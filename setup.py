@@ -157,7 +157,7 @@ setup(
     # MANIFEST.in as well.
     include_package_data=True,
     package_data={  # Optional
-        'pypaamespahdbpythonsuitehdb': ['resources/*'],
+        'amespahdbpythonsuite': ['resources/*'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may
