@@ -38,10 +38,12 @@ class XMLparser:
         # Identify location of PAHdb XML file.
         if self.filename is None:
             try:
-                self.filename = os.environ.get("AMESPAHDEFAULTDB")
-            except OSError as e:
+                self.filename = os.environ["AMESPAHDEFAULTDB"]
+            except KeyError as e:
                 print("Must set AMESPAHDEFAULTDB environment variable.")
                 raise e
+            else:
+                print('Using default PAHdb file:\n{}'.format(self.filename))
 
         # Parse XML file to dictionary.
         self._database, self._info = self._parse()
@@ -189,7 +191,7 @@ class XMLparser:
 
         return database_dict, info_dict
 
-    def to_dict(self):
+    def to_dicts(self):
         """Return the database and info dictionaries."""
         return self._database, self._info
 

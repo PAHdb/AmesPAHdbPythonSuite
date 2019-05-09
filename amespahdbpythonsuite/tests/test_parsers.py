@@ -20,6 +20,12 @@ def real_xml_file():
 
 
 @pytest.fixture(scope="module")
+def real_xml_file_experimental():
+    xml = 'resources/pahdb-experimental_cutdown.xml'
+    return resource_filename('amespahdbpythonsuite', xml)
+
+
+@pytest.fixture(scope="module")
 def illformed_xml_file():
     xml = 'resources/pahdb-theoretical_cutdown_illformed.xml'
     return resource_filename('amespahdbpythonsuite', xml)
@@ -34,18 +40,45 @@ def not_an_xml_file(tmpdir_factory):
 
 
 class TestXMLparser:
-    """Test the XMLparser class with a cut-down, real PAHdb XML file."""
-
-    def test_real_xml_file(self, real_xml_file):
-        parsey = XMLparser(real_xml_file)
-        assert isinstance(parsey, amespahdbpythonsuite.parsers.XMLparser)
+    """Test the XMLparser class."""
+    def test_real_xml_file(self, real_xml_file, check_schema=True):
+        parsed = XMLparser(real_xml_file)
+        assert isinstance(parsed, amespahdbpythonsuite.parsers.XMLparser)
 
         dict_keys = ['filename', 'type', 'date', 'full', 'version',
                      'comment', 'nspecies']
-        assert list(parsey.to_dict()[1].keys()) == dict_keys
-        assert list(parsey.to_dict()[0].keys()) == [18]
+        assert list(parsed.to_dicts()[1].keys()) == dict_keys
+        assert list(parsed.to_dicts()[0].keys()) == [18]
+        xml_str = 'An XML parser from the Ames PAHdb Python Suite'
+        assert str(parsed).split('.')[0] == xml_str
+        print(parsed)
 
-    def test_illformed_xml_file(self, illformed_xml_file):
+    def test_real_xml_file2(self, real_xml_file, check_schema=False):
+        parsed = XMLparser(real_xml_file)
+        assert isinstance(parsed, amespahdbpythonsuite.parsers.XMLparser)
+
+        dict_keys = ['filename', 'type', 'date', 'full', 'version',
+                     'comment', 'nspecies']
+        assert list(parsed.to_dicts()[1].keys()) == dict_keys
+        assert list(parsed.to_dicts()[0].keys()) == [18]
+        xml_str = 'An XML parser from the Ames PAHdb Python Suite'
+        assert str(parsed).split('.')[0] == xml_str
+
+    def test_real_xml_file_experimental(self, real_xml_file_experimental):
+        parsed = XMLparser(real_xml_file_experimental)
+        assert isinstance(parsed, amespahdbpythonsuite.parsers.XMLparser)
+
+        dict_keys = ['filename', 'type', 'date', 'full', 'version',
+                     'comment', 'nspecies']
+        assert list(parsed.to_dicts()[1].keys()) == dict_keys
+        assert list(parsed.to_dicts()[0].keys()) == [273]
+        assert ('laboratory' in parsed.to_dicts()[0][273].keys())
+
+    def test_illformed_xml_file(self, illformed_xml_file, check_schema=True):
+        with pytest.raises(XMLSyntaxError):
+            XMLparser(illformed_xml_file)
+
+    def test_illformed_xml_file2(self, illformed_xml_file, check_schema=False):
         with pytest.raises(XMLSyntaxError):
             XMLparser(illformed_xml_file)
 
