@@ -5,7 +5,6 @@ test_parsers.py
 Test whether the XMLparser class behaves as expected.
 """
 
-import pandas as pd
 import pytest
 from lxml.etree import XMLSyntaxError
 from pkg_resources import resource_filename
@@ -29,8 +28,8 @@ def illformed_xml_file():
 @pytest.fixture(scope="module")
 def not_an_xml_file(tmpdir_factory):
     tmp_file = tmpdir_factory.mktemp("data").join("not_xml.xml")
-    mock_df = pd.DataFrame({'wave': (0, 1), 'flux': (1, 2)})
-    mock_df.to_pickle(tmp_file)
+    with open(tmp_file, 'w') as file:
+        file.write('Not an xml file.')
     return tmp_file
 
 
