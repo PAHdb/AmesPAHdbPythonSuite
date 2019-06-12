@@ -10,8 +10,11 @@ import base64
 import os
 import urllib.request
 
-from lxml import etree as ElementTree
 import numpy as np
+from lxml import etree as ElementTree
+
+from amespahdbpythonsuite.utils.xml_data_types import \
+    metadata_keys, geometry_keys, transition_keys, laboratory_keys
 
 
 class XMLparser:
@@ -20,48 +23,101 @@ class XMLparser:
     Optional behaviour includes validating the XML schema.
 
     Attributes:
-        check_schema: Whether to validate the XML schema or not.
-        filename: XML file location. If not given, it is assigned to the
-            "AMESPAHDEFAULTDB" environment variable.
+        filename (str): XML file path.
+        validate (bool): Whether to validate the XML schema or not.
+        schema_is_valid (bool): Outcome of the schema checking.
+        database (dict): Dictionary containing the PAHdb-parsed data.
+        info (dict): Dictionary containing the PAHdb-parsed metadata.
 
     Note:
         `validated` (bool) indicates if the schema is valid (True) or
-            not (False). Defaults to False until validation is performed.
+            not (False). Set to None until validation is performed.
+
+    Examples:
+        parser = XMLparser(filename="xml_file.xml")
+        parser.verify_schema()
+        database, info = parser.to_pahdb_dict()
+
+        parser = XMLparser(filename="xml_file.xml", validate=True)
+        database, info = parser.to_pahdb_dict()
+
+        parser = XMLparser()
+        parser.filename = "xml_file.xml"
+        parser.validate = True
+        database, info = parser.to_pahdb_dict()
+
+        parser = XMLparser.from_string("<XML code here>")
+        parser.verify_schema()
+        database, info = parser.to_pahdb_dict()
+
     """
 
-    def __init__(self, filename=None, check_schema=True):
-        """Inits XMLparser with schema checking on, no given filename."""
+    def __init__(self, filename=None, validate=False):
+        """Inits XMLparser with schema checking off, no given filename."""
         self.filename = filename
-        self.check_schema = check_schema
-        self.validated = False  # Assume schema has not yet been checked.
+        self.validate = validate
+        self.schema_is_valid = None
 
-        # Identify location of PAHdb XML file.
-        if self.filename is None:
-            try:
-                self.filename = os.environ["AMESPAHDEFAULTDB"]
-            except KeyError as e:
-                print("Must set AMESPAHDEFAULTDB environment variable.")
-                raise e
-            else:
-                print('Using default PAHdb file:\n{}'.format(self.filename))
-
-        # Parse XML file to dictionary.
-        self._database, self._info = self._parse()
+        self.database = None
+        self.info = None
 
     def __repr__(self):
         """Class representation."""
         return (f'{self.__class__.__name__}('
-                f'check_schema={self.check_schema!r}, '
                 f'filename={self.filename!r}, '
-                f'validated={self.validated!r})')
+                f'validate={self.validate!r})')
 
     def __str__(self):
         """A description of the object."""
-        return (f'An XML parser from the Ames PAHdb Python Suite. '
+        return (f'An XML parser from the AmesPAHdbPythonSuite. '
                 f'XML file: \n{self.filename!r}.')
 
-    def _parse(self):
+    def verify_schema(self):
+        """Validate XML schema.
+
+        Note:
+            Requires that self.filename is set.
+
+            It sets the internal attributes:
+            _tree (ElementTree.ElementTree): parsed XML file.
+            _root: root element of ElementTree tree.
+
+        Returns:
+            True if successful. Also assigns self.schema_is_valid to True
+            if successful, False if unsuccessful.
+        """
+
+        self._tree = ElementTree.parse(self.filename)
+        self._root = self._tree.getroot()
+
+        schema = self._root.get(
+            '{http://www.w3.org/2001/XMLSchema-instance}' + 'schemaLocation'
+        )
+
+        if schema:
+            _, uri = schema.split(' ', 1)
+            doc = ElementTree.parse(urllib.request.urlopen(uri))
+            xmlschema = ElementTree.XMLSchema(doc)
+            try:
+                xmlschema.assertValid(self._tree)
+            except Exception as e:
+                self.schema_is_valid = False
+                print("Schema invalid!")
+                raise e
+            else:
+                self.schema_is_valid = True
+                print("Successfully validated schema.")
+                return True
+
+    def to_pahdb_dict(self, validate=False):
         """Perform the actual parsing, with or without validation.
+
+        Args:
+            validate (bool). Defaults to self.valdiate value, but can be
+            overridden.
+
+        Note:
+            Sets the attributes self.database and self.info if successful.
 
         Returns:
             database (dict): Dictionary, with the UIDs as keys,
@@ -71,52 +127,33 @@ class XMLparser:
                 the XML file, including filename, type, date, full
                 (bool), version, comment, and number of species.
         """
+        events = ("start", "end")
 
-        if self.check_schema:
-            tree = ElementTree.parse(self.filename)
-            root = tree.getroot()
-            self._validate_schema(tree, root)
-            formatted_tree = \
-                ElementTree.iterwalk(tree, events=("start", "end"))
+        # First determine whether we've already validated the schema.
+        if self.schema_is_valid:
+            self._formatted_tree = \
+                ElementTree.iterwalk(self._tree, events=events)
 
+        # Else decide whether to validate here, or skip validation.
         else:
-            formatted_tree = \
-                ElementTree.iterparse(self.filename, events=("start", "end"))
-
-        database, info = self._tree_to_dict(formatted_tree)
-
-        return database, info
-
-    def _validate_schema(self, tree, root):
-        """Validate XML schema.
-
-        Args:
-            tree (ElementTree.ElementTree): parsed XML file.
-            root: root element of ElementTree tree.
-
-        Returns:
-            N/A. If the XML schema is successfully validated, the instance
-            variable self.validated is set to True (bool).
-        """
-
-        schema = root.get('{http://www.w3.org/2001/XMLSchema-instance}' +
-                          'schemaLocation')
-        if schema:
-            _, uri = schema.split(' ', 1)
-            doc = ElementTree.parse(urllib.request.urlopen(uri))
-            xmlschema = ElementTree.XMLSchema(doc)
-            try:
-                xmlschema.assertValid(tree)
-            except Exception as e:
-                raise e
+            if self.validate or validate:
+                self.verify_schema()
+                self._formatted_tree = \
+                    ElementTree.iterwalk(self._tree, events=events)
             else:
-                self.validated = True
+                self._formatted_tree = \
+                    ElementTree.iterparse(self.filename, events=events)
 
-    def _tree_to_dict(self, tree):
+        self.database, self.info = \
+            self._tree_to_pahdb_dict(self._formatted_tree)
+
+        return self.database, self.info
+
+    def _tree_to_pahdb_dict(self, formatted_tree):
         """Convert the tree to a dict of dicts.
 
         Args:
-            tree: lxml tree of PAHdb file.
+            formatted_tree: lxml tree of PAHdb file.
 
         Returns:
             database_dict: Dictionary, with the UIDs as keys,
@@ -127,7 +164,7 @@ class XMLparser:
                 (bool), version, comment, and number of species.
         """
         # Advance to root and identify namespace.
-        event, root = next(tree)
+        event, root = next(formatted_tree)
         namespace = self.determine_xml_namespace(root)
 
         # Root dict attributes.
@@ -139,7 +176,7 @@ class XMLparser:
         first_run = True
 
         # Iterate through the tree, clearing elements as we go.
-        for _, (event, elem) in enumerate(tree):
+        for _, (event, elem) in enumerate(formatted_tree):
 
             # Store the top XML comment.
             if first_run:
@@ -149,11 +186,11 @@ class XMLparser:
 
             # Extract UID data on a per-tag ('specie') basis.
             if event == "end" and elem.tag == namespace + 'specie':
-                # Extract soft data.
+                # Extract the metadata.
                 uid, metadata, comments, reference = \
                     self._extract_info(elem, namespace)
 
-                # Extract hard data.
+                # Extract the numeric data.
                 args = elem, namespace
                 geometry_dict = self._extract_numeric(*args, 'geometry')
                 transitions_dict = self._extract_numeric(*args, 'transitions')
@@ -191,10 +228,6 @@ class XMLparser:
 
         return database_dict, info_dict
 
-    def to_dicts(self):
-        """Return the database and info dictionaries."""
-        return self._database, self._info
-
     @staticmethod
     def determine_xml_namespace(root):
         """Returns the namespace for an ElementTree root object.
@@ -230,29 +263,6 @@ class XMLparser:
             ref_list (tuple): Tuple of general references from XML file.
         """
 
-        def get_metadata_keys():
-            """XML tags for the children of a <specie> element,
-            metadata only."""
-            metadata_keys = {
-                'references': str,
-                'comments': str,
-                'formula': str,
-                'charge': int,
-                'symmetry': str,
-                'weight': float,
-                'total_e': float,
-                'vib_e': float,
-                'method': str,
-                'n_solo': int,
-                'n_duo': int,
-                'n_trio': int,
-                'n_quartet': int,
-                'n_quintet': int,
-                'n_ch2': int,
-                'n_chx': int,
-            }
-            return metadata_keys
-
         def extract_metadata(specie, namespace):
             """Returns the specie metadata.
 
@@ -274,8 +284,8 @@ class XMLparser:
             children = specie.getchildren()
             childrens_tags = [x.tag for x in children]
 
-            # Retrieve metadata from each child.
-            metadata_keys = get_metadata_keys()
+            # # Retrieve metadata from each child.
+            # metadata_keys = get_metadata_keys()
 
             # Iterative over the metadata keys.
             for (meta_key, meta_type) in list(metadata_keys.items()):
@@ -368,40 +378,6 @@ class XMLparser:
             dictionaries (one per transition/mode), each with keys `frequency`,
             `scale`, `intensity`, `symmetry`.
         """
-
-        def geometry_keys():
-            """Returns the XML tags for the children of <geometry> as a
-            dictionary."""
-            geo_keys = {
-                'position': int,
-                # 'uid': int,
-                # 'type': int,
-                'x': float,
-                'y': float,
-                'z': float,
-            }
-            return geo_keys
-
-        def transition_keys():
-            """Returns the XML tags for the children of <transitions> as a
-            dictionary."""
-            tran_keys = {
-                'frequency': float,
-                # 'uid': int,
-                'scale': float,
-                'intensity': float,
-                'symmetry': str,
-            }
-            return tran_keys
-
-        def laboratory_keys():
-            """Returns the XML tags for the children of <laboratory> as a
-            dictionary."""
-            lab_keys = {
-                'frequency': float,
-                'intensity': float,
-            }
-            return lab_keys
 
         def parse_atom_to_dict(atom, namespace, geometry_keys):
             """Parse a single <atom> XML element to dictionary.
@@ -503,15 +479,15 @@ class XMLparser:
 
         # Depending on what type of data, assign different keys/functions.
         if label == 'geometry':
-            key_dict = geometry_keys()
+            key_dict = geometry_keys
             func = parse_atom_to_dict
 
         elif label == 'transitions':
-            key_dict = transition_keys()
+            key_dict = transition_keys
             func = parse_mode_to_dict
 
         elif label == 'laboratory':
-            key_dict = laboratory_keys()
+            key_dict = laboratory_keys
             # No func here, since this XML tag is not repeated under
             # a single 'specie'. Handle it differently, as seen below.
 
@@ -541,3 +517,9 @@ class XMLparser:
                 container.append(data_dict)
 
             return tuple(container)
+
+    @classmethod
+    def from_string(cls, string):
+        """Generate XMLparser instance from a string."""
+        # TODO: complete this method, if the general class structure is OK.
+        return cls()

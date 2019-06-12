@@ -10,7 +10,7 @@ from lxml.etree import XMLSyntaxError
 from pkg_resources import resource_filename
 
 import amespahdbpythonsuite
-from amespahdbpythonsuite.parsers import XMLparser
+from amespahdbpythonsuite.xmlparser import XMLparser
 
 
 @pytest.fixture(scope="module")
@@ -41,50 +41,62 @@ def not_an_xml_file(tmpdir_factory):
 
 class TestXMLparser:
     """Test the XMLparser class."""
-    def test_real_xml_file(self, real_xml_file, check_schema=True):
-        parsed = XMLparser(real_xml_file)
-        assert isinstance(parsed, amespahdbpythonsuite.parsers.XMLparser)
+    def test_real_xml_file(self, real_xml_file, validate=True):
+        parser = XMLparser(real_xml_file, validate=validate)
+        parser.verify_schema()
+        database, info = parser.to_pahdb_dict()
+        assert isinstance(parser, amespahdbpythonsuite.xmlparser.XMLparser)
+        assert parser.schema_is_valid is True
 
         dict_keys = ['filename', 'type', 'date', 'full', 'version',
                      'comment', 'nspecies']
-        assert list(parsed.to_dicts()[1].keys()) == dict_keys
-        assert list(parsed.to_dicts()[0].keys()) == [18]
-        xml_str = 'An XML parser from the Ames PAHdb Python Suite'
-        assert str(parsed).split('.')[0] == xml_str
-        print(parsed)
+        assert list(info.keys()) == dict_keys
+        assert list(database.keys()) == [18]
+        xml_str = 'An XML parser from the AmesPAHdbPythonSuite'
+        assert str(parser).split('.')[0] == xml_str
+        print(parser)
 
-    def test_real_xml_file2(self, real_xml_file, check_schema=False):
-        parsed = XMLparser(real_xml_file)
-        assert isinstance(parsed, amespahdbpythonsuite.parsers.XMLparser)
+    def test_real_xml_file2(self, real_xml_file, validate=False):
+        parser = XMLparser(real_xml_file, validate=validate)
+        database, info = parser.to_pahdb_dict()
+        assert isinstance(parser, amespahdbpythonsuite.xmlparser.XMLparser)
+        assert parser.schema_is_valid is None
 
         dict_keys = ['filename', 'type', 'date', 'full', 'version',
                      'comment', 'nspecies']
-        assert list(parsed.to_dicts()[1].keys()) == dict_keys
-        assert list(parsed.to_dicts()[0].keys()) == [18]
-        xml_str = 'An XML parser from the Ames PAHdb Python Suite'
-        assert str(parsed).split('.')[0] == xml_str
+        assert list(info.keys()) == dict_keys
+        assert list(database.keys()) == [18]
+        print(parser)
 
     def test_real_xml_file_experimental(self, real_xml_file_experimental):
-        parsed = XMLparser(real_xml_file_experimental)
-        assert isinstance(parsed, amespahdbpythonsuite.parsers.XMLparser)
+        parser = XMLparser(real_xml_file_experimental)
+        parser.verify_schema()
+        database, info = parser.to_pahdb_dict()
+        assert isinstance(parser, amespahdbpythonsuite.xmlparser.XMLparser)
 
         dict_keys = ['filename', 'type', 'date', 'full', 'version',
                      'comment', 'nspecies']
-        assert list(parsed.to_dicts()[1].keys()) == dict_keys
-        assert list(parsed.to_dicts()[0].keys()) == [273]
-        assert ('laboratory' in parsed.to_dicts()[0][273].keys())
+        assert list(info.keys()) == dict_keys
+        assert list(database.keys()) == [273]
+        assert ('laboratory' in database[273].keys())
 
-    def test_illformed_xml_file(self, illformed_xml_file, check_schema=True):
+    def test_illformed_xml_file(self, illformed_xml_file, validate=True):
         with pytest.raises(XMLSyntaxError):
-            XMLparser(illformed_xml_file)
+            parser = XMLparser(illformed_xml_file, validate=validate)
+            parser.verify_schema()
 
-    def test_illformed_xml_file2(self, illformed_xml_file, check_schema=False):
+    def test_illformed_xml_file2(self, illformed_xml_file, validate=False):
         with pytest.raises(XMLSyntaxError):
-            XMLparser(illformed_xml_file)
+            parser = XMLparser(illformed_xml_file, validate=validate)
+            parser.verify_schema()
+            database, info = parser.to_pahdb_dict()
 
     def test_not_an_xml_file(self, tmpdir_factory, not_an_xml_file):
         with pytest.raises(TypeError):
-            XMLparser(not_an_xml_file)
+            parser = XMLparser(not_an_xml_file)
+            parser.verify_schema()
+            database, info = parser.to_pahdb_dict()
 
     with pytest.raises(OSError):
-        XMLparser('fake.txt')
+        parser = XMLparser(filename='fake.txt')
+        parser.verify_schema()
