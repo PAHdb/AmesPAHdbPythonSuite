@@ -13,6 +13,7 @@ import urllib.request
 import numpy as np
 from lxml import etree as ElementTree
 
+import amespahdbpythonsuite.utils
 from amespahdbpythonsuite.utils.xml_data_types import \
     metadata_keys, geometry_keys, transition_keys, laboratory_keys
 
