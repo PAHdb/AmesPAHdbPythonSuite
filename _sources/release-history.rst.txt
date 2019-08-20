@@ -2,5 +2,7 @@
 Release History
 ===============
 
-Initial Release (YYYY-MM-DD)
+v0.1.0 (2019-08-20)
 ----------------------------
+
+Initial release

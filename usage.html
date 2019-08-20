@@ -8,43 +8,49 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; AmesPAHdbPythonSuite 0.post3+gb4cdb0c documentation</title>
+  <title>Usage &mdash; AmesPAHdbPythonSuite  documentation</title>
   
 
   
   
+    <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
+  
   
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Release History" href="release-history.html" />
+    <link rel="next" title="API" href="amespahdbpythonsuite.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,10 +62,6 @@
 
           
             
-            
-              <div class="version">
-                0.post3+gb4cdb0c
-              </div>
             
           
 
@@ -85,7 +87,15 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20">v0.1.0 (2019-08-20)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -107,7 +117,7 @@
 
       <div class="wy-nav-content">
         
-        <div class="rst-content">
+        <div class="rst-content style-external-links">
         
           
 
@@ -137,13 +147,20 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
-          
         
       </li>
     
   </ul>
 
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="amespahdbpythonsuite.html" class="btn btn-neutral float-right" title="API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
   
   <hr/>
 </div>
@@ -168,11 +185,24 @@
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
 </style>
 <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Start by importing AmesPAHdbPythonSuite.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">as</span> <span class="nn">pahdb</span>
+<p>This is the example contained in example.py located in the
+examples-directory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.xmlparser</span> <span class="kn">import</span> <span class="n">XMLparser</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;resources/pahdb-theoretical_cutdown.xml&#39;</span>
+<span class="n">xml</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;amespahdbpythonsuite&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">XMLparser</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">verify_schema</span><span class="p">()</span>
+<span class="n">library</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_pahdb_dict</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -185,10 +215,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="release-history.html" class="btn btn-neutral float-right" title="Release History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="amespahdbpythonsuite.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -197,7 +227,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, The NASA Ames PAH IR Spectroscopic Database Team
+        &copy; Copyright 2019, Dr. Christiaan Boersma and Dr. Matthew J. Shannon
 
     </p>
   </div>
@@ -214,25 +244,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
