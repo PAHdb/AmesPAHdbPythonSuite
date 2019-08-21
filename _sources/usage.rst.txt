@@ -10,6 +10,7 @@ display the ('stick') absorption spectrum of coronene (UID=18).
 
      import pkg_resources
      from amespahdbpythonsuite.xmlparser import XMLparser
+     import matplotlib.pyplot as plt
 
      path = 'resources/pahdb-theoretical_cutdown.xml'
      xml = pkg_resources.resource_filename('amespahdbpythonsuite', path)
