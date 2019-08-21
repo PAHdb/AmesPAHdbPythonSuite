@@ -3,7 +3,8 @@ Usage
 =====
 
 This is the example contained in example.py located in the
-examples-directory.
+examples-directory and shows how the AmesPAHdbPythonSuite is used to
+display the ('stick') absorption spectrum of coronene (UID=18).
 
 .. code-block:: python
 
@@ -15,3 +16,9 @@ examples-directory.
      parser = XMLparser(xml)
      parser.verify_schema()
      library = parser.to_pahdb_dict()
+     plt.bar([d['frequency'] for d in library['species'][18]['transitions']],
+             [d['intensity'] for d in library['species'][18]['transitions']],
+             20, color='red', edgecolor="none")
+     plt.xlabel('frequency [cm$^{-1}$]')
+     plt.ylabel('integrated cross-section [km mol$^{-1}$]')
+     plt.show()

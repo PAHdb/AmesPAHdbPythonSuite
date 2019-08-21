@@ -108,7 +108,6 @@ class XMLparser:
 
             self._context = \
                 etree.iterwalk(self._tree, events=("start", "end"))
-
         else:
             self._context = \
                 etree.iterparse(self.filename, events=("start", "end"))
@@ -155,8 +154,7 @@ class XMLparser:
             if action == 'start' and tag == 'specie':
                 uid = int(elem.attrib['uid'])
                 species[uid] = self._specie_handler(context)
-
-            if action != 'end':
+            elif action != 'end':
                 continue
 
             if tag == 'species':
@@ -195,8 +193,7 @@ class XMLparser:
                         elem.clear()
 
                         geometry.append(atom_dict)
-
-                if action != 'end':
+                elif action != 'end':
                     continue
 
                 if tag == 'geometry':
@@ -224,24 +221,22 @@ class XMLparser:
                         if action != 'end':
                             continue
 
-                        if elem.attrib:
-                            mode_dict.update(elem.attrib)
-
                         if tag == 'mode':
                             break
+
+                        if elem.attrib:
+                            mode_dict.update(elem.attrib)
 
                         try:
                             value = float(elem.text)
                         except ValueError:
                             value = elem.text
-
                         mode_dict[tag] = value
 
                         elem.clear()
 
                         transitions.append(mode_dict)
-
-                if action != 'end':
+                elif action != 'end':
                     continue
 
                 if tag == 'transitions':
@@ -260,12 +255,10 @@ class XMLparser:
                 tag = etree.QName(elem).localname
 
                 if action == 'end':
-
                     if tag == 'frequency' or tag == 'intensity':
                         bin = base64.b64decode(elem.text)
                         laboratory[tag] = array.array('f', bin)
-
-                    if tag == 'laboratory':
+                    elif tag == 'laboratory':
                         break
 
                     elem.clear()
@@ -279,7 +272,6 @@ class XMLparser:
             tag = etree.QName(elem).localname
 
             if action == 'start':
-
                 if tag == 'comments':
                     comments = []
 
@@ -296,7 +288,6 @@ class XMLparser:
                             elem.clear()
 
                     specie_dict['comments'] = tuple(comments)
-
                 elif tag == 'references':
                     references = []
 
@@ -313,7 +304,6 @@ class XMLparser:
                             elem.clear()
 
                     specie_dict['references'] = tuple(references)
-
                 elif tag == 'geometry':
                     specie_dict['geometry'] = specie_geometry_handler(context)
                 elif tag == 'transitions':
@@ -322,9 +312,7 @@ class XMLparser:
                 elif tag == 'laboratory':
                     specie_dict['laboratory'] = \
                         specie_laboratory_handler(context)
-
             elif action == 'end':
-
                 if tag == 'specie':
                     break
 
@@ -334,7 +322,7 @@ class XMLparser:
                         value = int(value)
                 except ValueError:
                     value = elem.text
-                    specie_dict[tag] = value
+                specie_dict[tag] = value
 
                 elem.clear()
 
