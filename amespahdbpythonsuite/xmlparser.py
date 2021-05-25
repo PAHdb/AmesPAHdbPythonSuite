@@ -186,13 +186,13 @@ class XMLparser:
                             continue
 
                         if tag == 'atom':
+                            geometry.append(atom_dict)
                             break
 
                         atom_dict[tag] = float(elem.text)
 
                         elem.clear()
-
-                        geometry.append(atom_dict)
+                        
                 elif action != 'end':
                     continue
 
@@ -222,6 +222,7 @@ class XMLparser:
                             continue
 
                         if tag == 'mode':
+                            transitions.append(mode_dict)
                             break
 
                         if elem.attrib:
@@ -234,8 +235,6 @@ class XMLparser:
                         mode_dict[tag] = value
 
                         elem.clear()
-
-                        transitions.append(mode_dict)
                 elif action != 'end':
                     continue
 
