@@ -192,7 +192,7 @@ class XMLparser:
                         atom_dict[tag] = float(elem.text)
 
                         elem.clear()
-                        
+
                 elif action != 'end':
                     continue
 
