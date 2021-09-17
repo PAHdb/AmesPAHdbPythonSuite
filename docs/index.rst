@@ -26,13 +26,16 @@ for additional resources and information.
 
 .. toctree::
    :hidden:
+   :maxdepth: 1
 
    installation
    usage
-   amespahdbpythonsuite
+   api
    release-history
+   faq
+   amespahdbpythonsuite
 
-*Last updated March 2019*
+*Last updated September 2021*
 
 .. rubric:: Footnotes
 

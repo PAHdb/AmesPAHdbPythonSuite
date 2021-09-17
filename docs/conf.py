@@ -22,8 +22,8 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'AmesPAHdbPythonSuite'
-copyright = '2019, Dr. Christiaan Boersma and Dr. Matthew J. Shannon'
-author = 'Dr. Christiaan Boersma and Dr. Matthew J. Shannon'
+copyright = '2019/2021 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis'
+author = 'Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis'
 
 # The short X.Y version
 version = ''
@@ -161,7 +161,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'PAHdbwebsitemanual.tex', 'PAHdb website manual',
-     'Dr. Christiaan Boersma, Dr. Matthew J. Shannon', 'manual'),
+     'Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis', 'manual'),
 ]
 
 
