@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.5 Working with Molecular Geometric Data &mdash; AmesPAHdbPythonSuite  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3.6 Working with Raw Laboratory Spectra" href="sec_03f.html" />
+    <link rel="prev" title="3.4 Working with fundamental vibrational transitions" href="sec_03d.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> AmesPAHdbPythonSuite
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><span class="sectnum">1</span> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html"><span class="sectnum">2</span> Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html"><span class="sectnum">3</span> API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sec_03a.html"><span class="sectnum">3.1</span> Main Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03b.html"><span class="sectnum">3.2</span> Accessing the molecular PAH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03c.html"><span class="sectnum">3.3</span> Working with Molecular PAH Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.5</span> Working with Molecular Geometric Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03f.html"><span class="sectnum">3.6</span> Working with Raw Laboratory Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7</span> Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03h.html"><span class="sectnum">3.8</span> Creating PAH Spectra</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#emission-models"><span class="sectnum">3.8.1</span> Emission models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#line-profiles"><span class="sectnum">3.8.2</span> Line profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AmesPAHdbPythonSuite</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html"><span class="sectnum">3</span> API</a> &raquo;</li>
+      <li><span class="sectnum">3.5</span> Working with Molecular Geometric Data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="sec_03d.html" class="btn btn-neutral float-left" title="3.4 Working with fundamental vibrational transitions" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03f.html" class="btn btn-neutral float-right" title="3.6 Working with Raw Laboratory Spectra" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="working-with-molecular-geometric-data">
+<h1><span class="sectnum">3.5</span> Working with Molecular Geometric Data<a class="headerlink" href="#working-with-molecular-geometric-data" title="Permalink to this headline">¶</a></h1>
+<p>The ‘AmesPAHdbIDLSuite_Geometry’-object exposes the molecular
+geometric data.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>geometry <span class="o">=</span> pahdb<span class="o">-&gt;</span>getGeometryByUID( $
+           pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>))
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Geometry’-object provides both the ‘Plot’
+and ‘Structure’-methods to output the chemical structure of the
+PAH with provided UID. The first method uses IDL’s PLOT-procedures
+to create the output, while the latter IDL object graphics.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="c1">; UID 18 = coronene (C24H12)</span>
+
+void <span class="o">=</span> geometry<span class="o">-&gt;</span><span class="nb">Plot</span>(<span class="mi">18</span>)
+
+img <span class="o">=</span> geometry<span class="o">-&gt;</span>Structure(<span class="mi">18</span>)
+</pre></div>
+</div>
+<p>The ‘Plot’-method will accept the ‘Scale’, ‘Thick’, and ‘RGB’-
+keywords to control the scale at which the atoms are to be drawn,
+the thickness of the bonds, and if colors should be outputted as
+decomposed RGB, respectively. In addition, the ‘NoErase’ and
+‘Position’-keywords control display erasing prior plotting and the
+plot position in normalized coordinates, respectively. When the
+‘Resolution’-keyword is set, the plot will be rendered to IDL’s
+Z-buffer device at given resolution and outputted as an image and
+returned to the caller. When the ‘Save’-keyword is also set, a
+PNG-image will be generated as well, which will have the UID of
+the PAH molecule under consideration embedded in the filename.
+Lastly, the ‘Angle’-keyword controls rotation of the structure
+around the <em>z</em>-axis.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="c1">; UID 18 = coronene (C24H12)</span>
+
+img <span class="o">=</span> geometry<span class="o">-&gt;</span><span class="nb">Plot</span>(<span class="mi">18</span>, Scale<span class="o">=</span><span class="mf">2.0</span>, Thick<span class="o">=</span><span class="mf">5.0</span>, $
+                        Resolution<span class="o">=</span>[<span class="mi">1200</span>, <span class="mi">1200</span>], <span class="o">/</span><span class="nb">Save</span>)
+</pre></div>
+</div>
+<p>The ‘Structure’-method will accept the ‘Background’ and
+‘Frame’-keywords to control background color and display of a
+wireframe. The ‘Resolution’-keyword controls the dimension of the
+3D-rendered output image. The ‘Save’-keyword can be specified to
+save the generated image as a PNG-image as well, which will have
+the UID of the PAH molecule under consideration embedded in the
+filename. If in addition the ‘Transparent’-keyword is specified as
+a color-triplet array, that color will be set to transparent in
+the generated PNG-file. The ‘Axis’ and ‘Angle’-keywords can
+control axis and angle of rotation, respectively. With the
+‘View’-keyword set the generated structure will be displayed using
+IDL’s XOBJVIEW routine. Lastly, when the ‘Obj’-keyword is set, the
+generated IDLgrModel-object is returned to the caller.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="c1">; UID 18 = coronene (C24H12)</span>
+
+img <span class="o">=</span> geometry<span class="o">-&gt;</span>Structure(<span class="mi">18</span>, Background<span class="o">=</span>[<span class="mi">0</span>, <span class="mi">255</span>, <span class="mi">0</span>], $
+                              Resolution<span class="o">=</span>[<span class="mi">600</span>, <span class="mi">600</span>], $
+                              <span class="o">/</span><span class="nb">Save</span>, Transparent<span class="o">=</span>[<span class="mi">0</span>, <span class="mi">255</span>, <span class="mi">0</span>], $
+                              <span class="o">/</span>View)
+</pre></div>
+</div>
+<p>In addition, the ‘AmesPAHdbIDLSuite_Geometry’-object provides the
+‘Mass’, ‘Rings’, and ‘Area’-methods that return the calculated
+mass based on atomic masses, the number of 3-8 membered rings, and
+total surface area of the PAH molecules under consideration.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>masses <span class="o">=</span> geometry<span class="o">-&gt;</span>Mass()
+
+rings <span class="o">=</span> geometry<span class="o">-&gt;</span>Rings()
+
+areas <span class="o">=</span> geometry<span class="o">-&gt;</span>Area()
+</pre></div>
+</div>
+<p>Lastly, the ‘Inertia’-method provides the moment of inertia
+matrices, which are diagonalized with the ‘Diagonalize’-method,
+for the PAH molecules under consideration. The latter method can
+be particular useful to ensure proper alignment of the structure
+with the view before calling the ‘Plot’ or ‘Structure’-methods.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>matrix <span class="o">=</span> geometry<span class="o">-&gt;</span>Inertia()
+
+geometry<span class="o">-&gt;</span>Diagonalize
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sec_03d.html" class="btn btn-neutral float-left" title="3.4 Working with fundamental vibrational transitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03f.html" class="btn btn-neutral float-right" title="3.6 Working with Raw Laboratory Spectra" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019/2021 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

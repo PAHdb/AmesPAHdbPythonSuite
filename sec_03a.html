@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4 Release History &mdash; AmesPAHdbPythonSuite  documentation</title>
+  <title>3.1 Main Interface &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="5 FAQ" href="faq.html" />
-    <link rel="prev" title="3.10 Graphical User Interface" href="sec_03j.html" /> 
+    <link rel="next" title="3.2 Accessing the molecular PAH data" href="sec_03b.html" />
+    <link rel="prev" title="3 API" href="api.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,8 +44,8 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><span class="sectnum">1</span> Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html"><span class="sectnum">2</span> Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html"><span class="sectnum">3</span> API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sec_03a.html"><span class="sectnum">3.1</span> Main Interface</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html"><span class="sectnum">3</span> API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.1</span> Main Interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03b.html"><span class="sectnum">3.2</span> Accessing the molecular PAH data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03c.html"><span class="sectnum">3.3</span> Working with Molecular PAH Properties</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</a></li>
@@ -64,8 +64,8 @@
 <li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><span class="sectnum">4</span> Release History</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
@@ -90,12 +90,13 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><span class="sectnum">4</span> Release History</li>
+          <li><a href="api.html"><span class="sectnum">3</span> API</a> &raquo;</li>
+      <li><span class="sectnum">3.1</span> Main Interface</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
-        <a href="sec_03j.html" class="btn btn-neutral float-left" title="3.10 Graphical User Interface" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="5 FAQ" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api.html" class="btn btn-neutral float-left" title="3 API" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03b.html" class="btn btn-neutral float-right" title="3.2 Accessing the molecular PAH data" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
   </div>
   <hr/>
 </div>
@@ -126,20 +127,56 @@
     text-align: unset;
 }
 </style>
-<section id="release-history">
-<h1><span class="sectnum">4</span> Release History<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
-<section id="v0-1-0-2019-08-20">
-<h2><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)<a class="headerlink" href="#v0-1-0-2019-08-20" title="Permalink to this headline">¶</a></h2>
-<p>Initial release</p>
-</section>
+<section id="main-interface">
+<h1><span class="sectnum">3.1</span> Main Interface<a class="headerlink" href="#main-interface" title="Permalink to this headline">¶</a></h1>
+<p>Interaction with the NASA Ames PAH IR Spectroscopic Database is
+organized around the ‘AmesPAHdbIDLSuite’-object, which is created
+as shown below.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>)
+</pre></div>
+</div>
+<p>Alternatively, the ‘AmesPAHdbIDLSuite’-object can be created
+through the implicit object creation method as shown below.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> AmesPAHdbIDLSuite()
+</pre></div>
+</div>
+<p>In case the system/IDL variable for the default database is not
+set, or one wishes to load another version or type of database,
+the ‘Filename’-keyword can be specified.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Filename<span class="o">=</span><span class="s1">&#39;/path/to/xml-file&#39;</span>)
+</pre></div>
+</div>
+<p>By default the <em>AmesPAHdbIDLSuite</em> will cache the parsed database
+XML-file for faster subsequent access. However, this behavior can
+be disabled by setting the ‘Cache’-keyword to ‘0’.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Cache<span class="o">=</span><span class="mi">0</span>)
+</pre></div>
+</div>
+<p>When parsing the database XML-file, the <em>AmesPAHdbIDLSuite</em> will
+try and validate its content against a URL-linked Schema. However,
+validation can be disabled by setting the ‘Check’-keyword to ‘0’.
+This can be useful when not having an active internet connection.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Check<span class="o">=</span><span class="mi">0</span>)
+</pre></div>
+</div>
+<p>It is possible to combine the different keywords.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Filename<span class="o">=</span><span class="s1">&#39;path/to/xml-file&#39;</span>, $
+                                     Cache<span class="o">=</span><span class="mi">0</span>, Check<span class="o">=</span><span class="mi">0</span>)
+</pre></div>
+</div>
+<p>When finished with the <em>AmesPAHdbIDLSuite</em> the object should be
+destroyed.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="nb">OBJ_DESTROY</span>,pahdb
+</pre></div>
+</div>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sec_03j.html" class="btn btn-neutral float-left" title="3.10 Graphical User Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="5 FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api.html" class="btn btn-neutral float-left" title="3 API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03b.html" class="btn btn-neutral float-right" title="3.2 Accessing the molecular PAH data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

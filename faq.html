@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4 Release History &mdash; AmesPAHdbPythonSuite  documentation</title>
+  <title>5 FAQ &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="5 FAQ" href="faq.html" />
-    <link rel="prev" title="3.10 Graphical User Interface" href="sec_03j.html" /> 
+    <link rel="next" title="src" href="amespahdbpythonsuite.html" />
+    <link rel="prev" title="4 Release History" href="release-history.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,11 +64,11 @@
 <li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><span class="sectnum">4</span> Release History</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
@@ -90,12 +90,12 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><span class="sectnum">4</span> Release History</li>
+      <li><span class="sectnum">5</span> FAQ</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
-        <a href="sec_03j.html" class="btn btn-neutral float-left" title="3.10 Graphical User Interface" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="5 FAQ" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="release-history.html" class="btn btn-neutral float-left" title="4 Release History" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="amespahdbpythonsuite.html" class="btn btn-neutral float-right" title="src" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
   </div>
   <hr/>
 </div>
@@ -126,20 +126,67 @@
     text-align: unset;
 }
 </style>
-<section id="release-history">
-<h1><span class="sectnum">4</span> Release History<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
-<section id="v0-1-0-2019-08-20">
-<h2><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)<a class="headerlink" href="#v0-1-0-2019-08-20" title="Permalink to this headline">¶</a></h2>
-<p>Initial release</p>
-</section>
+<section id="faq">
+<h1><span class="sectnum">5</span> FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
+<p><strong>Why doesn’t the code in this guide work with my installation?</strong></p>
+<p><em>You are probably using a version of the AmesPAHdbIDLSuite</em>
+dated prior <em>February 14, 2015. Please update to a newer
+version.</em></p>
+<p><strong>Does the AmesPAHdbIDLSuite work with GDL?</strong></p>
+<p><em>The AmesPAHdbIDLSuite might work with</em> <a class="reference external" href="http://gnudatalanguage.sourceforge.net">GDL</a> <em>, the open source alternative to IDL.</em></p>
+<p><strong>How does the *AmesPAHdbIDLSuite* deal with color output?</strong></p>
+<p><em>The AmesPAHdbIDLSuite ‘Plot’-methods create and load a color
+table containing 15 colors. When outputting to screen, the
+device will be set into discrete graphics mode. Upon
+completion, both the color table and the display mode will be
+restored to their initial settings.</em></p>
+<p><strong>Where have the C-routines gone?</strong></p>
+<p><em>The C-code has been removed from the AmesPAHdbIDLSuite for
+three reasons. First, The NNLS implementation in the suite now
+makes use of IDL’s LA_LEAST_SQUARES-routine, which is
+implemented using LAPACK and therefore very fast. Second, it
+appears that IDL’s READS-routine has seen some significant
+speed improvements in recent IDL releases such that the
+CONVERT_ASCII C-implementation has become obsolete. Third and
+last, making the C-routines compile and reliable across
+multiple platforms has proven to be difficult.</em></p>
+<p><strong>I am getting schema validation errors, is this an issue and how can I get rid of them?</strong></p>
+<p><em>Schema validation errors typically do not cause a problem. The
+errors you see could be related to the move from
+www.astrochem.org to www.astrochemistry.org for the base URL,
+affecting the used XML namespaces. Re-downloading your database
+XML-file should solve the problem. As a last resort, you can
+disable schema validation by setting the ‘Check’-keyword to
+‘Check=0’ when creating the AmesPAHdbIDLSuite-object.</em></p>
+<p><strong>I am getting an unsupported protocol in URL error, what can I
+do?</strong></p>
+<p><em>With the recent move to using SSL (https) on our domain
+(www.astrochemistry.org) IDL’s XML-parser fails to download the
+linked schema for checking the structure of the database file.
+By setting the ‘CHECK’-keyword to ‘0’ in the OBJ_NEW-call will
+mitigate the problem. Note that you might need to manually
+remove the corrupted cache file.</em></p>
+<p><strong>I am receiving an invalid multi-byte sequence error, what can I
+do?</strong></p>
+<p><em>It has been reported that on older versions of some operating
+systems IDL’s XML-parser is unable to properly handle the utf-8
+characters embedded in the database XML-file. One solution is
+to move to a more modern version of your operation system.
+Another possible solution is converting the file to use a
+different encoding with the following command.</em></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xmllint --encode latin1 --output converted.xml file_with_UTF-8.xml
+</pre></div>
+</div>
+<p>Note that characters that cannot be converted are simply
+removed.</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sec_03j.html" class="btn btn-neutral float-left" title="3.10 Graphical User Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="5 FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="release-history.html" class="btn btn-neutral float-left" title="4 Release History" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="amespahdbpythonsuite.html" class="btn btn-neutral float-right" title="src" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.9 Spectroscopic Database Fitting &mdash; AmesPAHdbPythonSuite  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3.10 Graphical User Interface" href="sec_03j.html" />
+    <link rel="prev" title="3.8 Creating PAH Spectra" href="sec_03h.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> AmesPAHdbPythonSuite
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><span class="sectnum">1</span> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html"><span class="sectnum">2</span> Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html"><span class="sectnum">3</span> API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sec_03a.html"><span class="sectnum">3.1</span> Main Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03b.html"><span class="sectnum">3.2</span> Accessing the molecular PAH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03c.html"><span class="sectnum">3.3</span> Working with Molecular PAH Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03e.html"><span class="sectnum">3.5</span> Working with Molecular Geometric Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03f.html"><span class="sectnum">3.6</span> Working with Raw Laboratory Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7</span> Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03h.html"><span class="sectnum">3.8</span> Creating PAH Spectra</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#emission-models"><span class="sectnum">3.8.1</span> Emission models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#line-profiles"><span class="sectnum">3.8.2</span> Line profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AmesPAHdbPythonSuite</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html"><span class="sectnum">3</span> API</a> &raquo;</li>
+      <li><span class="sectnum">3.9</span> Spectroscopic Database Fitting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="sec_03h.html" class="btn btn-neutral float-left" title="3.8 Creating PAH Spectra" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03j.html" class="btn btn-neutral float-right" title="3.10 Graphical User Interface" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="spectroscopic-database-fitting">
+<h1><span class="sectnum">3.9</span> Spectroscopic Database Fitting<a class="headerlink" href="#spectroscopic-database-fitting" title="Permalink to this headline">¶</a></h1>
+<dl class="simple">
+<dt>The first step in fitting astronomical observations is loading</dt><dd><p>astronomical observations.</p>
+</dd>
+</dl>
+<section id="dealing-with-astronomical-observations">
+<h2><span class="sectnum">3.9.1</span> Dealing with astronomical observations<a class="headerlink" href="#dealing-with-astronomical-observations" title="Permalink to this headline">¶</a></h2>
+<p>Astronomical observations can be handled by the
+‘AmesPAHdbIDLSuite_Observation’-object, which is able to read
+text, <em>ISO</em>-SWS, and <em>Spitzer</em>-IRS-files. A convenience routine is
+available to manage units;
+AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite_Observation&#39;</span>, $
+                      <span class="s1">&#39;myObservationFile&#39;</span>, $
+              Units<span class="o">=</span>AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S())
+</pre></div>
+</div>
+<p>In addition, an ‘AmesPAHdbIDLSuite_Observation’-object can be
+created using keyword-initializers.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite_Observation&#39;</span>,
+                       X<span class="o">=</span>frequency, $
+                       Y<span class="o">=</span>intensity, $
+                       ErrY<span class="o">=</span>ystdev, $
+                       Units<span class="o">=</span>AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S())
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Observation’-object exposes the observation
+and provides the ‘Plot’, and ‘Write’-methods for output. The
+‘Plot’-method will display the observation and accepts the
+‘Oplot’, and ‘Color’-keywords to control overplotting and color,
+respectively. Through IDL’s keyword inheritance mechanism
+additional keywords accepted by IDL’s ‘PLOT’-procedure can be
+passed.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="o">-&gt;</span><span class="nb">Plot</span>,XRANGE<span class="o">=</span>[<span class="mf">2.5</span>,<span class="mi">15</span>],<span class="o">/</span>XSTYLE
+</pre></div>
+</div>
+<p>The ‘Write’-method will write the observation to a single text
+(.txt) file. Optionally, a prefix can be given that will be
+prepended to the filename.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;</span>
+</pre></div>
+</div>
+<p><strong>NB</strong> Text-files can have up to five columns, organized as
+follows. Column 1: abscissa, Column 2: ordinate, Column 3:
+continuum, Column 4: uncertainty in ordinate, and Column 5:
+uncertainty in abscissa.</p>
+<p>The ‘AmesPAHdbIDLSuite_Observation’-object’s ‘Rebin’,
+‘AbscissaUnitsTo’, and ‘SetGridRange’-methods can rebin the
+observation onto a specified grid or, with the ‘Uniform’-Keyword
+set, onto a uniform created grid with specified sampling; convert
+the units associated with the abscissa; and change the grid range,
+respectively.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="o">-&gt;</span><span class="nb">Rebin</span>,myGrid
+
+observation<span class="o">-&gt;</span><span class="nb">Rebin</span>,5D,<span class="o">/</span>Uniform
+
+observation<span class="o">-&gt;</span>AbsciccaUnitsTo
+
+observation<span class="o">-&gt;</span>SetGridRange,<span class="mi">500</span>,<span class="mi">2000</span>
+</pre></div>
+</div>
+<p>Spectroscopic database fitting is handled by the
+‘AmesPAHdbIDLSuite_Spectrum’-object and it either accepts an
+‘AmesPAHdbIDLSuite_Observation’-object, or a simple array of
+ordinates with an optional array of ordinate uncertainties.
+Whether ordinate uncertainties are provided or not, the
+‘AmesPAHdbIDLSuite_Spectrum’-object’s ‘Fit’-method will perform a
+non-negative least-chi-square or non-negative least-square fit and
+return an ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit <span class="o">=</span> spectrum<span class="o">-&gt;</span>Fit(intensity, uncertainty)
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object exposes the fit and
+provides the ‘Plot’, and ‘Write’-methods for output. The
+‘Plot’-method accepts the ‘Residual’, ‘Size’, ‘Charge’, and
+‘Composition’-keywords, which selectively display the residual of
+the fit, or either the size, charge and compositional breakdown.
+Without these keywords the fit itself is displayed.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit<span class="o">-&gt;</span><span class="nb">Plot</span>,<span class="o">/</span>Charge
+</pre></div>
+</div>
+<p>Optionally, the ‘Wavelength’, ‘Stick’, ‘Oplot’, ‘Legend’, and
+‘Color’-keywords can be given to the ‘Plot’-method to control the
+abscissa, stick representation, overplotting, legend and color,
+respectively. Through IDL’s keyword inheritance mechanism
+additional keywords accepted by IDL’s ‘PLOT’-procedure can be
+passed.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit<span class="o">-&gt;</span><span class="nb">Plot</span>,<span class="o">/</span><span class="nb">Size</span>,<span class="o">/</span>Wavelength,XTITLE<span class="o">=</span>[<span class="mf">2.5</span>,<span class="mi">15</span>],<span class="o">/</span>XSTYLE
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object’s ‘Write’-method
+will write the fit to a single text (.txt) file. Optionally, a
+prefix can be given that will be prepended to the filename.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;</span>
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object’s ‘GetClasses’, and
+‘GetBreakdown’-methods return the fit broken down by charge, size,
+and composition, where the first provides the spectrum for each
+component and the latter its relative contribution.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>classes <span class="o">=</span> fit<span class="o">-&gt;</span>getClasses()
+
+breakdown <span class="o">=</span> fit<span class="o">-&gt;</span>getBreakdown()
+</pre></div>
+</div>
+<p>Optionally the ‘Small’ keyword can be set, which controls the
+small cutoff size in number of carbon atoms.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>classes <span class="o">=</span> fit<span class="o">-&gt;</span>getClasses(Small<span class="o">=</span><span class="il">20L</span>)
+</pre></div>
+</div>
+<p>The ‘GetBreakdown’-method also accepts the ‘Flux’-keyword, which
+controls whether the relative breakdown should be reported based
+on fitted weight or integrated flux.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>breakdown <span class="o">=</span> fit<span class="o">-&gt;</span>getBreakdown(<span class="o">/</span>Flux)
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sec_03h.html" class="btn btn-neutral float-left" title="3.8 Creating PAH Spectra" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03j.html" class="btn btn-neutral float-right" title="3.10 Graphical User Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019/2021 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

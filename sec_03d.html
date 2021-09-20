@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4 Release History &mdash; AmesPAHdbPythonSuite  documentation</title>
+  <title>3.4 Working with fundamental vibrational transitions &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="5 FAQ" href="faq.html" />
-    <link rel="prev" title="3.10 Graphical User Interface" href="sec_03j.html" /> 
+    <link rel="next" title="3.5 Working with Molecular Geometric Data" href="sec_03e.html" />
+    <link rel="prev" title="3.3 Working with Molecular PAH Properties" href="sec_03c.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,11 +44,11 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><span class="sectnum">1</span> Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html"><span class="sectnum">2</span> Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html"><span class="sectnum">3</span> API</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html"><span class="sectnum">3</span> API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="sec_03a.html"><span class="sectnum">3.1</span> Main Interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03b.html"><span class="sectnum">3.2</span> Accessing the molecular PAH data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03c.html"><span class="sectnum">3.3</span> Working with Molecular PAH Properties</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03e.html"><span class="sectnum">3.5</span> Working with Molecular Geometric Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03f.html"><span class="sectnum">3.6</span> Working with Raw Laboratory Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7</span> Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
@@ -64,8 +64,8 @@
 <li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><span class="sectnum">4</span> Release History</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
@@ -90,12 +90,13 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><span class="sectnum">4</span> Release History</li>
+          <li><a href="api.html"><span class="sectnum">3</span> API</a> &raquo;</li>
+      <li><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
-        <a href="sec_03j.html" class="btn btn-neutral float-left" title="3.10 Graphical User Interface" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="5 FAQ" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sec_03c.html" class="btn btn-neutral float-left" title="3.3 Working with Molecular PAH Properties" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03e.html" class="btn btn-neutral float-right" title="3.5 Working with Molecular Geometric Data" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
   </div>
   <hr/>
 </div>
@@ -126,20 +127,59 @@
     text-align: unset;
 }
 </style>
-<section id="release-history">
-<h1><span class="sectnum">4</span> Release History<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
-<section id="v0-1-0-2019-08-20">
-<h2><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)<a class="headerlink" href="#v0-1-0-2019-08-20" title="Permalink to this headline">¶</a></h2>
-<p>Initial release</p>
-</section>
+<section id="working-with-fundamental-vibrational-transitions">
+<h1><span class="sectnum">3.4</span> Working with fundamental vibrational transitions<a class="headerlink" href="#working-with-fundamental-vibrational-transitions" title="Permalink to this headline">¶</a></h1>
+<p>The ‘AmesPAHdbIDLSuite_Transitions’-object exposes the fundamental
+vibrational transitions.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions <span class="o">=</span> pahdb<span class="o">-&gt;</span>getTransitionsByUID( $
+              pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>))
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Transitions-object’s ‘Print’-method will
+print out the associated fundamental vibrational transitions for
+each PAH species.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span><span class="nb">Print</span>
+</pre></div>
+</div>
+<p>Optionally, the ‘Str’-keyword can be given to the ‘Print’-method,
+which will return the associated fundamental vibrational
+transitions for each PAH species as a single, concatenated string.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span><span class="nb">Print</span>,Str<span class="o">=</span>Str
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Transitions’-object’s ‘Plot’-method will
+display the fundamental vibrational transitions in a ‘stick’-plot.
+The transitions of each PAH species will be presented in a
+different color.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span><span class="nb">Plot</span>
+</pre></div>
+</div>
+<p>Optionally, the ‘Wavelength’, ‘Stick’, ‘Oplot’, ‘Legend’, and
+‘Color’-keywords can be given to the ‘Plot’-method to control the
+abscissa, stick representation, overplotting, legend and color,
+respectively. Through IDL’s keyword inheritance mechanism
+additional keywords accepted by IDL’s ‘PLOT’-procedure can be
+passed.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span><span class="nb">Plot</span>,<span class="o">/</span>Wavelength,Color<span class="o">=</span><span class="mi">5</span>,XRANGE<span class="o">=</span>[<span class="mf">2.5</span>,<span class="mi">15</span>],<span class="o">/</span>XSTYLE
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbIDLSuite_Transitions’-object’s ‘Write’-method will
+write the fundamental vibrational transitions to file. The
+transitions of each PAH species will be written to a separate text
+(.txt) file, where each filename will have the PAH species UID
+embedded. Optionally, a prefix can be given that will be prepended
+to the filename.</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;</span>
+</pre></div>
+</div>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sec_03j.html" class="btn btn-neutral float-left" title="3.10 Graphical User Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="5 FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sec_03c.html" class="btn btn-neutral float-left" title="3.3 Working with Molecular PAH Properties" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sec_03e.html" class="btn btn-neutral float-right" title="3.5 Working with Molecular Geometric Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
