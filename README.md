@@ -1,7 +1,7 @@
-[![Travis Status](https://img.shields.io/travis/PAHdb/AmesPAHdbPythonSuite.svg)](https://travis-ci.org/PAHdb/AmesPAHdbPythonSuite) [![Coverage Status]( https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite/graph/badge.svg)](https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite) [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://pahdb.github.io/AmesPAHdbPythonSuite/)
-
+[![Travis Status](https://img.shields.io/travis/com/PAHdb/AmesPAHdbPythonSuite)](https://app.travis-ci.com/github/PAHdb/AmesPAHdbPythonSuite) [![Coverage Status]( https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite/graph/badge.svg)](https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite) [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://pahdb.github.io/AmesPAHdbPythonSuite/)
 
 # AmesPAHdbPythonSuite
+
 The AmesPAHdbPythonSuite is a package to work with a downloaded PAHdb
 XML-file.
 
@@ -49,7 +49,7 @@ More examples can be found in the
 ## Documentation
 
 Documentation can be found at
-[www.astrochemistry.org/pahdb/amespahdbpythonsuite](https://www.astrochemistry.org/pahdb/amespahdbpythonsuite).
+[PAHdb.github.io](https://PAHdb.github.io).
 
 ## Background
 
@@ -65,26 +65,25 @@ Spectroscopic Database website, which is located at
 You are kindly asked to consider the following references for citation
 when using the AmesPAHdbPythonSuite:
 
-    * C.W. Bauschlicher, Jr., A. Ricca, C. Boersma, and
-      L.J. Allamandola, "THE NASA AMES PAH IR SPECTROSCOPIC DATABASE:
-      COMPUTATIONAL VERSION 3.00 WITH UPDATED CONTENT AND THE
-      INTRODUCTION OF MULTIPLE SCALING FACTORS", The Astrophysical
-      Journal Supplement Series, 234, 32, 2018
-      https://doi.org/10.3847/1538-4365/aaa019
+* C.W. Bauschlicher, Jr., A. Ricca, C. Boersma, and
+  L.J. Allamandola, "THE NASA AMES PAH IR SPECTROSCOPIC DATABASE:
+  COMPUTATIONAL VERSION 3.00 WITH UPDATED CONTENT AND THE
+  INTRODUCTION OF MULTIPLE SCALING FACTORS", The Astrophysical
+  Journal Supplement Series, 234, 32, 2018
+  [https://doi.org/10.3847/1538-4365/aaa019](https://doi.org/10.3847/1538-4365/aaa019])
 
-    * C. Boersma, C.W. Bauschlicher, Jr., A. Ricca, A.L. Mattioda,
-      J. Cami, E. Peeters, F. Sanchez de Armas, G. Puerta Saborido,
-      D.M. Hudgins, and L.J. Allamandola, "THE NASA AMES PAH IR
-      SPECTROSCOPIC DATABASE VERSION 2.00: UPDATED CONTENT, WEBSITE AND
-      ON/OFFLINE TOOLS", The Astrophysical Journal Supplement Series,
-      https://doi.org/211, 8, 2014 10.1088/0067-0049/211/1/8
+* C. Boersma, C.W. Bauschlicher, Jr., A. Ricca, A.L. Mattioda,
+  J. Cami, E. Peeters, F. Sanchez de Armas, G. Puerta Saborido,
+  D.M. Hudgins, and L.J. Allamandola, "THE NASA AMES PAH IR
+  SPECTROSCOPIC DATABASE VERSION 2.00: UPDATED CONTENT, WEBSITE AND
+  ON/OFFLINE TOOLS", The Astrophysical Journal Supplement Series,, 211, 8, 2014 [https://doi.org/10.1088/0067-0049/211/1/8](https://doi.org/10.1088/0067-0049/211/1/8)
 
-    * Mattioda, A. L., Hudgins, D. M., Boersma, C., Ricca, A.,
-      Peeters, E., Cami, J., Sanchez de Armas, F., Puerta Saborido,
-      G., Bauschlicher, C. W., J., and Allamandola, L. J. "THE NASA
-      AMES PAH IR SPECTROSCOPIC DATABASE: THE LABORATORY SPECTRA", The
-      Astrophysical Journal Supplement Series, XXX, 201X (in
-      preparation)
+* Mattioda, A. L., Hudgins, D. M., Boersma, C., Ricca, A.,
+  Peeters, E., Cami, J., Sanchez de Armas, F., Puerta Saborido,
+  G., Bauschlicher, C. W., J., and Allamandola, L. J. "THE NASA
+  AMES PAH IR SPECTROSCOPIC DATABASE: THE LABORATORY SPECTRA", The
+  Astrophysical Journal Supplement Series, 251, 22, 2020,
+  [https://doi.org/10.3847/1538-4365/abc2c8](https://doi.org/10.3847/1538-4365/abc2c8)
 
 ## Contributing
 
@@ -100,8 +99,9 @@ repository](https://github.com/pahdb/amespahdbpythonsuite/tags).
 
 * **Christiaan Boersma** - *Initial work* - [PAHdb](https://github.com/pahdb)
 * **Matthew J. Shannon** - *Initial work* - [PAHdb](https://github.com/pahdb)
+* **Alexandros Maragkoudakis** - *Initial work* - [PAHdb](https://github.com/pahdb)
 
-See also the list of [contributors](CONTRIBUTORS) who participated
+See also the list of [contributors](CONTRIBUTORS.md) who participated
 in this project.
 
 ## License
