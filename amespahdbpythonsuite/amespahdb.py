@@ -15,8 +15,13 @@ class AmesPAHdb:
     """
     AmesPAHdbPythonSuite main class.
     Contains methods to parse the database, perform search based on query,
-    retrieve UIDs, and call :meth:`amespahdbpythonsuite.transitions`
-    to retrieve transitions object.
+    and retrieve UIDs.
+    Calls methods:
+    :meth:`amespahdbpythonsuite.Transitions`,
+    :meth:`amespahdbpythonsuite.Laboratory`,
+    :meth:`amespahdbpythonsuite.Species`,
+    :meth:`amespahdbpythonsuite.Geometry`,
+    to retrieve the respective objects.
 
     """
 
@@ -179,7 +184,7 @@ class AmesPAHdb:
         """
         Retrieve and return transitions object based on UIDs input.
         UIDs can be a list, e.g. the output of search method, or an integer.
-        Calls the :meth:`amespahdbpythonsuite.transitions.transitions` class.
+        Calls the :meth:`amespahdbpythonsuite.transitions.Transitions` class.
 
         Parameters
         ----------
@@ -191,15 +196,14 @@ class AmesPAHdb:
         transitions object
 
         """
-        from amespahdbpythonsuite.transitions import transitions
+        from amespahdbpythonsuite.transitions import Transitions
         if type(uids) == int:
             uids = [uids]
 
-        return transitions(type=self.__data['database'],
+        return Transitions(type=self.__data['database'],
                            version=self.__data['version'],
                            data=self.__getkeybyuids('transitions', uids),
                            pahdb=self.__data,
-                           # pahdb=self.subdatabase(uids),
                            uids=uids,
                            model={'type': 'zerokelvin_m',
                                   'temperature': 0.0,
@@ -214,7 +218,7 @@ class AmesPAHdb:
         """
         Retrieve and return laboratory database object based on UIDs input.
         UIDs can be a list, e.g. the output of search method, or an integer.
-        Calls the :meth:`amespahdbpythonsuite.laboratory.laboratory` class.
+        Calls the :meth:`amespahdbpythonsuite.laboratory.Laboratory` class.
 
         Parameters
         ----------
@@ -233,12 +237,12 @@ class AmesPAHdb:
 
             return None
 
-        from amespahdbpythonsuite.laboratory import laboratory
+        from amespahdbpythonsuite.laboratory import Laboratory
 
         if type(uids) == int:
             uids = [uids]
 
-        return laboratory(type=self.__data['type'],
+        return Laboratory(type=self.__data['type'],
                           version=self.__data['version'],
                           data=self.__getkeybyuids('laboratory', uids),
                           pahdb=self.__data,
@@ -256,7 +260,7 @@ class AmesPAHdb:
         """
         Retrieve and return species object based on UIDs input.
         UIDs can be a list, e.g. the output of search method, or an integer.
-        Calls the :meth:`amespahdbpythonsuite.species.species` class.
+        Calls the :meth:`amespahdbpythonsuite.species.Species` class.
 
         Parameters
         ----------
@@ -268,12 +272,12 @@ class AmesPAHdb:
         species object
 
         """
-        from amespahdbpythonsuite.species import species
+        from amespahdbpythonsuite.species import Species
 
         if type(uids) == int:
             uids = [uids]
 
-        return species(type=self.__data['type'],
+        return Species(type=self.__data['type'],
                        version=self.__data['version'],
                        data=self.__getkeybyuids('species', uids),
                        pahdb=self.__data,
@@ -286,7 +290,7 @@ class AmesPAHdb:
         """
         Retrieve and return geometry object based on UIDs input.
         UIDs can be a list, e.g. the output of search method, or an integer.
-        Calls the :meth:`amespahdbpythonsuite.geometry.geometry` class
+        Calls the :meth:`amespahdbpythonsuite.geometry.Geometry` class
         and :meth:`amespahdbpythonsuite.amespahdb.getkeybyuids` method.
 
         Parameters
@@ -299,11 +303,11 @@ class AmesPAHdb:
         geometry object
 
         """
-        from amespahdbpythonsuite.geometry import geometry
+        from amespahdbpythonsuite.geometry import Geometry
 
         if type(uids) == int:
             uids = [uids]
-        return geometry(data=self.__getkeybyuids('geometry', uids), uids=uids)
+        return Geometry(data=self.__getkeybyuids('geometry', uids), uids=uids)
 
     def search(self, query):
         """
@@ -326,9 +330,8 @@ class AmesPAHdb:
         if len(query) == 0:
             return
 
-        # Chekc it the database is in cache and restore, otherwise dump into pickle and load.
+        # Check if the database is in cache and restore, otherwise dump into pickle and load.
         if not self._joined:
-            print(f'Hello! md5  {self.__data["filename"]}')
             md5 = (f'{tempfile.gettempdir()}/'
                    f'{hashlib.md5(open(self.__data["filename"], "rb").read()).hexdigest()}_joined.pkl')
 
@@ -408,9 +411,9 @@ class AmesPAHdb:
         tokens = []
 
         for word in words:
-            tokens.append(self.tokenize(word))
+            tokens.append(self._tokenize(word))
 
-        code = self.parsetokens(tokens)
+        code = self._parsetokens(tokens)
 
         if code == '':
             return None
@@ -424,7 +427,7 @@ class AmesPAHdb:
 
         return list(s)
 
-    def tokenize(self, word):
+    def _tokenize(self, word):
         """
         A function called by :sec:`amespahdbpythonsuite.amespahdb.search`
         that creates a dictionary with keys based on the input word/category.
@@ -529,7 +532,7 @@ class AmesPAHdb:
 
         return token
 
-    def parsetokens(self, tokens):
+    def _parsetokens(self, tokens):
         """
         Parse the dictionary of tokens created by
         :sec:`amespahdbpythonsuite.amespahdb.tokenize`
