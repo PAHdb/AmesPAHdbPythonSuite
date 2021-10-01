@@ -199,7 +199,7 @@ class AmesPAHdb:
     def gettransitionsbyuid(self, uids):
         """
         Retrieve and return transitions object based on UIDs input.
-        UIDs can be a list, e.g. the output of search method, or an integer.
+        UIDs should be a list, e.g. the output of search method.
         Calls the :meth:`amespahdbpythonsuite.transitions.Transitions` class.
 
         Parameters
@@ -236,7 +236,7 @@ class AmesPAHdb:
     def getlaboratorybyuid(self, uids):
         """
         Retrieve and return laboratory database object based on UIDs input.
-        UIDs can be a list, e.g. the output of search method, or an integer.
+        UIDs should be a list, e.g. the output of search method.
         Calls the :meth:`amespahdbpythonsuite.laboratory.Laboratory` class.
 
         Parameters
@@ -281,7 +281,7 @@ class AmesPAHdb:
     def getspeciesbyuid(self, uids):
         """
         Retrieve and return species object based on UIDs input.
-        UIDs can be a list, e.g. the output of search method, or an integer.
+        UIDs should be a list, e.g. the output of search method.
         Calls the :meth:`amespahdbpythonsuite.species.Species` class.
 
         Parameters
@@ -311,9 +311,9 @@ class AmesPAHdb:
     def getgeometrybyuid(self, uids):
         """
         Retrieve and return geometry object based on UIDs input.
-        UIDs can be a list, e.g. the output of search method, or an integer.
+        UIDs should be a list, e.g. the output of search method.
         Calls the :meth:`amespahdbpythonsuite.geometry.Geometry` class
-        and :meth:`amespahdbpythonsuite.amespahdb.getkeybyuids` method.
+        and :meth:`amespahdbpythonsuite.amespahdb.__getkeybyuids` method.
 
         Parameters
         ----------
