@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 class Transitions():
     """
     AmesPAHdbPythonSuite transitions class
