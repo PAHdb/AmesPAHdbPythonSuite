@@ -35,7 +35,8 @@ class AmesPAHdb:
 
         """
 
-        intro = ['AmesPAHdbPythonSuite', 'by', 'Dr. Christiaan Boersma', 'and', 'Dr. Alexandros Maragkoudakis']
+        intro = ['AmesPAHdbPythonSuite', 'by', 'Dr. Christiaan Boersma', 'and',
+                 'Dr. Alexandros Maragkoudakis']
         self.message(intro)
 
         if os.path.isfile("VERSION") and os.access("VERSION", os.R_OK):
@@ -51,7 +52,10 @@ class AmesPAHdb:
         if not filename:
             filename = os.environ.get("AMESPAHDEFAULTDB")
             if not filename:
-                self.message('DATABASE NOT FOUND: SET SYSTEM AMESPAHDEFAULTDB ENVIRONMENT VARIABLE')
+                msg = ['DATABASE NOT FOUND:',
+                       'SET SYSTEM AMESPAHDEFAULTDB',
+                       'ENVIRONMENT VARIABLE']
+                self.message(' '.join(msg))
 
         if not os.path.isfile(filename) or not os.access(filename, os.R_OK):
             self.message(f'UNABLE TO REAS: {filename}')
@@ -80,7 +84,8 @@ class AmesPAHdb:
         """
 
         # Create MD5 hash function pickle.
-        md5 = tempfile.gettempdir() + '/' + hashlib.md5(open(filename, 'r').read().encode()).hexdigest()
+        md5 = tempfile.gettempdir() + \
+            '/' + hashlib.md5(open(filename, 'r').read().encode()).hexdigest()
 
         joined = md5 + '_joined.pkl'
 
@@ -91,7 +96,9 @@ class AmesPAHdb:
         md5 += '.pkl'
 
         # Check if database is dumped in cache and restore it.
-        if keywords.get('cache', True) and os.path.isfile(md5) and os.access(md5, os.R_OK):
+        if (keywords.get('cache', True)
+            and os.path.isfile(md5)
+                and os.access(md5, os.R_OK)):
 
             self.message('RESTORING DATABASE FROM CACHE')
 
@@ -111,7 +118,9 @@ class AmesPAHdb:
             info = [f'FILENAME                    : {md5}',
                     f'ORIGNINAL FILENAME          : {filename}',
                     f'PARSE TIME                  : {elapsed}',
-                    f'VERSION (DATE)              : {self.__data["version"]} ({ self.__data["date"]})',
+                    'VERSION (DATE)              : ' +
+                    f'{self.__data["version"]}' +
+                    f'({self.__data["date"]})',
                     f'COMMENT                     : {self.__data["comment"]}']
             self.message(info, space=0)
 
@@ -123,7 +132,8 @@ class AmesPAHdb:
             tstart = time.perf_counter()
 
             # Call XMLparser module to parse the database.
-            parser = XMLparser(filename=filename, validate=keywords.get('check', True))
+            parser = XMLparser(filename=filename,
+                               validate=keywords.get('check', True))
 
             # Store the database into self.__self.data.
             self.__data = parser.to_pahdb_dict()
@@ -144,7 +154,8 @@ class AmesPAHdb:
 
     def __getkeybyuids(self, key, uids):
         """
-        Get a dictionary of PAHdb properties retrieved by keyword for provided UIDs.
+        Get a dictionary of PAHdb properties
+        retrieved by keyword for provided UIDs.
 
         Parameters
         ----------
@@ -158,7 +169,8 @@ class AmesPAHdb:
         Dictionary of retrieved properties with UIDs as keys.
 
         """
-        return copy.deepcopy(dict((uid, self.__data['species'][uid][key]) for uid in uids))
+        return copy.deepcopy(dict((uid, self.__data['species'][uid][key])
+                                  for uid in uids))
 
     def subdatabase(self, uids):
         """
@@ -171,13 +183,15 @@ class AmesPAHdb:
 
         Returns
         -------
-        PAHdb subset dictionary retrieved from the provided UIDs, with UIDs as keys.
+        PAHdb subset dictionary retrieved from the provided UIDs,
+        with UIDs as keys.
 
         """
         d = {}
         for key in self.__data:
             if key == 'species':
-                d[key] = dict((uid, self.__data['species'][uid]) for uid in uids)
+                d[key] = dict((uid, self.__data['species'][uid])
+                              for uid in uids)
             else:
                 d[key] = self.__data[key]
         return copy.deepcopy(d)
@@ -211,9 +225,12 @@ class AmesPAHdb:
                                   'temperature': 0.0,
                                   'description': ''},
                            units={'abscissa': {'unit': 1,
-                                               'str': 'frequency [wavenumber]'},
+                                               'str':
+                                                   'frequency [wavenumber]'},
                                   'ordinate': {'unit': 2,
-                                               'str': 'integrated cross-section [km/mol]'}}
+                                               'str':
+                                                   'integrated cross-section' +
+                                                   '[km/mol]'}}
                            )
 
     def getlaboratorybyuid(self, uids):
@@ -253,9 +270,12 @@ class AmesPAHdb:
                                  'temperature': 0.0,
                                  'description': ''},
                           units={'abscissa': {'unit': 1,
-                                              'str': 'frequency [wavenumber]'},
+                                              'str':
+                                                  'frequency [wavenumber]'},
                                  'ordinate': {'unit': 2,
-                                              'str': 'absorbance [-log(I/I$_{0})$'}}
+                                              'str':
+                                                  'absorbance' +
+                                                  '[-log(I/I$_{0})$'}}
                           )
 
     def getspeciesbyuid(self, uids):
@@ -326,16 +346,19 @@ class AmesPAHdb:
 
         Example
         -------
-        ``search('magnesium=0 oxygen=0 iron=0 silicium=0 chx=0 ch2=0 c>20 h>0')``
+        ``search('magnesium=0 oxygen=0 iron=0
+        silicium=0 chx=0 ch2=0 c>20 h>0')``
 
         """
         if len(query) == 0:
             return
 
-        # Check if the database is in cache and restore, otherwise dump into pickle and load.
+        # Check if the database is in cache and restore,
+        # otherwise dump into pickle and load.
         if not self._joined:
-            md5 = (f'{tempfile.gettempdir()}/'
-                   f'{hashlib.md5(open(self.__data["filename"], "rb").read()).hexdigest()}_joined.pkl')
+            md5 = tempfile.gettempdir() + '/' + \
+                hashlib.md5(open(self.__data["filename"], "rb").read()) \
+                .hexdigest() + '_joined.pkl'
 
             if os.path.isfile(md5) and os.access(md5, os.R_OK):
 
@@ -404,7 +427,8 @@ class AmesPAHdb:
 
             else:
                 i += 1
-                while i < n and query[i] not in [" ", "=", "<", ">", "&", "|", "(", ")", "!"]:
+                while i < n and query[i] not in [" ", "=", "<", ">", "&", "|",
+                                                 "(", ")", "!"]:
                     token += query[i]
                     i += 1
 
@@ -420,7 +444,8 @@ class AmesPAHdb:
         if code == '':
             return None
 
-        found = eval('[item for key,item in _joined.items() if (' + code + ')]', self.__dict__)
+        found = eval('[item for key,item in _joined.items()' +
+                     'if (' + code + ')]', self.__dict__)
 
         if len(found) == 0:
             return None
@@ -492,8 +517,10 @@ class AmesPAHdb:
 
         logical = {'and': 'and', 'or': 'or', '|': 'or', '&': 'and'}
 
-        comparison = {'<': '<', 'lt': '<', '>': '>', 'gt': '>', '=': '==', 'eq': '==', '<=': '<=',
-                      'le': '<=', '>=': '>=', 'ge': '>=', 'with': 'and', 'ne': '!=', '!=': '!='}
+        comparison = {'<': '<', 'lt': '<', '>': '>', 'gt': '>',
+                      '=': '==', 'eq': '==', '<=': '<=',
+                      'le': '<=', '>=': '>=', 'ge': '>=',
+                      'with': 'and', 'ne': '!=', '!=': '!='}
 
         transfer = {'(': '(', ')': ')'}
 
@@ -521,8 +548,9 @@ class AmesPAHdb:
             token['type'] = "TRANSFER"
             token['translation'] = transfer[word]
 
-        elif re.search(word, '(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]+)'
-                             '([0-9]*)(mg+|si+|fe+|[chno]*)([0-9]*)'):
+        elif re.search(word, '(mg+|si+|fe+|[chno]+)([0-9]*)' +
+                       '(mg+|si+|fe+|[chno]+)([0-9]*)' +
+                       '(mg+|si+|fe+|[chno]*)([0-9]*)'):
             token['type'] = "FORMULA"
             token['translation'] = word
 
@@ -568,11 +596,12 @@ class AmesPAHdb:
 
             if tokens[current]['type'] == 'FORMULA':
                 if prev is not None:
-                    if not (tokens[prev]['type'] != 'LOGICAL' and tokens[prev]['valid']):
+                    if not (tokens[prev]['type'] != 'LOGICAL'
+                            and tokens[prev]['valid']):
                         parsed += ' or '
 
-                parsed += ' STRMATCH(joined.formula, "' + tokens[current]['translation'] + \
-                          '*", /FOLD_CASE)'
+                parsed += ' STRMATCH(joined.formula, "' + \
+                    tokens[current]['translation'] + '*", /FOLD_CASE)'
 
             elif tokens[current]['type'] == 'IDENTITY':
                 if prev is not None:
@@ -590,7 +619,8 @@ class AmesPAHdb:
 
             elif tokens[current]['type'] == 'NUMERIC':
                 if prev is not None:
-                    if tokens[prev]['type'] == 'COMPARISON' and tokens[prev]['valid']:
+                    if (tokens[prev]['type'] == 'COMPARISON'
+                            and tokens[prev]['valid']):
                         parsed += ' ' + tokens[current]['translation']
                     else:
                         tokens[current].valid = False
@@ -600,7 +630,8 @@ class AmesPAHdb:
                     if (tokens[prev]['type'] == 'IDENTITY'
                             or tokens[prev]['type'] == 'NUMERIC'
                             or tokens[prev]['type'] == 'FORMULA'
-                            or tokens[prev]['type'] == 'CHARGE' and tokens[prev]['valid']):
+                            or tokens[prev]['type'] == 'CHARGE'
+                            and tokens[prev]['valid']):
                         if next is not None:
                             if (tokens[next]['type'] == 'TRANSFER'):
                                 parsed += tokens[current]['translation']
@@ -614,7 +645,8 @@ class AmesPAHdb:
 
             elif tokens[current]['type'] == 'COMPARISON':
                 if prev is not None:
-                    if tokens[prev]['type'] == 'IDENTITY' and tokens[prev]['valid']:
+                    if (tokens[prev]['type'] == 'IDENTITY'
+                            and tokens[prev]['valid']):
                         if next is not None:
                             if tokens[next]['type'] == 'NUMERIC':
                                 parsed += ' ' + tokens[current]['translation']
@@ -623,7 +655,8 @@ class AmesPAHdb:
 
             elif tokens[current]['type'] == 'CHARGE':
                 if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL' and tokens[prev]['valid']):
+                    if not (tokens[prev]['type'] == 'LOGICAL'
+                            and tokens[prev]['valid']):
                         parsed += ' and '
 
                 parsed += ' ' + tokens[current]['translation']
@@ -633,11 +666,13 @@ class AmesPAHdb:
 
             elif tokens[current]['type'] == 'NAME':
                 if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL' and tokens[prev]['valid']):
+                    if not (tokens[prev]['type'] == 'LOGICAL'
+                            and tokens[prev]['valid']):
                         parsed += ' and '
 
                 # THIS IS NOT CORRECTLY IMPLEMENTED
-                # parsed += ' pahdb.data.comments.str, "' + tokens[current]['translation'])'
+                # parsed += ' pahdb.data.comments.str, "' +
+                # tokens[current]['translation'])'
 
             elif tokens[current]['type'] == 'IGNORE':
                 print(f"{tokens[current].word} NOT UNDERSTOOD")
