@@ -96,13 +96,11 @@ class AmesPAHdb:
         md5 += '.pkl'
 
         # Check if database is dumped in cache and restore it.
-        if (keywords.get('cache', True)
-            and os.path.isfile(md5)
-                and os.access(md5, os.R_OK)):
+        if (keywords.get('cache', True) and os.path.isfile(md5) and os.access(md5, os.R_OK)):
 
             self.message('RESTORING DATABASE FROM CACHE')
 
-            # start timer
+            # Start timer
             tstart = time.perf_counter()
 
             # Open and read the dumped database.
@@ -118,9 +116,7 @@ class AmesPAHdb:
             info = [f'FILENAME                    : {md5}',
                     f'ORIGNINAL FILENAME          : {filename}',
                     f'PARSE TIME                  : {elapsed}',
-                    'VERSION (DATE)              : ' +
-                    f'{self.__data["version"]}' +
-                    f'({self.__data["date"]})',
+                    f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
                     f'COMMENT                     : {self.__data["comment"]}']
             self.message(info, space=0)
 
@@ -128,7 +124,7 @@ class AmesPAHdb:
 
             self.message('PARSING DATABASE: THIS MAY TAKE A FEW MINUTES')
 
-            # start timer
+            # Start timer
             tstart = time.perf_counter()
 
             # Call XMLparser module to parse the database.
@@ -169,32 +165,12 @@ class AmesPAHdb:
         Dictionary of retrieved properties with UIDs as keys.
 
         """
-        return copy.deepcopy(dict((uid, self.__data['species'][uid][key])
-                                  for uid in uids))
-
-    def subdatabase(self, uids):
-        """
-        Create a subset of the database containing the retrieved UIDs.
-
-        Parameters
-        ----------
-        uids : list of integers
-            List of UIDs.
-
-        Returns
-        -------
-        PAHdb subset dictionary retrieved from the provided UIDs,
-        with UIDs as keys.
-
-        """
-        d = {}
-        for key in self.__data:
-            if key == 'species':
-                d[key] = dict((uid, self.__data['species'][uid])
-                              for uid in uids)
-            else:
-                d[key] = self.__data[key]
-        return copy.deepcopy(d)
+        if key == 'species':
+            return copy.deepcopy(dict((uid, self.__data['species'][uid])
+                                      for uid in uids if uid in self.__data['species'].keys()))
+        else:
+            return copy.deepcopy(dict((uid, self.__data['species'][uid][key])
+                                      for uid in uids if uid in self.__data['species'].keys()))
 
     def gettransitionsbyuid(self, uids):
         """
@@ -225,12 +201,9 @@ class AmesPAHdb:
                                   'temperature': 0.0,
                                   'description': ''},
                            units={'abscissa': {'unit': 1,
-                                               'str':
-                                                   'frequency [wavenumber]'},
+                                               'str': 'frequency [wavenumber]'},
                                   'ordinate': {'unit': 2,
-                                               'str':
-                                                   'integrated cross-section' +
-                                                   '[km/mol]'}}
+                                               'str': 'integrated cross-section' + '[km/mol]'}}
                            )
 
     def getlaboratorybyuid(self, uids):
@@ -250,7 +223,7 @@ class AmesPAHdb:
 
         """
         # Check if the experimental database is loaded.
-        if self.__data['type'] != 'experimental':
+        if self.__data['database'] != 'experimental':
 
             self.message('EXPERIMENTAL DATABASE REQUIRED')
 
@@ -261,7 +234,7 @@ class AmesPAHdb:
         if type(uids) == int:
             uids = [uids]
 
-        return Laboratory(type=self.__data['type'],
+        return Laboratory(type=self.__data['database'],
                           version=self.__data['version'],
                           data=self.__getkeybyuids('laboratory', uids),
                           pahdb=self.__data,
@@ -270,12 +243,9 @@ class AmesPAHdb:
                                  'temperature': 0.0,
                                  'description': ''},
                           units={'abscissa': {'unit': 1,
-                                              'str':
-                                                  'frequency [wavenumber]'},
+                                              'str': 'frequency [wavenumber]'},
                                  'ordinate': {'unit': 2,
-                                              'str':
-                                                  'absorbance' +
-                                                  '[-log(I/I$_{0})$'}}
+                                              'str': 'absorbance' + '[-log(I/I$_{0})$'}}
                           )
 
     def getspeciesbyuid(self, uids):
@@ -299,7 +269,7 @@ class AmesPAHdb:
         if type(uids) == int:
             uids = [uids]
 
-        return Species(type=self.__data['type'],
+        return Species(type=self.__data['database'],
                        version=self.__data['version'],
                        data=self.__getkeybyuids('species', uids),
                        pahdb=self.__data,
@@ -357,14 +327,13 @@ class AmesPAHdb:
         # otherwise dump into pickle and load.
         if not self._joined:
             md5 = tempfile.gettempdir() + '/' + \
-                hashlib.md5(open(self.__data["filename"], "rb").read()) \
-                .hexdigest() + '_joined.pkl'
+                hashlib.md5(open(self.__data["filename"], "rb").read()).hexdigest() + '_joined.pkl'
 
             if os.path.isfile(md5) and os.access(md5, os.R_OK):
 
                 self.message('RESTORING INDEX FROM CACHE')
 
-                # start timer
+                # Start timer
                 tstart = time.perf_counter()
 
                 with open(md5, 'rb') as f:
@@ -427,8 +396,7 @@ class AmesPAHdb:
 
             else:
                 i += 1
-                while i < n and query[i] not in [" ", "=", "<", ">", "&", "|",
-                                                 "(", ")", "!"]:
+                while i < n and query[i] not in [" ", "=", "<", ">", "&", "|", "(", ")", "!"]:
                     token += query[i]
                     i += 1
 
@@ -456,7 +424,7 @@ class AmesPAHdb:
 
     def _tokenize(self, word):
         """
-        A function called by :sec:`amespahdbpythonsuite.amespahdb.search`
+        A method called by :sec:`amespahdbpythonsuite.amespahdb.search`
         that creates a dictionary with keys based on the input word/category.
 
         Parameters
