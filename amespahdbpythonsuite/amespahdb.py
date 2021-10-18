@@ -6,7 +6,6 @@ import hashlib
 import tempfile
 import time
 from datetime import timedelta
-import re
 
 import pickle
 
