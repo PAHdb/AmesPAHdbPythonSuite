@@ -165,6 +165,7 @@ class AmesPAHdb:
         Dictionary of retrieved properties with UIDs as keys.
 
         """
+        # TODO Handle empty lists or invalid UIDs.
         if key == 'species':
             return copy.deepcopy(dict((uid, self.__data['species'][uid])
                                       for uid in uids if uid in self.__data['species'].keys()))
@@ -264,6 +265,7 @@ class AmesPAHdb:
         species object
 
         """
+        # TODO: handle UIDs without 'references'.
         from amespahdbpythonsuite.species import Species
 
         if type(uids) == int:
@@ -320,107 +322,8 @@ class AmesPAHdb:
         silicium=0 chx=0 ch2=0 c>20 h>0')``
 
         """
-        if len(query) == 0:
-            return
 
-        # Check if the database is in cache and restore,
-        # otherwise dump into pickle and load.
-        if not self._joined:
-            md5 = tempfile.gettempdir() + '/' + \
-                hashlib.md5(open(self.__data["filename"], "rb").read()).hexdigest() + '_joined.pkl'
-
-            if os.path.isfile(md5) and os.access(md5, os.R_OK):
-
-                self.message('RESTORING INDEX FROM CACHE')
-
-                # Start timer
-                tstart = time.perf_counter()
-
-                with open(md5, 'rb') as f:
-                    joined = pickle.load(f)
-
-                # stop timer and calculate elapsed time
-                elapsed = timedelta(seconds=(time.perf_counter() - tstart))
-                print(f'Elapsed time: {elapsed}\n')
-
-            else:
-
-                self.message('BUILDING INDEX: THIS MAY TAKE A FEW MINUTES')
-
-                joined = self.__data['species']  # temporary for testing
-
-                with open(md5, 'wb') as f:
-                    pickle.dump(joined, f, pickle.HIGHEST_PROTOCOL)
-
-            self._joined = joined
-
-        words = []
-
-        n = len(query)
-
-        i = 0
-
-        while True:
-
-            if i == n:
-                break
-
-            while query[i] == ' ':
-                i += 1
-
-            token = query[i]
-
-            if token in ["=", "<", ">", "(", ")"]:
-                i += 1
-                if i < n and query[i] == "=":
-                    token += query[i]
-                    i += 1
-
-            elif token == "&":
-                i += 1
-                if i < n and query[i] == "&":
-                    token += query[i]
-                    i += 1
-
-            elif token == "|":
-                i += 1
-                if i < n and query[i] == "|":
-                    token += query[i]
-                    i += 1
-
-            elif token == "!":
-                i += 1
-                if i < n and query[i] == "=":
-                    token += query[i]
-                    i += 1
-
-            else:
-                i += 1
-                while i < n and query[i] not in [" ", "=", "<", ">", "&", "|", "(", ")", "!"]:
-                    token += query[i]
-                    i += 1
-
-            words.append(token)
-
-        tokens = []
-
-        for word in words:
-            tokens.append(self._tokenize(word))
-
-        code = self._parsetokens(tokens)
-
-        if code == '':
-            return None
-
-        found = eval('[item for key,item in _joined.items()' +
-                     'if (' + code + ')]', self.__dict__)
-
-        if len(found) == 0:
-            return None
-
-        s = set(d['uid'] for d in found)
-
-        return list(s)
+        return None
 
     def _tokenize(self, word):
         """
@@ -432,103 +335,8 @@ class AmesPAHdb:
         word : str
 
         """
-        word = word.lower()
 
-        token = dict()
-
-        charge = {'anion': 'item["charge"] < 0',
-                  'cation': 'item["charge"] > 0',
-                  'neutral': 'item["charge"] == 0',
-                  'positive': 'item["charge"] > 0',
-                  'negative': 'item["charge"] < 0',
-                  '-': 'item["charge"] == -1',
-                  '+': 'item["charge"] == 1',
-                  '++': 'item["charge"] == 2',
-                  '+++': 'item["charge"] == 3',
-                  '---': 'item["charge"] == -3'}
-
-        identities = {'uid': 'item["uid"]',
-                      'identifier': 'item["uid"]',
-                      'atoms': 'item["natoms"]',
-                      'carbon': 'item["nc"]',
-                      'hydrogen': 'item["nh"]',
-                      'nitrogen': 'item["nn"]',
-                      'oxygen': 'item["no"]',
-                      'magnesium': 'item["nmg"]',
-                      'silicium': 'item["nsi"]',
-                      'iron': 'item["nfe"]',
-                      'c': 'item["nc"]',
-                      'h': 'item["nh"]',
-                      'n': 'item["nn"]',
-                      'o': 'item["no"]',
-                      'mg': 'item["nmg"]',
-                      'si': 'item["nsi"]',
-                      'fe': 'item["nfe"]',
-                      'wavenumber': 'item["frequency"]',
-                      'absorbance': 'item["intensity"]',
-                      'frequency': 'item["frequency"]',
-                      'intensity': 'item["intensity"]',
-                      'ch2': 'item["nch2"]',
-                      'chx': 'item["nchx"]',
-                      'solo': 'item["nsolo"]',
-                      'duo': 'item["nduo"]',
-                      'trio': 'item["ntrio"]',
-                      'quartet': 'item["nquartet"]',
-                      'quintet': 'item["nquintet"]',
-                      'charge': 'item["charge"]',
-                      'symmetry': 'item["symmetry"]',
-                      'weight': 'item["weight"]',
-                      'scale': 'item["scale"]',
-                      'energy': 'item["total_e"]',
-                      'zeropoint': 'item["vib_e"]',
-                      'experiment': 'item["exp"]'}
-
-        logical = {'and': 'and', 'or': 'or', '|': 'or', '&': 'and'}
-
-        comparison = {'<': '<', 'lt': '<', '>': '>', 'gt': '>',
-                      '=': '==', 'eq': '==', '<=': '<=',
-                      'le': '<=', '>=': '>=', 'ge': '>=',
-                      'with': 'and', 'ne': '!=', '!=': '!='}
-
-        transfer = {'(': '(', ')': ')'}
-
-        if word.isnumeric():
-            token['type'] = "NUMERIC"
-            token['translation'] = word
-
-        elif word in charge:
-            token['type'] = "CHARGE"
-            token['translation'] = charge[word]
-
-        elif word in identities:
-            token['type'] = "IDENTITY"
-            token['translation'] = identities[word]
-
-        elif word in logical:
-            token['type'] = "LOGICAL"
-            token['translation'] = logical[word]
-
-        elif word in comparison:
-            token['type'] = "COMPARISON"
-            token['translation'] = comparison[word]
-
-        elif word in transfer:
-            token['type'] = "TRANSFER"
-            token['translation'] = transfer[word]
-
-        elif re.search(word, '(mg+|si+|fe+|[chno]+)([0-9]*)' +
-                       '(mg+|si+|fe+|[chno]+)([0-9]*)' +
-                       '(mg+|si+|fe+|[chno]*)([0-9]*)'):
-            token['type'] = "FORMULA"
-            token['translation'] = word
-
-        else:
-            token['type'] = "IGNORE"      # SHOULD BE NAME
-            token['translation'] = word
-
-        token['valid'] = True
-
-        return token
+        return None
 
     def _parsetokens(self, tokens):
         """
@@ -547,117 +355,8 @@ class AmesPAHdb:
             String of expressions based on tokens.
 
         """
-        ntokens = len(tokens)
 
-        prev = None
-
-        current = 0
-
-        if ntokens > 1:
-            next = 1
-        else:
-            next = None
-
-        parsed = ''
-
-        while current is not None:
-
-            if tokens[current]['type'] == 'FORMULA':
-                if prev is not None:
-                    if not (tokens[prev]['type'] != 'LOGICAL'
-                            and tokens[prev]['valid']):
-                        parsed += ' or '
-
-                parsed += ' STRMATCH(joined.formula, "' + \
-                    tokens[current]['translation'] + '*", /FOLD_CASE)'
-
-            elif tokens[current]['type'] == 'IDENTITY':
-                if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL'
-                            or tokens[prev]['type'] == 'TRANSFER'
-                            or tokens[prev]['type'] == 'TRANSFER'
-                            and tokens[prev]['valid']):
-                        parsed += ' and '
-
-                if next is not None:
-                    if tokens[next]['type'] == 'COMPARISON':
-                        parsed += ' ' + tokens[current]['translation']
-                    else:
-                        parsed += ' ' + tokens[current]['translation'] + ' > 0'
-
-            elif tokens[current]['type'] == 'NUMERIC':
-                if prev is not None:
-                    if (tokens[prev]['type'] == 'COMPARISON'
-                            and tokens[prev]['valid']):
-                        parsed += ' ' + tokens[current]['translation']
-                    else:
-                        tokens[current].valid = False
-
-            elif tokens[current]['type'] == 'LOGICAL':
-                if prev is not None:
-                    if (tokens[prev]['type'] == 'IDENTITY'
-                            or tokens[prev]['type'] == 'NUMERIC'
-                            or tokens[prev]['type'] == 'FORMULA'
-                            or tokens[prev]['type'] == 'CHARGE'
-                            and tokens[prev]['valid']):
-                        if next is not None:
-                            if (tokens[next]['type'] == 'TRANSFER'):
-                                parsed += tokens[current]['translation']
-                            elif (tokens[next]['type'] == 'IDENTITY'
-                                  or tokens[next]['type'] == 'NUMERIC'
-                                  or tokens[next]['type'] == 'FORMULA'
-                                  or tokens[next]['type'] == 'CHARGE'):
-                                parsed += ' ' + tokens[current]['translation']
-                            else:
-                                tokens[current].valid = False
-
-            elif tokens[current]['type'] == 'COMPARISON':
-                if prev is not None:
-                    if (tokens[prev]['type'] == 'IDENTITY'
-                            and tokens[prev]['valid']):
-                        if next is not None:
-                            if tokens[next]['type'] == 'NUMERIC':
-                                parsed += ' ' + tokens[current]['translation']
-                            else:
-                                tokens[current]['valid'] = False
-
-            elif tokens[current]['type'] == 'CHARGE':
-                if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL'
-                            and tokens[prev]['valid']):
-                        parsed += ' and '
-
-                parsed += ' ' + tokens[current]['translation']
-
-            elif tokens[current]['type'] == 'TRANSFER':
-                parsed += tokens[current]['translation']
-
-            elif tokens[current]['type'] == 'NAME':
-                if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL'
-                            and tokens[prev]['valid']):
-                        parsed += ' and '
-
-                # THIS IS NOT CORRECTLY IMPLEMENTED
-                # parsed += ' pahdb.data.comments.str, "' +
-                # tokens[current]['translation'])'
-
-            elif tokens[current]['type'] == 'IGNORE':
-                print(f"{tokens[current].word} NOT UNDERSTOOD")
-
-                return ''
-
-            prev = current
-
-            current = next
-
-            if next is not None:
-                if next == ntokens - 1:
-                    next = None
-                else:
-                    next += 1
-
-        return parsed
+        return None
 
     def getversion(self):
         """
