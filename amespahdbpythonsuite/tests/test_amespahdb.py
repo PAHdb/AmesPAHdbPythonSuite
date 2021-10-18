@@ -4,11 +4,27 @@ test_amespahdb.py
 
 Test the amespahdb.py module.
 """
-
+import pytest
 from pkg_resources import resource_filename
 import amespahdbpythonsuite
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+
+
+@pytest.fixture(scope="module")
+def pahdb_theoretical():
+    xml = 'resources/pahdb-theoretical_cutdown.xml'
+    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
+                      check=False, cache=True)
+    return pahdb
+
+
+@pytest.fixture(scope="module")
+def pahdb_laboratory():
+    xml = 'resources/pahdb-experimental_cutdown.xml'
+    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
+                      check=False, cache=True)
+    return pahdb
 
 
 class TestAmesPAHdb():
@@ -16,63 +32,45 @@ class TestAmesPAHdb():
     Test AmesPAHdb class.
 
     """
-    def test_instance(self):
-        # Define database name and location.
-        xml = 'resources/pahdb-theoretical_cutdown.xml'
-        database = resource_filename('amespahdbpythonsuite', xml)
+    def test_instance(self, pahdb_theoretical):
         # Read the database.
-        pahdb = AmesPAHdb(filename=database, check=False, cache=True)
-        assert isinstance(pahdb, amespahdbpythonsuite.amespahdb.AmesPAHdb)
+        assert isinstance(pahdb_theoretical, amespahdbpythonsuite.amespahdb.AmesPAHdb)
 
-    def test_keybyuids(self):
-        # Define database name and location.
-        xml = 'resources/pahdb-theoretical_cutdown.xml'
-        database = resource_filename('amespahdbpythonsuite', xml)
+    def test_keybyuids(self, pahdb_theoretical):
         # Read the database.
-        pahdb = AmesPAHdb(filename=database, check=False, cache=True)
+        pahdb = pahdb_theoretical
         # UIDs test list.
         uids = [18, 73, 726, 2054, 223]
         res = pahdb._AmesPAHdb__getkeybyuids('formula', uids)
         assert sorted(uids) == sorted(list(res.keys()))
 
-    def test_gettransitionsbyuid(self):
-        # Define database name and location.
-        xml = 'resources/pahdb-theoretical_cutdown.xml'
-        database = resource_filename('amespahdbpythonsuite', xml)
+    def test_gettransitionsbyuid(self, pahdb_theoretical):
         # Read the database.
-        pahdb = AmesPAHdb(filename=database, check=False, cache=True)
+        pahdb = pahdb_theoretical
         # UIDs test list.
         uids = [18, 73, 726, 2054, 223]
         trans = pahdb.gettransitionsbyuid(uids)
         assert isinstance(trans, amespahdbpythonsuite.transitions.Transitions)
 
-    def test_getlaboratorybyuid(self):
+    def test_getlaboratorybyuid(self, pahdb_laboratory):
+        # Read the database.
+        pahdb = pahdb_laboratory
         # UIDs test list.
         uids = [273]
-        # Retrieve database dictionary of provided UIDs.
-        xml = 'resources/pahdb-experimental_cutdown.xml'
-        database = resource_filename('amespahdbpythonsuite', xml)
-        pahdb = AmesPAHdb(filename=database, check=False, cache=True)
         lab = pahdb.getlaboratorybyuid(uids)
         assert isinstance(lab, amespahdbpythonsuite.laboratory.Laboratory)
 
-    def test_getspeciesbyuid(self):
-        # Define database name and location.
-        xml = 'resources/pahdb-theoretical_cutdown.xml'
-        database = resource_filename('amespahdbpythonsuite', xml)
+    def test_getspeciesbyuid(self, pahdb_theoretical):
         # Read the database.
-        pahdb = AmesPAHdb(filename=database, check=False, cache=True)
+        pahdb = pahdb_theoretical
         # UIDs test list.
         uids = [18, 726, 2054]
         spec = pahdb.getspeciesbyuid(uids)
         assert isinstance(spec, amespahdbpythonsuite.species.Species)
 
-    def test_getgeometrybyuid(self):
-        # Define database name and location.
-        xml = 'resources/pahdb-theoretical_cutdown.xml'
-        database = resource_filename('amespahdbpythonsuite', xml)
+    def test_getgeometrybyuid(self, pahdb_theoretical):
         # Read the database.
-        pahdb = AmesPAHdb(filename=database, check=False, cache=True)
+        pahdb = pahdb_theoretical
         # UIDs test list.
         uids = [18, 73, 726, 2054, 223]
         geo = pahdb.getgeometrybyuid(uids)
