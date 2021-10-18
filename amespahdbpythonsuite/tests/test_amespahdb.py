@@ -15,7 +15,7 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 def pahdb_theoretical():
     xml = 'resources/pahdb-theoretical_cutdown.xml'
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=True)
+                      check=False, cache=False)
     return pahdb
 
 
@@ -23,7 +23,7 @@ def pahdb_theoretical():
 def pahdb_laboratory():
     xml = 'resources/pahdb-experimental_cutdown.xml'
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=True)
+                      check=False, cache=False)
     return pahdb
 
 
@@ -35,6 +35,31 @@ class TestAmesPAHdb():
     def test_instance(self, pahdb_theoretical):
         # Read the database.
         assert isinstance(pahdb_theoretical, amespahdbpythonsuite.amespahdb.AmesPAHdb)
+
+    def test_env(self):
+        # TODO: Turn the sys.exit into exceptions.
+        with pytest.raises(SystemExit) as pytest_wrapped_e:
+            AmesPAHdb()
+            assert pytest_wrapped_e.type == SystemExit
+            assert pytest_wrapped_e.value.code == 1
+
+    def test_file_not_exist(self):
+        # TODO: Turn the sys.exit into exceptions.
+        with pytest.raises(SystemExit) as pytest_wrapped_e:
+            AmesPAHdb(filename='file_does_not_exists.xml')
+            assert pytest_wrapped_e.type == SystemExit
+            assert pytest_wrapped_e.value.code == 2
+
+    def test_cache(self, capsys):
+        xml = 'resources/pahdb-experimental_cutdown.xml'
+        # Make sure the AmesPAHdb module is called to create the cached database.
+        with capsys.disabled():
+            AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
+                      check=False, cache=True)
+        AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
+                  check=False, cache=True)
+        capture = capsys.readouterr()
+        assert capture.out.find('RESTORING DATABASE FROM CACHE') >= 0
 
     def test_keybyuids(self, pahdb_theoretical):
         # Read the database.

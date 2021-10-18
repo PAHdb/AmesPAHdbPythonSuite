@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import copy
 import hashlib
 import tempfile
@@ -10,6 +11,7 @@ from datetime import timedelta
 import pickle
 
 from amespahdbpythonsuite.xmlparser import XMLparser
+import amespahdbpythonsuite as suite
 
 
 class AmesPAHdb:
@@ -38,11 +40,7 @@ class AmesPAHdb:
                  'Dr. Alexandros Maragkoudakis']
         self.message(intro)
 
-        if os.path.isfile("VERSION") and os.access("VERSION", os.R_OK):
-            f = open("VERSION", 'r')
-            dated = f.readline()
-            f.close()
-            self.message(f'SUITE DATED: {dated.upp}')
+        self.message(f'SUITE VERSION: {suite.__version__}')
 
         self.message('WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/')
         self.message('CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV')
@@ -55,10 +53,13 @@ class AmesPAHdb:
                        'SET SYSTEM AMESPAHDEFAULTDB',
                        'ENVIRONMENT VARIABLE']
                 self.message(' '.join(msg))
+                # TODO: Turn the sys.exit into exceptions.
+                sys.exit(1)
 
-        if not os.path.isfile(filename) or not os.access(filename, os.R_OK):
-            self.message(f'UNABLE TO REAS: {filename}')
-            return
+        if not filename or not os.path.isfile(filename) or not os.access(filename, os.R_OK):
+            self.message(f'UNABLE TO READ: {filename}')
+            # TODO: Turn the sys.exit into exceptions.
+            sys.exit(2)
 
         self.__data = dict()
 
@@ -84,15 +85,7 @@ class AmesPAHdb:
 
         # Create MD5 hash function pickle.
         md5 = tempfile.gettempdir() + \
-            '/' + hashlib.md5(open(filename, 'r').read().encode()).hexdigest()
-
-        joined = md5 + '_joined.pkl'
-
-        if not keywords.get('cache', True):
-            if os.path.isfile(joined) and os.access(joined, os.R_OK):
-                os.remove(joined)
-
-        md5 += '.pkl'
+            '/' + hashlib.md5(open(filename, 'r').read().encode()).hexdigest() + '.pkl'
 
         # Check if database is dumped in cache and restore it.
         if (keywords.get('cache', True) and os.path.isfile(md5) and os.access(md5, os.R_OK)):
