@@ -137,9 +137,6 @@ class AmesPAHdb:
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
             print(f'Elapsed time: {elapsed}\n')
 
-    def pointer(self):
-        return self.__data
-
     def __getkeybyuids(self, key, uids):
         """
         Get a dictionary of PAHdb properties
