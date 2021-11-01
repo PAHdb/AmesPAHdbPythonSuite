@@ -72,14 +72,13 @@ class AmesPAHdb:
     def parsefile(self, filename, **keywords):
         """
         Method to parse or restore the database from cache.
-        Called by :meth:`amespahdbpythonsuite.amespahdb.__init__`method.
+        Called by :meth:`amespahdbpythonsuite.amespahdb.__init__` method.
 
-        Parameters
-        ----------
-        filname : str
-            String of the PAHdb filename and path.
-        **keywords
-            Arbitrary keyword arguments.
+        Parameters:
+            filname : str
+                String of the PAHdb filename and path.
+            keywords
+                Arbitrary keyword arguments.
 
         """
 
@@ -142,16 +141,14 @@ class AmesPAHdb:
         Get a dictionary of PAHdb properties
         retrieved by keyword for provided UIDs.
 
-        Parameters
-        ----------
-        key : str
-            Database keyword.
-        uids : list of integers
-            List of UIDs.
+        Parameters:
+            key : str
+                Database keyword.
+            uids : list of integers
+                List of UIDs.
 
-        Returns
-        -------
-        Dictionary of retrieved properties with UIDs as keys.
+        Returns:
+            Dictionary of retrieved properties with UIDs as keys.
 
         """
         # TODO Handle empty lists or invalid UIDs.
@@ -168,14 +165,12 @@ class AmesPAHdb:
         UIDs should be a list, e.g. the output of search method.
         Calls the :meth:`amespahdbpythonsuite.transitions.Transitions` class.
 
-        Parameters
-        ----------
-        uids : list of integers
-            List of UIDs.
+        Parameters:
+            uids : list of integers
+                List of UIDs.
 
-        Returns
-        -------
-        transitions object
+        Returns:
+            transitions object
 
         """
         from amespahdbpythonsuite.transitions import Transitions
@@ -202,14 +197,12 @@ class AmesPAHdb:
         UIDs should be a list, e.g. the output of search method.
         Calls the :meth:`amespahdbpythonsuite.laboratory.Laboratory` class.
 
-        Parameters
-        ----------
-        uids : list of integers
-            List of UIDs.
+        Parameters:
+            uids : list of integers
+                List of UIDs.
 
-        Returns
-        -------
-        laboratory database object
+        Returns:
+            laboratory database object
 
         """
         # Check if the experimental database is loaded.
@@ -244,14 +237,12 @@ class AmesPAHdb:
         UIDs should be a list, e.g. the output of search method.
         Calls the :meth:`amespahdbpythonsuite.species.Species` class.
 
-        Parameters
-        ----------
-        uids : list of integers
-            List of UIDs.
+        Parameters:
+            uids : list of integers
+                List of UIDs.
 
-        Returns
-        -------
-        species object
+        Returns:
+            species object
 
         """
         # TODO: handle UIDs without 'references'.
@@ -276,14 +267,12 @@ class AmesPAHdb:
         Calls the :meth:`amespahdbpythonsuite.geometry.Geometry` class
         and :meth:`amespahdbpythonsuite.amespahdb.__getkeybyuids` method.
 
-        Parameters
-        ----------
-        uids : list of integers
-            List of UIDs.
+        Parameters:
+            uids : list of integers
+                List of UIDs.
 
-        Returns
-        -------
-        geometry object
+        Returns:
+            geometry object
 
         """
         from amespahdbpythonsuite.geometry import Geometry
@@ -296,19 +285,16 @@ class AmesPAHdb:
         """
         Search the database based on query input.
 
-        Parameters
-        ----------
-        query : str
-            String containing search query.
+        Parameters:
+            query : str
+                String containing search query.
 
-        Returns
-        -------
-        List of UIDs
+        Returns:
+            List of UIDs
 
-        Example
-        -------
-        ``search('magnesium=0 oxygen=0 iron=0
-        silicium=0 chx=0 ch2=0 c>20 h>0')``
+        Example:
+            ``search('magnesium=0 oxygen=0 iron=0
+            silicium=0 chx=0 ch2=0 c>20 h>0')``
 
         """
 
@@ -319,9 +305,8 @@ class AmesPAHdb:
         A method called by :sec:`amespahdbpythonsuite.amespahdb.search`
         that creates a dictionary with keys based on the input word/category.
 
-        Parameters
-        ----------
-        word : str
+        Parameters:
+            word : str
 
         """
 
@@ -333,15 +318,13 @@ class AmesPAHdb:
         :sec:`amespahdbpythonsuite.amespahdb.tokenize`
         and return string of expressions.
 
-        Parameters
-        ----------
-        tokens : list
-            List of dictionaries.
+        Parameters:
+            tokens : list
+                List of dictionaries.
 
-        Returns
-        -------
-        parsed : str
-            String of expressions based on tokens.
+        Returns:
+            parsed : str
+                String of expressions based on tokens.
 
         """
 
@@ -351,9 +334,8 @@ class AmesPAHdb:
         """
         Method to retrieve the PAHdb version.
 
-        Returns
-        -------
-        String of PAHdb version.
+        Returns:
+            String of PAHdb version.
 
         """
         return self.__data['version']
@@ -362,9 +344,8 @@ class AmesPAHdb:
         """
         Method to retrieve the PAHdb type.
 
-        Returns
-        -------
-        String of PAHdb type.
+        Returns:
+            String of PAHdb type.
 
         """
         return self.__data['type']
@@ -373,9 +354,8 @@ class AmesPAHdb:
         """
         Method to retrieve the database.
 
-        Returns
-        -------
-        Dictionary containing the parsed database.
+        Returns:
+            Dictionary containing the parsed database.
 
         """
         return self.__data
@@ -385,12 +365,11 @@ class AmesPAHdb:
         """
         A method to print terminal message.
 
-        Parameters
-        ----------
-        text : string or list of strings.
-            Text to be displayed.
-        space : integer
-            Number to indent the text.
+        Parameters:
+            text : string or list of strings.
+                Text to be displayed.
+            space : integer
+                Number to indent the text.
 
         """
         line = 57 * '='

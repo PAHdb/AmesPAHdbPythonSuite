@@ -9,6 +9,7 @@ or without schema checking.
 import array
 import base64
 import urllib.request
+from urllib.error import HTTPError, URLError
 
 from lxml import etree
 
@@ -16,7 +17,7 @@ from lxml import etree
 class XMLparser:
     """Parse a NASA Ames PAH IR Spectroscopic library XML-file.
 
-    Optional behaviour includes validating against a schema.
+    Optional behavior includes validating against a schema.
 
     Attributes:
         filename (str): XML filename.
@@ -65,7 +66,7 @@ class XMLparser:
             _root: root element of ElementTree tree.
 
         Returns:
-            True if successful, otherwisse False.
+            True if successful, otherwise False.
 
         """
 
@@ -78,7 +79,12 @@ class XMLparser:
 
         if schema:
             _, uri = schema.split(' ', 1)
-            doc = etree.parse(urllib.request.urlopen(uri))
+            try:
+                response = urllib.request.urlopen(uri, timeout=3.0)
+            except (HTTPError, URLError):
+                # TODO For now, fallback to True if we can't get a schema, use False instead?
+                return True
+            doc = etree.parse(response)
             xmlschema = etree.XMLSchema(doc)
             try:
                 xmlschema.assertValid(self._tree)
@@ -86,6 +92,8 @@ class XMLparser:
                 raise e
             else:
                 return True
+
+        return True
 
     def to_pahdb_dict(self, validate=False):
         """Parses the XML, with or without validation.

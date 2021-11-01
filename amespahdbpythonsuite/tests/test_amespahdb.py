@@ -38,6 +38,9 @@ class TestAmesPAHdb():
 
     def test_env(self):
         # TODO: Turn the sys.exit into exceptions.
+        import os
+        if 'AMESPAHDEFAULTDB' in os.environ:
+            del os.environ["AMESPAHDEFAULTDB"]
         with pytest.raises(SystemExit) as pytest_wrapped_e:
             AmesPAHdb()
             assert pytest_wrapped_e.type == SystemExit

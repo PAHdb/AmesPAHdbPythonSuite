@@ -80,7 +80,7 @@ respectively.
 
 ----------------
 Database fitting
----------------
+----------------
 
 Spectroscopic database fitting is handled by the
 'AmesPAHdbIDLSuite_Spectrum'-object and it either accepts an
