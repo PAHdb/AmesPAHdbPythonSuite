@@ -27,6 +27,6 @@ jobs:
           make -C docs html
       - name: Publish documentation
         run: |
-          doctr deploy --built-docs docs/build/html
+          doctr deploy --force --built-docs docs/build/html
         env:
           secure: "Jzxgq6DRbdAHusBdP8RVLR+yaw4zxiYAx+gKFZ+YIAQThSrTxIJsuSVpvgDhJYhYCakTdzXssQxmzPaFDwMNlp+cVNtKIGssi4OR6NRPm0Ws9H9U0FNShyVpV9n8KflGigr5ZJZjgfDYFzpiSwaLnnDgGOXm0bnAYWs6OyX8KTu3DfrByPtSVZf6d9X7UAIJxttQGHUhMNla305TGE9mGHAzPgwc8lYRm6ZWxDGPACCIPXLRav3CL3ktApncZnp1EpjNVr3/fgJCXOVr2ggNs1d8aDIYjjiKW7FfWUHndEUkdaZnoOkagixE45+rKzPyegeBijfLK80jFq6pfO+Lk26MJHXrwnDXMAKHxHjqYnBpmPsbk28+2bTSyTK8+DnnJE0iMBD/4SKyxm4ND4CiM2QnGWGgtoC/q8KCXf13HihUbrcyj3NxnEvR8lb3Qbz5sf+5CRw12WWiAm1HWBK8vuAn8GOknijX9+4bt8ZINCdlBSnb+F9JJcyEhlJKOWIcSiFTbLAAjMHPNVCwWiayZvkb7todUpHyMCqWHpuRic2Z1KBEiqQhZUK2/GWg5i0rxX/7j9tsK5VNSuYVnjOjKp+7dgjwGew3zU2rz94Q4BIYekipOZcwrT1xLUt4B45jq6TxIVIv+sk8W7Y4HZbqFToAe6uYE5LWj8fTKoNOnbo="
