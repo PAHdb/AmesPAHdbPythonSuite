@@ -18,14 +18,14 @@ jobs:
           flake8 --max-line-length=115 --exclude versioneer.py,docs/*
       - name: Unit tests and coverage
         run: |
-          coverage run --source amespahdbpythonsuite --omit *amespahdbpythonsuite/_version.py,*amespahdbpythonsuite/tests/* -m pytest --pyargs amespahdbpythonsuite.tests  # Run the tests and check for test coverage.
+          coverage run --source amespahdbpythonsuite --omit *amespahdbpythonsuite/_version.py,*amespahdbpythonsuite/tests/* -m pytest --pyargs amespahdbpythonsuite.tests
       - name: Generate coverage report
         run: |
           coverage report -m
-      - name: Upload coverage report to codeCov
+      - name: Upload coverage report to CodeCov
         uses: codecov/codecov-action@v2
         with:
-          files: ./coverage
+          files: ./.coverage
           verbose: true
       - name: Build documentation
         run: |
