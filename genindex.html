@@ -6,6 +6,7 @@
   <title>Index &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
@@ -56,6 +57,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
@@ -67,7 +69,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -101,7 +108,11 @@
 
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#X"><strong>X</strong></a>
@@ -110,6 +121,8 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb">AmesPAHdb (class in amespahdbpythonsuite.amespahdb)</a>
+</li>
       <li>
     amespahdbpythonsuite
 
@@ -117,8 +130,36 @@
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">module</a>
 </li>
       </ul></li>
+      <li>
+    amespahdbpythonsuite.amespahdb
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">module</a>
+</li>
+      </ul></li>
+      <li>
+    amespahdbpythonsuite.geometry
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">module</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    amespahdbpythonsuite.laboratory
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">module</a>
+</li>
+      </ul></li>
+      <li>
+    amespahdbpythonsuite.transitions
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">module</a>
+</li>
+      </ul></li>
       <li>
     amespahdbpythonsuite.xmlparser
 
@@ -129,14 +170,56 @@
   </ul></td>
 </tr></table>
 
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry">Geometry (class in amespahdbpythonsuite.geometry)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdata">getdata() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">getgeometrybyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid">getlaboratorybyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid">getspeciesbyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid">gettransitionsbyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettype">gettype() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getversion">getversion() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory">Laboratory (class in amespahdbpythonsuite.laboratory)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.message">message() (amespahdbpythonsuite.amespahdb.AmesPAHdb static method)</a>
+</li>
       <li>
     module
 
       <ul>
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">amespahdbpythonsuite</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdbpythonsuite.amespahdb</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">amespahdbpythonsuite.geometry</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">amespahdbpythonsuite.laboratory</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">amespahdbpythonsuite.transitions</a>
 </li>
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a>
 </li>
@@ -144,10 +227,30 @@
   </ul></td>
 </tr></table>
 
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.parsefile">parsefile() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.search">search() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser.to_pahdb_dict">to_pahdb_dict() (amespahdbpythonsuite.xmlparser.XMLparser method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions">Transitions (class in amespahdbpythonsuite.transitions)</a>
 </li>
   </ul></td>
 </tr></table>

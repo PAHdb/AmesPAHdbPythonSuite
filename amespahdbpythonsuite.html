@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>src &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
@@ -58,6 +58,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
@@ -69,7 +70,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">src</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.geometry">geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -124,10 +130,179 @@
     text-align: unset;
 }
 </style>
-<section id="src">
+<div class="section" id="src">
 <h1>src<a class="headerlink" href="#src" title="Permalink to this headline">¶</a></h1>
-<section id="module-amespahdbpythonsuite.xmlparser">
-<span id="amespahdbpythonsuite-xmlparser"></span><h2>amespahdbpythonsuite.xmlparser<a class="headerlink" href="#module-amespahdbpythonsuite.xmlparser" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-amespahdbpythonsuite.amespahdb">
+<span id="amespahdb-module"></span><h2>amespahdb module<a class="headerlink" href="#module-amespahdbpythonsuite.amespahdb" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.amespahdb.</span></span><span class="sig-name descname"><span class="pre">AmesPAHdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AmesPAHdbPythonSuite main class.
+Contains methods to parse the database, perform search based on query,
+and retrieve UIDs.
+Calls methods:
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Transitions()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Laboratory()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Species()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Geometry()</span></code>,
+to retrieve the respective objects.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getdata">
+<span class="sig-name descname"><span class="pre">getdata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getdata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to retrieve the database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dictionary containing the parsed database.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">
+<span class="sig-name descname"><span class="pre">getgeometrybyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getgeometrybyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve and return geometry object based on UIDs input.
+UIDs should be a list, e.g. the output of search method.
+Calls the <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry()</span></code></a> class
+and <code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.amespahdb.__getkeybyuids()</span></code> method.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>geometry object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid">
+<span class="sig-name descname"><span class="pre">getlaboratorybyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getlaboratorybyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve and return laboratory database object based on UIDs input.
+UIDs should be a list, e.g. the output of search method.
+Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory()</span></code></a> class.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>laboratory database object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid">
+<span class="sig-name descname"><span class="pre">getspeciesbyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getspeciesbyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve and return species object based on UIDs input.
+UIDs should be a list, e.g. the output of search method.
+Calls the <code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species()</span></code> class.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>species object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid">
+<span class="sig-name descname"><span class="pre">gettransitionsbyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.gettransitionsbyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve and return transitions object based on UIDs input.
+UIDs should be a list, e.g. the output of search method.
+Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions()</span></code></a> class.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>transitions object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.gettype">
+<span class="sig-name descname"><span class="pre">gettype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.gettype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to retrieve the PAHdb type.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>String of PAHdb type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getversion">
+<span class="sig-name descname"><span class="pre">getversion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to retrieve the PAHdb version.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>String of PAHdb version.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.message">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">55</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method to print terminal message.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>text<span class="classifier">string or list of strings.</span></dt><dd><p>Text to be displayed.</p>
+</dd>
+<dt>space<span class="classifier">integer</span></dt><dd><p>Number to indent the text.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.parsefile">
+<span class="sig-name descname"><span class="pre">parsefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.parsefile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.parsefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to parse or restore the database from cache.
+Called by <code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.amespahdb.__init__()</span></code> method.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>filname<span class="classifier">str</span></dt><dd><p>String of the PAHdb filename and path.</p>
+</dd>
+<dt>keywords</dt><dd><p>Arbitrary keyword arguments.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search the database based on query input.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>query<span class="classifier">str</span></dt><dd><p>String containing search query.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of UIDs</p>
+</dd>
+<dt>Example:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">search('magnesium=0</span> <span class="pre">oxygen=0</span> <span class="pre">iron=0</span>
+<span class="pre">silicium=0</span> <span class="pre">chx=0</span> <span class="pre">ch2=0</span> <span class="pre">c&gt;20</span> <span class="pre">h&gt;0')</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-amespahdbpythonsuite.xmlparser">
+<span id="xmlparser-module"></span><h2>xmlparser module<a class="headerlink" href="#module-amespahdbpythonsuite.xmlparser" title="Permalink to this headline">¶</a></h2>
 <p>xmlparser.py</p>
 <p>Parse a NASA Ames PAH IR Spectroscopic Database XML library file, with
 or without schema checking.</p>
@@ -136,7 +311,7 @@ or without schema checking.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.xmlparser.</span></span><span class="sig-name descname"><span class="pre">XMLparser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/xmlparser.html#XMLparser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.xmlparser.XMLparser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Parse a NASA Ames PAH IR Spectroscopic library XML-file.</p>
-<p>Optional behaviour includes validating against a schema.</p>
+<p>Optional behavior includes validating against a schema.</p>
 <dl>
 <dt>Attributes:</dt><dd><p>filename (str): XML filename.
 validate (bool): Whether to validate the XML schema or not.
@@ -179,15 +354,45 @@ metadata, references, comments, and laboratory.</p>
 _tree (etree.ElementTree): parsed XML file.
 _root: root element of ElementTree tree.</p>
 </dd>
-<dt>Returns:</dt><dd><p>True if successful, otherwisse False.</p>
+<dt>Returns:</dt><dd><p>True if successful, otherwise False.</p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
-</section>
-<section id="module-amespahdbpythonsuite">
+</div>
+<div class="section" id="module-amespahdbpythonsuite.transitions">
+<span id="transitions-module"></span><h2>transitions module<a class="headerlink" href="#module-amespahdbpythonsuite.transitions" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">Transitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AmesPAHdbPythonSuite transitions class</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-amespahdbpythonsuite.geometry">
+<span id="geometry-module"></span><h2>geometry module<a class="headerlink" href="#module-amespahdbpythonsuite.geometry" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.geometry.</span></span><span class="sig-name descname"><span class="pre">Geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AmesPAHdbPythonSuite geometry class</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-amespahdbpythonsuite.laboratory">
+<span id="laboratory-module"></span><h2>laboratory module<a class="headerlink" href="#module-amespahdbpythonsuite.laboratory" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.laboratory.</span></span><span class="sig-name descname"><span class="pre">Laboratory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AmesPAHdbPythonSuite laboratory class</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-amespahdbpythonsuite">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-amespahdbpythonsuite" title="Permalink to this headline">¶</a></h2>
 <p>The AmesPAHdbPythonSuite is developed by the NASA Ames PAH IR
 Spectroscopic Database team, asscociated with the Astrophysics &amp;
@@ -222,8 +427,8 @@ Astrophysical Journal Supplement Series, 251, 22, 2020,
 <a class="reference external" href="https://doi.org/10.3847/1538-4365/abc2c8">https://doi.org/10.3847/1538-4365/abc2c8</a></p></li>
 </ul>
 </div></blockquote>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

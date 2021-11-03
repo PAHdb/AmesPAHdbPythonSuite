@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3.6 Working with Raw Laboratory Spectra &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
@@ -59,6 +59,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
@@ -70,7 +71,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -127,7 +133,7 @@
     text-align: unset;
 }
 </style>
-<section id="working-with-raw-laboratory-spectra">
+<div class="section" id="working-with-raw-laboratory-spectra">
 <h1><span class="sectnum">3.6</span> Working with Raw Laboratory Spectra<a class="headerlink" href="#working-with-raw-laboratory-spectra" title="Permalink to this headline">¶</a></h1>
 <p>The ‘AmesPAHdbIDLSuite_Laboratory’-object exposes available raw
 laboratory spectra when an experimental database XML-file is
@@ -158,7 +164,7 @@ a prefix can be given that will be prepended to the filename.</p>
 <div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>laboratory<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;</span>
 </pre></div>
 </div>
-</section>
+</div>
 
 
            </div>

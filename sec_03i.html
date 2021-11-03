@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3.9 Spectroscopic Database Fitting &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
@@ -59,6 +59,7 @@
 </li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
@@ -70,7 +71,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -127,13 +133,13 @@
     text-align: unset;
 }
 </style>
-<section id="spectroscopic-database-fitting">
+<div class="section" id="spectroscopic-database-fitting">
 <h1><span class="sectnum">3.9</span> Spectroscopic Database Fitting<a class="headerlink" href="#spectroscopic-database-fitting" title="Permalink to this headline">¶</a></h1>
 <dl class="simple">
 <dt>The first step in fitting astronomical observations is loading</dt><dd><p>astronomical observations.</p>
 </dd>
 </dl>
-<section id="dealing-with-astronomical-observations">
+<div class="section" id="dealing-with-astronomical-observations">
 <h2><span class="sectnum">3.9.1</span> Dealing with astronomical observations<a class="headerlink" href="#dealing-with-astronomical-observations" title="Permalink to this headline">¶</a></h2>
 <p>Astronomical observations can be handled by the
 ‘AmesPAHdbIDLSuite_Observation’-object, which is able to read
@@ -189,6 +195,9 @@ observation<span class="o">-&gt;</span>AbsciccaUnitsTo
 observation<span class="o">-&gt;</span>SetGridRange,<span class="mi">500</span>,<span class="mi">2000</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="database-fitting">
+<h2><span class="sectnum">3.9.2</span> Database fitting<a class="headerlink" href="#database-fitting" title="Permalink to this headline">¶</a></h2>
 <p>Spectroscopic database fitting is handled by the
 ‘AmesPAHdbIDLSuite_Spectrum’-object and it either accepts an
 ‘AmesPAHdbIDLSuite_Observation’-object, or a simple array of
@@ -244,8 +253,8 @@ on fitted weight or integrated flux.</p>
 <div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>breakdown <span class="o">=</span> fit<span class="o">-&gt;</span>getBreakdown(<span class="o">/</span>Flux)
 </pre></div>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

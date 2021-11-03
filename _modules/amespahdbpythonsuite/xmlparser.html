@@ -6,6 +6,7 @@
   <title>amespahdbpythonsuite.xmlparser &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/touch-icon-310x310.png"/>
@@ -56,6 +57,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
@@ -67,7 +69,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../amespahdbpythonsuite.html">src</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -109,6 +116,7 @@
 <span class="kn">import</span> <span class="nn">array</span>
 <span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">urllib.error</span> <span class="kn">import</span> <span class="n">HTTPError</span><span class="p">,</span> <span class="n">URLError</span>
 
 <span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
 
@@ -116,7 +124,7 @@
 <div class="viewcode-block" id="XMLparser"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser">[docs]</a><span class="k">class</span> <span class="nc">XMLparser</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Parse a NASA Ames PAH IR Spectroscopic library XML-file.</span>
 
-<span class="sd">    Optional behaviour includes validating against a schema.</span>
+<span class="sd">    Optional behavior includes validating against a schema.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        filename (str): XML filename.</span>
@@ -165,7 +173,7 @@
 <span class="sd">            _root: root element of ElementTree tree.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            True if successful, otherwisse False.</span>
+<span class="sd">            True if successful, otherwise False.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -178,14 +186,21 @@
 
         <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">uri</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">uri</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">HTTPError</span><span class="p">,</span> <span class="n">URLError</span><span class="p">):</span>
+                <span class="c1"># TODO For now, fallback to True if we can&#39;t get a schema, use False instead?</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
             <span class="n">xmlschema</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">XMLSchema</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">xmlschema</span><span class="o">.</span><span class="n">assertValid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">e</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span></div>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="XMLparser.to_pahdb_dict"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser.to_pahdb_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_pahdb_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Parses the XML, with or without validation.</span>

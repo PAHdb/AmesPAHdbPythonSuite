@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>amespahdbpythonsuite.amespahdb &mdash; AmesPAHdbPythonSuite  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/touch-icon-310x310.png"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> AmesPAHdbPythonSuite
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html"><span class="sectnum">1</span> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html"><span class="sectnum">2</span> Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html"><span class="sectnum">3</span> API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03a.html"><span class="sectnum">3.1</span> Main Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03b.html"><span class="sectnum">3.2</span> Accessing the molecular PAH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03c.html"><span class="sectnum">3.3</span> Working with Molecular PAH Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03d.html"><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03e.html"><span class="sectnum">3.5</span> Working with Molecular Geometric Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03f.html"><span class="sectnum">3.6</span> Working with Raw Laboratory Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03g.html"><span class="sectnum">3.7</span> Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03h.html"><span class="sectnum">3.8</span> Creating PAH Spectra</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../sec_03h.html#emission-models"><span class="sectnum">3.8.1</span> Emission models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sec_03h.html#line-profiles"><span class="sectnum">3.8.2</span> Line profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-history.html"><span class="sectnum">4</span> Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.1</span> v0.1.0 (2019-08-20)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html"><span class="sectnum">5</span> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../amespahdbpythonsuite.html">src</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AmesPAHdbPythonSuite</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>amespahdbpythonsuite.amespahdb</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for amespahdbpythonsuite.amespahdb</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.xmlparser</span> <span class="kn">import</span> <span class="n">XMLparser</span>
+<span class="kn">import</span> <span class="nn">amespahdbpythonsuite</span> <span class="k">as</span> <span class="nn">suite</span>
+
+
+<div class="viewcode-block" id="AmesPAHdb"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb">[docs]</a><span class="k">class</span> <span class="nc">AmesPAHdb</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AmesPAHdbPythonSuite main class.</span>
+<span class="sd">    Contains methods to parse the database, perform search based on query,</span>
+<span class="sd">    and retrieve UIDs.</span>
+<span class="sd">    Calls methods:</span>
+<span class="sd">    :meth:`amespahdbpythonsuite.Transitions`,</span>
+<span class="sd">    :meth:`amespahdbpythonsuite.Laboratory`,</span>
+<span class="sd">    :meth:`amespahdbpythonsuite.Species`,</span>
+<span class="sd">    :meth:`amespahdbpythonsuite.Geometry`,</span>
+<span class="sd">    to retrieve the respective objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize amespahdbpythonsuite class. Prints basic PAHdb info</span>
+<span class="sd">        and calls the :meth:`amespahdbpythonsuite.amespahdb.parsefile`</span>
+<span class="sd">        method to parse or restore the database.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">intro</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AmesPAHdbPythonSuite&#39;</span><span class="p">,</span> <span class="s1">&#39;by&#39;</span><span class="p">,</span> <span class="s1">&#39;Dr. Christiaan Boersma&#39;</span><span class="p">,</span> <span class="s1">&#39;and&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;Dr. Alexandros Maragkoudakis&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="n">intro</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SUITE VERSION: </span><span class="si">{</span><span class="n">suite</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39;WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39;CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV&#39;</span><span class="p">)</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AMESPAHDEFAULTDB&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DATABASE NOT FOUND:&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;SET SYSTEM AMESPAHDEFAULTDB&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;ENVIRONMENT VARIABLE&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+                <span class="c1"># TODO: Turn the sys.exit into exceptions.</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;UNABLE TO READ: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># TODO: Turn the sys.exit into exceptions.</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_joined</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsefile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span>
+                       <span class="n">cache</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                       <span class="n">check</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;check&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+
+<div class="viewcode-block" id="AmesPAHdb.parsefile"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.parsefile">[docs]</a>    <span class="k">def</span> <span class="nf">parsefile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to parse or restore the database from cache.</span>
+<span class="sd">        Called by :meth:`amespahdbpythonsuite.amespahdb.__init__` method.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            filname : str</span>
+<span class="sd">                String of the PAHdb filename and path.</span>
+<span class="sd">            keywords</span>
+<span class="sd">                Arbitrary keyword arguments.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Create MD5 hash function pickle.</span>
+        <span class="n">md5</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">()</span> <span class="o">+</span> \
+            <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span>
+
+        <span class="c1"># Check if database is dumped in cache and restore it.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">md5</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">md5</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">)):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39;RESTORING DATABASE FROM CACHE&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Start timer</span>
+            <span class="n">tstart</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+            <span class="c1"># Open and read the dumped database.</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">md5</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="c1"># Store the dumped database filename.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">md5</span>
+
+            <span class="c1"># stop timer and calculate elapsed time</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">tstart</span><span class="p">))</span>
+
+            <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;FILENAME                    : </span><span class="si">{</span><span class="n">md5</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;ORIGNINAL FILENAME          : </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;PARSE TIME                  : </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;VERSION (DATE)              : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;COMMENT                     : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39;PARSING DATABASE: THIS MAY TAKE A FEW MINUTES&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Start timer</span>
+            <span class="n">tstart</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+            <span class="c1"># Call XMLparser module to parse the database.</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">XMLparser</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                               <span class="n">validate</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;check&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+
+            <span class="c1"># Store the database into self.__self.data.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_pahdb_dict</span><span class="p">()</span>
+
+            <span class="c1"># Dump the database into pickle in the cache directory.</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">md5</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+
+            <span class="c1"># Store the dumped database filename.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">md5</span>
+
+            <span class="c1"># stop timer and calculate elapsed time</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">tstart</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Elapsed time: </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__getkeybyuids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">uids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a dictionary of PAHdb properties</span>
+<span class="sd">        retrieved by keyword for provided UIDs.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            key : str</span>
+<span class="sd">                Database keyword.</span>
+<span class="sd">            uids : list of integers</span>
+<span class="sd">                List of UIDs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary of retrieved properties with UIDs as keys.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO Handle empty lists or invalid UIDs.</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;species&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">uid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">])</span>
+                                      <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">uids</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">uid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+                                      <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">uids</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+<div class="viewcode-block" id="AmesPAHdb.gettransitionsbyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid">[docs]</a>    <span class="k">def</span> <span class="nf">gettransitionsbyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve and return transitions object based on UIDs input.</span>
+<span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
+<span class="sd">        Calls the :meth:`amespahdbpythonsuite.transitions.Transitions` class.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            uids : list of integers</span>
+<span class="sd">                List of UIDs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            transitions object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.transitions</span> <span class="kn">import</span> <span class="n">Transitions</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">uids</span> <span class="o">=</span> <span class="p">[</span><span class="n">uids</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">Transitions</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">],</span>
+                           <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span>
+                           <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s1">&#39;transitions&#39;</span><span class="p">,</span> <span class="n">uids</span><span class="p">),</span>
+                           <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span>
+                           <span class="n">uids</span><span class="o">=</span><span class="n">uids</span><span class="p">,</span>
+                           <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;zerokelvin_m&#39;</span><span class="p">,</span>
+                                  <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                                  <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+                           <span class="n">units</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;abscissa&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                               <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;frequency [wavenumber]&#39;</span><span class="p">},</span>
+                                  <span class="s1">&#39;ordinate&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                                               <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;integrated cross-section&#39;</span> <span class="o">+</span> <span class="s1">&#39;[km/mol]&#39;</span><span class="p">}}</span>
+                           <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AmesPAHdb.getlaboratorybyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid">[docs]</a>    <span class="k">def</span> <span class="nf">getlaboratorybyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve and return laboratory database object based on UIDs input.</span>
+<span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
+<span class="sd">        Calls the :meth:`amespahdbpythonsuite.laboratory.Laboratory` class.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            uids : list of integers</span>
+<span class="sd">                List of UIDs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            laboratory database object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if the experimental database is loaded.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;experimental&#39;</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39;EXPERIMENTAL DATABASE REQUIRED&#39;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.laboratory</span> <span class="kn">import</span> <span class="n">Laboratory</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">uids</span> <span class="o">=</span> <span class="p">[</span><span class="n">uids</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">Laboratory</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">],</span>
+                          <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span>
+                          <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s1">&#39;laboratory&#39;</span><span class="p">,</span> <span class="n">uids</span><span class="p">),</span>
+                          <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span>
+                          <span class="n">uids</span><span class="o">=</span><span class="n">uids</span><span class="p">,</span>
+                          <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;laboratory_m&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                                 <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+                          <span class="n">units</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;abscissa&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                              <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;frequency [wavenumber]&#39;</span><span class="p">},</span>
+                                 <span class="s1">&#39;ordinate&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                                              <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;absorbance&#39;</span> <span class="o">+</span> <span class="s1">&#39;[-log(I/I$_</span><span class="si">{0}</span><span class="s1">)$&#39;</span><span class="p">}}</span>
+                          <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AmesPAHdb.getspeciesbyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid">[docs]</a>    <span class="k">def</span> <span class="nf">getspeciesbyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve and return species object based on UIDs input.</span>
+<span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
+<span class="sd">        Calls the :meth:`amespahdbpythonsuite.species.Species` class.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            uids : list of integers</span>
+<span class="sd">                List of UIDs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            species object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: handle UIDs without &#39;references&#39;.</span>
+        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.species</span> <span class="kn">import</span> <span class="n">Species</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">uids</span> <span class="o">=</span> <span class="p">[</span><span class="n">uids</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">Species</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">],</span>
+                       <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span>
+                       <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s1">&#39;species&#39;</span><span class="p">,</span> <span class="n">uids</span><span class="p">),</span>
+                       <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span>
+                       <span class="n">uids</span><span class="o">=</span><span class="n">uids</span><span class="p">,</span>
+                       <span class="n">references</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s1">&#39;references&#39;</span><span class="p">,</span> <span class="n">uids</span><span class="p">),</span>
+                       <span class="n">comments</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">,</span> <span class="n">uids</span><span class="p">)</span>
+                       <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AmesPAHdb.getgeometrybyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">[docs]</a>    <span class="k">def</span> <span class="nf">getgeometrybyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve and return geometry object based on UIDs input.</span>
+<span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
+<span class="sd">        Calls the :meth:`amespahdbpythonsuite.geometry.Geometry` class</span>
+<span class="sd">        and :meth:`amespahdbpythonsuite.amespahdb.__getkeybyuids` method.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            uids : list of integers</span>
+<span class="sd">                List of UIDs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            geometry object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.geometry</span> <span class="kn">import</span> <span class="n">Geometry</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">uids</span> <span class="o">=</span> <span class="p">[</span><span class="n">uids</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s1">&#39;geometry&#39;</span><span class="p">,</span> <span class="n">uids</span><span class="p">),</span> <span class="n">uids</span><span class="o">=</span><span class="n">uids</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AmesPAHdb.search"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search the database based on query input.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            query : str</span>
+<span class="sd">                String containing search query.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of UIDs</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            ``search(&#39;magnesium=0 oxygen=0 iron=0</span>
+<span class="sd">            silicium=0 chx=0 ch2=0 c&gt;20 h&gt;0&#39;)``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A method called by :sec:`amespahdbpythonsuite.amespahdb.search`</span>
+<span class="sd">        that creates a dictionary with keys based on the input word/category.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            word : str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_parsetokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the dictionary of tokens created by</span>
+<span class="sd">        :sec:`amespahdbpythonsuite.amespahdb.tokenize`</span>
+<span class="sd">        and return string of expressions.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            tokens : list</span>
+<span class="sd">                List of dictionaries.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            parsed : str</span>
+<span class="sd">                String of expressions based on tokens.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="AmesPAHdb.getversion"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getversion">[docs]</a>    <span class="k">def</span> <span class="nf">getversion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to retrieve the PAHdb version.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            String of PAHdb version.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AmesPAHdb.gettype"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettype">[docs]</a>    <span class="k">def</span> <span class="nf">gettype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to retrieve the PAHdb type.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            String of PAHdb type.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AmesPAHdb.getdata"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdata">[docs]</a>    <span class="k">def</span> <span class="nf">getdata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to retrieve the database.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary containing the parsed database.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span></div>
+
+<div class="viewcode-block" id="AmesPAHdb.message"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.message">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="mi">55</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A method to print terminal message.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            text : string or list of strings.</span>
+<span class="sd">                Text to be displayed.</span>
+<span class="sd">            space : integer</span>
+<span class="sd">                Number to indent the text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="mi">57</span> <span class="o">*</span> <span class="s1">&#39;=&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">space</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">space</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019/2021 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

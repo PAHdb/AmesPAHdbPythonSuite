@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3.10 Graphical User Interface &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/touch-icon-310x310.png"/>
@@ -59,6 +59,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
@@ -70,7 +71,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">amespahdbpythonsuite.xmlparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -127,7 +133,7 @@
     text-align: unset;
 }
 </style>
-<section id="graphical-user-interface">
+<div class="section" id="graphical-user-interface">
 <h1><span class="sectnum">3.10</span> Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this headline">¶</a></h1>
 <p>Utilizing IDL’s widget programming capabilities, a simple
 graphical user interface (GUI) is available to explore the
@@ -139,16 +145,14 @@ can be loaded through the ‘File→Open’ menu-option.</p>
 <div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>amespahdbidlsuite_gui
 </pre></div>
 </div>
-<figure class="align-center" id="id1">
+<div class="figure align-center" id="id1">
 <img alt="_images/gui&#64;2x.png" src="_images/gui&#64;2x.png" />
-<figcaption>
-<p><span class="caption-text">Screenshot of the AmesPAHdbIDLsuite GUI.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-</figcaption>
-</figure>
+<p class="caption"><span class="caption-text">Screenshot of the AmesPAHdbIDLsuite GUI.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
 <p><strong>NB</strong> The GUI generates all necessary assets on-the-fly, which
 results in a considerable start-up-time, notably when loading a
 large database.</p>
-</section>
+</div>
 
 
            </div>
