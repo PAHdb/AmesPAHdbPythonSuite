@@ -1,4 +1,4 @@
-[![Travis Status](https://img.shields.io/travis/com/PAHdb/AmesPAHdbPythonSuite)](https://app.travis-ci.com/github/PAHdb/AmesPAHdbPythonSuite) [![Coverage Status]( https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite/graph/badge.svg)](https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite) [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://pahdb.github.io/AmesPAHdbPythonSuite/)
+![Workflow Status](https://github.com/pahdb/AmesPAHdbPythonSuite/actions/workflows/ci.yml/badge.svg) [![Coverage Status]( https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite/graph/badge.svg)](https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite) [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://pahdb.github.io/AmesPAHdbPythonSuite/)
 
 # AmesPAHdbPythonSuite
 
@@ -11,13 +11,15 @@ A Python module to work with a downloaded PAHdb XML-file.
 
 This software requires:
 
-``python``
-``scipy``
+``python3``
 ``astropy``
+``lxml``
+``matplotlib``
+``scipy``
 
 ## Installation
 
-The AmesPAHdbPythonSuite can be directly installed from the
+The AmesPAHdbPythonSuite can be directly installed from its
 [repository](https://github.com/PAHdb/AmesPAHdbPythonSuite) using pip:
 
 ``pip install git+git://github.com/PAHdb/AmesPAHdbPythonSuite.git``
@@ -46,11 +48,6 @@ plt.show()
 More examples can be found in the
 [examples](examples)-directory.
 
-## Documentation
-
-Documentation can be found at
-[PAHdb.github.io](https://PAHdb.github.io).
-
 ## Background
 
 The NASA Ames PAH IR Spectroscopic Database and the
@@ -60,7 +57,7 @@ PAH IR Spectroscopic Database"*.
 
 Additional information can be found at the NASA Ames PAH IR
 Spectroscopic Database website, which is located at
-[www.astrochemistry.org/pahdb](https://www.astrochemistry.org/pahdb/).
+[www.astrochemistry.org/pahdb/](https://www.astrochemistry.org/pahdb/).
 
 You are kindly asked to consider the following references for citation
 when using the AmesPAHdbPythonSuite:
@@ -112,6 +109,6 @@ This project is licensed under the BSD 3-Clause License - see the
 ## Acknowledgments
 
 * The NASA Ames PAH IR Spectroscopic Database Team -
-  [www.astrochemistry.org/pahdb](https://www.astrochemistry.org/pahdb/theoretical/3.00/help/about)
+  [www.astrochemistry.org/pahdb/](https://www.astrochemistry.org/pahdb/theoretical/3.00/help/about)
 * The Astrophysics & Astrochemistry Laboratory at NASA Ames Research
   Center - [www.astrochemistry.org](https://www.astrochemistry.org)
