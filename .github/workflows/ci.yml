@@ -22,10 +22,12 @@ jobs:
       - name: Generate coverage report
         run: |
           coverage report -m
-      - name: Upload coverage report to CodeCov
+          coverage xml
+      - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v2
         with:
-          files: ./.coverage
+          files: coverage.xml
+          fail_ci_if_error: true
           verbose: true
       - name: Build documentation
         run: |
