@@ -22,6 +22,10 @@ jobs:
       - name: Generate coverage report
         run: |
           coverage report -m
+      - name: Upload coverage report to codeCov
+        uses: codecov/codecov-action@v2
+        with:
+          verbose: true
       - name: Build documentation
         run: |
           make -C docs html
