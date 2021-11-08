@@ -20,11 +20,11 @@ class AmesPAHdb:
     AmesPAHdbPythonSuite main class.
     Contains methods to parse the database, perform search based on query,
     and retrieve UIDs.
-    Calls methods:
-    :meth:`amespahdbpythonsuite.Transitions`,
-    :meth:`amespahdbpythonsuite.Laboratory`,
-    :meth:`amespahdbpythonsuite.Species`,
-    :meth:`amespahdbpythonsuite.Geometry`,
+    Calls classes:
+    :class:`amespahdbpythonsuite.transitions.Transitions`,
+    :class:`amespahdbpythonsuite.laboratory.Laboratory`,
+    :class:`amespahdbpythonsuite.species.Species`,
+    :class:`amespahdbpythonsuite.geometry.Geometry`,
     to retrieve the respective objects.
 
     """
@@ -93,7 +93,7 @@ class AmesPAHdb:
 
             self.message('RESTORING DATABASE FROM CACHE')
 
-            # Start timer
+            # Start timer.
             tstart = time.perf_counter()
 
             # Open and read the dumped database.
@@ -103,7 +103,7 @@ class AmesPAHdb:
             # Store the dumped database filename.
             self.__data['filename'] = md5
 
-            # stop timer and calculate elapsed time
+            # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
 
             info = [f'FILENAME                    : {md5}',
@@ -117,7 +117,7 @@ class AmesPAHdb:
 
             self.message('PARSING DATABASE: THIS MAY TAKE A FEW MINUTES')
 
-            # Start timer
+            # Start timer.
             tstart = time.perf_counter()
 
             # Call XMLparser module to parse the database.
@@ -134,7 +134,7 @@ class AmesPAHdb:
             # Store the dumped database filename.
             self.__data['filename'] = md5
 
-            # stop timer and calculate elapsed time
+            # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
             print(f'Elapsed time: {elapsed}\n')
 
@@ -165,7 +165,7 @@ class AmesPAHdb:
         """
         Retrieve and return transitions object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
-        Calls the :meth:`amespahdbpythonsuite.transitions.Transitions` class.
+        Calls the :class:`amespahdbpythonsuite.transitions.Transitions` class.
 
         Parameters:
             uids : list of integers
@@ -197,7 +197,7 @@ class AmesPAHdb:
         """
         Retrieve and return laboratory database object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
-        Calls the :meth:`amespahdbpythonsuite.laboratory.Laboratory` class.
+        Calls the :class:`amespahdbpythonsuite.laboratory.Laboratory` class.
 
         Parameters:
             uids : list of integers
@@ -237,7 +237,7 @@ class AmesPAHdb:
         """
         Retrieve and return species object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
-        Calls the :meth:`amespahdbpythonsuite.species.Species` class.
+        Calls the :class:`amespahdbpythonsuite.species.Species` class.
 
         Parameters:
             uids : list of integers
@@ -266,7 +266,7 @@ class AmesPAHdb:
         """
         Retrieve and return geometry object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
-        Calls the :meth:`amespahdbpythonsuite.geometry.Geometry` class
+        Calls the :class:`amespahdbpythonsuite.geometry.Geometry` class
         and :meth:`amespahdbpythonsuite.amespahdb.__getkeybyuids` method.
 
         Parameters:
@@ -609,7 +609,7 @@ class AmesPAHdb:
                 Number to indent the text.
 
         """
-        line = 57 * '='
+        line = (space + 2) * '='
         print(line)
         if type(text) is list:
             for t in text:
