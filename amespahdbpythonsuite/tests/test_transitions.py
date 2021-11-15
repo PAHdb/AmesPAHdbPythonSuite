@@ -134,5 +134,5 @@ class TestTransitions():
                           6.135216019051803e-16, 1.8019125715086965e-18])
         assert spec.model['temperatures'][0]['temperature'] == 1279.7835033561428
         assert spec.model['temperatures'][0]['temperature'] == spec_multi.model['temperatures'][0]['temperature']
-        np.testing.assert_array_equal(tspec, spec.data[18])
-        np.testing.assert_array_equal(tspec, spec_multi.data[18])
+        np.testing.assert_array_almost_equal(tspec, spec.data[18])
+        np.testing.assert_array_almost_equal(tspec, spec_multi.data[18])

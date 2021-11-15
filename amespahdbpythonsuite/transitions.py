@@ -504,6 +504,7 @@ class Transitions(Data):
 
         val2 = 1.4387751297850830401 * frequencies / T
 
+        # TODO: replace np.exp with np.expm1, and avoid overflow.
         return (Transitions.heatcapacity(T) / (np.exp(val1) - 1)) * \
             (1 / np.sum(intensities * (frequencies) ** 3 / (np.exp(val2) - 1)))
 
