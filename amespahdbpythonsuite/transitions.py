@@ -10,8 +10,10 @@ from functools import partial
 from scipy import integrate
 from scipy import optimize
 
-from amespahdbpythonsuite.amespahdb import message
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
+
+message = AmesPAHdb.message
 
 
 class Transitions(Data):
@@ -84,11 +86,12 @@ class Transitions(Data):
 
         message('APPLYING FIXED TEMPERATURE EMISSION MODEL')
 
-        f = np.asarray([d['frequency'] for d in self.data])
+        for uid in self.uids:
+            f = np.array([d['frequency'] for d in self.data[uid]])
 
-        intensity = 2.4853427121856266e-23 * f ** 3 / (np.exp(1.4387751297850830401 * f / t) - 1.0)
-        for (d, i) in zip(self.data, intensity):
-            d['intensity'] *= i
+            intensity = 2.4853427121856266e-23 * f ** 3 / (np.exp(1.4387751297850830401 * f / t) - 1.0)
+            for (d, i) in zip(self.data[uid], intensity):
+                d['intensity'] *= i
 
     def calculatedtemperature(self, e, **keywords):
         """
@@ -137,19 +140,16 @@ class Transitions(Data):
             print('UID                              : %d' % uid)
             print('MEAN ABSORBED ENERGY             : %f +/- %f eV' % (e / 1.6021765e-12, 0.0))
 
-            f = [v for v in self.data if v['uid'] == uid]
-
             global frequencies
+            frequencies = np.array([d['frequency'] for d in self.data[uid]])
 
-            frequencies = np.array([d['frequency'] for d in f])
-
-            Tmax = optimize.brentq(attainedtemperature, 2.73, 5000.0)
+            Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
             print('MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin' % Tmax)
 
             self.model['temperatures'].append({'uid': uid, 'temperature': Tmax})
 
-            for d in f:
+            for d in self.data[uid]:
                 if d['intensity'] > 0:
                     d['intensity'] *= 2.4853427121856266e-23 * \
                         d['frequency'] ** 3 / (np.exp(1.4387751297850830401 * d['frequency'] / Tmax) - 1.0)
@@ -187,15 +187,15 @@ class Transitions(Data):
         global intensities
         intensities = np.array([d['intensity'] for d in self.data[uid]])
 
-        Tmax = optimize.brentq(attainedtemperature, 2.73, 5000.0)
+        Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
         for d in self.data[uid]:
             if d['intensity'] > 0:
                 global frequency
                 frequency = d['frequency']
-                d['intensity'] *= d['frequency'] ** 3 * integrate.quad(featurestrength, 2.73, Tmax)[0]
+                d['intensity'] *= d['frequency'] ** 3 * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
 
-        temp = {uid: Tmax}
+        temp = {'uid': uid, 'temperature': Tmax}
         ud = {uid: self.data[uid]}
         return ud, temp
 
@@ -273,7 +273,7 @@ class Transitions(Data):
                 global intensities
                 intensities = np.array([d['intensity'] for d in self.data[uid]])
 
-                Tmax = optimize.brentq(attainedtemperature, 2.73, 5000.0)
+                Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
                 print('MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin' % Tmax)
 
@@ -283,7 +283,7 @@ class Transitions(Data):
                     if d['intensity'] > 0:
                         global frequency
                         frequency = d['frequency']
-                        d['intensity'] *= d['frequency'] ** 3 * integrate.quad(featurestrength, 2.73, Tmax)[0]
+                        d['intensity'] *= d['frequency'] ** 3 * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
 
                 i += 1
 
@@ -399,12 +399,12 @@ class Transitions(Data):
 
         gaussian = keywords.get('gaussian', False)
         drude = keywords.get('drude', False)
-        get_intensities = partial(self._get_intensities,
-                                  npoints, xmin, xmax, clip, width, x,
-                                  gaussian, drude)
         d = {}
 
         if keywords.get('multiprocessing'):
+            get_intensities = partial(self._get_intensities, npoints,
+                                      xmin, xmax, clip, width,
+                                      x, gaussian, drude)
             if keywords.get('ncores'):
                 ncores = keywords.get('ncores')
                 print(f'Using multiprocessing module with {ncores} cores')
@@ -440,16 +440,16 @@ class Transitions(Data):
         elapsed = timedelta(seconds=(time.perf_counter() - tstart))
         print(f'Elapsed time: {elapsed}')
 
-        from amespahdbpythonsuite.spectrum import spectrum
+        from amespahdbpythonsuite.spectrum import Spectrum
 
         if self.model['type'] == 'zerokelvin_m':
             self.units['ordinate'] = {'unit': 2,
                                       'str': 'cross-section [x10$^{5}$ cm$^{2}$/mol]'}
         elif self.model['type'] == 'cascade_m':
-            self.uints['ordinate'] = {'unit': 3,
+            self.units['ordinate'] = {'unit': 3,
                                       'str': 'radiant energy [x10$^{5}$ erg/cm$^{-1}$/mol]'}
 
-        return spectrum(type=self.type,
+        return Spectrum(type=self.type,
                         version=self.version,
                         data=d,
                         pahdb=self.pahdb,
@@ -485,60 +485,56 @@ class Transitions(Data):
         elif keywords.get('lorentzian', True):
             return (width / np.pi) / ((x - x0) ** 2 + width ** 2)
 
+    @staticmethod
+    def featurestrength(T):
+        """
+        Calculate a feature's strength covolved with a blackbody.
 
-@staticmethod
-def featurestrength(T):
-    """
-    Calculate a feature's strength covolved with a blackbody.
+        Parameters
+        ----------
+        T : float
+            Excitation temperature in Kelvin.
 
-    Parameters
-    ----------
-    T : float
-        Excitation temperature in Kelvin.
+        """
+        global frequency
+        global frequencies
+        global intensities
 
-    """
-    global frequency
-    global frequencies
-    global intensities
+        val1 = 1.4387751297850830401 * frequency / T
 
-    val1 = 1.4387751297850830401 * frequency / T
+        val2 = 1.4387751297850830401 * frequencies / T
 
-    val2 = 1.4387751297850830401 * frequencies / T
+        return (Transitions.heatcapacity(T) / (np.exp(val1) - 1)) * \
+            (1 / np.sum(intensities * (frequencies) ** 3 / (np.exp(val2) - 1)))
 
-    return (heatcapacity(T) / (np.exp(val1) - 1)) * \
-        (1 / np.sum(intensities * (frequencies) ** 3 / (np.exp(val2) - 1)))
+    @staticmethod
+    def attainedtemperature(T):
+        """
+        Calculate a PAH's temperature after absorbing a given amount of energy.
 
+        Parameters
+        ----------
+        T : float
+            Excitation temperature in Kelvin.
 
-@staticmethod
-def attainedtemperature(T):
-    """
-    Calculate a PAH's temperature after absorbing a given amount of energy.
+        """
+        global energy
 
-    Parameters
-    ----------
-    T : float
-        Excitation temperature in Kelvin.
+        return integrate.quad(Transitions.heatcapacity, 2.73, T)[0] - energy
 
-    """
-    global energy
+    def heatcapacity(T):
+        """
+        Calculate heat capacity.
 
-    return integrate.quad(heatcapacity, 2.73, T)[0] - energy
+        Parameters
+        ----------
+        T : float
+            Excitation temperature in Kelvin.
 
+        """
 
-@staticmethod
-def heatcapacity(T):
-    """
-    Calculate heat capacity.
+        global frequencies
 
-    Parameters
-    ----------
-    T : float
-        Excitation temperature in Kelvin.
+        val = 1.4387751297850830401 * frequencies / T
 
-    """
-
-    global frequencies
-
-    val = 1.4387751297850830401 * frequencies / T
-
-    return 1.3806505e-16 * np.sum(np.exp(-val) * (val / (1.0 - np.exp(-val))) ** 2)
+        return 1.3806505e-16 * np.sum(np.exp(-val) * (val / (1.0 - np.exp(-val))) ** 2)
