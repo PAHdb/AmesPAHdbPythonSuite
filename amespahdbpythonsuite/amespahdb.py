@@ -6,6 +6,7 @@ import copy
 import hashlib
 import tempfile
 import time
+import re
 from datetime import timedelta
 
 import pickle
@@ -61,7 +62,7 @@ class AmesPAHdb:
             # TODO: Turn the sys.exit into exceptions.
             sys.exit(2)
 
-        self.__data = dict()
+        self.__data = {}
 
         self._joined = None
 
@@ -84,7 +85,8 @@ class AmesPAHdb:
 
         # Create MD5 hash function pickle.
         md5 = tempfile.gettempdir() + \
-            '/' + hashlib.md5(open(filename, 'r').read().encode()).hexdigest() + '.pkl'
+            '/' + hashlib.md5(open(filename, 'r').read().encode()
+                              ).hexdigest() + '.pkl'
 
         # Check if database is dumped in cache and restore it.
         if (keywords.get('cache', True) and os.path.isfile(md5) and os.access(md5, os.R_OK)):
@@ -298,7 +300,65 @@ class AmesPAHdb:
 
         """
 
-        return None
+        if not query:
+            return
+
+        words = []
+
+        n = len(query)
+
+        i = 0
+        while True:
+
+            if i == n:
+                break
+
+            while query[i] == ' ':
+                i += 1
+
+            token = query[i]
+            if token in ["=", "<", ">", "(", ")"]:
+                i += 1
+                if i < n and query[i] == "=":
+                    token += query[i]
+                    i += 1
+            elif token == "&":
+                i += 1
+                if i < n and query[i] == "&":
+                    token += query[i]
+                    i += 1
+            elif token == "|":
+                i += 1
+                if i < n and query[i] == "|":
+                    token += query[i]
+                    i += 1
+            elif token == "!":
+                i += 1
+                if i < n and query[i] == "=":
+                    token += query[i]
+                    i += 1
+            else:
+                i += 1
+                while i < n and query[i] not in [" ", "=", "<", ">", "&", "|", "(", ")", "!"]:
+                    token += query[i]
+                    i += 1
+
+            words.append(token)
+
+        tokens = []
+
+        for word in words:
+            tokens.append(self._tokenize(word))
+
+        code = self._parsetokens(tokens)
+
+        if not code:
+            return None
+
+        found = eval(
+            f"[item[0] for item in _AmesPAHdb__data['species'].items() if ({code})]", self.__dict__)
+
+        return found
 
     def _tokenize(self, word):
         """
@@ -310,7 +370,96 @@ class AmesPAHdb:
 
         """
 
-        return None
+        word = word.lower()
+
+        token = {}
+
+        charge = {'anion': 'item[1]["charge"] < 0',
+                  'cation': 'item[1]["charge"] > 0',
+                  'neutral': 'item[1]["charge"] == 0',
+                  'positive': 'item[1]["charge"] > 0',
+                  'negative': 'item[1]["charge"] < 0',
+                  '-': 'item[1]["charge"] == -1',
+                  '+': 'item[1]["charge"] == 1',
+                  '++': 'item[1]["charge"] == 2',
+                  '+++': 'item[1]["charge"] == 3',
+                  '---': 'item[1]["charge"] == -3'}
+
+        identities = {'uid': 'item[0]',
+                      'identifier': 'item[0]',
+                      'atoms': 'len(item[1]["geometry"])',
+                      'hydrogen': 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
+                      'carbon': 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
+                      'nitrogen': 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
+                      'oxygen': 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
+                      'magnesium': 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
+                      'silicium': 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
+                      'iron': 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
+                      'h': 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
+                      'c': 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
+                      'n': 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
+                      'o': 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
+                      'mg': 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
+                      'si': 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
+                      'fe': 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
+                      # TODO make transition search work
+                      # 'wavenumber': 'item[1]["transitions"]["frequency"]',
+                      # 'absorbance': 'item[1]["transitions"]["intensity"]',
+                      # 'frequency': 'item[1]["transitions"]["frequency"]',
+                      # 'intensity': 'item[1]["transitions"]["intensity"]',
+                      'ch2': 'item[1]["n_ch2"]',
+                      'chx': 'item[1]["n_chx"]',
+                      'solo': 'item[1]["n_solo"]',
+                      'duo': 'item[1]["n_duo"]',
+                      'trio': 'item[1]["n_trio"]',
+                      'quartet': 'item[1]["n_quartet"]',
+                      'quintet': 'item[1]["n_quintet"]',
+                      'charge': 'item[1]["charge"]',
+                      'symmetry': 'item[1]["symmetry"]',
+                      'weight': 'item[1]["weight"]',
+                      'scale': 'item[1]["scale"]',
+                      'energy': 'item[1]["total_e"]',
+                      'zeropoint': 'item[1]m["vib_e"]',
+                      'experiment': 'item[1]["exp"]'}
+
+        logical = {'and': 'and', 'or': 'or', '|': 'or', '&': 'and'}
+
+        comparison = {'<': '<', 'lt': '<', '>': '>', 'gt': '>', '=': '==', 'eq': '==',
+                      '<=': '<=', 'le': '<=', '>=': '>=', 'ge': '>=', 'with': 'and', 'ne': '!=', '!=': '!='}
+
+        transfer = {'(': '(', ')': ')'}
+
+        if word.isnumeric():
+            token['type'] = "NUMERIC"
+            token['translation'] = word
+        elif word in charge:
+            token['type'] = "CHARGE"
+            token['translation'] = charge[word]
+        elif word in identities:
+            token['type'] = "IDENTITY"
+            token['translation'] = identities[word]
+        elif word in logical:
+            token['type'] = "LOGICAL"
+            token['translation'] = logical[word]
+        elif word in comparison:
+            token['type'] = "COMPARISON"
+            token['translation'] = comparison[word]
+        elif word in transfer:
+            token['type'] = "TRANSFER"
+            token['translation'] = transfer[word]
+        elif re.search(
+            '(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]*)([0-9]*)',
+                word):
+            token['type'] = "FORMULA"
+            token['translation'] = f"item[1]['formula'] == '{word.upper()}'"
+        else:
+            # TODO: add search by compound name
+            token['type'] = "IGNORE"
+            token['translation'] = word
+
+        token['valid'] = True
+
+        return token
 
     def _parsetokens(self, tokens):
         """
@@ -328,7 +477,95 @@ class AmesPAHdb:
 
         """
 
-        return None
+        ntokens = len(tokens)
+
+        prev = None
+
+        current = 0
+
+        if ntokens > 1:
+            next = 1
+        else:
+            next = None
+
+        parsed = ''
+
+        while current is not None:
+
+            if tokens[current]['type'] == 'FORMULA':
+                if prev is not None:
+                    if not (tokens[prev]['type'] != 'LOGICAL' and tokens[prev]['valid']):
+                        parsed += ' or '
+                parsed += tokens[current]['translation']
+            elif tokens[current]['type'] == 'IDENTITY':
+                if prev is not None:
+                    if not (tokens[prev]['type'] == 'LOGICAL' or
+                       tokens[prev]['type'] == 'TRANSFER' or
+                       tokens[prev]['type'] == 'TRANSFER' and tokens[prev]['valid']):
+                        parsed += ' and '
+                if next is not None:
+                    if tokens[next]['type'] == 'COMPARISON':
+                        parsed += ' ' + tokens[current]['translation']
+                    else:
+                        parsed += ' ' + tokens[current]['translation'] + ' > 0'
+            elif tokens[current]['type'] == 'NUMERIC':
+                if prev is not None:
+                    if tokens[prev]['type'] == 'COMPARISON' and tokens[prev]['valid']:
+                        parsed += ' ' + tokens[current]['translation']
+                    else:
+                        tokens[current].valid = False
+            elif tokens[current]['type'] == 'LOGICAL':
+                if prev is not None:
+                    if (tokens[prev]['type'] == 'IDENTITY' or tokens[prev]['type'] == 'NUMERIC' or
+                        tokens[prev]['type'] == 'FORMULA' or tokens[prev]['type'] == 'CHARGE' and
+                            tokens[prev]['valid']):
+                        if next is not None:
+                            if (tokens[next]['type'] == 'TRANSFER'):
+                                parsed += tokens[current]['translation']
+                            elif (tokens[next]['type'] == 'IDENTITY' or
+                                  tokens[next]['type'] == 'NUMERIC' or
+                                  tokens[next]['type'] == 'FORMULA' or
+                                  tokens[next]['type'] == 'CHARGE'):
+                                parsed += ' ' + tokens[current]['translation']
+                            else:
+                                tokens[current].valid = False
+            elif tokens[current]['type'] == 'COMPARISON':
+                if prev is not None:
+                    if tokens[prev]['type'] == 'IDENTITY' and tokens[prev]['valid']:
+                        if next is not None:
+                            if tokens[next]['type'] == 'NUMERIC':
+                                parsed += ' ' + tokens[current]['translation']
+                            else:
+                                tokens[current]['valid'] = False
+            elif tokens[current]['type'] == 'CHARGE':
+                if prev is not None:
+                    if not (tokens[prev]['type'] == 'LOGICAL' and tokens[prev]['valid']):
+                        parsed += ' and '
+                parsed += ' ' + tokens[current]['translation']
+            elif tokens[current]['type'] == 'TRANSFER':
+                parsed += tokens[current]['translation']
+            elif tokens[current]['type'] == 'NAME':
+                if prev is not None:
+                    if not (tokens[prev]['type'] == 'LOGICAL' and tokens[prev]['valid']):
+                        parsed += ' and '
+                # TODO implement name
+                # parsed += f"item[1]['comments'] == {tokens[current]['translation']}"
+            elif tokens[current]['type'] == 'IGNORE':
+                print(f"'{tokens[current]['translation']}' NOT UNDERSTOOD")
+
+                return ''
+
+            prev = current
+
+            current = next
+
+            if next:
+                if next == ntokens - 1:
+                    next = None
+                else:
+                    next += 1
+
+        return parsed
 
     def getversion(self):
         """

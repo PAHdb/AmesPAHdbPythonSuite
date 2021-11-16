@@ -103,3 +103,26 @@ class TestAmesPAHdb():
         uids = [18, 73, 726, 2054, 223]
         geo = pahdb.getgeometrybyuid(uids)
         assert isinstance(geo, amespahdbpythonsuite.geometry.Geometry)
+
+    def test_getdata(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        assert isinstance(pahdb.getdata(), dict)
+
+    def test_search_formula(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        uids = pahdb.search("c24h12")
+        assert uids == [18]
+
+    def test_search_charge(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        uids = pahdb.search("charge=0")
+        assert uids == [18, 73, 726, 2054, 223]
+
+    def test_search_size_and_charge(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        uids = pahdb.search("c=24 and h=12 and neutral")
+        assert uids == [18]
