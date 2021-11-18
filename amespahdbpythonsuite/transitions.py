@@ -162,7 +162,7 @@ class Transitions(Data):
 
         print(57 * '=')
 
-    def _cascade_em_model(self, uid):
+    def _cascade_em_model(self, e, uid):
         """
         A partial method of :meth:`amespahdbpythonsuite.transitions.cascade`
         used when multiprocessing is required.
@@ -181,6 +181,9 @@ class Transitions(Data):
             Dictionary of calculated intensities for the given UID.
 
         """
+        global energy
+        energy = e
+
         global frequencies
         frequencies = np.array([d['frequency'] for d in self.data[uid]])
 
@@ -237,7 +240,7 @@ class Transitions(Data):
         print(57 * '=')
 
         if keywords.get('multiprocessing'):
-            cascade_em_model = partial(self._cascade_em_model)
+            cascade_em_model = partial(self._cascade_em_model, e)
             if keywords.get('ncores'):
                 ncores = keywords.get('ncores')
                 print(f'Using multiprocessing module with {ncores} cores')
@@ -256,7 +259,7 @@ class Transitions(Data):
                 for k, v in d.items():
                     self.data[k] = v
 
-            self.model['temperatures'] = temp
+                self.model['temperatures'] = temp
 
         else:
             i = 0
