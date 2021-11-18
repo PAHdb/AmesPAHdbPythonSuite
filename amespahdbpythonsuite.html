@@ -144,11 +144,11 @@
 <p>AmesPAHdbPythonSuite main class.
 Contains methods to parse the database, perform search based on query,
 and retrieve UIDs.
-Calls methods:
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Transitions()</span></code>,
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Laboratory()</span></code>,
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Species()</span></code>,
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Geometry()</span></code>,
+Calls classes:
+<a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions</span></code></a>,
+<a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory</span></code></a>,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code>,
+<a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry</span></code></a>,
 to retrieve the respective objects.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getdata">
@@ -165,7 +165,7 @@ to retrieve the respective objects.</p>
 <span class="sig-name descname"><span class="pre">getgeometrybyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getgeometrybyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve and return geometry object based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
-Calls the <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry()</span></code></a> class
+Calls the <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry</span></code></a> class
 and <code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.amespahdb.__getkeybyuids()</span></code> method.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
@@ -183,7 +183,7 @@ and <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 <span class="sig-name descname"><span class="pre">getlaboratorybyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getlaboratorybyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve and return laboratory database object based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
-Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory()</span></code></a> class.</p>
+Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory</span></code></a> class.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
 <dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
@@ -200,7 +200,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.L
 <span class="sig-name descname"><span class="pre">getspeciesbyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getspeciesbyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve and return species object based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
-Calls the <code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species()</span></code> class.</p>
+Calls the <code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code> class.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
 <dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
@@ -217,7 +217,7 @@ Calls the <code class="xref py py-meth docutils literal notranslate"><span class
 <span class="sig-name descname"><span class="pre">gettransitionsbyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.gettransitionsbyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve and return transitions object based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
-Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions()</span></code></a> class.</p>
+Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions</span></code></a> class.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
 <dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
@@ -367,8 +367,96 @@ _root: root element of ElementTree tree.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">Transitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>AmesPAHdbPythonSuite transitions class</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.data.Data</span></code></p>
+<p>AmesPAHdbPythonSuite transitions class.
+Contains methods to create and apply an emission model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.attainedtemperature">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attainedtemperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.attainedtemperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.attainedtemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a PAH’s temperature after absorbing a given amount of energy.</p>
+<dl class="simple">
+<dt>T<span class="classifier">float</span></dt><dd><p>Excitation temperature in Kelvin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.calculatedtemperature">
+<span class="sig-name descname"><span class="pre">calculatedtemperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.calculatedtemperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.calculatedtemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the Calculated Temperature emission model.</p>
+<dl class="simple">
+<dt>e<span class="classifier">float</span></dt><dd><p>Excitation energy in erg.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.cascade">
+<span class="sig-name descname"><span class="pre">cascade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.cascade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.cascade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the Cascade emission model.</p>
+<dl class="simple">
+<dt>e<span class="classifier">float</span></dt><dd><p>Excitation energy in erg.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.convolve">
+<span class="sig-name descname"><span class="pre">convolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.convolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.convolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convolve transitions with a line profile.
+Calls class:
+<code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.spectrum.Spectrum</span></code> to retrieve the respective object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.featurestrength">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">featurestrength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.featurestrength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.featurestrength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength covolved with a blackbody.</p>
+<dl class="simple">
+<dt>T<span class="classifier">float</span></dt><dd><p>Excitation temperature in Kelvin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.fixedtemperature">
+<span class="sig-name descname"><span class="pre">fixedtemperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.fixedtemperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.fixedtemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the Fixed Temperature emission model.</p>
+<dl class="simple">
+<dt>t<span class="classifier">float</span></dt><dd><p>Excitation temperature in Kelvin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id1"><span class="problematic" id="id2">`</span></a>amespahdbpythonsuite.data.Data.get to get keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.heatcapacity">
+<span class="sig-name descname"><span class="pre">heatcapacity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.heatcapacity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.heatcapacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate heat capacity.</p>
+<dl class="simple">
+<dt>T<span class="classifier">float</span></dt><dd><p>Excitation temperature in Kelvin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id3"><span class="problematic" id="id4">`</span></a>amespahdbpythonsuite.data.Data.set to parse keywords.
+Checks type of database object (e.g., theoretical, experimental)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.shift">
+<span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.shift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shifts transitions frequency by provided value.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
