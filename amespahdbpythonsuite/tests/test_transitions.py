@@ -210,3 +210,12 @@ class TestTransitions():
                                             drude=False,
                                             uid=uids[0])
         np.testing.assert_array_almost_equal(test_spec[0], spec[18])
+
+    def test_plot_transitions(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        # UIDs test list.
+        uids = [18]
+        trans = pahdb.gettransitionsbyuid(uids)
+        # Call plot method.
+        trans.plot()
