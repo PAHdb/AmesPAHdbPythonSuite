@@ -259,7 +259,7 @@ class Transitions(Data):
                 for k, v in d.items():
                     self.data[k] = v
 
-                self.model['temperatures'] = temp
+            self.model['temperatures'] = temp
 
         else:
             i = 0
@@ -487,6 +487,36 @@ class Transitions(Data):
                 width ** 2 / ((x / x0 - x0 / x) ** 2 + width ** 2)
         elif keywords.get('lorentzian', True):
             return (width / np.pi) / ((x - x0) ** 2 + width ** 2)
+
+    def plot(self, **keywords):
+        """
+        Plot the transitions absorption spectrum.
+
+        """
+        import matplotlib.pyplot as plt
+        import matplotlib.cm as cm
+
+        _, ax = plt.subplots()
+        ax.minorticks_on()
+        ax.tick_params(which='major', right='on', top='on', direction='in', length=5)
+        ax.tick_params(which='minor', right='on', top='on', direction='in', length=3)
+        colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
+        for uid, col in zip(self.uids, colors):
+            f = [v for v in self.data[uid]]
+            x = [d['frequency'] for d in f]
+            y = [d['intensity'] for d in f]
+            ax.bar(x, y, 20, color=col, alpha=0.5)
+            ax.tick_params(axis='both', labelsize=14)
+
+        plt.gca().invert_xaxis()
+        plt.xlabel(self.units['abscissa']['str'], fontsize=14)
+        plt.ylabel(self.units['ordinate']['str'], fontsize=14)
+
+        if keywords.get('show'):
+            plt.show()
+        elif keywords.get('outfile'):
+            outfile = keywords.get('outfile')
+            plt.savefig(f'{outfile}.pdf', bbox_inches='tight')
 
     @staticmethod
     def featurestrength(T):
