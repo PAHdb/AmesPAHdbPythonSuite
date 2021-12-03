@@ -11,6 +11,7 @@ from pkg_resources import resource_filename
 import amespahdbpythonsuite
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+from amespahdbpythonsuite import transitions
 
 
 @pytest.fixture(scope="module")
@@ -98,6 +99,59 @@ class TestTransitions():
         uids = [18, 73, 726, 2054, 223]
         trans = pahdb.gettransitionsbyuid(uids)
         assert isinstance(trans, amespahdbpythonsuite.transitions.Transitions)
+
+    def test_set(self, capsys, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        # Test transitions set and data class set methods.
+        transitions.Transitions(type='invalid',
+                                version=pahdb._AmesPAHdb__data['version'],
+                                pahdb=pahdb._AmesPAHdb__data)
+        captured = capsys.readouterr()
+        assert 'DATABASE MISMATCH' in captured.out
+
+        transitions.Transitions(type='theoretical',
+                                version='9999',
+                                pahdb=pahdb._AmesPAHdb__data)
+        captured = capsys.readouterr()
+        assert 'VERSION MISMATCH' in captured.out
+
+    def test_get(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        # UIDs test list.
+        uids = [18, 73]
+        # Test transitions set and data class set methods.
+        trans = transitions.Transitions(type='theoretical',
+                                        version=pahdb._AmesPAHdb__data['version'],
+                                        uids=uids,
+                                        data=pahdb._AmesPAHdb__getkeybyuids('transitions', uids),
+                                        pahdb=pahdb._AmesPAHdb__data,
+                                        model={'type': 'zerokelvin_m',
+                                               'temperature': 0.0,
+                                               'description': ''},
+                                        units={'abscissa': {'unit': 1,
+                                                            'str': 'frequency [wavenumber]'},
+                                               'ordinate': {'unit': 2,
+                                                            'str': 'integrated cross-section' + '[km/mol]'}})
+
+        test_dict = trans.get()
+        key_list = ['type', 'database', 'version', 'data', 'uids', 'model', 'units', 'shift']
+        assert list(test_dict.keys()) == key_list
+        assert test_dict['type'] == 'Transitions'
+        assert test_dict['database'] == 'theoretical'
+        assert test_dict['version'] == pahdb._AmesPAHdb__data['version']
+
+    def test_intersect(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        # UIDs test list.
+        uids = [18, 73, 726, 2054, 223]
+        sub_uids = [18, 223]
+        trans = pahdb.gettransitionsbyuid(uids)
+        trans.intersect(sub_uids)
+        assert list(trans.uids) == sub_uids
+        assert list(trans.data.keys()) == sub_uids
 
     def test_shift(self, pahdb_theoretical):
         # Read the database.

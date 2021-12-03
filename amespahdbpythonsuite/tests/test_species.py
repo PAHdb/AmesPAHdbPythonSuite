@@ -2,7 +2,7 @@
 """
 test_amespahdb.py
 
-Test the Transitions.py module.
+Test the species.py module.
 """
 
 import amespahdbpythonsuite
@@ -10,7 +10,7 @@ import amespahdbpythonsuite
 from amespahdbpythonsuite.species import Species
 
 
-class TestTransitions():
+class TestSpecies():
     """
     Test AmesPAHdb class.
 
