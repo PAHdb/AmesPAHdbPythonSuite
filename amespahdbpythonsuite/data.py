@@ -35,7 +35,6 @@ class Data(object):
                     self.data = d['data']
                 if not keywords.get('uids'):
                     self.uids = d['uids']
-                    print('no uids keyword')
                 if not keywords.get('model'):
                     self.model = d['model']
                 if not keywords.get('units'):

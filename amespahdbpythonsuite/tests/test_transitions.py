@@ -12,6 +12,7 @@ import amespahdbpythonsuite
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import transitions
+from amespahdbpythonsuite import data
 
 
 @pytest.fixture(scope="module")
@@ -141,6 +142,10 @@ class TestTransitions():
         assert test_dict['type'] == 'Transitions'
         assert test_dict['database'] == 'theoretical'
         assert test_dict['version'] == pahdb._AmesPAHdb__data['version']
+        # Test set method of data module with provided dictionary.
+        test_dict['type'] = 'Data'
+        db = data.Data(test_dict, pahdb=pahdb._AmesPAHdb__data)
+        assert db.type == 'theoretical'
 
     def test_intersect(self, pahdb_theoretical):
         # Read the database.
