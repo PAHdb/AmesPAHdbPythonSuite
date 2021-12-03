@@ -42,7 +42,7 @@ class Transitions(Data):
             if d.get('type', '') == self.__class__.__name__:
                 if not keywords.get('shift'):
                     self.__shift = d['shift']
-                d['type'] = 'transitions'
+                d['type'] = 'Transitions'
 
         if keywords.get('shift'):
             self.shift = keywords.get('shift')
