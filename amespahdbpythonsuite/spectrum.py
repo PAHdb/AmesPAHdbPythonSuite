@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import copy
 
 from scipy import optimize
 
@@ -23,7 +22,6 @@ class Spectrum(Transitions):
         Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.set to parse keywords.
 
         """
-        Transitions.set(self, d, **keywords)
         if d:
             if d.get('type', '') == self.__class__.__name__:
                 if not keywords.get('grid'):
@@ -33,7 +31,7 @@ class Spectrum(Transitions):
                 if not keywords.get('fwhm'):
                     self.fwhm = d['fwhm']
 
-                Transitions.set(self, d, **keywords)
+        Transitions.set(self, d, **keywords)
 
         if len(keywords.get('grid', [])):
             self.grid = keywords.get('grid')
@@ -55,18 +53,6 @@ class Spectrum(Transitions):
         d['fwhm'] = self.fwhm
 
         return d
-
-    def subdatabase(self, uids):
-        """
-        Creates a subset of the database containing the retrieved UIDs.
-        """
-        d = {}
-        for key in self.pahdb:
-            if key == 'species':
-                d[key] = dict((uid, self.pahdb['species'][uid]) for uid in uids)
-            else:
-                d[key] = self.pahdb[key]
-        return copy.deepcopy(d)
 
     def fit(self, y, yerr=None, **keywords):
         """
@@ -109,7 +95,7 @@ class Spectrum(Transitions):
         return Fitted(type=self.type,
                       version=self.version,
                       data=data,
-                      pahdb=self.subdatabase(uids),
+                      pahdb=self.pahdb,
                       uids=uids,
                       model=self.model,
                       units=self.units,

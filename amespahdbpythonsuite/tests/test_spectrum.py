@@ -23,7 +23,7 @@ def pahdb_theoretical():
     return pahdb
 
 
-class TestSpecies():
+class TestSpectrum():
     """
     Test AmesPAHdb class.
 
