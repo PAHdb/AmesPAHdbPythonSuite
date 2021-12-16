@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-test_amespahdb.py
+test_laboratory.py
 
-Test the Transitions.py module.
+Test the laboratory.py module.
 """
 
 import amespahdbpythonsuite

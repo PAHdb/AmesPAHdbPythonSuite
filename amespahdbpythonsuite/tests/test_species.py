@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-test_amespahdb.py
+test_species.py
 
 Test the species.py module.
 """
