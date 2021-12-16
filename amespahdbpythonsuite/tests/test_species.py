@@ -12,7 +12,7 @@ from amespahdbpythonsuite.species import Species
 
 class TestSpecies():
     """
-    Test AmesPAHdb class.
+    Test Species class.
 
     """
     def test_instance(self):

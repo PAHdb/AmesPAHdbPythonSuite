@@ -10,9 +10,9 @@ import amespahdbpythonsuite
 from amespahdbpythonsuite.geometry import Geometry
 
 
-class TestTransitions():
+class TestGeometry():
     """
-    Test AmesPAHdb class.
+    Test Geometry class.
 
     """
     def test_instance(self):

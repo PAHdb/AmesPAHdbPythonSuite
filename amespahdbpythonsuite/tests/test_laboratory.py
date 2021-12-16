@@ -10,9 +10,9 @@ import amespahdbpythonsuite
 from amespahdbpythonsuite.laboratory import Laboratory
 
 
-class TestTransitions():
+class TestLaboratory():
     """
-    Test AmesPAHdb class.
+    Test Laboratory class.
 
     """
     def test_instance(self):

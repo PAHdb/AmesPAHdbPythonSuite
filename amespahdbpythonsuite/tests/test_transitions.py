@@ -90,7 +90,7 @@ def test_spec():
 
 class TestTransitions():
     """
-    Test AmesPAHdb class.
+    Test Transitions class.
 
     """
     def test_instance(self, pahdb_theoretical):

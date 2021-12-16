@@ -25,7 +25,7 @@ def pahdb_theoretical():
 
 class TestSpectrum():
     """
-    Test AmesPAHdb class.
+    Test Spectrum class.
 
     """
 
