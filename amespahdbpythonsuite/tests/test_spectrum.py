@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-test_amespahdb.py
+test_spectrum.py
 
-Test the species.py module.
+Test the spectrum.py module.
 """
 
 import pytest
@@ -25,7 +25,7 @@ def pahdb_theoretical():
 
 class TestSpectrum():
     """
-    Test AmesPAHdb class.
+    Test Spectrum class.
 
     """
 
@@ -57,4 +57,4 @@ class TestSpectrum():
         np.testing.assert_array_almost_equal(fit.grid, np.array(waven))
         # Check plotting function.
         monkeypatch.setattr(plt, 'show', lambda: None)
-        fit.plot()
+        spectrum.plot()

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-test_amespahdb.py
+test_geometry.py
 
-Test the Transitions.py module.
+Test the geometry.py module.
 """
 
 import amespahdbpythonsuite
@@ -10,9 +10,9 @@ import amespahdbpythonsuite
 from amespahdbpythonsuite.geometry import Geometry
 
 
-class TestTransitions():
+class TestGeometry():
     """
-    Test AmesPAHdb class.
+    Test Geometry class.
 
     """
     def test_instance(self):

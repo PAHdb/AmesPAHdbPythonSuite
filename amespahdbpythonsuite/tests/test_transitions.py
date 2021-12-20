@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-test_amespahdb.py
+test_transitions.py
 
-Test the Transitions.py module.
+Test the transitions.py module.
 """
 
 import numpy as np
@@ -90,7 +90,7 @@ def test_spec():
 
 class TestTransitions():
     """
-    Test AmesPAHdb class.
+    Test Transitions class.
 
     """
     def test_instance(self, pahdb_theoretical):

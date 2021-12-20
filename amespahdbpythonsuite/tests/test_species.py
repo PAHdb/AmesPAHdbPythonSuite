@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-test_amespahdb.py
+test_species.py
 
 Test the species.py module.
 """
@@ -12,7 +12,7 @@ from amespahdbpythonsuite.species import Species
 
 class TestSpecies():
     """
-    Test AmesPAHdb class.
+    Test Species class.
 
     """
     def test_instance(self):
