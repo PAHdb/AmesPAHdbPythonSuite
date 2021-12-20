@@ -247,7 +247,7 @@ class Fitted(Spectrum):
         fweight = list(self.weights.values())
         uids = self.uids
         formula = [self.pahdb['species'][uid]['formula'] for uid in self.uids]
-        nc = [self.pahdb['species'][uid]['nc'] for uid in self.uids]
+        nc = [self.atoms[uid]['nc'] for uid in self.uids]
         charge = [self.pahdb['species'][uid]['charge'] for uid in self.uids]
         mweight = [self.pahdb['species'][uid]['weight'] for uid in self.uids]
         nsolo = [self.pahdb['species'][uid]['n_solo'] for uid in self.uids]
@@ -283,24 +283,8 @@ class Fitted(Spectrum):
         # Set atom keywords in species dictionary.
         self._atoms()
 
-        subclasses = {'anion': {'subclass': 'charge',
-                                'operator': operator.lt,
-                                'operand': 0},
-                      'neutral': {'subclass': 'charge',
-                                  'operator': operator.eq,
-                                  'operand': 0},
-                      'cation': {'subclass': 'charge',
-                                 'operator': operator.gt,
-                                 'operand': 0},
-                      'small': {'subclass': 'nc',
-                                'operator': operator.le,
-                                'operand': keywords.get('small', 50)},
-                      'large': {'subclass': 'nc',
-                                'operator': operator.gt,
-                                'operand': keywords.get('small', 50)},
-                      'nitrogen': {'subclass': 'nn',
-                                   'operator': operator.gt,
-                                   'operand': 0}}
+        # Set subclasses dictionary.
+        subclasses = self._subclasses(**keywords)
 
         classes = dict()
 
@@ -308,11 +292,11 @@ class Fitted(Spectrum):
             classes[key] = self.__classes(subclasses[key])
 
         puids = [uid for uid in self.uids
-                 if self.pahdb['species'][uid]['nn'] == 0
-                 and self.pahdb['species'][uid]['no'] == 0
-                 and self.pahdb['species'][uid]['nmg'] == 0
-                 and self.pahdb['species'][uid]['nsi'] == 0
-                 and self.pahdb['species'][uid]['nfe'] == 0]
+                 if self.atoms[uid]['nn'] == 0
+                 and self.atoms[uid]['no'] == 0
+                 and self.atoms[uid]['nmg'] == 0
+                 and self.atoms[uid]['nsi'] == 0
+                 and self.atoms[uid]['nfe'] == 0]
         classes['pure'] = sum({k: v for k, v in self.data.items() if k in puids}.values())
 
         return classes
@@ -323,8 +307,12 @@ class Fitted(Spectrum):
 
         """
 
-        uids = [uid for uid in self.uids
-                if s['operator'](self.pahdb['species'][uid][s['subclass']], s['operand'])]
+        if s['subclass'] == 'charge':
+            uids = [uid for uid in self.uids
+                    if s['operator'](self.pahdb['species'][uid][s['subclass']], s['operand'])]
+        else:
+            uids = [uid for uid in self.uids
+                    if s['operator'](self.atoms[uid][s['subclass']], s['operand'])]
 
         intensities = sum({k: v for k, v in self.data.items() if k in uids}.values())
         return intensities
@@ -339,8 +327,9 @@ class Fitted(Spectrum):
 
             return None
 
-        # Set atom keywords in species dictionary.
-        self._atoms()
+        # Set atom dictionary if it doesn't exist.
+        if not self.atoms:
+            self._atoms()
 
         # Getting fit weights
         fweight = np.array(list(self.weights.values()))
@@ -380,6 +369,55 @@ class Fitted(Spectrum):
         if not keywords.get('absolute', False):
             total = np.sum(fweight)
 
+        # Set subclasses dictionary.
+        subclasses = self._subclasses(**keywords)
+
+        for key in subclasses:
+            breakdown[key] = self.__breakdown(subclasses[key]) / total
+
+        # Obtaining pure PAH breakdown.
+        uids = [uid for uid in self.uids
+                if self.atoms[uid]['nn'] == 0
+                and self.atoms[uid]['no'] == 0
+                and self.atoms[uid]['nmg'] == 0
+                and self.atoms[uid]['nsi'] == 0
+                and self.atoms[uid]['nfe'] == 0]
+
+        if len(uids) > 0:
+            breakdown['pure'] = np.sum([self.weights[uid] for uid in uids]) / total
+
+        # Getting Nc.
+        nc = np.array([self.atoms[uid]['nc'] for uid in self.uids])
+        breakdown['nc'] = np.sum(nc * fweight) / np.sum(fweight)
+        # Getting fit uncertainty.
+        breakdown['error'] = self.__geterror()
+
+        return breakdown
+
+    def __breakdown(self, s):
+        """
+        Retrieve the sum of the fitting weights for the fitted PAHs.
+
+        """
+        if s['subclass'] == 'charge':
+            uids = [uid for uid in self.uids
+                    if s['operator'](self.pahdb['species'][uid][s['subclass']], s['operand'])]
+        else:
+            uids = [uid for uid in self.uids
+                    if s['operator'](self.atoms[uid][s['subclass']], s['operand'])]
+
+        if len(uids) > 0:
+            return np.sum([self.weights[uid] for uid in uids])
+
+        else:
+            return 0.0
+
+    def _subclasses(self, **keywords):
+        """
+        Create subclasses dictionary.
+
+        """
+
         subclasses = {'anion': {'subclass': 'charge',
                                 'operator': operator.lt,
                                 'operand': 0},
@@ -399,45 +437,11 @@ class Fitted(Spectrum):
                                    'operator': operator.gt,
                                    'operand': 0}}
 
-        for key in subclasses:
-            breakdown[key] = self.__breakdown(subclasses[key]) / total
-
-        # Obtaining pure PAH breakdown.
-        uids = [uid for uid in self.uids
-                if self.pahdb['species'][uid]['nn'] == 0
-                and self.pahdb['species'][uid]['no'] == 0
-                and self.pahdb['species'][uid]['nmg'] == 0
-                and self.pahdb['species'][uid]['nsi'] == 0
-                and self.pahdb['species'][uid]['nfe'] == 0]
-
-        if len(uids) > 0:
-            breakdown['pure'] = np.sum([self.weights[uid] for uid in uids]) / total
-
-        # Getting Nc.
-        nc = np.array([self.pahdb['species'][uid]['nc'] for uid in self.uids])
-        breakdown['nc'] = np.sum(nc * fweight) / np.sum(fweight)
-        # Getting fit uncertainty.
-        breakdown['error'] = self.__geterror()
-
-        return breakdown
-
-    def __breakdown(self, s):
-        """
-        Retrieve the sum of the fitting weights for the fitted PAHs.
-
-        """
-        uids = [uid for uid in self.uids
-                if s['operator'](self.pahdb['species'][uid][s['subclass']], s['operand'])]
-
-        if len(uids) > 0:
-            return np.sum([self.weights[uid] for uid in uids])
-
-        else:
-            return 0.0
+        return subclasses
 
     def _atoms(self):
         """
-        Set atom keywords in species dictionary.
+        Create atoms dictionary.
 
         """
 
@@ -449,10 +453,11 @@ class Fitted(Spectrum):
                                                         if t['type'] == nelem[key]])(x)
                                             for x in self.pahdb['species'].values())]
 
-        # Append to species dict.
+        # Create atoms dictionary.
+        self.atoms = {key: {} for key in self.uids}
         for key in dnelem.keys():
             for i in range(len(self.uids)):
-                self.pahdb['species'][self.uids[i]][key] = dnelem[key][i]
+                self.atoms[self.uids[i]][key] = dnelem[key][i]
 
     def __geterror(self):
         """
