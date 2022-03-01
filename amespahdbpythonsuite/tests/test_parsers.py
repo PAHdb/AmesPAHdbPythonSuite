@@ -69,7 +69,7 @@ class TestXMLparser:
             parser.to_pahdb_dict()
 
     def test_not_an_xml_file(self, tmpdir_factory, not_an_xml_file):
-        with pytest.raises(TypeError):
+        with pytest.raises(XMLSyntaxError):
             parser = XMLparser(not_an_xml_file)
             parser.verify_schema()
             parser.to_pahdb_dict()
