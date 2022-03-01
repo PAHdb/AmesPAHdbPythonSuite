@@ -11,8 +11,6 @@ https://pahdb.github.io/cookbook/
 
 from pkg_resources import resource_filename
 
-import matplotlib.pyplot as plt
-
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 if __name__ == '__main__':
