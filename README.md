@@ -19,10 +19,22 @@ This software requires:
 
 ## Installation
 
+### Using pip
+
 The AmesPAHdbPythonSuite can be directly installed from its
 [repository](https://github.com/PAHdb/AmesPAHdbPythonSuite) using pip:
 
 ``pip install git+git://github.com/PAHdb/AmesPAHdbPythonSuite.git``
+
+### From source
+
+Alternatively the AmesPAHdbPythonSuite can be cloned and then installed:
+
+``git clone https://github.com/PAHdb/AmesPAHdbPythonSuite.git``
+
+Then change directories to the new AmesPAHdbPythonSuite directory and install:
+
+``pip install -e .``
 
 ## Examples
 
