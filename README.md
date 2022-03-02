@@ -39,22 +39,31 @@ Then change directories to the new AmesPAHdbPythonSuite directory and install:
 ## Examples
 
 ```python
-import pkg_resources
-from amespahdbpythonsuite.xmlparser import XMLparser
-import matplotlib.pyplot as plt
+from pkg_resources import resource_filename
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
-path = 'resources/pahdb-theoretical_cutdown.xml'
-xml = pkg_resources.resource_filename('amespahdbpythonsuite', path)
-parser = XMLparser(xml)
-parser.verify_schema()
-library = parser.to_pahdb_dict()
-plt.bar([d['frequency'] for d in library['species'][18]['transitions']],
-        [d['intensity'] for d in library['species'][18]['transitions']],
-        20, color='red', edgecolor="none")
-plt.title('stick absorption spectrum of coronene (UID=18)')
-plt.xlabel('frequency [cm$^{-1}$]')
-plt.ylabel('integrated cross-section [km mol$^{-1}$]')
-plt.show()
+# Read the database.
+xml = 'resources/pahdb-theoretical_cutdown.xml'
+pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
+                  check=False, cache=False)
+
+# Retrieve the transitions from the database for coronene.
+transitions = pahdb.gettransitionsbyuid([18])
+
+# Plot the emission 'stick' spectrum.
+transitions.plot(show=True)
+
+# Calculate the emission spectrum at the temperature reached
+# after absorbing a 6 eV (CGS units) photon.
+transitions.cascade(6 * 1.603e-12, multiprocessing=False)
+
+# Plot the emission 'stick' spectrum at that temperature.
+transitions.plot(show=True)
+
+# Convolve the bands with a Gaussian with FWHM of 15 /cm.
+convolved = transitions.convolve(fwhm=15.0, gaussian=True,
+                                 multiprocessing=False)
+convolved.plot(show=True)
 ```
 
 More examples can be found in the
