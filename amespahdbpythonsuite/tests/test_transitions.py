@@ -182,7 +182,7 @@ class TestTransitions():
         # Retrieve dictionary at 3068.821 frequency.
         dtest = [x for x in trans.data[18] if x['frequency'] == 3068.821][0]
         # Assert attained intensity.
-        assert dtest['intensity'] == 6.420001406551514e-14
+        np.testing.assert_almost_equal(dtest['intensity'], 6.420001406551514e-14, decimal=20)
 
     def test_calculatedtemperature(self, pahdb_theoretical):
         # Read the database.
@@ -210,7 +210,7 @@ class TestTransitions():
         dtest_b = [x for x in trans.data[18] if x['frequency'] == 3068.821][0]
         # Assert attained intensity and temperature.
         assert dtest_a['temperature'] == 1279.7835033561428
-        assert dtest_b['intensity'] == 1.6710637100014386e-12
+        np.testing.assert_almost_equal(dtest_b['intensity'], 1.6710637100014386e-12, decimal=20)
 
     def test_partial_cascade(self, pahdb_theoretical):
         # Read the database.
@@ -222,7 +222,7 @@ class TestTransitions():
         intf, tmax = trans_multi._cascade_em_model(6 * 1.603e-12, uids[0])
         test_i = [x for x in intf[uids[0]] if x['frequency'] == 3068.821][0]
         assert tmax['temperature'] == 1279.7835033561428
-        assert test_i['intensity'] == 1.6710637100014386e-12
+        np.testing.assert_almost_equal(test_i['intensity'], 1.6710637100014386e-12, decimal=20)
 
     def test_convolve(self, pahdb_theoretical, test_spec):
         # Read the database.
