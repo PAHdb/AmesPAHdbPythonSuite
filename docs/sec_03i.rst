@@ -6,147 +6,119 @@
 Spectroscopic Database Fitting
 ==============================
 
-The first step in fitting astronomical observations is loading
-      astronomical observations.
-
 --------------------------------------
 Dealing with astronomical observations
 --------------------------------------
 
-Astronomical observations can be handled by the
-'AmesPAHdbIDLSuite_Observation'-object, which is able to read
-text, *ISO*-SWS, and *Spitzer*-IRS-files. A convenience routine is
-available to manage units;
-AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S.
+Astronomical observations can be handled by the 'observation'-instance, which is able to read text, ISO-SWS, and Spitzer-IRS-files (*work-in-progress*).
+
+.. code:: python
+
+   observation = observation('myObservationFile')
+
+**NB** Text-files can have up to five columns, organized as follows:
+
+Column 1: abscissa
+
+Column 2: ordinate
+
+Column 3: continuum
+
+Column 4: uncertainty in ordinate
+
+Column 5: uncertainty in abscissa
 
 .. code:: idl
 
-   observation = OBJ_NEW('AmesPAHdbIDLSuite_Observation', $
-                         'myObservationFile', $
-                 Units=AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S())
+   observation = observation(x=frequency, \
+                             y=intensity, \
+                             yerr=ystdev)
 
-In addition, an 'AmesPAHdbIDLSuite_Observation'-object can be
-created using keyword-initializers.
+The 'observation'-instance exposes the observation and provides the 'plot', and 'write'-methods for output. The 'plot'- method will display the observation and accepts the 'oplot', and 'color'-keywords to control overplotting and color, respectively.
 
-.. code:: idl
+.. code:: python
 
-   observation = OBJ_NEW('AmesPAHdbIDLSuite_Observation',
-                          X=frequency, $
-                          Y=intensity, $
-                          ErrY=ystdev, $
-                          Units=AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S())
+   observation.plot()
 
-The 'AmesPAHdbIDLSuite_Observation'-object exposes the observation
-and provides the 'Plot', and 'Write'-methods for output. The
-'Plot'-method will display the observation and accepts the
-'Oplot', and 'Color'-keywords to control overplotting and color,
-respectively. Through IDL's keyword inheritance mechanism
-additional keywords accepted by IDL's 'PLOT'-procedure can be
-passed.
+The 'Write'-method will write the observation to an IPAC table (.tbl) file. Optionally, a filename can be provided.
 
-.. code:: idl
+.. code:: python
 
-   observation->Plot,XRANGE=[2.5,15],/XSTYLE
+   observation.write('myFile')
 
-The 'Write'-method will write the observation to a single text
-(.txt) file. Optionally, a prefix can be given that will be
-prepended to the filename.
 
-.. code:: idl
-
-   observation->Write,'myPrefix'
-
-**NB** Text-files can have up to five columns, organized as
-follows. Column 1: abscissa, Column 2: ordinate, Column 3:
-continuum, Column 4: uncertainty in ordinate, and Column 5:
-uncertainty in abscissa.
-
-The 'AmesPAHdbIDLSuite_Observation'-object's 'Rebin',
-'AbscissaUnitsTo', and 'SetGridRange'-methods can rebin the
-observation onto a specified grid or, with the 'Uniform'-Keyword
+The 'observations'-instance's 'rebin',
+'abscissaunitsto', and 'setgridrange'-methods can rebin the
+observation onto a specified grid or, with the 'uniform'-keyword
 set, onto a uniform created grid with specified sampling; convert
 the units associated with the abscissa; and change the grid range,
 respectively.
 
-.. code:: idl
+.. code:: python
 
-   observation->Rebin,myGrid
+   observation.rebin(myGrid)
 
-   observation->Rebin,5D,/Uniform
+   observation.rebin(5.0, uniform=True)
 
-   observation->AbsciccaUnitsTo
+   observation.AbsciccaUnitsTo
 
-   observation->SetGridRange,500,2000
+   observation.setgridrange(500, 2000)
 
 ----------------
 Database fitting
 ----------------
 
-Spectroscopic database fitting is handled by the
-'AmesPAHdbIDLSuite_Spectrum'-object and it either accepts an
-'AmesPAHdbIDLSuite_Observation'-object, or a simple array of
-ordinates with an optional array of ordinate uncertainties.
-Whether ordinate uncertainties are provided or not, the
-'AmesPAHdbIDLSuite_Spectrum'-object's 'Fit'-method will perform a
-non-negative least-chi-square or non-negative least-square fit and
-return an 'AmesPAHdbIDLSuite_Fitted_Spectrum'-object.
+Spectroscopic database fitting is handled by the 'spectrum'-instance and it either accepts an 'observation'-instance, or simply an array of ordinates with an optional array of ordinate uncertainties. Whether ordinate uncertainties are provided or not, the 'spectrum'- instance's 'fit'-method will perform a non-negative least-chi-square or non-negative least-square fit and return an 'fit'-instance.
 
-.. code:: idl
+.. code:: python
 
-   fit = spectrum->Fit(intensity, uncertainty)
+   # Using an 'observation'-instance
+   fit = spectrum.fit(observation)
 
-The 'AmesPAHdbIDLSuite_Fitted_Spectrum'-object exposes the fit and
-provides the 'Plot', and 'Write'-methods for output. The
-'Plot'-method accepts the 'Residual', 'Size', 'Charge', and
-'Composition'-keywords, which selectively display the residual of
-the fit, or either the size, charge and compositional breakdown.
-Without these keywords the fit itself is displayed.
+   # Using an array of ordinate values
+   fit = spectrum.fit(intensity)
 
-.. code:: idl
+   # Using an array of ordinate uncertainty values
+   fit = spectrum.fit(intensity, uncertainty)
 
-   fit->Plot,/Charge
+The 'fit'-instance exposes the fit and provides the 'plot', and 'Write'-methods for output. The 'plot'-method accepts the 'residual', 'size', 'charge', and 'composition'-keywords, which selectively display the residual of the fit, or either the size, charge and compositional breakdown. Without these keywords the fit itself is displayed.
 
-Optionally, the 'Wavelength', 'Stick', 'Oplot', 'Legend', and
-'Color'-keywords can be given to the 'Plot'-method to control the
+.. code:: python
+
+   fit.plot(charge=True)
+
+Optionally, the 'wavelength', 'stick', 'oplot', 'legend', and
+'color'-keywords can be given to the 'plot'-method to control the
 abscissa, stick representation, overplotting, legend and color,
-respectively. Through IDL's keyword inheritance mechanism
-additional keywords accepted by IDL's 'PLOT'-procedure can be
-passed.
+respectively.
 
-.. code:: idl
+.. code:: python
 
-   fit->Plot,/Size,/Wavelength,XTITLE=[2.5,15],/XSTYLE
+   fit.plot(size=True, wavelength=True)
 
-The 'AmesPAHdbIDLSuite_Fitted_Spectrum'-object's 'Write'-method
-will write the fit to a single text (.txt) file. Optionally, a
-prefix can be given that will be prepended to the filename.
+The 'fit’-instance’s ‘Write’-method will write the fit to an IPAC table (.tbl) file. Optionally, a filename can be provided.
 
-.. code:: idl
+.. code:: python
 
-   fit->Write,'myPrefix'
+   fit.write('myFile')
 
-The 'AmesPAHdbIDLSuite_Fitted_Spectrum'-object's 'GetClasses', and
-'GetBreakdown'-methods return the fit broken down by charge, size,
-and composition, where the first provides the spectrum for each
-component and the latter its relative contribution.
+The 'fit'-instance's 'getclasses', and 'getbreakdown'-methods return the fit broken down by charge, size, and composition, where the first provides the spectrum for each component and the latter its relative contribution.
 
-.. code:: idl
+.. code:: python
 
-   classes = fit->getClasses()
+   classes = fit.getclasses()
 
-   breakdown = fit->getBreakdown()
+   breakdown = fit.getbreakdown()
 
-Optionally the 'Small' keyword can be set, which controls the
+Optionally the 'small' keyword can be set, which controls the
 small cutoff size in number of carbon atoms.
 
-.. code:: idl
+.. code:: python
 
-   classes = fit->getClasses(Small=20L)
+   classes = fit.getclasses(small=20)
 
-The 'GetBreakdown'-method also accepts the 'Flux'-keyword, which
-controls whether the relative breakdown should be reported based
-on fitted weight or integrated flux.
+The 'getbreakdown'-method also accepts the 'flux'-keyword, which controls whether the relative breakdown should be reported based on fitted weight or integrated flux.
 
-.. code:: idl
+.. code:: python
 
-   breakdown = fit->getBreakdown(/Flux)
+   breakdown = fit.getbreakdown(flux=True)

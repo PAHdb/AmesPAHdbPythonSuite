@@ -30,10 +30,15 @@ consists of four main parts:
 .. code:: python
 
    pahdb = AmesPAHdb()
+   
    uids = pahdb.search("c<=20 neutral n=2 neutral")
+
    pahs = pahdb.getspeciesbyuid(uids)
+
    transitions = pahdb.gettransitionsbyuid(uids)
+
    geometry = pahdb.getgeometrybyuid(uids)
+
    laboratory = pahdb.getlaboratorybyuid(uids)
 
 Alternatively, one can access these components through the 'species'-instance.
@@ -41,7 +46,11 @@ Alternatively, one can access these components through the 'species'-instance.
 .. code:: python
 
    pahdb = AmesPAHdb()
+
    pahs = pahdb.getspeciesbyuid(pahdb.search("c<=20 neutral n=2 neutral"))
+
    transitions = pahs.transitions()
+
    geometry = pahs.geometry()
+
    laboratory = pahs.laboratory()
