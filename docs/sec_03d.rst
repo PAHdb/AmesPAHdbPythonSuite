@@ -6,57 +6,51 @@
 Working with fundamental vibrational transitions
 =================================================
 
-The 'AmesPAHdbIDLSuite_Transitions'-object exposes the fundamental
+The 'transitions'-instance exposes the fundamental
 vibrational transitions.
 
-.. code:: idl
+.. code:: python
 
-   transitions = pahdb->getTransitionsByUID( $
-                 pahdb->Search("c<=20 neutral n=2 neutral"))
+   transitions = pahdb.gettransitionsbyuid(pahdb.search("c<=20 neutral n=2 neutral"))
 
-The 'AmesPAHdbIDLSuite_Transitions-object's 'Print'-method will
+The 'transitions'-instance's 'print'-method will
 print out the associated fundamental vibrational transitions for
 each PAH species.
 
-.. code:: idl
+.. code:: python
 
-   transitions->Print
+   transitions.print()
 
-Optionally, the 'Str'-keyword can be given to the 'Print'-method,
+Optionally, the 'str'-keyword can be given to the 'print'-method,
 which will return the associated fundamental vibrational
 transitions for each PAH species as a single, concatenated string.
 
-.. code:: idl
+.. code:: python
    
-   transitions->Print,Str=Str
+   myStr = transitions.print(str=True)
 
-The 'AmesPAHdbIDLSuite_Transitions'-object's 'Plot'-method will
+The 'transitions'-instance's 'plot'-method will
 display the fundamental vibrational transitions in a 'stick'-plot.
 The transitions of each PAH species will be presented in a
-different color.
+different color. 
+The 'show' keyword will display the plot on screen, while the 'outfile' keyword will save figure to file.
 
-.. code:: idl
+.. code:: python
 
-   transitions->Plot
+   transitions.plot(show=True)
+   transitions.plot(outfile='myPlot')
 
-Optionally, the 'Wavelength', 'Stick', 'Oplot', 'Legend', and
-'Color'-keywords can be given to the 'Plot'-method to control the
+Optionally, the 'wavelength', 'stick', 'oplot', 'legend', and
+'color'-keywords can be given to the 'Plot'-method to control the
 abscissa, stick representation, overplotting, legend and color,
-respectively. Through IDL's keyword inheritance mechanism
-additional keywords accepted by IDL's 'PLOT'-procedure can be
-passed.
+respectively (*work-in-progress*). 
 
-.. code:: idl
+.. code:: python
 
-   transitions->Plot,/Wavelength,Color=5,XRANGE=[2.5,15],/XSTYLE
+   transitions.plot(wavelength=True, color='blue', show=True)
 
-The 'AmesPAHdbIDLSuite_Transitions'-object's 'Write'-method will
-write the fundamental vibrational transitions to file. The
-transitions of each PAH species will be written to a separate text
-(.txt) file, where each filename will have the PAH species UID
-embedded. Optionally, a prefix can be given that will be prepended
-to the filename.
+The 'transitions'-instance's 'write'-method will write the fundamental vibrational transitions to file. The transitions of each PAH species will be written to a IPAC table (.tbl). Optionally, a filename can be provided (*work-in-progress*).
 
-.. code:: idl
+.. code:: python
 
-   transitions->Write,'myPrefix'
+   transitions.write(myFile)

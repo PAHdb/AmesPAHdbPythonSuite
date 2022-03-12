@@ -6,39 +6,39 @@
 Working with Raw Laboratory Spectra
 ===================================
 
-The 'AmesPAHdbIDLSuite_Laboratory'-object exposes available raw
+The 'laboratory'-instance exposes available raw
 laboratory spectra when an experimental database XML-file is
-loaded.
+loaded (*work-in-progress*).
 
-.. code:: idl
+.. code:: python
 
-   laboratory = pahdb->getLaboratoryByUID( $
-                pahdb->Search("c<=20 neutral n=2 neutral"))
+   uids = pahdb.search("c<=20 neutral n=2 neutral")
 
-The 'AmesPAHdbIDLSuite_Laboratory-object's 'Plot'-method will
+   laboratory = pahdb.getlaboratorybyuid(uids)
+
+
+The 'laboratory'-instance's 'plot'-method will
 display the raw laboratory spectra. The spectrum of each PAH
-species will be presented in a different color.
+species will be presented in a different color (*work-in-progress*).
 
-.. code:: idl
+.. code:: python
 
-   laboratory->Plot
+   laboratory.plot()
 
-Optionally, the 'Wavelength', 'Oplot', and 'Color'-keywords can be
-given to the 'Plot'-method to control the abscissa, overplotting,
-and color, respectively. Through IDL's keyword inheritance
-mechanism additional keywords accepted by IDL's 'PLOT'-procedure
-can be passed.
+Optionally, the 'wavelength', 'oplot', and 'color'-keywords can be
+given to the 'plot'-method to control the abscissa, overplotting,
+and color, respectively (*work-in-progress*).
 
-.. code:: idl
+.. code:: python
 
-   laboratory->Plot,/Wavelength,Color=5,XRANGE=[2.5,15],/XSTYLE
+   laboratory.plot(wavelength=True,color='blue')
 
-The 'AmesPAHdbIDLSuite_Laboratory-object's 'Write'-method will
+The 'laboratory'-instance's 'write'-method will
 write the raw laboratory spectrum to file. The spectrum of each
 PAH species will be written to a separate text (.txt) file, where
 each filename will have the PAH species UID embedded. Optionally,
-a prefix can be given that will be prepended to the filename.
+a prefix can be given that will be prepended to the filename (*work-in-progress*).
 
-.. code:: idl
+.. code:: python
 
-   laboratory->Write,'myPrefix'
+   laboratory.write('myFile')

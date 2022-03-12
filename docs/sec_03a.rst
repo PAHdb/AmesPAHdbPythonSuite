@@ -7,55 +7,42 @@ Main Interface
 ==============
 
 Interaction with the NASA Ames PAH IR Spectroscopic Database is
-organized around the 'AmesPAHdbIDLSuite'-object, which is created
+organized around the 'AmesPAHdb'-object, which is created
 as shown below.
 
-.. code:: idl
+.. code:: python
 
-   pahdb = OBJ_NEW('AmesPAHdbIDLSuite')
+   from amespahdbpythonsuite.amespahdb import AmesPAHdb
+   pahdb = AmesPAHdb()
 
-Alternatively, the 'AmesPAHdbIDLSuite'-object can be created
-through the implicit object creation method as shown below.
-
-.. code:: idl
-
-   pahdb = AmesPAHdbIDLSuite()
-
-In case the system/IDL variable for the default database is not
+In case the system variable for the default database is not
 set, or one wishes to load another version or type of database,
-the 'Filename'-keyword can be specified.
+the 'filename'-keyword can be specified.
 
-.. code:: idl
+.. code:: python
 
-   pahdb = OBJ_NEW('AmesPAHdbIDLSuite', Filename='/path/to/xml-file')
+   pahdb = AmesPAHdb(filename='/path/to/xml-file')
 
-By default the *AmesPAHdbIDLSuite* will cache the parsed database
-XML-file for faster subsequent access. However, this behavior can
-be disabled by setting the 'Cache'-keyword to '0'.
+By default the parsed database XML-file will be cached for faster subsequent access. However, this behavior can be disabled by setting the 'cache'-keyword to false.
 
-.. code:: idl
+.. code:: python
 
-   pahdb = OBJ_NEW('AmesPAHdbIDLSuite', Cache=0)
+   pahdb = AmesPAHdb(cache=False)
 
-When parsing the database XML-file, the *AmesPAHdbIDLSuite* will
-try and validate its content against a URL-linked Schema. However,
-validation can be disabled by setting the 'Check'-keyword to '0'.
-This can be useful when not having an active internet connection.
+When parsing a database XML-file, the software will validate its content against a URL-linked Schema. However, validation can be disabled by setting the 'check'-keyword to false. This can be useful when not having an active internet connection.
 
-.. code:: idl
+.. code:: python
 
-   pahdb = OBJ_NEW('AmesPAHdbIDLSuite', Check=0)
+   pahdb = AmesPAHdb(check=False)
 
 It is possible to combine the different keywords.
 
-.. code:: idl
+.. code:: python
 
-   pahdb = OBJ_NEW('AmesPAHdbIDLSuite', Filename='path/to/xml-file', $
-                                        Cache=0, Check=0)
+   pahdb = AmesPAHdb(filename='/path/to/xml-file', cache=False, check=False)
 
-When finished with the *AmesPAHdbIDLSuite* the object should be
-destroyed.
+Lastly, when finished with the ‘pahdb’-instance it should be destroyed when no garbage collection is available.
 
-.. code:: idl
+.. code:: python
 
-   OBJ_DESTROY,pahdb
+   del pahdb

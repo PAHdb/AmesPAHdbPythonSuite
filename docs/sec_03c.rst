@@ -6,26 +6,26 @@
 Working with Molecular PAH Properties
 =====================================
 
-The 'AmesPAHdbIDLSuite_Species'-object exposes the molecular PAH
-properties.
+The 'species'-instance exposes the molecular PAH
+properties (currently *work-in-progress*).
 
-.. code:: idl
+The below code snippets are examples only of the *work-in-progress* 'AmesPAHdbPythonSuite Species' module. 
 
-   pahs = pahdb->getSpeciesByUID( $
-          pahdb->Search("c<=20 neutral n=2 neutral"))
+.. code:: python
 
-The 'AmesPAHdbIDLSuite_Species'-object's 'Print'-method will print
+   pahs = pahdb.getspeciesbyuid(pahdb.search("c<=20 neutral n=2 neutral"))
+
+The 'species'-instance's 'print'-method will print
 out the associated molecular properties for each PAH species.
 
-.. code:: idl
+.. code:: python
 
-   pahs->Print
+   pahs.print()
 
-Optionally, the 'Str'-keyword can be given to the 'Print'-method,
+Optionally, the 'str'-keyword can be given to the 'print'-method,
 which will return the molecular PAH properties for each species as
 an array of strings.
 
-.. code:: idl
+.. code:: python
 
-   pahs->Print,Str=Str
-
+   pahs.print(str=True)
