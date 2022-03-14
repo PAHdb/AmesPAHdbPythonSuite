@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -135,33 +134,32 @@
 </style>
 <div class="section" id="working-with-raw-laboratory-spectra">
 <h1><span class="sectnum">3.6</span> Working with Raw Laboratory Spectra<a class="headerlink" href="#working-with-raw-laboratory-spectra" title="Permalink to this headline">¶</a></h1>
-<p>The ‘AmesPAHdbIDLSuite_Laboratory’-object exposes available raw
+<p>The ‘laboratory’-instance exposes available raw
 laboratory spectra when an experimental database XML-file is
-loaded.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>laboratory <span class="o">=</span> pahdb<span class="o">-&gt;</span>getLaboratoryByUID( $
-             pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>))
+loaded (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uids</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span><span class="p">)</span>
+
+<span class="n">laboratory</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getlaboratorybyuid</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘AmesPAHdbIDLSuite_Laboratory-object’s ‘Plot’-method will
+<p>The ‘laboratory’-instance’s ‘plot’-method will
 display the raw laboratory spectra. The spectrum of each PAH
-species will be presented in a different color.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>laboratory<span class="o">-&gt;</span><span class="nb">Plot</span>
+species will be presented in a different color (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">laboratory</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Optionally, the ‘Wavelength’, ‘Oplot’, and ‘Color’-keywords can be
-given to the ‘Plot’-method to control the abscissa, overplotting,
-and color, respectively. Through IDL’s keyword inheritance
-mechanism additional keywords accepted by IDL’s ‘PLOT’-procedure
-can be passed.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>laboratory<span class="o">-&gt;</span><span class="nb">Plot</span>,<span class="o">/</span>Wavelength,Color<span class="o">=</span><span class="mi">5</span>,XRANGE<span class="o">=</span>[<span class="mf">2.5</span>,<span class="mi">15</span>],<span class="o">/</span>XSTYLE
+<p>Optionally, the ‘wavelength’, ‘oplot’, and ‘color’-keywords can be
+given to the ‘plot’-method to control the abscissa, overplotting,
+and color, respectively (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">laboratory</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘AmesPAHdbIDLSuite_Laboratory-object’s ‘Write’-method will
+<p>The ‘laboratory’-instance’s ‘write’-method will
 write the raw laboratory spectrum to file. The spectrum of each
 PAH species will be written to a separate text (.txt) file, where
 each filename will have the PAH species UID embedded. Optionally,
-a prefix can be given that will be prepended to the filename.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>laboratory<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;</span>
+a prefix can be given that will be prepended to the filename (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">laboratory</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;myFile&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

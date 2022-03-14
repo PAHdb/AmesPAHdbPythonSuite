@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -142,74 +141,53 @@ i.e., spectra. When not dealing with absorption at 0-Kelvin, an
 emission model is required as well.</p>
 <div class="section" id="emission-models">
 <h2><span class="sectnum">3.8.1</span> Emission models<a class="headerlink" href="#emission-models" title="Permalink to this headline">¶</a></h2>
-<p>The <em>AmesPAHdbIDLSuite</em> offers three PAH emission models. With
-increasing complexity they are the ‘FixedTemperature’,
-‘CalculatedTemperature’, and ‘Cascade’ model. The first simply
-multiplies a blackbody at fixed given temperature with the
-integrated cross-section of each vibrational transition. The
-second first calculates the maximum attained temperature from the
-provided input and subsequently multiplies a blackbody at that
-fixed temperature with the integrated cross-section of each
-vibrational transition. The third averages the total emission over
-the entire cooling cascade (time).</p>
-<p>Emission models are handled by the
-‘AmesPAHdbIDLSuite_Transitions’-object. The
-‘FixedTemperature’-model simply takes a temperature, in Kelvin,
-and, in their simplest form, both the ‘CalculatedTemperature’ and
-‘Cascade’ models take an energy, in erg.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span>FixedTemperature,600D
+<p>The software tools offer three PAH emission models. With increasing complexity they are the ‘fixedtemperature’, ‘calculatedtemperature’, and ‘cascade’ model. The first simply multiplies a blackbody at fixed given temperature with the integrated cross-section of each vibrational transition. The second first calculates the maximum attained temperature from the provided input and subsequently multiplies a blackbody at that fixed temperature with the integrated cross-section of each vibrational transition. The third averages the total emission over the entire cooling cascade (time).</p>
+<p>Emission models are handled by the ‘transitions’-instance. The ‘FixedTemperature’-model simply takes a temperature, in Kelvin, and, in their simplest form, both the ‘calculatedtemperature’ and ‘cascade’ models take an energy, in erg.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span><span class="o">.</span><span class="n">fixedtemperature</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
 
-transitions<span class="o">-&gt;</span>CalculatedTemperature,6D<span class="o">*</span><span class="mf">1.603D-12</span>; <span class="mi">6</span> eV
+<span class="n">transitions</span><span class="o">.</span><span class="n">calculatedtemperature</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="mf">1.603e-12</span><span class="p">)</span>
 
-transitions<span class="o">-&gt;</span>Cascade,6D<span class="o">*</span><span class="mf">1.603D-12</span>; <span class="mi">6</span> eV
+<span class="n">transitions</span><span class="o">.</span><span class="n">cascade</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="mf">1.603e-12</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Both the ‘CalculatedTemperature’ and ‘Cascade’-methods accept the
-‘Approximate’, ‘Star’, ‘StellarModel’, and ‘ISRF’-keywords. With
-the ‘Approximate’-keyword specified, calculations are performed
+<p>Both the ‘calculatedtemperature’ and ‘cascade’-methods accept the
+‘approximate’, ‘star’, ‘stellarmodel’, and ‘isrf’-keywords. With
+the ‘approximate’-keyword specified, calculations are performed
 using the PAH emission model from Bakes et al.
 (2001<a class="reference external" href="http://adsabs.harvard.edu/abs/2001ApJ...556..501B">a</a>,
 <a class="reference external" href="http://adsabs.harvard.edu/abs/2001ApJ...560..261B">b</a>). When
-the ‘Star’-keyword is set, a stellar blackbody at the provided
+the ‘star’-keyword is set, a stellar blackbody at the provided
 temperature is used to calculate the average energy absorbed by
 each PAH utilizing the PAH absorption cross-sections from Draine &amp;
 Li
 (<a class="reference external" href="http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=2007ApJ...657..810D&amp;db_key=AST&amp;link_type=ABSTRACT&amp;high=54888b502c27613">2007</a>).
-In case the ‘StellarModel’-keyword is provided as well, the input
-is considered to be a full-blown, for example, Kurucz stellar
-atmosphere model. The
+In case the ‘stellarmodel’-keyword is provided as well, the input
+is considered to be a full-blown, for example, kurucz stellar
+atmosphere model. In the IDL case, the
 ‘AmesPAHdbIDLSuite_CREATE_KURUCZ_STELLARMODEL_S’ helper routine is
 provided to assist with molding the model data into the proper
-input format. Lastly, with the ‘ISRF’-keyword set, the
+input format. Lastly, with the ‘isrf’-keyword set, the
 interstellar radiation field from Mathis et al.
 (<a class="reference external" href="http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=1983A%26A...128..212M&amp;db_key=AST&amp;link_type=ABSTRACT&amp;high=54888b502c28367">1983</a>)
 is used to calculate the average energy absorbed by each PAH.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span>CalculatedTemperature,17D3,<span class="o">/</span>Star
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span><span class="o">.</span><span class="n">calculatedtemperature</span><span class="p">(</span><span class="mi">17000</span><span class="p">,</span> <span class="n">star</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-transitions<span class="o">-&gt;</span>Cascade,<span class="o">/</span>Approximate,<span class="o">/</span>ISRF
-
-FTAB_EXT,<span class="s1">&#39;ckp00_17000.fits&#39;</span>,[<span class="mi">1</span>,<span class="mi">10</span>],angstroms,flam,EXT<span class="o">=</span><span class="mi">1</span>
-
-transitions<span class="o">-&gt;</span>Cascade, $
-             AmesPAHdbIDLSuite_CREATE_KURUCZ_STELLARMODEL_S(angstroms, $
-                                                            flam), $
-             <span class="o">/</span>Star, $
-             <span class="o">/</span>StellarModel
+<span class="n">transitions</span><span class="o">.</span><span class="n">cascade</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="s1">&#39;approximate&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘Cascade’-method also accepts the ‘Convolve’-keyword. When set
-and combined with either the ‘Star’, optionally with the
-‘StellarModel’-keyword, or ‘ISRF’-keyword, will instead of
+<p>The ‘cascade’-method also accepts the ‘convolve’-keyword. When set
+and combined with either the ‘star’, optionally with the
+‘stellarModel’-keyword, or ‘isrf’-keyword, will instead of
 calculating the average absorbed photon energy for each PAH,
 convolve the PAH emission with the entire radiation field.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span>Cascade,17D3,<span class="o">/</span>Star,<span class="o">/</span>Convolve
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span><span class="o">.</span><span class="n">cascade</span><span class="p">(</span><span class="mi">17000</span><span class="p">,</span> <span class="n">star</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">convolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>NB</strong> This is computationally expensive.</p>
-<p>The ‘AmesPAHdbIDLSuite_Transitions’-object’s ‘Shift’-method can be
+<p>The ‘transitions’-instance’s ‘shift’-method can be
 used to redshift the fundamental transitions to simulate
 anharmonic effects.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span><span class="nb">Shift</span>,<span class="o">-</span>15D
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>NB</strong> Red-shifting the fundamental vibrational transitions should
@@ -218,44 +196,30 @@ described above.</p>
 </div>
 <div class="section" id="line-profiles">
 <h2><span class="sectnum">3.8.2</span> Line profiles<a class="headerlink" href="#line-profiles" title="Permalink to this headline">¶</a></h2>
-<p>Line profiles are handled by the
-‘AmesPAHdbIDLSuite_Transitions’-object and it provides three
-profiles; Lorentzian, Gaussian and Drude. Convolution with the
-keyword chosen line profile is achieved through the
-‘AmesPAHdbIDLSuite_Transitions’-object’s ‘Convolve’-method, which
-will return the convolved spectrum in the form of an
-‘AmesPAHdbIDLSuite_Spectrum’-object.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>spectrum <span class="o">=</span> transitions<span class="o">-&gt;</span>Convolve(<span class="o">/</span>Drude)
+<p>Line profiles are also handled by the ‘transitions’-intance and it provides three profiles Lorentzian, Gaussian and Drude. Convolution with the keyword chosen line profile is achieved through the ‘transitions’-instance’s ‘convolve’-method, which will return the convolved spectrum in the form of a ‘spectrum’-instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">transitions</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">drude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Optionally, the ‘Convolve’-method accepts the ‘FWHM’, ‘Grid’,
-‘NPoints’, and ‘XRange’-keywords, which control the
+<p>Optionally, the ‘convolve’-method accepts the ‘fwhm’, ‘grid’,
+‘npoints’, and ‘xrange’-keywords, which control the
 full-width-at-half-maximum of the selected line profile (in
 cm<sup>-1</sup>), convolution onto a specified grid, the number of
 resolution elements in the generated spectrum, and the frequency
 range (in cm<sup>-1</sup>) of the spectrum.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>spectrum <span class="o">=</span> transitions<span class="o">-&gt;</span>Convolve(<span class="o">/</span>Drude, FWHM<span class="o">=</span>20D, Grid<span class="o">=</span>myGrid)
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">transitions</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">drude</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">myGrid</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘AmesPAHdbIDLSuite_Spectrum’-object exposes the convolved
-spectra and provides the ‘Plot’, and ‘Write’-methods. The
-‘Plot’-method will display the spectrum of each PAH species in a
-different color. The ‘Write’-method will write all spectra to a
-single text (.txt) file. Optionally, a prefix can be given that
-will be prepended to the filename.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>  spectrum<span class="o">-&gt;</span><span class="nb">Plot</span>
+<p>The ‘spectrum’-instance exposes convolved spectra and provides the ‘plot’, and ‘write’-methods. The ‘plot’-method will display the spectrum of each PAH species in a different color. The ‘write’-method will write all spectra to an IPAC table (.tbl). Optionally, a filename can be provided.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
-  spectrum<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;&#39;</span>
-
-<span class="s1">Optionally, the &#39;</span>Wavelength<span class="s1">&#39;, &#39;</span>Stick<span class="s1">&#39;, &#39;</span><span class="nb">Oplot</span><span class="s1">&#39;, &#39;</span><span class="nb">Legend</span><span class="s1">&#39;, and</span>
-<span class="s1">&#39;</span>Color<span class="s1">&#39;-keywords can be given to the &#39;</span><span class="nb">Plot</span><span class="s1">&#39;-method to control</span>
-<span class="s1">abscissa, stick representation, overplotting, legend and color,</span>
-<span class="s1">respectively. Through IDL&#39;</span>s keyword inheritance mechanism
-additional keywords accepted by IDL<span class="s1">&#39;s &#39;</span><span class="nb">PLOT</span>&#39;<span class="o">-</span>procedure can be
-passed.
+<span class="n">spectrum</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;myFile&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>spectrum<span class="o">-&gt;</span><span class="nb">Plot</span>,<span class="o">/</span>Wavelength,XRANGE<span class="o">=</span>[<span class="mf">2.5</span>,<span class="mi">15</span>],<span class="o">/</span>XSTYLE
+<p>Optionally, the ‘wavelength’, ‘stick’, ‘oplot’, ‘legend’, and
+‘color’-keywords can be given to the ‘plot’-method to control
+abscissa, stick representation, overplotting, legend and color,
+respectively.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

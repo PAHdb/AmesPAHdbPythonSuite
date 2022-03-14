@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -135,44 +134,43 @@
 </style>
 <div class="section" id="working-outside-the-amespahdbidlsuite-object-classes">
 <h1><span class="sectnum">3.7</span> Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes<a class="headerlink" href="#working-outside-the-amespahdbidlsuite-object-classes" title="Permalink to this headline">¶</a></h1>
-<p>The <em>AmesPAHdbIDLSuite</em> object classes all provide the
-‘Get’-method that allows extraction of the object’s internal data
-into an anonymous IDL struct.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions_s <span class="o">=</span> transitions<span class="o">-&gt;</span>Get()
+<p>The <em>AmesPAHdbPythonSuite</em> object classes all provide the
+‘get’-method that allows extraction of the object’s internal data
+into a dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions_dict</span> <span class="o">=</span> <span class="n">transitions</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This allows, for example, more control over the presentation of
 the data.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="nb">PLOT</span>,transitions_s.data.frequency,1D5<span class="o">*</span>transitions_s.data.intensity, $
-     XTITLE<span class="o">=</span>transitions_s.units.x.str, $
-     YTITLE<span class="o">=</span><span class="s1">&#39;integrated intensity [cm!U-2!N mol!U-1!N]&#39;</span>, $
-     PSYM<span class="o">=</span><span class="mi">10</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span> <span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;intensity&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">][</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;integrated intensity [cm!U-2!N mol!U-1!N]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Subsequently this anonymous structure can be manipulated and even
+<p>Subsequently this dictionary can be manipulated and even
 be set to the object, which will try altering its internal state
 to reflect that of the manipulated data.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span>Set,transitions_s
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">transitions_dict</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In addition, the ‘Set’-method accepts keywords to alter its
+<p>In addition, the ‘set’-method accepts keywords to alter its
 internal state.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions<span class="o">-&gt;</span>Set,Data<span class="o">=</span>transitions_s.data
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Lastly, it is also possible to create new
-<em>AmesPAHdbIDLSuite</em>-objects initialized with an appropriate
-anonymous structure or through keywords.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>transitions <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite_Transitions&#39;</span>, transitions_s)
+<p>Lastly, it is also possible to create new intances initialized with an appropriate data representation or through keywords.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span> <span class="o">=</span> <span class="n">transitions</span><span class="p">(</span><span class="n">transitions_dict</span><span class="p">)</span>
 
-transitions <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite_Transitions&#39;</span>, $
-                      Type<span class="o">=</span>transitions_s.type, $
-                      Version<span class="o">=</span>transitions_s.version, $
-                      PAHdb<span class="o">=</span>pahdb<span class="o">-&gt;</span>Pointer(), $
-                      Data<span class="o">=</span>transitions_s.data, $
-                      Uids<span class="o">=</span>transitions_s.uids, $
-                      Model<span class="o">=</span>transitions_s.model, $
-                      Units<span class="o">=</span>transitions_s.units)
+<span class="n">transitions</span> <span class="o">=</span> <span class="n">trantions</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> \
+                        <span class="n">version</span><span class="o">=</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span> \
+                        <span class="n">pahdb</span><span class="o">=</span><span class="n">pahdb</span><span class="p">,</span> \
+                        <span class="n">data</span><span class="o">=</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> \
+                        <span class="n">uids</span><span class="o">=</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;uids&#39;</span><span class="p">],</span> \
+                        <span class="n">model</span><span class="o">=</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">],</span> \
+                        <span class="n">units</span><span class="o">=</span><span class="n">transitions_dict</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>

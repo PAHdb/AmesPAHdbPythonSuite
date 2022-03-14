@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -135,82 +134,73 @@
 </style>
 <div class="section" id="working-with-molecular-geometric-data">
 <h1><span class="sectnum">3.5</span> Working with Molecular Geometric Data<a class="headerlink" href="#working-with-molecular-geometric-data" title="Permalink to this headline">¶</a></h1>
-<p>The ‘AmesPAHdbIDLSuite_Geometry’-object exposes the molecular
-geometric data.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>geometry <span class="o">=</span> pahdb<span class="o">-&gt;</span>getGeometryByUID( $
-           pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>))
+<p>The ‘AmesPAHdbPythonSuite_Geometry’-object exposes the molecular
+geometric data (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uids</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span><span class="p">)</span>
+<span class="n">geometry</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getgeometrybyuid</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘AmesPAHdbIDLSuite_Geometry’-object provides both the ‘Plot’
-and ‘Structure’-methods to output the chemical structure of the
-PAH with provided UID. The first method uses IDL’s PLOT-procedures
-to create the output, while the latter IDL object graphics.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="c1">; UID 18 = coronene (C24H12)</span>
+<p>The ‘geometry’-instance provides both the ‘plot’ and ‘structure’-methods to output the chemical structure of the PAH with provided UID. The first method uses a 2D representation, while the latter a 3D one (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># UID 18 = coronene (C24H12)</span>
 
-void <span class="o">=</span> geometry<span class="o">-&gt;</span><span class="nb">Plot</span>(<span class="mi">18</span>)
-
-img <span class="o">=</span> geometry<span class="o">-&gt;</span>Structure(<span class="mi">18</span>)
+<span class="n">geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">structure</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘Plot’-method will accept the ‘Scale’, ‘Thick’, and ‘RGB’-
+<p>The ‘plot’-method will accept the ‘scale’, ‘thick’, and ‘rgb’-
 keywords to control the scale at which the atoms are to be drawn,
 the thickness of the bonds, and if colors should be outputted as
-decomposed RGB, respectively. In addition, the ‘NoErase’ and
-‘Position’-keywords control display erasing prior plotting and the
+decomposed RGB, respectively. In addition, the ‘noerase’ and
+‘position’-keywords control display erasing prior plotting and the
 plot position in normalized coordinates, respectively. When the
-‘Resolution’-keyword is set, the plot will be rendered to IDL’s
+‘resolution’-keyword is set, the plot will be rendered to
 Z-buffer device at given resolution and outputted as an image and
-returned to the caller. When the ‘Save’-keyword is also set, a
+returned to the caller. When the ‘save’-keyword is also set, a
 PNG-image will be generated as well, which will have the UID of
 the PAH molecule under consideration embedded in the filename.
-Lastly, the ‘Angle’-keyword controls rotation of the structure
-around the <em>z</em>-axis.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="c1">; UID 18 = coronene (C24H12)</span>
+Lastly, the ‘angle’-keyword controls rotation of the structure
+around the <em>z</em>-axis (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># UID 18 = coronene (C24H12)</span>
 
-img <span class="o">=</span> geometry<span class="o">-&gt;</span><span class="nb">Plot</span>(<span class="mi">18</span>, Scale<span class="o">=</span><span class="mf">2.0</span>, Thick<span class="o">=</span><span class="mf">5.0</span>, $
-                        Resolution<span class="o">=</span>[<span class="mi">1200</span>, <span class="mi">1200</span>], <span class="o">/</span><span class="nb">Save</span>)
+<span class="n">img</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">thick</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">1200</span><span class="p">),</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘Structure’-method will accept the ‘Background’ and
-‘Frame’-keywords to control background color and display of a
-wireframe. The ‘Resolution’-keyword controls the dimension of the
-3D-rendered output image. The ‘Save’-keyword can be specified to
+<p>The ‘structure’-method will accept the ‘background’ and
+‘frame’-keywords to control background color and display of a
+wireframe. The ‘resolution’-keyword controls the dimension of the
+3D-rendered output image. The ‘save’-keyword can be specified to
 save the generated image as a PNG-image as well, which will have
 the UID of the PAH molecule under consideration embedded in the
-filename. If in addition the ‘Transparent’-keyword is specified as
+filename. If in addition the ‘transparent’-keyword is specified as
 a color-triplet array, that color will be set to transparent in
-the generated PNG-file. The ‘Axis’ and ‘Angle’-keywords can
+the generated PNG-file. The ‘axis’ and ‘angle’-keywords can
 control axis and angle of rotation, respectively. With the
-‘View’-keyword set the generated structure will be displayed using
-IDL’s XOBJVIEW routine. Lastly, when the ‘Obj’-keyword is set, the
-generated IDLgrModel-object is returned to the caller.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="c1">; UID 18 = coronene (C24H12)</span>
-
-img <span class="o">=</span> geometry<span class="o">-&gt;</span>Structure(<span class="mi">18</span>, Background<span class="o">=</span>[<span class="mi">0</span>, <span class="mi">255</span>, <span class="mi">0</span>], $
-                              Resolution<span class="o">=</span>[<span class="mi">600</span>, <span class="mi">600</span>], $
-                              <span class="o">/</span><span class="nb">Save</span>, Transparent<span class="o">=</span>[<span class="mi">0</span>, <span class="mi">255</span>, <span class="mi">0</span>], $
-                              <span class="o">/</span>View)
+‘view’-keyword set the generated structure will be rendered on screen.
+Lastly, when the ‘obj’-keyword is set, the
+generated 3D model is returned to the caller (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># UID 18 = coronene (C24H12)</span>
 </pre></div>
 </div>
-<p>In addition, the ‘AmesPAHdbIDLSuite_Geometry’-object provides the
-‘Mass’, ‘Rings’, and ‘Area’-methods that return the calculated
+<p>img = geometry.structure(18, background=(0, 255, 0), resolution=(600, 600), save=True, transparent=(0, 255, 0), view=True)</p>
+<p>In addition, the ‘geometry’-instance provides the
+‘mass’, ‘rings’, and ‘area’-methods that return the calculated
 mass based on atomic masses, the number of 3-8 membered rings, and
-total surface area of the PAH molecules under consideration.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>masses <span class="o">=</span> geometry<span class="o">-&gt;</span>Mass()
+total surface area of the PAH molecules under consideration (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">masses</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">mass</span><span class="p">()</span>
 
-rings <span class="o">=</span> geometry<span class="o">-&gt;</span>Rings()
+<span class="n">rings</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">rings</span><span class="p">()</span>
 
-areas <span class="o">=</span> geometry<span class="o">-&gt;</span>Area()
+<span class="n">areas</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">area</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Lastly, the ‘Inertia’-method provides the moment of inertia
-matrices, which are diagonalized with the ‘Diagonalize’-method,
+<p>Lastly, the ‘inertia’-method provides the moment of inertia
+matrices, which are diagonalized with the ‘diagonalize’-method,
 for the PAH molecules under consideration. The latter method can
 be particular useful to ensure proper alignment of the structure
-with the view before calling the ‘Plot’ or ‘Structure’-methods.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>matrix <span class="o">=</span> geometry<span class="o">-&gt;</span>Inertia()
+with the view before calling the ‘plot’ or ‘structure’-methods (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">matrix</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">inertia</span><span class="p">()</span>
 
-geometry<span class="o">-&gt;</span>Diagonalize
+<span class="n">geometry</span><span class="o">.</span><span class="n">diagonalize</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

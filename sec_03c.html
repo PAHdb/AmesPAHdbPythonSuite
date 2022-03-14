@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -135,21 +134,21 @@
 </style>
 <div class="section" id="working-with-molecular-pah-properties">
 <h1><span class="sectnum">3.3</span> Working with Molecular PAH Properties<a class="headerlink" href="#working-with-molecular-pah-properties" title="Permalink to this headline">¶</a></h1>
-<p>The ‘AmesPAHdbIDLSuite_Species’-object exposes the molecular PAH
-properties.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahs <span class="o">=</span> pahdb<span class="o">-&gt;</span>getSpeciesByUID( $
-       pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>))
+<p>The ‘species’-instance exposes the molecular PAH
+properties (currently <em>work-in-progress</em>).</p>
+<p>The below code snippets are examples only of the <em>work-in-progress</em> ‘AmesPAHdbPythonSuite Species’ module.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahs</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getspeciesbyuid</span><span class="p">(</span><span class="n">pahdb</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>The ‘AmesPAHdbIDLSuite_Species’-object’s ‘Print’-method will print
+<p>The ‘species’-instance’s ‘print’-method will print
 out the associated molecular properties for each PAH species.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahs<span class="o">-&gt;</span><span class="nb">Print</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahs</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Optionally, the ‘Str’-keyword can be given to the ‘Print’-method,
+<p>Optionally, the ‘str’-keyword can be given to the ‘print’-method,
 which will return the molecular PAH properties for each species as
 an array of strings.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahs<span class="o">-&gt;</span><span class="nb">Print</span>,Str<span class="o">=</span>Str
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahs</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="nb">str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

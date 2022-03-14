@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -137,22 +136,30 @@
 <p>This is the example contained in example.py located in the
 examples-directory and shows how the AmesPAHdbPythonSuite is used to
 display the (‘stick’) absorption spectrum of coronene (UID=18).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pkg_resources</span>
-<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.xmlparser</span> <span class="kn">import</span> <span class="n">XMLparser</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
 
-<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;resources/pahdb-theoretical_cutdown.xml&#39;</span>
-<span class="n">xml</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;amespahdbpythonsuite&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-<span class="n">parser</span> <span class="o">=</span> <span class="n">XMLparser</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">verify_schema</span><span class="p">()</span>
-<span class="n">library</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_pahdb_dict</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">library</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">][</span><span class="mi">18</span><span class="p">][</span><span class="s1">&#39;transitions&#39;</span><span class="p">]],</span>
-        <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">library</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">][</span><span class="mi">18</span><span class="p">][</span><span class="s1">&#39;transitions&#39;</span><span class="p">]],</span>
-        <span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;stick absorption spectrum of coronene (UID=18)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;frequency [cm$^{-1}$]&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;integrated cross-section [km mol$^{-1}$]&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># Read the database.</span>
+<span class="n">xml</span> <span class="o">=</span> <span class="s1">&#39;resources/pahdb-theoretical_cutdown.xml&#39;</span>
+<span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;amespahdbpythonsuite&#39;</span><span class="p">,</span> <span class="n">xml</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Retrieve the transitions from the database for coronene.</span>
+<span class="n">transitions</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">gettransitionsbyuid</span><span class="p">([</span><span class="mi">18</span><span class="p">])</span>
+
+<span class="c1"># Plot the emission &#39;stick&#39; spectrum.</span>
+<span class="n">transitions</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Calculate the emission spectrum at the temperature reached</span>
+<span class="c1"># after absorbing a 6 eV (CGS units) photon.</span>
+<span class="n">transitions</span><span class="o">.</span><span class="n">cascade</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="mf">1.603e-12</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Plot the emission &#39;stick&#39; spectrum at that temperature.</span>
+<span class="n">transitions</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Convolve the bands with a Gaussian with FWHM of 15 /cm.</span>
+<span class="n">convolved</span> <span class="o">=</span> <span class="n">transitions</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">fwhm</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">gaussian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">convolved</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

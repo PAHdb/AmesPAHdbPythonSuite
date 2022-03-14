@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="3.10 Graphical User Interface" href="sec_03j.html" />
+    <link rel="next" title="4 Release History" href="release-history.html" />
     <link rel="prev" title="3.8 Creating PAH Spectra" href="sec_03h.html" /> 
 </head>
 
@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -102,7 +101,7 @@
       </li>
   </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
         <a href="sec_03h.html" class="btn btn-neutral float-left" title="3.8 Creating PAH Spectra" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sec_03j.html" class="btn btn-neutral float-right" title="3.10 Graphical User Interface" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="release-history.html" class="btn btn-neutral float-right" title="4 Release History" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
   </div>
   <hr/>
 </div>
@@ -135,122 +134,88 @@
 </style>
 <div class="section" id="spectroscopic-database-fitting">
 <h1><span class="sectnum">3.9</span> Spectroscopic Database Fitting<a class="headerlink" href="#spectroscopic-database-fitting" title="Permalink to this headline">¶</a></h1>
-<dl class="simple">
-<dt>The first step in fitting astronomical observations is loading</dt><dd><p>astronomical observations.</p>
-</dd>
-</dl>
 <div class="section" id="dealing-with-astronomical-observations">
 <h2><span class="sectnum">3.9.1</span> Dealing with astronomical observations<a class="headerlink" href="#dealing-with-astronomical-observations" title="Permalink to this headline">¶</a></h2>
-<p>Astronomical observations can be handled by the
-‘AmesPAHdbIDLSuite_Observation’-object, which is able to read
-text, <em>ISO</em>-SWS, and <em>Spitzer</em>-IRS-files. A convenience routine is
-available to manage units;
-AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite_Observation&#39;</span>, $
-                      <span class="s1">&#39;myObservationFile&#39;</span>, $
-              Units<span class="o">=</span>AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S())
+<p>Astronomical observations can be handled by the ‘observation’-instance, which is able to read text, ISO-SWS, and Spitzer-IRS-files (<em>work-in-progress</em>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span> <span class="o">=</span> <span class="n">observation</span><span class="p">(</span><span class="s1">&#39;myObservationFile&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In addition, an ‘AmesPAHdbIDLSuite_Observation’-object can be
-created using keyword-initializers.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite_Observation&#39;</span>,
-                       X<span class="o">=</span>frequency, $
-                       Y<span class="o">=</span>intensity, $
-                       ErrY<span class="o">=</span>ystdev, $
-                       Units<span class="o">=</span>AmesPAHdbIDLSuite_CREATE_OBSERVATION_UNITS_S())
+<p><strong>NB</strong> Text-files can have up to five columns, organized as follows:</p>
+<p>Column 1: abscissa</p>
+<p>Column 2: ordinate</p>
+<p>Column 3: continuum</p>
+<p>Column 4: uncertainty in ordinate</p>
+<p>Column 5: uncertainty in abscissa</p>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation <span class="o">=</span> observation(x<span class="o">=</span>frequency, \
+                          y<span class="o">=</span>intensity, \
+                          yerr<span class="o">=</span>ystdev)
 </pre></div>
 </div>
-<p>The ‘AmesPAHdbIDLSuite_Observation’-object exposes the observation
-and provides the ‘Plot’, and ‘Write’-methods for output. The
-‘Plot’-method will display the observation and accepts the
-‘Oplot’, and ‘Color’-keywords to control overplotting and color,
-respectively. Through IDL’s keyword inheritance mechanism
-additional keywords accepted by IDL’s ‘PLOT’-procedure can be
-passed.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="o">-&gt;</span><span class="nb">Plot</span>,XRANGE<span class="o">=</span>[<span class="mf">2.5</span>,<span class="mi">15</span>],<span class="o">/</span>XSTYLE
+<p>The ‘observation’-instance exposes the observation and provides the ‘plot’, and ‘write’-methods for output. The ‘plot’- method will display the observation and accepts the ‘oplot’, and ‘color’-keywords to control overplotting and color, respectively.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The ‘Write’-method will write the observation to a single text
-(.txt) file. Optionally, a prefix can be given that will be
-prepended to the filename.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;</span>
+<p>The ‘Write’-method will write the observation to an IPAC table (.tbl) file. Optionally, a filename can be provided.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;myFile&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>NB</strong> Text-files can have up to five columns, organized as
-follows. Column 1: abscissa, Column 2: ordinate, Column 3:
-continuum, Column 4: uncertainty in ordinate, and Column 5:
-uncertainty in abscissa.</p>
-<p>The ‘AmesPAHdbIDLSuite_Observation’-object’s ‘Rebin’,
-‘AbscissaUnitsTo’, and ‘SetGridRange’-methods can rebin the
-observation onto a specified grid or, with the ‘Uniform’-Keyword
+<p>The ‘observations’-instance’s ‘rebin’,
+‘abscissaunitsto’, and ‘setgridrange’-methods can rebin the
+observation onto a specified grid or, with the ‘uniform’-keyword
 set, onto a uniform created grid with specified sampling; convert
 the units associated with the abscissa; and change the grid range,
 respectively.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="o">-&gt;</span><span class="nb">Rebin</span>,myGrid
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span><span class="o">.</span><span class="n">rebin</span><span class="p">(</span><span class="n">myGrid</span><span class="p">)</span>
 
-observation<span class="o">-&gt;</span><span class="nb">Rebin</span>,5D,<span class="o">/</span>Uniform
+<span class="n">observation</span><span class="o">.</span><span class="n">rebin</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">uniform</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-observation<span class="o">-&gt;</span>AbsciccaUnitsTo
+<span class="n">observation</span><span class="o">.</span><span class="n">AbsciccaUnitsTo</span>
 
-observation<span class="o">-&gt;</span>SetGridRange,<span class="mi">500</span>,<span class="mi">2000</span>
+<span class="n">observation</span><span class="o">.</span><span class="n">setgridrange</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="database-fitting">
 <h2><span class="sectnum">3.9.2</span> Database fitting<a class="headerlink" href="#database-fitting" title="Permalink to this headline">¶</a></h2>
-<p>Spectroscopic database fitting is handled by the
-‘AmesPAHdbIDLSuite_Spectrum’-object and it either accepts an
-‘AmesPAHdbIDLSuite_Observation’-object, or a simple array of
-ordinates with an optional array of ordinate uncertainties.
-Whether ordinate uncertainties are provided or not, the
-‘AmesPAHdbIDLSuite_Spectrum’-object’s ‘Fit’-method will perform a
-non-negative least-chi-square or non-negative least-square fit and
-return an ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit <span class="o">=</span> spectrum<span class="o">-&gt;</span>Fit(intensity, uncertainty)
-</pre></div>
-</div>
-<p>The ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object exposes the fit and
-provides the ‘Plot’, and ‘Write’-methods for output. The
-‘Plot’-method accepts the ‘Residual’, ‘Size’, ‘Charge’, and
-‘Composition’-keywords, which selectively display the residual of
-the fit, or either the size, charge and compositional breakdown.
-Without these keywords the fit itself is displayed.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit<span class="o">-&gt;</span><span class="nb">Plot</span>,<span class="o">/</span>Charge
-</pre></div>
-</div>
-<p>Optionally, the ‘Wavelength’, ‘Stick’, ‘Oplot’, ‘Legend’, and
-‘Color’-keywords can be given to the ‘Plot’-method to control the
-abscissa, stick representation, overplotting, legend and color,
-respectively. Through IDL’s keyword inheritance mechanism
-additional keywords accepted by IDL’s ‘PLOT’-procedure can be
-passed.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit<span class="o">-&gt;</span><span class="nb">Plot</span>,<span class="o">/</span><span class="nb">Size</span>,<span class="o">/</span>Wavelength,XTITLE<span class="o">=</span>[<span class="mf">2.5</span>,<span class="mi">15</span>],<span class="o">/</span>XSTYLE
-</pre></div>
-</div>
-<p>The ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object’s ‘Write’-method
-will write the fit to a single text (.txt) file. Optionally, a
-prefix can be given that will be prepended to the filename.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>fit<span class="o">-&gt;</span>Write,<span class="s1">&#39;myPrefix&#39;</span>
-</pre></div>
-</div>
-<p>The ‘AmesPAHdbIDLSuite_Fitted_Spectrum’-object’s ‘GetClasses’, and
-‘GetBreakdown’-methods return the fit broken down by charge, size,
-and composition, where the first provides the spectrum for each
-component and the latter its relative contribution.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>classes <span class="o">=</span> fit<span class="o">-&gt;</span>getClasses()
+<p>Spectroscopic database fitting is handled by the ‘spectrum’-instance and it either accepts an ‘observation’-instance, or simply an array of ordinates with an optional array of ordinate uncertainties. Whether ordinate uncertainties are provided or not, the ‘spectrum’- instance’s ‘fit’-method will perform a non-negative least-chi-square or non-negative least-square fit and return an ‘fit’-instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using an &#39;observation&#39;-instance</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
 
-breakdown <span class="o">=</span> fit<span class="o">-&gt;</span>getBreakdown()
+<span class="c1"># Using an array of ordinate values</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span>
+
+<span class="c1"># Using an array of ordinate uncertainty values</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">intensity</span><span class="p">,</span> <span class="n">uncertainty</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Optionally the ‘Small’ keyword can be set, which controls the
+<p>The ‘fit’-instance exposes the fit and provides the ‘plot’, and ‘Write’-methods for output. The ‘plot’-method accepts the ‘residual’, ‘size’, ‘charge’, and ‘composition’-keywords, which selectively display the residual of the fit, or either the size, charge and compositional breakdown. Without these keywords the fit itself is displayed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">charge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Optionally, the ‘wavelength’, ‘stick’, ‘oplot’, ‘legend’, and
+‘color’-keywords can be given to the ‘plot’-method to control the
+abscissa, stick representation, overplotting, legend and color,
+respectively.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The ‘fit’-instance’s ‘Write’-method will write the fit to an IPAC table (.tbl) file. Optionally, a filename can be provided.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;myFile&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The ‘fit’-instance’s ‘getclasses’, and ‘getbreakdown’-methods return the fit broken down by charge, size, and composition, where the first provides the spectrum for each component and the latter its relative contribution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">classes</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">getclasses</span><span class="p">()</span>
+
+<span class="n">breakdown</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">getbreakdown</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Optionally the ‘small’ keyword can be set, which controls the
 small cutoff size in number of carbon atoms.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>classes <span class="o">=</span> fit<span class="o">-&gt;</span>getClasses(Small<span class="o">=</span><span class="il">20L</span>)
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">classes</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">getclasses</span><span class="p">(</span><span class="n">small</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The ‘GetBreakdown’-method also accepts the ‘Flux’-keyword, which
-controls whether the relative breakdown should be reported based
-on fitted weight or integrated flux.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>breakdown <span class="o">=</span> fit<span class="o">-&gt;</span>getBreakdown(<span class="o">/</span>Flux)
+<p>The ‘getbreakdown’-method also accepts the ‘flux’-keyword, which controls whether the relative breakdown should be reported based on fitted weight or integrated flux.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">breakdown</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">getbreakdown</span><span class="p">(</span><span class="n">flux</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -261,7 +226,7 @@ on fitted weight or integrated flux.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="sec_03h.html" class="btn btn-neutral float-left" title="3.8 Creating PAH Spectra" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sec_03j.html" class="btn btn-neutral float-right" title="3.10 Graphical User Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="release-history.html" class="btn btn-neutral float-right" title="4 Release History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

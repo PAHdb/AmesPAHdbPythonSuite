@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -141,7 +140,7 @@ allows retrieval of these UIDs through simplified queries. The
 syntax is the same as used on the NASA Ames PAH IR Spectroscopic
 Database
 <a class="reference external" href="https://www.astrochemistry.org/pahdb/theoretical/3.20/default/view">website.</a></p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>uids <span class="o">=</span> pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>)
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uids</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The molecular PAH data contained in the database XML-files
@@ -154,34 +153,29 @@ energy, total energy, etc.</p></li>
 <li><p>Raw laboratory spectra for a subset of molecules in the
 experimental database</p></li>
 </ol>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>)
-uids <span class="o">=</span> pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>)
-pahs <span class="o">=</span> pahdb<span class="o">-&gt;</span>getSpeciesByUID(uids)
-transitions <span class="o">=</span> pahdb<span class="o">-&gt;</span>getTransitionsByUID(uids)
-geometries <span class="o">=</span> pahdb<span class="o">-&gt;</span>getGeometryByUID(uids)
-laboratory <span class="o">=</span> pahdb<span class="o">-&gt;</span>getLaboratoryByUID(uids)
-... work ...
-<span class="nb">OBJ_DESTROY</span>,[laboratory, $
-             geometries, $
-             transitions, $
-             pahs, $
-             pahdb]
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">()</span>
+
+<span class="n">uids</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span><span class="p">)</span>
+
+<span class="n">pahs</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getspeciesbyuid</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
+
+<span class="n">transitions</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">gettransitionsbyuid</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
+
+<span class="n">geometry</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getgeometrybyuid</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
+
+<span class="n">laboratory</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getlaboratorybyuid</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Alternatively, one can access these data components through the
-‘AmesPAHdbIDLSuite_Species’-object.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>)
-pahs <span class="o">=</span> pahdb<span class="o">-&gt;</span>getSpeciesByUID( $
-       pahdb<span class="o">-&gt;</span>Search(<span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span>))
-transitions <span class="o">=</span> pahs<span class="o">-&gt;</span>transitions()
-geometries <span class="o">=</span> pahs<span class="o">-&gt;</span>geometry()
-laboratory <span class="o">=</span> pahs<span class="o">-&gt;</span>laboratory()
-... work ...
-<span class="nb">OBJ_DESTROY</span>,[laboratory, $
-             geometries, $
-             transitions, $
-             pahs, $
-             pahdb]
+<p>Alternatively, one can access these components through the ‘species’-instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">()</span>
+
+<span class="n">pahs</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getspeciesbyuid</span><span class="p">(</span><span class="n">pahdb</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span><span class="p">))</span>
+
+<span class="n">transitions</span> <span class="o">=</span> <span class="n">pahs</span><span class="o">.</span><span class="n">transitions</span><span class="p">()</span>
+
+<span class="n">geometry</span> <span class="o">=</span> <span class="n">pahs</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+
+<span class="n">laboratory</span> <span class="o">=</span> <span class="n">pahs</span><span class="o">.</span><span class="n">laboratory</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

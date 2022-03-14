@@ -62,7 +62,6 @@
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03j.html"><span class="sectnum">3.10</span> Graphical User Interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
@@ -136,43 +135,32 @@
 <div class="section" id="main-interface">
 <h1><span class="sectnum">3.1</span> Main Interface<a class="headerlink" href="#main-interface" title="Permalink to this headline">¶</a></h1>
 <p>Interaction with the NASA Ames PAH IR Spectroscopic Database is
-organized around the ‘AmesPAHdbIDLSuite’-object, which is created
+organized around the ‘AmesPAHdb’-object, which is created
 as shown below.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>)
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
+<span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Alternatively, the ‘AmesPAHdbIDLSuite’-object can be created
-through the implicit object creation method as shown below.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> AmesPAHdbIDLSuite()
-</pre></div>
-</div>
-<p>In case the system/IDL variable for the default database is not
+<p>In case the system variable for the default database is not
 set, or one wishes to load another version or type of database,
-the ‘Filename’-keyword can be specified.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Filename<span class="o">=</span><span class="s1">&#39;/path/to/xml-file&#39;</span>)
+the ‘filename’-keyword can be specified.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;/path/to/xml-file&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>By default the <em>AmesPAHdbIDLSuite</em> will cache the parsed database
-XML-file for faster subsequent access. However, this behavior can
-be disabled by setting the ‘Cache’-keyword to ‘0’.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Cache<span class="o">=</span><span class="mi">0</span>)
+<p>By default the parsed database XML-file will be cached for faster subsequent access. However, this behavior can be disabled by setting the ‘cache’-keyword to false.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>When parsing the database XML-file, the <em>AmesPAHdbIDLSuite</em> will
-try and validate its content against a URL-linked Schema. However,
-validation can be disabled by setting the ‘Check’-keyword to ‘0’.
-This can be useful when not having an active internet connection.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Check<span class="o">=</span><span class="mi">0</span>)
+<p>When parsing a database XML-file, the software will validate its content against a URL-linked Schema. However, validation can be disabled by setting the ‘check’-keyword to false. This can be useful when not having an active internet connection.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">(</span><span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>It is possible to combine the different keywords.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>pahdb <span class="o">=</span> <span class="nb">OBJ_NEW</span>(<span class="s1">&#39;AmesPAHdbIDLSuite&#39;</span>, Filename<span class="o">=</span><span class="s1">&#39;path/to/xml-file&#39;</span>, $
-                                     Cache<span class="o">=</span><span class="mi">0</span>, Check<span class="o">=</span><span class="mi">0</span>)
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pahdb</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;/path/to/xml-file&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>When finished with the <em>AmesPAHdbIDLSuite</em> the object should be
-destroyed.</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span><span class="nb">OBJ_DESTROY</span>,pahdb
+<p>Lastly, when finished with the ‘pahdb’-instance it should be destroyed when no garbage collection is available.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">del</span> <span class="n">pahdb</span>
 </pre></div>
 </div>
 </div>
