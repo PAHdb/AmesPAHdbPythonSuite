@@ -12,3 +12,4 @@ numpydoc
 sphinx-copybutton
 docutils<0.17
 sphinx_rtd_theme
+graphviz

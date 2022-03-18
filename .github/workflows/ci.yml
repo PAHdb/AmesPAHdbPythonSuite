@@ -10,6 +10,7 @@ jobs:
           python-version: 3.9
       - name: Install dependencies
         run: |
+          sudo apt-get install -y graphviz
           python -m pip install --upgrade pip
           pip install -v .
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
