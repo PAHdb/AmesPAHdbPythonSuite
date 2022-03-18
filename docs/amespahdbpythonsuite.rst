@@ -37,9 +37,6 @@ amespahdb module
     :undoc-members:
     :show-inheritance:
 
-xmlparser module
-----------------
-
 data module
 ----------------
 
