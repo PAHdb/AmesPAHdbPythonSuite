@@ -1,0 +1,7 @@
+<map id="inheritance88108a10d3" name="inheritance88108a10d3">
+<area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="3,30,192,45"/>
+<area shape="rect" id="node2" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="30,3,165,17"/>
+<area shape="rect" id="node5" href="#amespahdbpythonsuite.transitions.Transitions" target="_top" title="AmesPAHdbPythonSuite transitions class." alt="" coords="219,3,398,17"/>
+<area shape="rect" id="node3" href="#amespahdbpythonsuite.fitted.Fitted" target="_top" title="AmesPAHdbPythonSuite fitted class" alt="" coords="623,3,765,17"/>
+<area shape="rect" id="node4" href="#amespahdbpythonsuite.spectrum.Spectrum" target="_top" title="AmesPAHdbPythonSuite spectrum class." alt="" coords="425,3,596,17"/>
+</map>

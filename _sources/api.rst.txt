@@ -47,4 +47,3 @@ described in turn.
    sec_03g
    sec_03h
    sec_03i
-   sec_03j
