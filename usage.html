@@ -72,10 +72,14 @@
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.data">data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.spectrum">spectrum module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.species">species module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.fitted">fitted module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -133,8 +137,9 @@
 </style>
 <div class="section" id="usage">
 <h1><span class="sectnum">2</span> Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>This is the example contained in example.py located in the
-examples-directory and shows how the AmesPAHdbPythonSuite is used to
+<p>A database (.xml file) is required for complete usage of the AmesPAHdbPythonSuite. A few sample dabases are provided with the package installation (located in the <em>resources</em>-directory), however a complete database can be obtained from the NASA Ames PAH IR Spectroscopic Database <a class="reference external" href="https://www.astrochemistry.org/pahdb/theoretical/3.20/download/view">website.</a> following the Database Downloads instructions.</p>
+<p>Below is the example contained in example.py located in the
+<em>examples</em>-directory and shows how the AmesPAHdbPythonSuite is used to
 display the (‘stick’) absorption spectrum of coronene (UID=18).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>

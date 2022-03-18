@@ -71,10 +71,14 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">src</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.data">data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.spectrum">spectrum module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.species">species module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.geometry">geometry module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.fitted">fitted module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -133,6 +137,151 @@
 <h1>src<a class="headerlink" href="#src" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+digraph inheritancee52dcffb22 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.xmlparser.XMLparser&quot; [URL=&quot;#amespahdbpythonsuite.xmlparser.XMLparser&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;Parse a NASA Ames PAH IR Spectroscopic library XML-file.&quot;];
+}
+digraph inheritancef946d5dcdd {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritancebe829c5288 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.laboratory.Laboratory&quot; [URL=&quot;#amespahdbpythonsuite.laboratory.Laboratory&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite laboratory class&quot;];
+}
+digraph inheritanceb13f24d4ba {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.species.Species&quot; [URL=&quot;#amespahdbpythonsuite.species.Species&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite species class&quot;];
+}
+digraph inheritanceff75363379 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.geometry.Geometry&quot; [URL=&quot;#amespahdbpythonsuite.geometry.Geometry&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite geometry class&quot;];
+}
+digraph inheritance02695de3d5 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritance496b98ea20 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritance0ab6e6067c {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [URL=&quot;#amespahdbpythonsuite.spectrum.Spectrum&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite spectrum class.&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; -&gt; &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritanceeafbdcc348 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+}
+digraph inheritance63b9d555a4 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [URL=&quot;#amespahdbpythonsuite.spectrum.Spectrum&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite spectrum class.&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; -&gt; &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritance161e0f5624 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.fitted.Fitted&quot; [URL=&quot;#amespahdbpythonsuite.fitted.Fitted&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite fitted class&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; -&gt; &quot;amespahdbpythonsuite.fitted.Fitted&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [URL=&quot;#amespahdbpythonsuite.spectrum.Spectrum&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite spectrum class.&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; -&gt; &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritance88108a10d3 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.amespahdb.AmesPAHdb&quot; [URL=&quot;#amespahdbpythonsuite.amespahdb.AmesPAHdb&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite main class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.fitted.Fitted&quot; [URL=&quot;#amespahdbpythonsuite.fitted.Fitted&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite fitted class&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; -&gt; &quot;amespahdbpythonsuite.fitted.Fitted&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [URL=&quot;#amespahdbpythonsuite.spectrum.Spectrum&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite spectrum class.&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; -&gt; &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritance74342d531f {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.data.Data&quot; [URL=&quot;#amespahdbpythonsuite.data.Data&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite data class&quot;];
+  &quot;amespahdbpythonsuite.fitted.Fitted&quot; [URL=&quot;#amespahdbpythonsuite.fitted.Fitted&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite fitted class&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; -&gt; &quot;amespahdbpythonsuite.fitted.Fitted&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [URL=&quot;#amespahdbpythonsuite.spectrum.Spectrum&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite spectrum class.&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; -&gt; &quot;amespahdbpythonsuite.spectrum.Spectrum&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;amespahdbpythonsuite.transitions.Transitions&quot; [URL=&quot;#amespahdbpythonsuite.transitions.Transitions&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite transitions class.&quot;];
+  &quot;amespahdbpythonsuite.data.Data&quot; -&gt; &quot;amespahdbpythonsuite.transitions.Transitions&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+digraph inheritance600fde76fc {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.xmlparser.XMLparser&quot; [URL=&quot;#amespahdbpythonsuite.xmlparser.XMLparser&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;Parse a NASA Ames PAH IR Spectroscopic library XML-file.&quot;];
+}
+digraph inheritance8761091f53 {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.geometry.Geometry&quot; [URL=&quot;#amespahdbpythonsuite.geometry.Geometry&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite geometry class&quot;];
+}
+digraph inheritanceef0412fc5a {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.laboratory.Laboratory&quot; [URL=&quot;#amespahdbpythonsuite.laboratory.Laboratory&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite laboratory class&quot;];
+}
+digraph inheritancefa1427a76c {
+bgcolor=transparent;
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;amespahdbpythonsuite.species.Species&quot; [URL=&quot;#amespahdbpythonsuite.species.Species&quot;,fillcolor=white,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5),filled&quot;,target=&quot;_top&quot;,tooltip=&quot;AmesPAHdbPythonSuite species class&quot;];
+}
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 </div>
 <div class="section" id="module-amespahdbpythonsuite.amespahdb">
 <span id="amespahdb-module"></span><h2>amespahdb module<a class="headerlink" href="#module-amespahdbpythonsuite.amespahdb" title="Permalink to this headline">¶</a></h2>
@@ -146,7 +295,7 @@ and retrieve UIDs.
 Calls classes:
 <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions</span></code></a>,
 <a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory</span></code></a>,
-<code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code>,
+<a class="reference internal" href="#amespahdbpythonsuite.species.Species" title="amespahdbpythonsuite.species.Species"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code></a>,
 <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry</span></code></a>,
 to retrieve the respective objects.</p>
 <dl class="py method">
@@ -199,7 +348,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.L
 <span class="sig-name descname"><span class="pre">getspeciesbyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getspeciesbyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve and return species object based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
-Calls the <code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code> class.</p>
+Calls the <a class="reference internal" href="#amespahdbpythonsuite.species.Species" title="amespahdbpythonsuite.species.Species"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code></a> class.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
 <dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
@@ -300,6 +449,35 @@ Called by <code class="xref py py-meth docutils literal notranslate"><span class
 </dd></dl>
 
 </div>
+<div class="section" id="module-amespahdbpythonsuite.data">
+<span id="data-module"></span><h2>data module<a class="headerlink" href="#module-amespahdbpythonsuite.data" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.data.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AmesPAHdbPythonSuite data class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return data dictionary with expected keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.intersect">
+<span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.intersect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates data to the intersection with provided UIDs.</p>
+<p>uids : list of integers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate data dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-amespahdbpythonsuite.xmlparser">
 <span id="xmlparser-module"></span><h2>xmlparser module<a class="headerlink" href="#module-amespahdbpythonsuite.xmlparser" title="Permalink to this headline">¶</a></h2>
 <p>xmlparser.py</p>
@@ -366,7 +544,7 @@ _root: root element of ElementTree tree.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">Transitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.data.Data</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#amespahdbpythonsuite.data.Data" title="amespahdbpythonsuite.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.data.Data</span></code></a></p>
 <p>AmesPAHdbPythonSuite transitions class.
 Contains methods to create and apply an emission model.</p>
 <dl class="py method">
@@ -404,7 +582,7 @@ Contains methods to create and apply an emission model.</p>
 <span class="sig-name descname"><span class="pre">convolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.convolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.convolve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolve transitions with a line profile.
 Calls class:
-<code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.spectrum.Spectrum</span></code> to retrieve the respective object.</p>
+<a class="reference internal" href="#amespahdbpythonsuite.spectrum.Spectrum" title="amespahdbpythonsuite.spectrum.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.spectrum.Spectrum</span></code></a> to retrieve the respective object.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -465,6 +643,52 @@ Checks type of database object (e.g., theoretical, experimental)</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-amespahdbpythonsuite.spectrum">
+<span id="spectrum-module"></span><h2>spectrum module<a class="headerlink" href="#module-amespahdbpythonsuite.spectrum" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.spectrum.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions</span></code></a></p>
+<p>AmesPAHdbPythonSuite spectrum class.
+Contains methods to fit and plot the input spectrum.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the input spectrum.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id5"><span class="problematic" id="id6">`</span></a>amespahdbpythonsuite.transitions.Transitions.get.
+Assigns class variables from inherited dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the spectrum.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id7"><span class="problematic" id="id8">`</span></a>amespahdbpythonsuite.transitions.Transitions.set to parse keywords.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-amespahdbpythonsuite.species">
+<span id="species-module"></span><h2>species module<a class="headerlink" href="#module-amespahdbpythonsuite.species" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.species.</span></span><span class="sig-name descname"><span class="pre">Species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AmesPAHdbPythonSuite species class</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-amespahdbpythonsuite.geometry">
 <span id="geometry-module"></span><h2>geometry module<a class="headerlink" href="#module-amespahdbpythonsuite.geometry" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -482,6 +706,89 @@ Checks type of database object (e.g., theoretical, experimental)</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.laboratory.</span></span><span class="sig-name descname"><span class="pre">Laboratory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>AmesPAHdbPythonSuite laboratory class</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-amespahdbpythonsuite.fitted">
+<span id="fitted-module"></span><h2>fitted module<a class="headerlink" href="#module-amespahdbpythonsuite.fitted" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.fitted.</span></span><span class="sig-name descname"><span class="pre">Fitted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#amespahdbpythonsuite.spectrum.Spectrum" title="amespahdbpythonsuite.spectrum.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.spectrum.Spectrum</span></code></a></p>
+<p>AmesPAHdbPythonSuite fitted class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id9"><span class="problematic" id="id10">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.get.
+Assigns class variables from inherited dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getbreakdown">
+<span class="sig-name descname"><span class="pre">getbreakdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getbreakdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getbreakdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the breakdown of the fitted PAHs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getchisquared">
+<span class="sig-name descname"><span class="pre">getchisquared</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getchisquared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getchisquared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the chi-squared of the fit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getclasses">
+<span class="sig-name descname"><span class="pre">getclasses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getclasses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getclasses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the spectra of the different classes of the fitted PAHs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getfit">
+<span class="sig-name descname"><span class="pre">getfit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getfit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the sum of fit values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getnorm">
+<span class="sig-name descname"><span class="pre">getnorm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getnorm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getnorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the Norm of the fit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getobservation">
+<span class="sig-name descname"><span class="pre">getobservation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getobservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getobservation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the ordinate values of the observation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getresidual">
+<span class="sig-name descname"><span class="pre">getresidual</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getresidual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getresidual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the residual of the fit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.getweights">
+<span class="sig-name descname"><span class="pre">getweights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.getweights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.getweights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the weights of the fitted PAHs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plotting method for the fitted spectrum and breakdown components.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id11"><span class="problematic" id="id12">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve fitted PAH properties and write to file.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

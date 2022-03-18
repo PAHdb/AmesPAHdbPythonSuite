@@ -72,10 +72,14 @@
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.data">data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.spectrum">spectrum module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.species">species module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.fitted">fitted module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -133,57 +137,30 @@
 </style>
 <div class="section" id="faq">
 <h1><span class="sectnum">5</span> FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
-<p><strong>Why doesn’t the code in this guide work with my installation?</strong></p>
-<p><em>You are probably using a version of the AmesPAHdbIDLSuite</em>
-dated prior <em>February 14, 2015. Please update to a newer
-version.</em></p>
-<p><strong>Does the AmesPAHdbIDLSuite work with GDL?</strong></p>
-<p><em>The AmesPAHdbIDLSuite might work with</em> <a class="reference external" href="http://gnudatalanguage.sourceforge.net">GDL</a> <em>, the open source alternative to IDL.</em></p>
-<p><strong>How does the *AmesPAHdbIDLSuite* deal with color output?</strong></p>
-<p><em>The AmesPAHdbIDLSuite ‘Plot’-methods create and load a color
-table containing 15 colors. When outputting to screen, the
-device will be set into discrete graphics mode. Upon
-completion, both the color table and the display mode will be
-restored to their initial settings.</em></p>
-<p><strong>Where have the C-routines gone?</strong></p>
-<p><em>The C-code has been removed from the AmesPAHdbIDLSuite for
-three reasons. First, The NNLS implementation in the suite now
-makes use of IDL’s LA_LEAST_SQUARES-routine, which is
-implemented using LAPACK and therefore very fast. Second, it
-appears that IDL’s READS-routine has seen some significant
-speed improvements in recent IDL releases such that the
-CONVERT_ASCII C-implementation has become obsolete. Third and
-last, making the C-routines compile and reliable across
-multiple platforms has proven to be difficult.</em></p>
+<p><strong>What Python version is required to run the package?</strong></p>
+<p><em>The AmesPAHdbPythonSuite requires a Python &gt; 3.6 installation.</em></p>
 <p><strong>I am getting schema validation errors, is this an issue and how can I get rid of them?</strong></p>
 <p><em>Schema validation errors typically do not cause a problem. The
 errors you see could be related to the move from
 www.astrochem.org to www.astrochemistry.org for the base URL,
 affecting the used XML namespaces. Re-downloading your database
 XML-file should solve the problem. As a last resort, you can
-disable schema validation by setting the ‘Check’-keyword to
-‘Check=0’ when creating the AmesPAHdbIDLSuite-object.</em></p>
+disable schema validation by setting the ‘check’-keyword to
+‘check=False’ when creating the AmesPAHdbPythonSuite-object.</em></p>
 <p><strong>I am getting an unsupported protocol in URL error, what can I
 do?</strong></p>
 <p><em>With the recent move to using SSL (https) on our domain
-(www.astrochemistry.org) IDL’s XML-parser fails to download the
+(www.astrochemistry.org) the XML-parser fails to download the
 linked schema for checking the structure of the database file.
-By setting the ‘CHECK’-keyword to ‘0’ in the OBJ_NEW-call will
+By setting the ‘check’-keyword to ‘False’ in the AmesPAHdb-call will
 mitigate the problem. Note that you might need to manually
 remove the corrupted cache file.</em></p>
-<p><strong>I am receiving an invalid multi-byte sequence error, what can I
-do?</strong></p>
-<p><em>It has been reported that on older versions of some operating
-systems IDL’s XML-parser is unable to properly handle the utf-8
-characters embedded in the database XML-file. One solution is
-to move to a more modern version of your operation system.
-Another possible solution is converting the file to use a
-different encoding with the following command.</em></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xmllint --encode latin1 --output converted.xml file_with_UTF-8.xml
+<p><strong>Is multiprocessing supported?</strong></p>
+<p><em>Multiprocessing is currently supported for the `cascade` emission model and the `convolve` method of the `transitions`-instance.</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transitions</span><span class="o">.</span><span class="n">cascade</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="mf">1.603e-12</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">transitions</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">gaussian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that characters that cannot be converted are simply
-removed.</p>
 </div>
 
 

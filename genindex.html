@@ -70,10 +70,14 @@
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.data">data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.spectrum">spectrum module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.species">species module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.fitted">fitted module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -108,15 +112,18 @@
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
  
 </div>
@@ -140,6 +147,20 @@
 </li>
       </ul></li>
       <li>
+    amespahdbpythonsuite.data
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.data">module</a>
+</li>
+      </ul></li>
+      <li>
+    amespahdbpythonsuite.fitted
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.fitted">module</a>
+</li>
+      </ul></li>
+      <li>
     amespahdbpythonsuite.geometry
 
       <ul>
@@ -153,6 +174,20 @@
 
       <ul>
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">module</a>
+</li>
+      </ul></li>
+      <li>
+    amespahdbpythonsuite.species
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.species">module</a>
+</li>
+      </ul></li>
+      <li>
+    amespahdbpythonsuite.spectrum
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.spectrum">module</a>
 </li>
       </ul></li>
       <li>
@@ -188,13 +223,25 @@
   </ul></td>
 </tr></table>
 
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.data.Data">Data (class in amespahdbpythonsuite.data)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.featurestrength">featurestrength() (amespahdbpythonsuite.transitions.Transitions static method)</a>
 </li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.fit">fit() (amespahdbpythonsuite.spectrum.Spectrum method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted">Fitted (class in amespahdbpythonsuite.fitted)</a>
+</li>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.fixedtemperature">fixedtemperature() (amespahdbpythonsuite.transitions.Transitions method)</a>
 </li>
   </ul></td>
@@ -205,15 +252,37 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry">Geometry (class in amespahdbpythonsuite.geometry)</a>
 </li>
-      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.get">get() (amespahdbpythonsuite.transitions.Transitions method)</a>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.data.Data.get">get() (amespahdbpythonsuite.data.Data method)</a>
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.get">(amespahdbpythonsuite.fitted.Fitted method)</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.get">(amespahdbpythonsuite.spectrum.Spectrum method)</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.get">(amespahdbpythonsuite.transitions.Transitions method)</a>
+</li>
+      </ul></li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getbreakdown">getbreakdown() (amespahdbpythonsuite.fitted.Fitted method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getchisquared">getchisquared() (amespahdbpythonsuite.fitted.Fitted method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getclasses">getclasses() (amespahdbpythonsuite.fitted.Fitted method)</a>
 </li>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdata">getdata() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
 </li>
-      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">getgeometrybyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getfit">getfit() (amespahdbpythonsuite.fitted.Fitted method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">getgeometrybyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid">getlaboratorybyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getnorm">getnorm() (amespahdbpythonsuite.fitted.Fitted method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getobservation">getobservation() (amespahdbpythonsuite.fitted.Fitted method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getresidual">getresidual() (amespahdbpythonsuite.fitted.Fitted method)</a>
 </li>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid">getspeciesbyuid() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
 </li>
@@ -223,6 +292,8 @@
 </li>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getversion">getversion() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
 </li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getweights">getweights() (amespahdbpythonsuite.fitted.Fitted method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -230,6 +301,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.heatcapacity">heatcapacity() (amespahdbpythonsuite.transitions.Transitions method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.data.Data.intersect">intersect() (amespahdbpythonsuite.data.Data method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -255,9 +334,17 @@
 </li>
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdbpythonsuite.amespahdb</a>
 </li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.data">amespahdbpythonsuite.data</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.fitted">amespahdbpythonsuite.fitted</a>
+</li>
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">amespahdbpythonsuite.geometry</a>
 </li>
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">amespahdbpythonsuite.laboratory</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.species">amespahdbpythonsuite.species</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.spectrum">amespahdbpythonsuite.spectrum</a>
 </li>
         <li><a href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">amespahdbpythonsuite.transitions</a>
 </li>
@@ -272,10 +359,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.parsefile">parsefile() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.plot">plot() (amespahdbpythonsuite.transitions.Transitions method)</a>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.plot">plot() (amespahdbpythonsuite.fitted.Fitted method)</a>
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.plot">(amespahdbpythonsuite.spectrum.Spectrum method)</a>
 </li>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.plot">(amespahdbpythonsuite.transitions.Transitions method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -284,11 +375,23 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.search">search() (amespahdbpythonsuite.amespahdb.AmesPAHdb method)</a>
 </li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.data.Data.set">set() (amespahdbpythonsuite.data.Data method)</a>
+
+      <ul>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.set">(amespahdbpythonsuite.fitted.Fitted method)</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.set">(amespahdbpythonsuite.spectrum.Spectrum method)</a>
+</li>
+        <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.set">(amespahdbpythonsuite.transitions.Transitions method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.set">set() (amespahdbpythonsuite.transitions.Transitions method)</a>
-</li>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.shift">shift() (amespahdbpythonsuite.transitions.Transitions method)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species">Species (class in amespahdbpythonsuite.species)</a>
+</li>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum">Spectrum (class in amespahdbpythonsuite.spectrum)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -309,6 +412,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser.verify_schema">verify_schema() (amespahdbpythonsuite.xmlparser.XMLparser method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.write">write() (amespahdbpythonsuite.fitted.Fitted method)</a>
 </li>
   </ul></td>
 </tr></table>
