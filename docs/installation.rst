@@ -18,3 +18,5 @@ Alternatively the AmesPAHdbPythonSuite can be cloned and then installed::
 Then change directories to the new AmesPAHdbPythonSuite directory and install::
 
    $ pip install -e .
+
+A database (.xml file) is required for a comprehensive usage of the AmesPAHdbPythonSuite. See the :doc:`Usage <usage>` Section for details. 
