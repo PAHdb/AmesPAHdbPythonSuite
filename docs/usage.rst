@@ -4,9 +4,10 @@
 =====
 Usage
 =====
+A database (.xml file) is required for complete usage of the AmesPAHdbPythonSuite. A few sample dabases are provided with the package installation (located in the *resources*-directory), however a complete database can be obtained from the NASA Ames PAH IR Spectroscopic Database `website. <https://www.astrochemistry.org/pahdb/theoretical/3.20/download/view>`__ following the Database Downloads instructions.
 
-This is the example contained in example.py located in the
-examples-directory and shows how the AmesPAHdbPythonSuite is used to
+Below is the example contained in example.py located in the
+*examples*-directory and shows how the AmesPAHdbPythonSuite is used to
 display the ('stick') absorption spectrum of coronene (UID=18).
 
 .. code-block:: python
