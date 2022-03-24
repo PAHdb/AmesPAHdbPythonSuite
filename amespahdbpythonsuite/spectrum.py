@@ -16,10 +16,20 @@ class Spectrum(Transitions):
 
     def __init__(self, d=None, **keywords):
         Transitions.__init__(self, d, **keywords)
+        self.fwhm = 0.0
+        self.__set(d, **keywords)
 
-    def set(self, d=None, **keywords):
+    def set(self, d, **keywords):
         """
         Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.set to parse keywords.
+
+        """
+        Transitions.set(self, d, **keywords)
+        self.__set(d, **keywords)
+
+    def __set(self, d, **keywords):
+        """
+        Populate data dictionary helper.
 
         """
         if d:
@@ -30,8 +40,6 @@ class Spectrum(Transitions):
                     self.profile = d['profile']
                 if not keywords.get('fwhm'):
                     self.fwhm = d['fwhm']
-
-        Transitions.set(self, d, **keywords)
 
         if len(keywords.get('grid', [])):
             self.grid = keywords.get('grid')
@@ -116,8 +124,10 @@ class Spectrum(Transitions):
 
         _, ax = plt.subplots()
         ax.minorticks_on()
-        ax.tick_params(which='major', right='on', top='on', direction='in', length=5)
-        ax.tick_params(which='minor', right='on', top='on', direction='in', length=3)
+        ax.tick_params(which='major', right='on',
+                       top='on', direction='in', length=5)
+        ax.tick_params(which='minor', right='on',
+                       top='on', direction='in', length=3)
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
 
         for uid, col in zip(self.uids, colors):

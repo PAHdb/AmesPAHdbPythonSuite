@@ -13,6 +13,7 @@ from pkg_resources import resource_filename
 from astropy.io import ascii
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+from amespahdbpythonsuite import spectrum
 
 
 @pytest.fixture(scope="module")
@@ -31,7 +32,8 @@ class TestSpectrum():
 
     def test_fit(self, pahdb_theoretical, monkeypatch):
         # Read input spectrum.
-        spec = resource_filename('amespahdbpythonsuite', 'resources/galaxy_spec.ipac')
+        spec = resource_filename(
+            'amespahdbpythonsuite', 'resources/galaxy_spec.ipac')
         f = ascii.read(spec)
         wave = f['wavelength']
         flux = f['flux']
@@ -48,7 +50,8 @@ class TestSpectrum():
         # Shift data 15 wavenumber to the red.
         transitions.shift(-15.0)
         # convolve the transitions into a spectrum.
-        spectrum = transitions.convolve(grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False)
+        spectrum = transitions.convolve(
+            grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False)
         # fit the spectrum.
         fit = spectrum.fit(flux, sigma)
         # Assert results.
@@ -58,3 +61,17 @@ class TestSpectrum():
         # Check plotting function.
         monkeypatch.setattr(plt, 'show', lambda: None)
         spectrum.plot()
+
+    def test_getset(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        # UIDs test list.
+        uids = [18, 73]
+        trans = pahdb.gettransitionsbyuid(uids)
+        spec1 = trans.convolve(fwhm=15.0)
+        d1 = spec1.get()
+        assert(d1['type'] == 'Spectrum')
+        spec2 = spectrum.Spectrum()
+        spec2.set(d1)
+        d2 = spec2.get()
+        assert(d2['type'] == 'Spectrum')

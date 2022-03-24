@@ -24,6 +24,9 @@ class Fitted(Spectrum):
 
         """
         Spectrum.__init__(self, d, **keywords)
+        self.weights = None
+        self.observation = None
+        self.__set(d, **keywords)
 
     def plot(self, **keywords):
         """
@@ -56,8 +59,10 @@ class Fitted(Spectrum):
             axis = plt.subplot(spec[0])
             axis = [axis, plt.subplot(spec[1])]
             figures.subplots_adjust(wspace=0.25)
-            axis[0].tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-            axis[0].tick_params(axis='y', which='both', left='off', right='off', labelleft='off')
+            axis[0].tick_params(axis='x', which='both',
+                                bottom='off', top='off', labelbottom='off')
+            axis[0].tick_params(axis='y', which='both',
+                                left='off', right='off', labelleft='off')
             axis[0].set_ylim((0, 1))
             axis = list(reversed(axis))
 
@@ -78,8 +83,10 @@ class Fitted(Spectrum):
             axis[0].set_title(keywords['title'])
 
         axis[0].minorticks_on()
-        axis[0].tick_params(which='major', right='on', top='on', direction='in', length=5)
-        axis[0].tick_params(which='minor', right='on', top='on', direction='in', length=3)
+        axis[0].tick_params(which='major', right='on',
+                            top='on', direction='in', length=5)
+        axis[0].tick_params(which='minor', right='on',
+                            top='on', direction='in', length=3)
 
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
         for uid, col in zip(self.uids, colors):
@@ -117,7 +124,8 @@ class Fitted(Spectrum):
                 if not isinstance(classes['pure'], int):
                     axis[0].plot(x, classes['pure'], 'r-', label='pure')
                 if not isinstance(classes['nitrogen'], int):
-                    axis[0].plot(x, classes['nitrogen'], 'g-', label='nitrogen')
+                    axis[0].plot(x, classes['nitrogen'],
+                                 'g-', label='nitrogen')
                 axis[0].axhline(0, linestyle='--', color='gray')
                 axis[0].legend(fontsize=12)
 
@@ -141,21 +149,26 @@ class Fitted(Spectrum):
 
         axis[0].set_ylabel(keywords['units'][1], fontsize=14)
         if keywords.get('residual', False):
-            axis[1].set_xlabel(f"{xtitle} ({keywords['units'][0]})", fontsize=14)
+            axis[1].set_xlabel(
+                f"{xtitle} ({keywords['units'][0]})", fontsize=14)
             axis[1].set_ylabel('residual', fontsize=14)
             axis[1].minorticks_on()
-            axis[1].tick_params(which='major', right='on', top='on', direction='in', length=5)
-            axis[1].tick_params(which='minor', right='on', top='on', direction='in', length=3)
+            axis[1].tick_params(which='major', right='on',
+                                top='on', direction='in', length=5)
+            axis[1].tick_params(which='minor', right='on',
+                                top='on', direction='in', length=3)
 
         else:
-            axis[0].set_xlabel(f"{xtitle} ({keywords['units'][0]})", fontsize=14)
+            axis[0].set_xlabel(
+                f"{xtitle} ({keywords['units'][0]})", fontsize=14)
         if keywords.get('show', False):
             plt.show()
 
         # save plots
         figures.tight_layout()
         if keywords['ftype']:
-            figures.savefig(f"{keywords['outputname']}_{keywords['ptype']}.{keywords['ftype']}")
+            figures.savefig(
+                f"{keywords['outputname']}_{keywords['ptype']}.{keywords['ftype']}")
         plt.close(figures)
 
     def set(self, d=None, **keywords):
@@ -164,14 +177,19 @@ class Fitted(Spectrum):
 
         """
         Spectrum.set(self, d, **keywords)
+        self.__set(d, **keywords)
+
+    def __set(self, d=None, **keywords):
+        """
+        Populate data dictionary helper.
+
+        """
         if d:
             if d.get('type', '') == self.__class__.__name__:
                 if not keywords.get('observation'):
                     self.observation = d['observation']
                 if not keywords.get('weights'):
                     self.weights = d['weights']
-
-                Spectrum.set(self, d, **keywords)
 
         if len(keywords.get('observation', [])):
             self.observation = keywords.get('observation')
@@ -253,8 +271,10 @@ class Fitted(Spectrum):
         nsolo = [self.pahdb['species'][uid]['n_solo'] for uid in self.uids]
         nduo = [self.pahdb['species'][uid]['n_duo'] for uid in self.uids]
         ntrio = [self.pahdb['species'][uid]['n_trio'] for uid in self.uids]
-        nquartet = [self.pahdb['species'][uid]['n_quartet'] for uid in self.uids]
-        nquintet = [self.pahdb['species'][uid]['n_quintet'] for uid in self.uids]
+        nquartet = [self.pahdb['species'][uid]['n_quartet']
+                    for uid in self.uids]
+        nquintet = [self.pahdb['species'][uid]['n_quintet']
+                    for uid in self.uids]
 
         if prefix == '':
             prefix = self.__class__.__name__
@@ -297,7 +317,8 @@ class Fitted(Spectrum):
                  and self.atoms[uid]['nmg'] == 0
                  and self.atoms[uid]['nsi'] == 0
                  and self.atoms[uid]['nfe'] == 0]
-        classes['pure'] = sum({k: v for k, v in self.data.items() if k in puids}.values())
+        classes['pure'] = sum(
+            {k: v for k, v in self.data.items() if k in puids}.values())
 
         return classes
 
@@ -314,7 +335,8 @@ class Fitted(Spectrum):
             uids = [uid for uid in self.uids
                     if s['operator'](self.atoms[uid][s['subclass']], s['operand'])]
 
-        intensities = sum({k: v for k, v in self.data.items() if k in uids}.values())
+        intensities = sum(
+            {k: v for k, v in self.data.items() if k in uids}.values())
         return intensities
 
     def getbreakdown(self, **keywords):
@@ -356,7 +378,8 @@ class Fitted(Spectrum):
                 print('first integrate occurance')
 
             for key in classes:
-                breakdown[key] = integrate.quad(self.grid, classes[key]) / total
+                breakdown[key] = integrate.quad(
+                    self.grid, classes[key]) / total
                 print('second integrate occurance')
 
             return breakdown
@@ -384,7 +407,8 @@ class Fitted(Spectrum):
                 and self.atoms[uid]['nfe'] == 0]
 
         if len(uids) > 0:
-            breakdown['pure'] = np.sum([self.weights[uid] for uid in uids]) / total
+            breakdown['pure'] = np.sum([self.weights[uid]
+                                       for uid in uids]) / total
 
         # Getting Nc.
         nc = np.array([self.atoms[uid]['nc'] for uid in self.uids])
@@ -446,7 +470,8 @@ class Fitted(Spectrum):
         """
 
         # Calculate numbers of c, h, n, o, mg, si, fe.
-        nelem = {'nc': 6, 'nh': 1, 'nn': 7, 'no': 8, 'nmg': 12, 'nsi': 14, 'nfe': 26}
+        nelem = {'nc': 6, 'nh': 1, 'nn': 7, 'no': 8,
+                 'nmg': 12, 'nsi': 14, 'nfe': 26}
         dnelem = dict.fromkeys(nelem)
         for key in dnelem.keys():
             dnelem[key] = [len(y) for y in ((lambda g: [t['type'] for t in g['geometry']

@@ -93,6 +93,7 @@ class TestTransitions():
     Test Transitions class.
 
     """
+
     def test_instance(self, pahdb_theoretical):
         # Read the database.
         pahdb = pahdb_theoretical
@@ -126,7 +127,8 @@ class TestTransitions():
         trans = transitions.Transitions(type='theoretical',
                                         version=pahdb._AmesPAHdb__data['version'],
                                         uids=uids,
-                                        data=pahdb._AmesPAHdb__getkeybyuids('transitions', uids),
+                                        data=pahdb._AmesPAHdb__getkeybyuids(
+                                            'transitions', uids),
                                         pahdb=pahdb._AmesPAHdb__data,
                                         model={'type': 'zerokelvin_m',
                                                'temperature': 0.0,
@@ -137,7 +139,8 @@ class TestTransitions():
                                                             'str': 'integrated cross-section' + '[km/mol]'}})
 
         test_dict = trans.get()
-        key_list = ['type', 'database', 'version', 'data', 'uids', 'model', 'units', 'shift']
+        key_list = ['type', 'database', 'version',
+                    'data', 'uids', 'model', 'units', 'shift']
         assert list(test_dict.keys()) == key_list
         assert test_dict['type'] == 'Transitions'
         assert test_dict['database'] == 'theoretical'
@@ -146,6 +149,19 @@ class TestTransitions():
         test_dict['type'] = 'Data'
         db = data.Data(test_dict, pahdb=pahdb._AmesPAHdb__data)
         assert db.type == 'theoretical'
+
+    def test_getset(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        # UIDs test list.
+        uids = [18, 73]
+        trans1 = pahdb.gettransitionsbyuid(uids)
+        d1 = trans1.get()
+        assert(d1['type'] == 'Transitions')
+        trans2 = transitions.Transitions()
+        trans2.set(d1)
+        d2 = trans2.get()
+        assert(d2['type'] == 'Transitions')
 
     def test_intersect(self, pahdb_theoretical):
         # Read the database.
@@ -182,7 +198,8 @@ class TestTransitions():
         # Retrieve dictionary at 3068.821 frequency.
         dtest = [x for x in trans.data[18] if x['frequency'] == 3068.821][0]
         # Assert attained intensity.
-        np.testing.assert_almost_equal(dtest['intensity'], 6.420001406551514e-14, decimal=20)
+        np.testing.assert_almost_equal(
+            dtest['intensity'], 6.420001406551514e-14, decimal=20)
 
     def test_calculatedtemperature(self, pahdb_theoretical):
         # Read the database.
@@ -193,7 +210,8 @@ class TestTransitions():
         # Apply calculatedtemperature emission model at 6 eV.
         trans.calculatedtemperature(6 * 1.603e-12)
         # Assert attained Tmax.
-        dtest = next((sub for sub in trans.model['temperatures'] if sub['uid'] == uids[0]), None)
+        dtest = next(
+            (sub for sub in trans.model['temperatures'] if sub['uid'] == uids[0]), None)
         assert dtest['temperature'] == 1279.7835033561428
 
     def test_cascade(self, pahdb_theoretical):
@@ -205,12 +223,14 @@ class TestTransitions():
         # Apply cascade emission model at 6 eV.
         trans.cascade(6 * 1.603e-12, multiprocessing=False)
         # Assert attained Tmax.
-        dtest_a = next((sub for sub in trans.model['temperatures'] if sub['uid'] == uids[0]), None)
+        dtest_a = next(
+            (sub for sub in trans.model['temperatures'] if sub['uid'] == uids[0]), None)
         # Retrieve dictionary at 3068.821 frequency.
         dtest_b = [x for x in trans.data[18] if x['frequency'] == 3068.821][0]
         # Assert attained intensity and temperature.
         assert dtest_a['temperature'] == 1279.7835033561428
-        np.testing.assert_almost_equal(dtest_b['intensity'], 1.6710637100014386e-12, decimal=20)
+        np.testing.assert_almost_equal(
+            dtest_b['intensity'], 1.6710637100014386e-12, decimal=20)
 
     def test_partial_cascade(self, pahdb_theoretical):
         # Read the database.
@@ -222,7 +242,8 @@ class TestTransitions():
         intf, tmax = trans_multi._cascade_em_model(6 * 1.603e-12, uids[0])
         test_i = [x for x in intf[uids[0]] if x['frequency'] == 3068.821][0]
         assert tmax['temperature'] == 1279.7835033561428
-        np.testing.assert_almost_equal(test_i['intensity'], 1.6710637100014386e-12, decimal=20)
+        np.testing.assert_almost_equal(
+            test_i['intensity'], 1.6710637100014386e-12, decimal=20)
 
     def test_convolve(self, pahdb_theoretical, test_spec):
         # Read the database.
@@ -237,8 +258,10 @@ class TestTransitions():
         # Apply shift.
         trans.shift(-15.0)
         # Get spectum object
-        spec1 = trans.convolve(grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False)
-        spec2 = trans.convolve(grid=waven, fwhm=15.0, drude=True, multiprocessing=False)
+        spec1 = trans.convolve(grid=waven, fwhm=15.0,
+                               gaussian=True, multiprocessing=False)
+        spec2 = trans.convolve(grid=waven, fwhm=15.0,
+                               drude=True, multiprocessing=False)
         spec3 = trans.convolve(grid=waven, fwhm=15.0, multiprocessing=False)
         # Expected gaussian convolved transitions.
         assert spec1.model['temperatures'][0]['temperature'] == 1279.7835033561428
@@ -263,7 +286,8 @@ class TestTransitions():
                                             xmin=np.min(waven),
                                             xmax=np.max(waven),
                                             clip=3,
-                                            width=0.5 * 15.0 / np.sqrt(2.0 * np.log(2.0)),
+                                            width=0.5 * 15.0 /
+                                            np.sqrt(2.0 * np.log(2.0)),
                                             x=np.asarray(waven),
                                             gaussian=True,
                                             drude=False,

@@ -15,12 +15,19 @@ class Data(object):
         Initialize Data class.
 
         """
-
-        self.set(d, **keywords)
+        self.pahdb = None
+        self.__set(d, **keywords)
 
     def set(self, d=None, **keywords):
         """
         Populate data dictionary.
+
+        """
+        self.__set(d, **keywords)
+
+    def __set(self, d=None, **keywords):
+        """
+        Populate data dictionary helper.
 
         """
         if d:
@@ -60,12 +67,14 @@ class Data(object):
         if self.pahdb:
             if self.pahdb['database'] != self.type:
 
-                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
+                message(
+                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
                 return
 
             if self.pahdb['version'] != self.version:
 
-                message(f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
+                message(
+                    f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
                 return
 
     def get(self):

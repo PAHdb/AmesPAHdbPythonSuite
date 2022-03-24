@@ -28,8 +28,9 @@ class Transitions(Data):
         Initialize transitions class.
 
         """
+        super().__init__(d, **keywords)
         self.__shift = 0.0
-        self.set(d, **keywords)
+        self.__set(d, **keywords)
 
     def set(self, d=None, **keywords):
         """
@@ -37,22 +38,28 @@ class Transitions(Data):
         Checks type of database object (e.g., theoretical, experimental)
 
         """
-        super().set(d, **keywords)
+        Data.set(self, d, **keywords)
+        self.__set(d, **keywords)
+
+    def __set(self, d=None, **keywords):
+        """
+        Populate data dictionary helper.
+
+        """
         if d:
             if d.get('type', '') == self.__class__.__name__:
                 if not keywords.get('shift'):
                     self.__shift = d['shift']
-                d['type'] = 'Transitions'
 
         if keywords.get('shift'):
-            self.shift = keywords.get('shift')
+            self.__shift = keywords.get('shift')
 
     def get(self):
         """
         Calls class: :class:`amespahdbpythonsuite.data.Data.get to get keywords.
 
         """
-        d = super().get()
+        d = Data.get(self)
         d['type'] = self.__class__.__name__
         d['shift'] = self.__shift
         return copy.deepcopy(d)
@@ -81,7 +88,8 @@ class Transitions(Data):
         """
         if self.model:
             if self.model['type'] != 'zerokelvin_m':
-                message(f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
+                message(
+                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
                 return
 
         message('APPLYING FIXED TEMPERATURE EMISSION MODEL')
@@ -89,7 +97,8 @@ class Transitions(Data):
         for uid in self.uids:
             f = np.array([d['frequency'] for d in self.data[uid]])
 
-            intensity = 2.4853427121856266e-23 * f ** 3 / (np.exp(1.4387751297850830401 * f / t) - 1.0)
+            intensity = 2.4853427121856266e-23 * f ** 3 / \
+                (np.exp(1.4387751297850830401 * f / t) - 1.0)
             for (d, i) in zip(self.data[uid], intensity):
                 d['intensity'] *= i
 
@@ -109,7 +118,8 @@ class Transitions(Data):
 
         if self.model:
             if self.model['type'] != 'zerokelvin_m':
-                message(f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
+                message(
+                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
                 return
 
         message('APPLYING CALCULATED TEMPERATURE EMISSION MODEL')
@@ -138,7 +148,8 @@ class Transitions(Data):
 
             print('SPECIES                          : %d/%d' % (i + 1, nuids))
             print('UID                              : %d' % uid)
-            print('MEAN ABSORBED ENERGY             : %f +/- %f eV' % (e / 1.6021765e-12, 0.0))
+            print('MEAN ABSORBED ENERGY             : %f +/- %f eV' %
+                  (e / 1.6021765e-12, 0.0))
 
             global frequencies
             frequencies = np.array([d['frequency'] for d in self.data[uid]])
@@ -147,12 +158,15 @@ class Transitions(Data):
 
             print('MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin' % Tmax)
 
-            self.model['temperatures'].append({'uid': uid, 'temperature': Tmax})
+            self.model['temperatures'].append(
+                {'uid': uid, 'temperature': Tmax})
 
             for d in self.data[uid]:
                 if d['intensity'] > 0:
                     d['intensity'] *= 2.4853427121856266e-23 * \
-                        d['frequency'] ** 3 / (np.exp(1.4387751297850830401 * d['frequency'] / Tmax) - 1.0)
+                        d['frequency'] ** 3 / \
+                        (np.exp(1.4387751297850830401 *
+                         d['frequency'] / Tmax) - 1.0)
 
             # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
@@ -196,7 +210,8 @@ class Transitions(Data):
             if d['intensity'] > 0:
                 global frequency
                 frequency = d['frequency']
-                d['intensity'] *= d['frequency'] ** 3 * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
+                d['intensity'] *= d['frequency'] ** 3 * \
+                    integrate.quad(self.featurestrength, 2.73, Tmax)[0]
 
         temp = {'uid': uid, 'temperature': Tmax}
         ud = {uid: self.data[uid]}
@@ -218,7 +233,8 @@ class Transitions(Data):
 
         if self.model:
             if self.model['type'] != 'zerokelvin_m':
-                message(f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
+                message(
+                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
                 return
 
         message('APPLYING CASCADE EMISSION MODEL')
@@ -266,27 +282,33 @@ class Transitions(Data):
             nuids = len(self.uids)
             for uid in self.uids:
 
-                print('SPECIES                          : %d/%d' % (i + 1, nuids))
+                print('SPECIES                          : %d/%d' %
+                      (i + 1, nuids))
                 print('UID                              : %d' % uid)
-                print('MEAN ABSORBED ENERGY             : %f +/- %f eV' % (e / 1.6021765e-12, 0.0))
+                print('MEAN ABSORBED ENERGY             : %f +/- %f eV' %
+                      (e / 1.6021765e-12, 0.0))
 
                 global frequencies
-                frequencies = np.array([d['frequency'] for d in self.data[uid]])
+                frequencies = np.array([d['frequency']
+                                       for d in self.data[uid]])
 
                 global intensities
-                intensities = np.array([d['intensity'] for d in self.data[uid]])
+                intensities = np.array([d['intensity']
+                                       for d in self.data[uid]])
 
                 Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
                 print('MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin' % Tmax)
 
-                self.model['temperatures'].append({'uid': uid, 'temperature': Tmax})
+                self.model['temperatures'].append(
+                    {'uid': uid, 'temperature': Tmax})
 
                 for d in self.data[uid]:
                     if d['intensity'] > 0:
                         global frequency
                         frequency = d['frequency']
-                        d['intensity'] *= d['frequency'] ** 3 * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
+                        d['intensity'] *= d['frequency'] ** 3 * \
+                            integrate.quad(self.featurestrength, 2.73, Tmax)[0]
 
                 i += 1
 
@@ -393,7 +415,8 @@ class Transitions(Data):
             xmax = max(x)
             npoints = len(x)
 
-        message(f'GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS')
+        message(
+            f'GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS')
         message(f'FWHM: {fwhm} /cm')
 
         print('Convolving')
@@ -436,7 +459,8 @@ class Transitions(Data):
                         s += t['intensity'] * self.__lineprofile(x,
                                                                  t['frequency'],
                                                                  width,
-                                                                 gaussian=keywords.get('gaussian', False),
+                                                                 gaussian=keywords.get(
+                                                                     'gaussian', False),
                                                                  drude=keywords.get('drude', False))
                 d[uid] = s
 
@@ -498,8 +522,10 @@ class Transitions(Data):
 
         _, ax = plt.subplots()
         ax.minorticks_on()
-        ax.tick_params(which='major', right='on', top='on', direction='in', length=5)
-        ax.tick_params(which='minor', right='on', top='on', direction='in', length=3)
+        ax.tick_params(which='major', right='on',
+                       top='on', direction='in', length=5)
+        ax.tick_params(which='minor', right='on',
+                       top='on', direction='in', length=3)
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
         for uid, col in zip(self.uids, colors):
             f = [v for v in self.data[uid]]
