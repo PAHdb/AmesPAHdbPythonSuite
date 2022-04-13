@@ -26,6 +26,7 @@ class Fitted(Spectrum):
         Spectrum.__init__(self, d, **keywords)
         self.weights = None
         self.observation = None
+        self.atoms = None
         self.__set(d, **keywords)
 
     def plot(self, **keywords):
@@ -350,6 +351,7 @@ class Fitted(Spectrum):
             return None
 
         # Set atom dictionary if it doesn't exist.
+        # if not hasattr(self, 'atoms'):
         if not self.atoms:
             self._atoms()
 
@@ -469,20 +471,21 @@ class Fitted(Spectrum):
 
         """
 
-        # Calculate numbers of c, h, n, o, mg, si, fe.
+        # Create reference dictionary with atomic numbers for c, h, n, o, mg, si, and fe.
         nelem = {'nc': 6, 'nh': 1, 'nn': 7, 'no': 8,
                  'nmg': 12, 'nsi': 14, 'nfe': 26}
-        dnelem = dict.fromkeys(nelem)
-        for key in dnelem.keys():
-            dnelem[key] = [len(y) for y in ((lambda g: [t['type'] for t in g['geometry']
-                                                        if t['type'] == nelem[key]])(x)
-                                            for x in self.pahdb['species'].values())]
 
-        # Create atoms dictionary.
+        # Initialize atoms dictionary.
         self.atoms = {key: {} for key in self.uids}
-        for key in dnelem.keys():
-            for i in range(len(self.uids)):
-                self.atoms[self.uids[i]][key] = dnelem[key][i]
+
+        for uid in self.uids:
+            # Initialize dictionary based on reference dictionary.
+            dnelem = dict.fromkeys(nelem)
+            # Loop through the keys to determine the number of each atom present in a given uid.
+            for key in dnelem.keys():
+                dnelem[key] = len([sub['type'] for sub in self.pahdb['species'][uid]['geometry']
+                                  if sub['type'] == nelem[key]])
+            self.atoms[uid] = dnelem
 
     def __geterror(self):
         """
