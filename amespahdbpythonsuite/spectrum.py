@@ -34,18 +34,18 @@ class Spectrum(Transitions):
         """
         if d:
             if d.get('type', '') == self.__class__.__name__:
-                if not keywords.get('grid'):
+                if 'grid' not in keywords:
                     self.grid = d['grid']
-                if not keywords.get('profile'):
+                if 'profile' not in keywords:
                     self.profile = d['profile']
-                if not keywords.get('fwhm'):
+                if 'fwhm' not in keywords:
                     self.fwhm = d['fwhm']
 
         if len(keywords.get('grid', [])):
             self.grid = keywords.get('grid')
-        if keywords.get('profile'):
+        if 'profile' in keywords:
             self.profile = keywords.get('profile')
-        if keywords.get('fwhm'):
+        if 'fwhm' in keywords:
             self.fwhm = keywords.get('fwhm')
 
     def get(self):
@@ -107,7 +107,7 @@ class Spectrum(Transitions):
                       uids=uids,
                       model=self.model,
                       units=self.units,
-                      shift=self.shift,
+                      shift=self._shift,
                       grid=self.grid,
                       profile=self.profile,
                       fwhm=self.fwhm,
@@ -141,3 +141,13 @@ class Spectrum(Transitions):
         ax.set_ylabel(self.units['ordinate']['str'], fontsize=14)
 
         plt.show()
+
+    def coadd(self, weights=None, average=False):
+        """
+        Co-add spectra.
+        """
+        if weights:
+            coadded = np.zeros(len(self.grid))
+            for key in self.data.keys():
+                coadded += self.data[key] * weights[key]
+            return coadded

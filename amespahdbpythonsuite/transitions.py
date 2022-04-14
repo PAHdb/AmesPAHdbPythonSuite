@@ -29,7 +29,7 @@ class Transitions(Data):
 
         """
         super().__init__(d, **keywords)
-        self.__shift = 0.0
+        self._shift = 0.0
         self.__set(d, **keywords)
 
     def set(self, d=None, **keywords):
@@ -49,10 +49,10 @@ class Transitions(Data):
         if d:
             if d.get('type', '') == self.__class__.__name__:
                 if not keywords.get('shift'):
-                    self.__shift = d['shift']
+                    self._shift = d['shift']
 
         if keywords.get('shift'):
-            self.__shift = keywords.get('shift')
+            self._shift = keywords.get('shift')
 
     def get(self):
         """
@@ -61,7 +61,7 @@ class Transitions(Data):
         """
         d = Data.get(self)
         d['type'] = self.__class__.__name__
-        d['shift'] = self.__shift
+        d['shift'] = self._shift
         return copy.deepcopy(d)
 
     def shift(self, shift):
@@ -69,12 +69,12 @@ class Transitions(Data):
         Shifts transitions frequency by provided value.
 
         """
-        self.__shift += shift
+        self._shift += shift
 
         for key in self.data:
             for d in self.data[key]:
                 d['frequency'] += shift
-        message(f'TOTAL SHIFT: {self.__shift} /cm')
+        message(f'TOTAL SHIFT: {self._shift} /cm')
 
     def fixedtemperature(self, t):
         """
@@ -484,7 +484,7 @@ class Transitions(Data):
                         model=self.model,
                         units={'abscissa': self.units['abscissa'],
                                'ordinate': self.units['ordinate']},
-                        shift=self.__shift,
+                        shift=self._shift,
                         grid=x,
                         profile=profile,
                         fwhm=fwhm)
