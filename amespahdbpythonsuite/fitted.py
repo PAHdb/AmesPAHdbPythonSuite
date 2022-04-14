@@ -351,7 +351,6 @@ class Fitted(Spectrum):
             return None
 
         # Set atom dictionary if it doesn't exist.
-        # if not hasattr(self, 'atoms'):
         if not self.atoms:
             self._atoms()
 

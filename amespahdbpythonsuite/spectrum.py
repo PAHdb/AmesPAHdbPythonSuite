@@ -36,16 +36,16 @@ class Spectrum(Transitions):
             if d.get('type', '') == self.__class__.__name__:
                 if 'grid' not in keywords:
                     self.grid = d['grid']
-                if not keywords.get('profile'):
+                if 'profile' not in keywords:
                     self.profile = d['profile']
-                if not keywords.get('fwhm'):
+                if 'fwhm' not in keywords:
                     self.fwhm = d['fwhm']
 
         if len(keywords.get('grid', [])):
             self.grid = keywords.get('grid')
-        if keywords.get('profile'):
+        if 'profile' in keywords:
             self.profile = keywords.get('profile')
-        if keywords.get('fwhm'):
+        if 'fwhm' in keywords:
             self.fwhm = keywords.get('fwhm')
 
     def get(self):
