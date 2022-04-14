@@ -145,18 +145,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grid&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s1">&#39;grid&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;grid&#39;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s1">&#39;profile&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;profile&#39;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fwhm&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s1">&#39;fwhm&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fwhm&#39;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grid&#39;</span><span class="p">,</span> <span class="p">[])):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grid&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;profile&#39;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fwhm&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;fwhm&#39;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fwhm&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Spectrum.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -218,7 +218,7 @@
                       <span class="n">uids</span><span class="o">=</span><span class="n">uids</span><span class="p">,</span>
                       <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
                       <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
-                      <span class="n">shift</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">,</span>
+                      <span class="n">shift</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shift</span><span class="p">,</span>
                       <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
                       <span class="n">profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span>
                       <span class="n">fwhm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">,</span>
@@ -251,7 +251,17 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s1">&#39;abscissa&#39;</span><span class="p">][</span><span class="s1">&#39;str&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s1">&#39;ordinate&#39;</span><span class="p">][</span><span class="s1">&#39;str&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Spectrum.coadd"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.coadd">[docs]</a>    <span class="k">def</span> <span class="nf">coadd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Co-add spectra.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">weights</span><span class="p">:</span>
+            <span class="n">coadded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">coadded</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">coadded</span></div></div>
 </pre></div>
 
            </div>
