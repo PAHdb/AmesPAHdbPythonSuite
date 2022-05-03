@@ -88,5 +88,7 @@ class TestFitted():
         # Obtain fit breakdown.
         bd = fit.getbreakdown()
         lkeys = ['solo', 'duo', 'trio', 'quartet', 'quintet',
-                 'anion', 'neutral', 'cation', 'small', 'large', 'nitrogen', 'pure', 'nc', 'error']
+                 'anion', 'neutral', 'cation', 'small', 'large',
+                 'nitrogen', 'pure', 'nc', 'err',
+                 'e127', 'e112', 'e77', 'e62', 'e33']
         assert list(bd.keys()) == lkeys

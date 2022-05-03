@@ -415,7 +415,9 @@ class Fitted(Spectrum):
         nc = np.array([self.atoms[uid]['nc'] for uid in self.uids])
         breakdown['nc'] = np.sum(nc * fweight) / np.sum(fweight)
         # Getting fit uncertainty.
-        breakdown['error'] = self.__geterror()
+        pahdberr = self.__geterror()
+        for key in pahdberr.keys():
+            breakdown[key] = pahdberr[key]
 
         return breakdown
 
@@ -492,7 +494,23 @@ class Fitted(Spectrum):
         as the ratio of the residual over the total spectrum area.
 
         """
+        tags = ['err', 'e127', 'e112', 'e77', 'e62', 'e33']
+
+        piecewise = dict.fromkeys(tags)
+
+        range = dict.fromkeys(tags)
+        range['err'] = [min(self.grid), max(self.grid)]
+        range['e127'] = [754.0, 855.0]
+        range['e112'] = [855.0, 1000.0]
+        range['e77'] = [1000.0, 1495.0]
+        range['e62'] = [1495.0, 1712.0]
+        range['e33'] = [2900.0, 3125.0]
+
         if self.observation:
-            total_area = np.trapz(self.observation, x=self.grid)
-            resid_area = np.trapz(np.abs(self.getresidual()), x=self.grid)
-            return resid_area / total_area
+            for key in piecewise.keys():
+                sel = np.where(np.logical_and(self.grid >= range[key][0], self.grid <= range[key][1]))[0]
+                total_area = np.trapz(np.array(self.observation)[sel], x=self.grid[sel])
+                resid_area = np.trapz(np.abs(np.array(self.observation)[sel] - self.getfit()[sel]),
+                                      x=self.grid[sel])
+                piecewise[key] = resid_area / total_area
+            return piecewise
