@@ -415,7 +415,9 @@ class Fitted(Spectrum):
         nc = np.array([self.atoms[uid]['nc'] for uid in self.uids])
         breakdown['nc'] = np.sum(nc * fweight) / np.sum(fweight)
         # Getting fit uncertainty.
-        breakdown['error'] = self.__geterror()
+        pahdberr = self.__geterror()
+        for key in pahdberr.keys():
+            breakdown[key] = pahdberr[key]
 
         return breakdown
 
@@ -507,6 +509,8 @@ class Fitted(Spectrum):
         if self.observation:
             for key in piecewise.keys():
                 sel = np.where(np.logical_and(self.grid >= range[key][0], self.grid <= range[key][1]))[0]
-                total_area = np.trapz(self.observation[sel], x=self.grid[sel])
-                resid_area = np.trapz(np.abs(self.observation[sel] - self.getfit()[sel]), x=self.grid[sel])
+                total_area = np.trapz(np.array(self.observation)[sel], x=self.grid[sel])
+                resid_area = np.trapz(np.abs(np.array(self.observation)[sel] - self.getfit()[sel]),
+                                      x=self.grid[sel])
                 piecewise[key] = resid_area / total_area
+            return piecewise
