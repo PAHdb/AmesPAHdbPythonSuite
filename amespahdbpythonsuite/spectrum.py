@@ -144,10 +144,37 @@ class Spectrum(Transitions):
 
     def coadd(self, weights=None, average=False):
         """
-        Co-add spectra.
+        Co-add PAHdb spectra.
+
+        Parameters:
+            weights: dict
+                Dictonary of fit weights to use when co-adding.
+            average: bool
+                If True calculates the average coadded spectrum.
+
         """
+        coadded = dict()
+        coadded['type'] = self.type
+        coadded['version'] = self.version
+        coadded['pahdb'] = self.pahdb
+        coadded['uids'] = list(self.data.keys())
+        coadded['model'] = self.model
+        coadded['units'] = self.units
+        coadded['shift'] = self._shift
+        coadded['grid'] = self.grid
+        coadded['profile'] = self.profile
+        coadded['fwhm'] = self.fwhm
+        coadded['weights'] = weights
+        coadded['averaged'] = average
+        coadded['data'] = np.zeros(len(self.grid))
+
         if weights:
-            coadded = np.zeros(len(self.grid))
             for key in self.data.keys():
-                coadded += self.data[key] * weights[key]
-            return coadded
+                coadded['data'] += self.data[key] * weights[key]
+        else:
+            for key in self.data.keys():
+                coadded['data'] += self.data[key]
+        if average:
+            coadded['data'] /= len(self.data.keys())
+
+        return coadded
