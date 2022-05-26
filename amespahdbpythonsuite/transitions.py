@@ -561,14 +561,15 @@ class Transitions(Data):
 
         val1 = 1.4387751297850830401 * frequency / T
         if val1 > np.log(np.finfo(float).max):
-          return 0.0
+            return 0.0
 
         val2 = 1.4387751297850830401 * frequencies / T
 
         valid = np.where((val2 < np.log(np.finfo(float).max)))
 
         return (Transitions.heatcapacity(T) / np.expm1(val1)) * \
-            (1.0 / np.sum(intensities[valid] * (frequencies[valid]) ** 3 / np.expm1(val2[valid])))
+            (1.0 / np.sum(intensities[valid] *
+             (frequencies[valid]) ** 3 / np.expm1(val2[valid])))
 
     @staticmethod
     def attainedtemperature(T):

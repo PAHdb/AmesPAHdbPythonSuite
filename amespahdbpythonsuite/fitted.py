@@ -508,10 +508,12 @@ class Fitted(Spectrum):
 
         if self.observation:
             for key in piecewise.keys():
-                sel = np.where(np.logical_and(self.grid >= range[key][0], self.grid <= range[key][1]))[0]
-                total_area = np.trapz(np.array(self.observation)[sel], x=self.grid[sel])
+                sel = np.where(np.logical_and(
+                    self.grid >= range[key][0], self.grid <= range[key][1]))[0]
+                total_area = np.trapz(np.array(self.observation)[
+                                      sel], x=self.grid[sel])
                 if total_area == 0:
-                  continue
+                    continue
                 resid_area = np.trapz(np.abs(np.array(self.observation)[sel] - self.getfit()[sel]),
                                       x=self.grid[sel])
                 piecewise[key] = resid_area / total_area
