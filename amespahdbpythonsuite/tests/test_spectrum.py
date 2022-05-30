@@ -71,7 +71,7 @@ class TestSpectrum():
         monkeypatch.setattr(plt, 'show', lambda: None)
         spectrum.plot()
         coadded = fit.coadd(weights=fit.weights, average=False)
-        np.testing.assert_equal(test_spec, coadded['data'])
+        np.testing.assert_allclose(test_spec, coadded['data'])
 
     def test_getset(self, pahdb_theoretical):
         # Read the database.
