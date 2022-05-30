@@ -24,13 +24,22 @@ def pahdb_theoretical():
     return pahdb
 
 
+@pytest.fixture(scope="module")
+def test_spec():
+
+    file = 'resources/coadded_test_data.npy'
+    spec = np.load(resource_filename('amespahdbpythonsuite', file))
+
+    return spec
+
+
 class TestSpectrum():
     """
     Test Spectrum class.
 
     """
 
-    def test_fit(self, pahdb_theoretical, monkeypatch):
+    def test_fit(self, pahdb_theoretical, monkeypatch, test_spec):
         # Read input spectrum.
         spec = resource_filename(
             'amespahdbpythonsuite', 'resources/galaxy_spec.ipac')
@@ -61,6 +70,8 @@ class TestSpectrum():
         # Check plotting function.
         monkeypatch.setattr(plt, 'show', lambda: None)
         spectrum.plot()
+        coadded = fit.coadd(weights=fit.weights, average=False)
+        np.testing.assert_allclose(test_spec, coadded['data'])
 
     def test_getset(self, pahdb_theoretical):
         # Read the database.
