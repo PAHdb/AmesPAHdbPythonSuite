@@ -27,10 +27,10 @@ def pahdb_theoretical():
 @pytest.fixture(scope="module")
 def test_spec():
 
-    tfile = '/resources/coadded_test_data.npy'
-    tspec1 = np.load(resource_filename('amespahdbpythonsuite', tfile))
+    file = 'resources/coadded_test_data.npy'
+    spec = np.load(resource_filename('amespahdbpythonsuite', file))
 
-    return tspec1
+    return spec
 
 
 class TestSpectrum():
