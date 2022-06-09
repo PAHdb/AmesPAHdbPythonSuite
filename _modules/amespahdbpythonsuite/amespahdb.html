@@ -115,6 +115,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">Version</span>
 <span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -154,6 +157,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="n">intro</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SUITE VERSION: </span><span class="si">{</span><span class="n">suite</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)):</span>
+            <span class="n">github</span> <span class="o">=</span> <span class="s2">&quot;http://api.github.com/repos/pahdb/amespahdbpythonsuite/tags&quot;</span>
+            <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">github</span><span class="p">)</span> <span class="k">as</span> <span class="n">url</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="n">versions</span> <span class="o">=</span> <span class="p">[</span><span class="n">Version</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+                <span class="n">versions</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">suite</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">versions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">update</span> <span class="o">=</span> <span class="n">versions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">public</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V</span><span class="si">{</span><span class="n">update</span><span class="si">}</span><span class="s2"> UPDATE AVAILABLE&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39;WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s1">&#39;CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV&#39;</span><span class="p">)</span>
@@ -689,6 +702,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span></div>
 
+<div class="viewcode-block" id="AmesPAHdb.checkversion"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.checkversion">[docs]</a>    <span class="k">def</span> <span class="nf">checkversion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to check against a PAHdb version.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Boolean whether a provided version matched the PAHdb version.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">version</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="AmesPAHdb.gettype"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettype">[docs]</a>    <span class="k">def</span> <span class="nf">gettype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to retrieve the PAHdb type.</span>
@@ -699,7 +722,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.getdata"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdata">[docs]</a>    <span class="k">def</span> <span class="nf">getdata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AmesPAHdb.getdatabaseref"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdatabaseref">[docs]</a>    <span class="k">def</span> <span class="nf">getdatabaseref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to retrieve the database.</span>
 
