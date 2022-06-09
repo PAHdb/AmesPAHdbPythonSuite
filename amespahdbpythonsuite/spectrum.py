@@ -153,28 +153,31 @@ class Spectrum(Transitions):
                 If True calculates the average coadded spectrum.
 
         """
-        coadded = dict()
-        coadded['type'] = self.type
-        coadded['version'] = self.version
-        coadded['pahdb'] = self.pahdb
-        coadded['uids'] = list(self.data.keys())
-        coadded['model'] = self.model
-        coadded['units'] = self.units
-        coadded['shift'] = self._shift
-        coadded['grid'] = self.grid
-        coadded['profile'] = self.profile
-        coadded['fwhm'] = self.fwhm
-        coadded['weights'] = weights
-        coadded['averaged'] = average
-        coadded['data'] = np.zeros(len(self.grid))
+
+        data = np.zeros(len(self.grid))
 
         if weights:
             for key in self.data.keys():
-                coadded['data'] += self.data[key] * weights[key]
+                data += self.data[key] * weights[key]
         else:
             for key in self.data.keys():
-                coadded['data'] += self.data[key]
-        if average:
-            coadded['data'] /= len(self.data.keys())
+                data += self.data[key]
 
-        return coadded
+        if average:
+            data /= len(self.data.keys())
+
+        from amespahdbpythonsuite.coadded import Coadded
+
+        return Coadded(type=self.type,
+                       version=self.version,
+                       data={0: data},
+                       pahdb=self.pahdb,
+                       uids=[0],
+                       model=self.model,
+                       units=self.units,
+                       shift=self._shift,
+                       grid=self.grid,
+                       profile=self.profile,
+                       fwhm=self.fwhm,
+                       weights=weights,
+                       averaged=average)
