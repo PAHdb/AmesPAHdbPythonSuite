@@ -66,7 +66,7 @@ class TestSpectrum():
         # Assert results.
         assert spectrum.uids == uids
         assert fit.uids == [73, 2054, 223]
-        np.testing.assert_array_almost_equal(fit.grid, np.array(waven))
+        np.testing.assert_allclose(fit.grid, np.array(waven))
         # Check plotting function.
         monkeypatch.setattr(plt, 'show', lambda: None)
         spectrum.plot()
