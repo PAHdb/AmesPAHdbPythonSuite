@@ -29,7 +29,7 @@ Submodules
 
 |
 
-amespahdb module
+amespahdb class
 ----------------
 
 .. automodule:: amespahdbpythonsuite.amespahdb
@@ -37,7 +37,7 @@ amespahdb module
     :undoc-members:
     :show-inheritance:
 
-data module
+data class
 ----------------
 
 .. automodule:: amespahdbpythonsuite.data
@@ -45,7 +45,7 @@ data module
     :undoc-members:
     :show-inheritance:
 
-xmlparser module
+xmlparser class
 ----------------
 
 .. automodule:: amespahdbpythonsuite.xmlparser
@@ -53,7 +53,7 @@ xmlparser module
     :undoc-members:
     :show-inheritance:
 
-transitions module
+transitions class
 ------------------
 
 .. automodule:: amespahdbpythonsuite.transitions
@@ -61,7 +61,7 @@ transitions module
     :undoc-members:
     :show-inheritance:
 
-spectrum module
+spectrum class
 ------------------
 
 .. automodule:: amespahdbpythonsuite.spectrum
@@ -69,7 +69,15 @@ spectrum module
     :undoc-members:
     :show-inheritance:
 
-species module
+coadd class
+-----------------
+
+.. automodule:: amespahdbpythonsuite.coadded
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+species class
 ------------------
 
 .. automodule:: amespahdbpythonsuite.species
@@ -77,7 +85,7 @@ species module
     :undoc-members:
     :show-inheritance:
 
-geometry module
+geometry class
 ---------------
 
 .. automodule:: amespahdbpythonsuite.geometry
@@ -85,7 +93,7 @@ geometry module
     :undoc-members:
     :show-inheritance:
 
-laboratory module
+laboratory class
 -----------------
 
 .. automodule:: amespahdbpythonsuite.laboratory
@@ -93,7 +101,7 @@ laboratory module
     :undoc-members:
     :show-inheritance:
 
-fitted module
+fitted class
 -----------------
 
 .. automodule:: amespahdbpythonsuite.fitted

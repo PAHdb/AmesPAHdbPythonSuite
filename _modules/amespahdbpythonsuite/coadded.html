@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>amespahdbpythonsuite.species &mdash; AmesPAHdbPythonSuite  documentation</title>
+  <title>amespahdbpythonsuite.coadded &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -101,7 +101,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>amespahdbpythonsuite.species</li>
+      <li>amespahdbpythonsuite.coadded</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -110,17 +110,62 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for amespahdbpythonsuite.species</h1><div class="highlight"><pre>
+  <h1>Source code for amespahdbpythonsuite.coadded</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
-<div class="viewcode-block" id="Species"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species">[docs]</a><span class="k">class</span> <span class="nc">Species</span><span class="p">():</span>
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+
+
+<div class="viewcode-block" id="Coadded"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded">[docs]</a><span class="k">class</span> <span class="nc">Coadded</span><span class="p">(</span><span class="n">Spectrum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    AmesPAHdbPythonSuite species class</span>
+<span class="sd">    AmesPAHdbPythonSuite coadded class</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="n">Spectrum</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Coadded.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.Spectrum.spectrum.set to parse keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Spectrum</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populate data dictionary helper.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;weights&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;averaged&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;averaged&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="p">[])):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;weights&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;averaged&#39;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;averaged&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Coadded.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get.</span>
+<span class="sd">        Assigns class variables from inherited dictionary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;averaged&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span>
+
+        <span class="k">return</span> <span class="n">d</span></div></div>
 </pre></div>
 
            </div>
