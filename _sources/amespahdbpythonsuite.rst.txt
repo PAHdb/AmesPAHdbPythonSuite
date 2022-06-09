@@ -21,12 +21,13 @@ Submodules
 
 .. inheritance-diagram:: amespahdbpythonsuite.amespahdb amespahdbpythonsuite.fitted
 .. inheritance-diagram:: amespahdbpythonsuite.spectrum amespahdbpythonsuite.fitted
+.. inheritance-diagram:: amespahdbpythonsuite.spectrum amespahdbpythonsuite.coadded
 
 .. inheritance-diagram:: amespahdbpythonsuite.xmlparser 
 .. inheritance-diagram:: amespahdbpythonsuite.geometry 
 .. inheritance-diagram:: amespahdbpythonsuite.laboratory 
 .. inheritance-diagram:: amespahdbpythonsuite.species 
-
+.. inheritance-diagram:: amespahdbpythonsuite.observation
 |
 
 amespahdb class

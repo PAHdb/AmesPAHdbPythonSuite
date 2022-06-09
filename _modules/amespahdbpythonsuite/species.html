@@ -114,14 +114,192 @@
   <h1>Source code for amespahdbpythonsuite.species</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">laboratory</span>
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">geometry</span>
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">transitions</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
+<span class="n">message</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="o">.</span><span class="n">message</span>
+
+
 <div class="viewcode-block" id="Species"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species">[docs]</a><span class="k">class</span> <span class="nc">Species</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    AmesPAHdbPythonSuite species class</span>
+<span class="sd">    AmesPAHdbPythonSuite species class.</span>
+<span class="sd">    Contains methods to work with PAH species.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Species.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populate properties.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uids&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">uids</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;uids&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pahdb&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pahdb&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uids&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uids</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uids&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+
+                <span class="n">message</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;DATABASE MISMATCH: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> != </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+
+                <span class="n">message</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;VERSION MISMATCH: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> != </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Species.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return data dictionary with expected keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                <span class="s1">&#39;uids&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="Species.transitions"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species.transitions">[docs]</a>    <span class="k">def</span> <span class="nf">transitions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">transitions</span><span class="o">.</span><span class="n">Transitions</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return transitions object.</span>
+<span class="sd">        Calls the :class:`amespahdbpythonsuite.transitions.Transitions` class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            transitions object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">transitions</span><span class="o">.</span><span class="n">Transitions</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                                       <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+                                       <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkey</span><span class="p">(</span><span class="s1">&#39;transitions&#39;</span><span class="p">),</span>
+                                       <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">,</span>
+                                       <span class="n">uids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">,</span>
+                                       <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;zerokelvin_m&#39;</span><span class="p">,</span>
+                                              <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                                              <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+                                       <span class="n">units</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;abscissa&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                                           <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;frequency [wavenumber]&#39;</span><span class="p">},</span>
+                                              <span class="s1">&#39;ordinate&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                                                           <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;integrated cross-section&#39;</span> <span class="o">+</span> <span class="s1">&#39;[km/mol]&#39;</span><span class="p">}}</span>
+                                       <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Species.geometry"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">geometry</span><span class="o">.</span><span class="n">Geometry</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return geometry object.</span>
+<span class="sd">        Calls the :class:`amespahdbpythonsuite.geometry.Geometry` class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            geometry object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">Geometry</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                                 <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+                                 <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkey</span><span class="p">(</span><span class="s1">&#39;geometry&#39;</span><span class="p">),</span>
+                                 <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">,</span>
+                                 <span class="n">uids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span>
+                                 <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Species.laboratory"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species.laboratory">[docs]</a>    <span class="k">def</span> <span class="nf">laboratory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">laboratory</span><span class="o">.</span><span class="n">Laboratory</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return laboratory object.</span>
+<span class="sd">        Calls the :class:`amespahdbpythonsuite.laboratory.Laboratory` class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            laboratory object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;experimental&#39;</span><span class="p">:</span>
+
+            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;EXPERIMENTAL DATABASE REQUIRED&#39;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">laboratory</span><span class="o">.</span><span class="n">Laboratory</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                                     <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+                                     <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkey</span><span class="p">(</span><span class="s1">&#39;laboratory&#39;</span><span class="p">),</span>
+                                     <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">,</span>
+                                     <span class="n">uids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">,</span>
+                                     <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;laboratory_m&#39;</span><span class="p">,</span>
+                                            <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+                                     <span class="n">units</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;abscissa&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                                         <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;frequency [wavenumber]&#39;</span><span class="p">},</span>
+                                            <span class="s1">&#39;ordinate&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                                                         <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;absorbance&#39;</span> <span class="o">+</span> <span class="s1">&#39;[-log(I/I$_</span><span class="si">{0}</span><span class="s1">)$&#39;</span><span class="p">}}</span>
+                                     <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Species.references"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species.references">[docs]</a>    <span class="k">def</span> <span class="nf">references</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return dict with references.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getkey</span><span class="p">(</span><span class="s1">&#39;references&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Species.comments"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species.comments">[docs]</a>    <span class="k">def</span> <span class="nf">comments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return dict with comments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getkey</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__getkey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a dictionary of species properties</span>
+<span class="sd">        retrieved by keyword.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            key : str</span>
+<span class="sd">                Database keyword.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary of retrieved properties with UIDs as keys.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">uid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+                                  <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span></div>
 </pre></div>
 
            </div>
