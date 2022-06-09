@@ -32,9 +32,11 @@ class TestAmesPAHdb():
     Test AmesPAHdb class.
 
     """
+
     def test_instance(self, pahdb_theoretical):
         # Read the database.
-        assert isinstance(pahdb_theoretical, amespahdbpythonsuite.amespahdb.AmesPAHdb)
+        assert isinstance(pahdb_theoretical,
+                          amespahdbpythonsuite.amespahdb.AmesPAHdb)
 
     def test_env(self):
         # TODO: Turn the sys.exit into exceptions.
@@ -63,6 +65,11 @@ class TestAmesPAHdb():
                   check=False, cache=True)
         capture = capsys.readouterr()
         assert capture.out.find('RESTORING DATABASE FROM CACHE') >= 0
+
+    def test_checkversion(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        assert not pahdb.checkversion('wrong')
 
     def test_keybyuids(self, pahdb_theoretical):
         # Read the database.
@@ -104,10 +111,10 @@ class TestAmesPAHdb():
         geo = pahdb.getgeometrybyuid(uids)
         assert isinstance(geo, amespahdbpythonsuite.geometry.Geometry)
 
-    def test_getdata(self, pahdb_theoretical):
+    def test_getdatabaseref(self, pahdb_theoretical):
         # Read the database.
         pahdb = pahdb_theoretical
-        assert isinstance(pahdb.getdata(), dict)
+        assert isinstance(pahdb.getdatabaseref(), dict)
 
     def test_search_formula(self, pahdb_theoretical):
         # Read the database.

@@ -3,6 +3,9 @@
 import os
 import sys
 import copy
+import json
+import urllib.request
+from packaging.version import Version
 import hashlib
 import tempfile
 import time
@@ -42,6 +45,16 @@ class AmesPAHdb:
         self.message(intro)
 
         self.message(f'SUITE VERSION: {suite.__version__}')
+
+        if(keywords.get('update', True)):
+            github = "http://api.github.com/repos/pahdb/amespahdbpythonsuite/tags"
+            with urllib.request.urlopen(github) as url:
+                data = json.load(url)
+                versions = [Version(tag['name']) for tag in data]
+                versions.sort()
+                if(Version(suite.__version__) < versions[-1]):
+                    update = versions[-1].public
+                    self.message(f"V{update} UPDATE AVAILABLE")
 
         self.message('WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/')
         self.message('CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV')
@@ -577,6 +590,16 @@ class AmesPAHdb:
         """
         return self.__data['version']
 
+    def checkversion(self, version: str) -> bool:
+        """
+        Method to check against a PAHdb version.
+
+        Returns:
+            Boolean whether a provided version matched the PAHdb version.
+
+        """
+        return version == self.__data['version']
+
     def gettype(self):
         """
         Method to retrieve the PAHdb type.
@@ -587,7 +610,7 @@ class AmesPAHdb:
         """
         return self.__data['type']
 
-    def getdata(self):
+    def getdatabaseref(self):
         """
         Method to retrieve the database.
 

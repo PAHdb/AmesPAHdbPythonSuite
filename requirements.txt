@@ -3,3 +3,4 @@ astropy
 lxml
 matplotlib
 scipy
+packaging
