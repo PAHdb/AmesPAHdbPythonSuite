@@ -272,7 +272,8 @@ class XMLparser:
 
             return laboratory
 
-        specie_dict = {}
+        specie_dict = {'comments': (), 'references': (
+        ), 'geometry': (), 'transitions': (), 'laboratory': ()}
 
         while True:
             action, elem = next(context)
@@ -294,7 +295,7 @@ class XMLparser:
 
                             elem.clear()
 
-                    specie_dict['comments'] = tuple(comments)
+                    specie_dict['comments'] = comments
                 elif tag == 'references':
                     references = []
 
@@ -310,7 +311,7 @@ class XMLparser:
 
                             elem.clear()
 
-                    specie_dict['references'] = tuple(references)
+                    specie_dict['references'] = references
                 elif tag == 'geometry':
                     specie_dict['geometry'] = specie_geometry_handler(context)
                 elif tag == 'transitions':

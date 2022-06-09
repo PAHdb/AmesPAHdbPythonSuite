@@ -166,7 +166,7 @@ class AmesPAHdb:
             Dictionary of retrieved properties with UIDs as keys.
 
         """
-        # TODO Handle empty lists or invalid UIDs.
+
         if key == 'species':
             return copy.deepcopy(dict((uid, self.__data['species'][uid])
                                       for uid in uids if uid in self.__data['species'].keys()))
@@ -294,7 +294,12 @@ class AmesPAHdb:
 
         if type(uids) == int:
             uids = [uids]
-        return Geometry(data=self.__getkeybyuids('geometry', uids), uids=uids)
+
+        return Geometry(type=self.__data['database'],
+                        version=self.__data['version'],
+                        data=self.__getkeybyuids('geometry', uids),
+                        pahdb=self.__data,
+                        uids=uids)
 
     def search(self, query):
         """
