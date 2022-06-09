@@ -109,6 +109,14 @@ fitted class
     :undoc-members:
     :show-inheritance:
 
+observation class
+-----------------
+
+.. automodule:: amespahdbpythonsuite.observation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
