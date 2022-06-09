@@ -148,7 +148,7 @@ class Spectrum(Transitions):
 
         Parameters:
             weights: dict
-                Dictonary of fit weights to use when co-adding.
+                Dictionary of fit weights to use when co-adding.
             average: bool
                 If True calculates the average coadded spectrum.
 

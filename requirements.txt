@@ -4,3 +4,4 @@ lxml
 matplotlib
 scipy
 packaging
+specutils

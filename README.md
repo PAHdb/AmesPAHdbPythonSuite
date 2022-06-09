@@ -11,11 +11,13 @@ A Python module to work with a downloaded PAHdb XML-file.
 
 This software requires:
 
-``python3``
+``numpy``
 ``astropy``
 ``lxml``
 ``matplotlib``
 ``scipy``
+``packaging``
+``specutils``
 
 ## Installation
 

@@ -51,7 +51,7 @@ class TestAmesPAHdb():
     def test_file_not_exist(self):
         # TODO: Turn the sys.exit into exceptions.
         with pytest.raises(SystemExit) as pytest_wrapped_e:
-            AmesPAHdb(filename='file_does_not_exists.xml')
+            AmesPAHdb(filename='file_does_not_exist.xml')
             assert pytest_wrapped_e.type == SystemExit
             assert pytest_wrapped_e.value.code == 2
 
