@@ -18,7 +18,7 @@ from amespahdbpythonsuite import coadded
 def pahdb_theoretical():
     xml = 'resources/pahdb-theoretical_cutdown.xml'
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False)
+                      check=False, cache=False, update=False)
     return pahdb
 
 

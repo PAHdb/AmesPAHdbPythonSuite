@@ -23,7 +23,7 @@ class Fitted(Spectrum):
         Initialize fitted class.
 
         """
-        Spectrum.__init__(self, d, **keywords)
+        super().__init__(d, **keywords)
         self.weights = None
         self.observation = None
         self.atoms = None

@@ -10,7 +10,7 @@ class Coadded(Spectrum):
     """
 
     def __init__(self, d=None, **keywords):
-        Spectrum.__init__(self, d, **keywords)
+        super().__init__(d, **keywords)
         self.weights = []
         self.averaged = False
         self.__set(d, **keywords)

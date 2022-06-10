@@ -4,6 +4,7 @@ import os
 import sys
 import copy
 import json
+from urllib.error import HTTPError
 import urllib.request
 from packaging.version import Version
 import hashlib
@@ -48,13 +49,16 @@ class AmesPAHdb:
 
         if(keywords.get('update', True)):
             github = "http://api.github.com/repos/pahdb/amespahdbpythonsuite/tags"
-            with urllib.request.urlopen(github) as url:
-                data = json.load(url)
-                versions = [Version(tag['name']) for tag in data]
-                versions.sort()
-                if(Version(suite.__version__) < versions[-1]):
-                    update = versions[-1].public
-                    self.message(f"V{update} UPDATE AVAILABLE")
+            try:
+                with urllib.request.urlopen(github) as url:
+                    data = json.load(url)
+                    versions = [Version(tag['name']) for tag in data]
+                    versions.sort()
+                    if(Version(suite.__version__) < versions[-1]):
+                        update = versions[-1].public
+                        self.message(f"V{update} UPDATE AVAILABLE")
+            except HTTPError:
+                self.message("FAILED TO CHECK VERSION")
 
         self.message('WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/')
         self.message('CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV')

@@ -20,7 +20,7 @@ from amespahdbpythonsuite import spectrum
 def pahdb_theoretical():
     xml = 'resources/pahdb-theoretical_cutdown.xml'
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False)
+                      check=False, cache=False, update=False)
     return pahdb
 
 
@@ -29,6 +29,9 @@ class TestSpectrum():
     Test Spectrum class.
 
     """
+
+    def test_instance(self):
+        assert isinstance(spectrum.Spectrum(), spectrum.Spectrum)
 
     def test_fit(self, pahdb_theoretical, monkeypatch):
         # Read input spectrum.

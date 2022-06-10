@@ -15,7 +15,7 @@ class Spectrum(Transitions):
     """
 
     def __init__(self, d=None, **keywords):
-        Transitions.__init__(self, d, **keywords)
+        super().__init__(d, **keywords)
         self.fwhm = 0.0
         self.__set(d, **keywords)
 

@@ -15,7 +15,7 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 def pahdb_theoretical():
     xml = 'resources/pahdb-theoretical_cutdown.xml'
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False)
+                      check=False, cache=False, update=False)
     return pahdb
 
 
@@ -23,7 +23,7 @@ def pahdb_theoretical():
 def pahdb_laboratory():
     xml = 'resources/pahdb-experimental_cutdown.xml'
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False)
+                      check=False, cache=False, update=False)
     return pahdb
 
 
@@ -38,20 +38,25 @@ class TestAmesPAHdb():
         assert isinstance(pahdb_theoretical,
                           amespahdbpythonsuite.amespahdb.AmesPAHdb)
 
+    def test_update(self):
+        xml = 'resources/pahdb-theoretical_cutdown.xml'
+        path = resource_filename('amespahdbpythonsuite', xml)
+        AmesPAHdb(filename=path, check=False, cache=False, update=True)
+
     def test_env(self):
         # TODO: Turn the sys.exit into exceptions.
         import os
         if 'AMESPAHDEFAULTDB' in os.environ:
             del os.environ["AMESPAHDEFAULTDB"]
         with pytest.raises(SystemExit) as pytest_wrapped_e:
-            AmesPAHdb()
+            AmesPAHdb(check=False, cache=False, update=False)
             assert pytest_wrapped_e.type == SystemExit
             assert pytest_wrapped_e.value.code == 1
 
     def test_file_not_exist(self):
         # TODO: Turn the sys.exit into exceptions.
         with pytest.raises(SystemExit) as pytest_wrapped_e:
-            AmesPAHdb(filename='file_does_not_exist.xml')
+            AmesPAHdb(filename='file_does_not_exist.xml', update=False)
             assert pytest_wrapped_e.type == SystemExit
             assert pytest_wrapped_e.value.code == 2
 
@@ -60,9 +65,9 @@ class TestAmesPAHdb():
         # Make sure the AmesPAHdb module is called to create the cached database.
         with capsys.disabled():
             AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=True)
+                      check=False, cache=True, update=False)
         AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                  check=False, cache=True)
+                  check=False, cache=True, update=False)
         capture = capsys.readouterr()
         assert capture.out.find('RESTORING DATABASE FROM CACHE') >= 0
 
