@@ -6,6 +6,7 @@ Test the species.py module.
 """
 
 import pytest
+import copy
 from pkg_resources import resource_filename
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -19,7 +20,7 @@ def species_test():
     xml = 'resources/pahdb-theoretical_cutdown.xml'
     db = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
                    check=False, cache=False, update=False)
-    s = db.getspeciesbyuid([18, 73])
+    s = db.getspeciesbyuid([18, 73, 726, 2054, 223])
     return s
 
 
@@ -54,3 +55,17 @@ class TestSpecies():
         species2.set(s1)
         s2 = species2.get()
         assert(s2['type'] == 'Species')
+
+    def test_intersect(self, species_test):
+        sub_uids = [18, 223]
+        s = copy.copy(species_test)
+        s.intersect(sub_uids)
+        assert list(s.uids) == sub_uids
+        assert list(s.data.keys()) == sub_uids
+
+    def test_difference(self, species_test):
+        sub_uids = [18, 223]
+        s = copy.copy(species_test)
+        s.difference(sub_uids)
+        assert list(s.uids) == [73, 726, 2054]
+        assert list(s.data.keys()) == [73, 726, 2054]

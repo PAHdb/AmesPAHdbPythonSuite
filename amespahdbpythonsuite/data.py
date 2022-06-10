@@ -90,18 +90,24 @@ class Data(object):
                 'model': self.model,
                 'units': self.units}
 
-    def intersect(self, uids):
+    def getuids(self) -> list:
+        """
+        Return uid list.
+
+        """
+        return self.uids
+
+    def intersect(self, uids: list) -> None:
         """
         Updates data to the intersection with provided UIDs.
 
-        Parameters
-        ----------
-        uids : list of integers
+        Parameters:
+            uids : list of integers
 
         """
-        self.uids = set(self.uids) & set(uids)
+        keep = set(self.uids) & set(uids)
 
-        count = len(self.uids)
+        count = len(keep)
 
         if count == 0:
 
@@ -110,5 +116,32 @@ class Data(object):
             return
 
         message(f'INTERSECTION FOUND: {count}')
+
+        self.uids = keep
+
+        self.data = {key: self.data[key] for key in self.uids}
+
+    def difference(self, uids: list) -> None:
+        """
+        Updates data to the difference with provided UIDs.
+
+        Parameters:
+            uids : list of integers
+                List of UIDs.
+
+        """
+        keep = set(self.uids) - set(uids)
+
+        count = len(keep)
+
+        if count == 0:
+
+            message('NO DIFFERENCE FOUND')
+
+            return
+
+        message(f'DIFFERENCE FOUND: {keep}')
+
+        self.uids = keep
 
         self.data = {key: self.data[key] for key in self.uids}

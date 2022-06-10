@@ -123,6 +123,17 @@ class TestTransitions():
         assert list(trans.uids) == sub_uids
         assert list(trans.data.keys()) == sub_uids
 
+    def test_difference(self, pahdb_theoretical):
+        # Read the database.
+        pahdb = pahdb_theoretical
+        # UIDs test list.
+        uids = [18, 73, 726, 2054, 223]
+        sub_uids = [18, 223]
+        trans = pahdb.gettransitionsbyuid(uids)
+        trans.difference(sub_uids)
+        assert list(trans.uids) == [73, 726, 2054]
+        assert list(trans.data.keys()) == [73, 726, 2054]
+
     def test_shift(self, pahdb_theoretical):
         # Read the database.
         pahdb = pahdb_theoretical
