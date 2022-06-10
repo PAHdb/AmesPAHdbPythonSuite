@@ -150,10 +150,11 @@
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="5,55,344,80"/>
 <area shape="rect" id="node2" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="53,5,296,31"/>
 <area shape="rect" id="node3" href="#amespahdbpythonsuite.transitions.Transitions" target="_top" title="AmesPAHdbPythonSuite transitions class." alt="" coords="392,5,715,31"/>
-</map><div class="graphviz"><img src="_images/inheritance-b57a5a6c2586fc9f86a5f39f566af51dd4e0b56c.png" alt="Inheritance diagram of amespahdbpythonsuite.laboratory, amespahdbpythonsuite.amespahdb" usemap="#inheritancebe829c5288" class="inheritance graphviz" /></div>
+</map><div class="graphviz"><img src="_images/inheritance-a08698663a05f5ee694313539840152cded6b7b4.png" alt="Inheritance diagram of amespahdbpythonsuite.laboratory, amespahdbpythonsuite.amespahdb" usemap="#inheritancebe829c5288" class="inheritance graphviz" /></div>
 <map id="inheritancebe829c5288" name="inheritancebe829c5288">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="5,55,344,80"/>
-<area shape="rect" id="node2" href="#amespahdbpythonsuite.laboratory.Laboratory" target="_top" title="AmesPAHdbPythonSuite laboratory class" alt="" coords="15,5,334,31"/>
+<area shape="rect" id="node2" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="53,5,296,31"/>
+<area shape="rect" id="node3" href="#amespahdbpythonsuite.laboratory.Laboratory" target="_top" title="AmesPAHdbPythonSuite laboratory class." alt="" coords="392,5,711,31"/>
 </map><div class="graphviz"><img src="_images/inheritance-581de7c69f96d0112be398fb554e2221ee681a18.png" alt="Inheritance diagram of amespahdbpythonsuite.species, amespahdbpythonsuite.amespahdb" usemap="#inheritanceb13f24d4ba" class="inheritance graphviz" /></div>
 <map id="inheritanceb13f24d4ba" name="inheritanceb13f24d4ba">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="5,55,344,80"/>
@@ -216,9 +217,10 @@
 </map><div class="graphviz"><img src="_images/inheritance-ead52fcb24bf591ff2084d89ae6c621a1a08bd98.png" alt="Inheritance diagram of amespahdbpythonsuite.geometry" usemap="#inheritance8761091f53" class="inheritance graphviz" /></div>
 <map id="inheritance8761091f53" name="inheritance8761091f53">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.geometry.Geometry" target="_top" title="AmesPAHdbPythonSuite geometry class" alt="" coords="5,5,315,31"/>
-</map><div class="graphviz"><img src="_images/inheritance-5aa6df5264503ecfb861b7001dac7f7dd67c08c8.png" alt="Inheritance diagram of amespahdbpythonsuite.laboratory" usemap="#inheritanceef0412fc5a" class="inheritance graphviz" /></div>
+</map><div class="graphviz"><img src="_images/inheritance-cc9b578b9e107b5ac40d1ac604407641b2fedec2.png" alt="Inheritance diagram of amespahdbpythonsuite.laboratory" usemap="#inheritanceef0412fc5a" class="inheritance graphviz" /></div>
 <map id="inheritanceef0412fc5a" name="inheritanceef0412fc5a">
-<area shape="rect" id="node1" href="#amespahdbpythonsuite.laboratory.Laboratory" target="_top" title="AmesPAHdbPythonSuite laboratory class" alt="" coords="5,5,324,31"/>
+<area shape="rect" id="node1" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="5,5,248,31"/>
+<area shape="rect" id="node2" href="#amespahdbpythonsuite.laboratory.Laboratory" target="_top" title="AmesPAHdbPythonSuite laboratory class." alt="" coords="296,5,615,31"/>
 </map><div class="graphviz"><img src="_images/inheritance-674543c4fc8cf6652ca410abd8cc6b11dc302f27.png" alt="Inheritance diagram of amespahdbpythonsuite.species" usemap="#inheritancefa1427a76c" class="inheritance graphviz" /></div>
 <map id="inheritancefa1427a76c" name="inheritancefa1427a76c">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.species.Species" target="_top" title="AmesPAHdbPythonSuite species class." alt="" coords="5,5,288,31"/>
@@ -413,16 +415,38 @@ Called by <code class="xref py py-meth docutils literal notranslate"><span class
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>AmesPAHdbPythonSuite data class</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.difference">
+<span class="sig-name descname"><span class="pre">difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates data to the difference with provided UIDs.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return data dictionary with expected keywords.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.getuids">
+<span class="sig-name descname"><span class="pre">getuids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.getuids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.getuids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return uid list.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.intersect">
-<span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.intersect" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.intersect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates data to the intersection with provided UIDs.</p>
-<p>uids : list of integers</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>uids : list of integers</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -692,6 +716,19 @@ Contains methods to work with PAH species.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.difference">
+<span class="sig-name descname"><span class="pre">difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates data to the difference with provided UIDs.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>uids<span class="classifier">list of integers</span></dt><dd><p>List of UIDs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.geometry">
 <span class="sig-name descname"><span class="pre">geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><span class="pre">Geometry</span></a></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return geometry object.
@@ -706,6 +743,22 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geo
 <dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return data dictionary with expected keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.getuids">
+<span class="sig-name descname"><span class="pre">getuids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.getuids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.getuids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return uid list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.intersect">
+<span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.intersect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates data to the intersection with provided UIDs.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>uids : list of integers</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -764,8 +817,22 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.
 <dl class="py class">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.laboratory.</span></span><span class="sig-name descname"><span class="pre">Laboratory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>AmesPAHdbPythonSuite laboratory class</p>
+<dd><p>Bases: <a class="reference internal" href="#amespahdbpythonsuite.data.Data" title="amespahdbpythonsuite.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
+<p>AmesPAHdbPythonSuite laboratory class.
+Contains methods to work with a laboratory spectrum.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id13"><span class="problematic" id="id14">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.get.
+Assigns class variables from inherited dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id15"><span class="problematic" id="id16">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -779,7 +846,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls class: :class:<a href="#id13"><span class="problematic" id="id14">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.get.
+<dd><p>Calls class: :class:<a href="#id17"><span class="problematic" id="id18">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.get.
 Assigns class variables from inherited dictionary.</p>
 </dd></dl>
 
@@ -840,7 +907,7 @@ Assigns class variables from inherited dictionary.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.set">
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls class: :class:<a href="#id15"><span class="problematic" id="id16">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.</p>
+<dd><p>Calls class: :class:<a href="#id19"><span class="problematic" id="id20">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.</p>
 </dd></dl>
 
 <dl class="py method">

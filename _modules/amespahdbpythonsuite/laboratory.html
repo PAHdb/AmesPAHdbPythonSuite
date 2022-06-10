@@ -114,14 +114,37 @@
   <h1>Source code for amespahdbpythonsuite.laboratory</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
-<div class="viewcode-block" id="Laboratory"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory">[docs]</a><span class="k">class</span> <span class="nc">Laboratory</span><span class="p">():</span>
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.data</span> <span class="kn">import</span> <span class="n">Data</span>
+
+
+<div class="viewcode-block" id="Laboratory"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory">[docs]</a><span class="k">class</span> <span class="nc">Laboratory</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    AmesPAHdbPythonSuite laboratory class</span>
+<span class="sd">    AmesPAHdbPythonSuite laboratory class.</span>
+<span class="sd">    Contains methods to work with a laboratory spectrum.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Laboratory.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Data</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laboratory.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get.</span>
+<span class="sd">        Assigns class variables from inherited dictionary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="k">return</span> <span class="n">d</span></div></div>
 </pre></div>
 
            </div>
