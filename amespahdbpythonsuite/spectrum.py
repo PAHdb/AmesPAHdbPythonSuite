@@ -4,7 +4,10 @@ import numpy as np
 
 from scipy import optimize
 
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.transitions import Transitions
+
+message = AmesPAHdb.message
 
 
 class Spectrum(Transitions):
@@ -33,20 +36,20 @@ class Spectrum(Transitions):
 
         """
         if d:
-            if d.get('type', '') == self.__class__.__name__:
-                if 'grid' not in keywords:
-                    self.grid = d['grid']
-                if 'profile' not in keywords:
-                    self.profile = d['profile']
-                if 'fwhm' not in keywords:
-                    self.fwhm = d['fwhm']
+            if d.get("type", "") == self.__class__.__name__:
+                if "grid" not in keywords:
+                    self.grid = d["grid"]
+                if "profile" not in keywords:
+                    self.profile = d["profile"]
+                if "fwhm" not in keywords:
+                    self.fwhm = d["fwhm"]
 
-        if len(keywords.get('grid', [])):
-            self.grid = keywords.get('grid')
-        if 'profile' in keywords:
-            self.profile = keywords.get('profile')
-        if 'fwhm' in keywords:
-            self.fwhm = keywords.get('fwhm')
+        if len(keywords.get("grid", [])):
+            self.grid = keywords.get("grid")
+        if "profile" in keywords:
+            self.profile = keywords.get("profile")
+        if "fwhm" in keywords:
+            self.fwhm = keywords.get("fwhm")
 
     def get(self):
         """
@@ -55,14 +58,14 @@ class Spectrum(Transitions):
 
         """
         d = Transitions.get(self)
-        d['type'] = self.__class__.__name__
-        d['grid'] = self.grid
-        d['profile'] = self.profile
-        d['fwhm'] = self.fwhm
+        d["type"] = self.__class__.__name__
+        d["grid"] = self.grid
+        d["profile"] = self.profile
+        d["fwhm"] = self.fwhm
 
         return d
 
-    def fit(self, y, yerr=None, **keywords):
+    def fit(self, y, yerr=None, notice=True, **keywords):
         """
         Fits the input spectrum.
 
@@ -73,14 +76,16 @@ class Spectrum(Transitions):
 
         if yerr is None:
             # Do NNLS.
-            method = 'NNLS'
+            method = "NNLS"
             b = list(y)
             m = matrix
         else:
             # Do NNLC.
-            method = 'NNLC'
+            method = "NNLC"
             b = list(np.divide(y, yerr))
             m = np.divide(matrix, yerr)
+
+        message(f"DOING {method}")
 
         solution, norm = optimize.nnls(m.T, b)
 
@@ -90,7 +95,11 @@ class Spectrum(Transitions):
         weights = {}
 
         # Retrieve uids, data, and fit weights dictionaries.
-        for uid, s, m, in zip(self.uids, solution, matrix):
+        for (
+            uid,
+            s,
+            m,
+        ) in zip(self.uids, solution, matrix):
             if s > 0:
                 intensities = []
                 uids.append(uid)
@@ -99,23 +108,35 @@ class Spectrum(Transitions):
                 data[uid] = np.array(intensities)
                 weights[uid] = s
 
-        # Call Fitted Class to plot the fitted spectrum and get the fit breakdown.
+        message(
+            [
+                " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
+                " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
+                " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
+                " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
+                " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
+                " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
+            ]
+        )
+
         from amespahdbpythonsuite.fitted import Fitted
 
-        return Fitted(type=self.type,
-                      version=self.version,
-                      data=data,
-                      pahdb=self.pahdb,
-                      uids=uids,
-                      model=self.model,
-                      units=self.units,
-                      shift=self._shift,
-                      grid=self.grid,
-                      profile=self.profile,
-                      fwhm=self.fwhm,
-                      observation=list(y),
-                      weights=weights,
-                      method=method)
+        return Fitted(
+            type=self.type,
+            version=self.version,
+            data=data,
+            pahdb=self.pahdb,
+            uids=uids,
+            model=self.model,
+            units=self.units,
+            shift=self._shift,
+            grid=self.grid,
+            profile=self.profile,
+            fwhm=self.fwhm,
+            observation=list(y),
+            weights=weights,
+            method=method,
+        )
 
     def plot(self, **keywords):
         """
@@ -127,10 +148,8 @@ class Spectrum(Transitions):
 
         _, ax = plt.subplots()
         ax.minorticks_on()
-        ax.tick_params(which='major', right='on',
-                       top='on', direction='in', length=5)
-        ax.tick_params(which='minor', right='on',
-                       top='on', direction='in', length=3)
+        ax.tick_params(which="major", right="on", top="on", direction="in", length=5)
+        ax.tick_params(which="minor", right="on", top="on", direction="in", length=3)
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
 
         for uid, col in zip(self.uids, colors):
@@ -138,10 +157,10 @@ class Spectrum(Transitions):
             ax.plot(self.grid, y, color=col)
 
         ax.set_xlim((max(self.grid), min(self.grid)))
-        ax.tick_params(axis='both', labelsize=14)
+        ax.tick_params(axis="both", labelsize=14)
 
-        ax.set_xlabel(self.units['abscissa']['str'], fontsize=14)
-        ax.set_ylabel(self.units['ordinate']['str'], fontsize=14)
+        ax.set_xlabel(self.units["abscissa"]["str"], fontsize=14)
+        ax.set_ylabel(self.units["ordinate"]["str"], fontsize=14)
 
         plt.show()
 
@@ -171,16 +190,18 @@ class Spectrum(Transitions):
 
         from amespahdbpythonsuite.coadded import Coadded
 
-        return Coadded(type=self.type,
-                       version=self.version,
-                       data={0: data},
-                       pahdb=self.pahdb,
-                       uids=[0],
-                       model=self.model,
-                       units=self.units,
-                       shift=self._shift,
-                       grid=self.grid,
-                       profile=self.profile,
-                       fwhm=self.fwhm,
-                       weights=weights,
-                       averaged=average)
+        return Coadded(
+            type=self.type,
+            version=self.version,
+            data={0: data},
+            pahdb=self.pahdb,
+            uids=[0],
+            model=self.model,
+            units=self.units,
+            shift=self._shift,
+            grid=self.grid,
+            profile=self.profile,
+            fwhm=self.fwhm,
+            weights=weights,
+            averaged=average,
+        )

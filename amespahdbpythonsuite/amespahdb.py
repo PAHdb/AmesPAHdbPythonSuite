@@ -145,15 +145,22 @@ class AmesPAHdb:
             self.__data = parser.to_pahdb_dict()
 
             # Dump the database into pickle in the cache directory.
-            with open(md5, 'wb') as f:
-                pickle.dump(self.__data, f, pickle.HIGHEST_PROTOCOL)
+            if keywords.get('cache', True):
+                with open(md5, 'wb') as f:
+                    pickle.dump(self.__data, f, pickle.HIGHEST_PROTOCOL)
 
             # Store the dumped database filename.
             self.__data['filename'] = md5
 
             # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
-            print(f'Elapsed time: {elapsed}\n')
+
+            info = [f'FILENAME                    : {filename}',
+                    f'PARSE TIME                  : {elapsed}',
+                    f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
+                    f'COMMENT                     : {self.__data["comment"]}']
+
+            self.message(info, space=0)
 
     def __getkeybyuids(self, key, uids):
         """
@@ -649,3 +656,4 @@ class AmesPAHdb:
         else:
             print(text.center(space))
         print(line)
+        print()

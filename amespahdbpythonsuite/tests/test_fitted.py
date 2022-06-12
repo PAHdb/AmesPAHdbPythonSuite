@@ -60,7 +60,7 @@ class TestFitted():
         # fit the spectrum.
         fit = spectrum.fit(flux, sigma)
         # Obtain method
-        assert fit.getmethod() == 'NNLC' 
+        assert fit.getmethod() == 'NNLC'
         # Create temporary pytest directory.
         d = tmp_path / "sub"
         d.mkdir()
@@ -94,3 +94,5 @@ class TestFitted():
                  'nitrogen', 'pure', 'nc', 'err',
                  'e127', 'e112', 'e77', 'e62', 'e33']
         assert list(bd.keys()) == lkeys
+        # Obtain weights
+        assert fit.sort() != fit.sort(flux=True)

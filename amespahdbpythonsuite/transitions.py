@@ -419,10 +419,6 @@ class Transitions(Data):
             f'GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS')
         message(f'FWHM: {fwhm} /cm')
 
-        print('Convolving')
-        # Start timer.
-        tstart = time.perf_counter()
-
         gaussian = keywords.get('gaussian', False)
         drude = keywords.get('drude', False)
         d = {}
@@ -464,17 +460,14 @@ class Transitions(Data):
                                                                  drude=keywords.get('drude', False))
                 d[uid] = s
 
-        elapsed = timedelta(seconds=(time.perf_counter() - tstart))
-        print(f'Elapsed time: {elapsed}')
-
-        from amespahdbpythonsuite.spectrum import Spectrum
-
         if self.model['type'] == 'zerokelvin_m':
             self.units['ordinate'] = {'unit': 2,
                                       'str': 'cross-section [x10$^{5}$ cm$^{2}$/mol]'}
         elif self.model['type'] == 'cascade_m':
             self.units['ordinate'] = {'unit': 3,
                                       'str': 'radiant energy [x10$^{5}$ erg/cm$^{-1}$/mol]'}
+
+        from amespahdbpythonsuite.spectrum import Spectrum
 
         return Spectrum(type=self.type,
                         version=self.version,
