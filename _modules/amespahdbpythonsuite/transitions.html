@@ -533,10 +533,6 @@
             <span class="sa">f</span><span class="s1">&#39;GRID: (XMIN,XMAX)=(</span><span class="si">{</span><span class="n">xmin</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">xmax</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">); </span><span class="si">{</span><span class="n">npoints</span><span class="si">}</span><span class="s1"> POINTS&#39;</span><span class="p">)</span>
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;FWHM: </span><span class="si">{</span><span class="n">fwhm</span><span class="si">}</span><span class="s1"> /cm&#39;</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Convolving&#39;</span><span class="p">)</span>
-        <span class="c1"># Start timer.</span>
-        <span class="n">tstart</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-
         <span class="n">gaussian</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">drude</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;drude&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
@@ -578,17 +574,14 @@
                                                                  <span class="n">drude</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;drude&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
                 <span class="n">d</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
 
-        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">tstart</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Elapsed time: </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;zerokelvin_m&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s1">&#39;ordinate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
                                       <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;cross-section [x10$^</span><span class="si">{5}</span><span class="s1">$ cm$^</span><span class="si">{2}</span><span class="s1">$/mol]&#39;</span><span class="p">}</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cascade_m&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s1">&#39;ordinate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
                                       <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s1">&#39;radiant energy [x10$^</span><span class="si">{5}</span><span class="s1">$ erg/cm$^{-1}$/mol]&#39;</span><span class="p">}</span>
+
+        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
 
         <span class="k">return</span> <span class="n">Spectrum</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
                         <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
