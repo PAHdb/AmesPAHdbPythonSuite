@@ -16,14 +16,13 @@ class Laboratory(Data):
 
     def set(self, d, **keywords):
         """
-        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.
+        Calls class: :class:`amespahdbpythonsuite.data.Data.set to parse keywords.
 
         """
         Data.set(self, d, **keywords)
 
     def get(self):
         """
-        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get.
         Assigns class variables from inherited dictionary.
 
         """

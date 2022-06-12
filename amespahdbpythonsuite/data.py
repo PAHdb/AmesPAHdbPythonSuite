@@ -15,6 +15,12 @@ class Data(object):
         Initialize Data class.
 
         """
+        self.type = ''
+        self.version = ''
+        self.data = dict()
+        self.uids = []
+        self.model = dict()
+        self.units = dict()
         self.pahdb = None
         self.__set(d, **keywords)
 
