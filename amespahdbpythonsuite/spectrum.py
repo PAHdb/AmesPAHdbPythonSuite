@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import Union
+
 import numpy as np
 
 from scipy import optimize
@@ -205,3 +207,26 @@ class Spectrum(Transitions):
             weights=weights,
             averaged=average,
         )
+
+    def normalize(self, all=False) -> Union[float, dict]:
+        """
+        Normalize spectral data
+
+        """
+
+        if all:
+            max = 0.0
+            for intensities in self.data.values():
+                m = intensities.max()
+                if m > max:
+                    max = m
+            for intensities in self.data.values():
+                intensities /= max
+        else:
+            max = dict()
+            for uid, intensities in self.data.items():
+                m = intensities.max()
+                intensities /= m
+                max[uid] = m
+
+        return max

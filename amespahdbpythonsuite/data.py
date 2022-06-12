@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+
 message = AmesPAHdb.message
 
 
@@ -15,8 +16,8 @@ class Data(object):
         Initialize Data class.
 
         """
-        self.type = ''
-        self.version = ''
+        self.type = ""
+        self.version = ""
         self.data = dict()
         self.uids = []
         self.model = dict()
@@ -39,48 +40,46 @@ class Data(object):
         if d:
             # Check if expected keywords are present in provided dictionary,
             # otherwise assign them to instance variables.
-            if d.get('type', '') == self.__class__.__name__:
-                if not keywords.get('type'):
-                    self.type = d['database']
-                if not keywords.get('version'):
-                    self.version = d['version']
-                if not keywords.get('data'):
-                    self.data = d['data']
-                if not keywords.get('uids'):
-                    self.uids = d['uids']
-                if not keywords.get('model'):
-                    self.model = d['model']
-                if not keywords.get('units'):
-                    self.units = d['units']
+            if d.get("type", "") == self.__class__.__name__:
+                if not keywords.get("type"):
+                    self.type = d["database"]
+                if not keywords.get("version"):
+                    self.version = d["version"]
+                if not keywords.get("data"):
+                    self.data = d["data"]
+                if not keywords.get("uids"):
+                    self.uids = d["uids"]
+                if not keywords.get("model"):
+                    self.model = d["model"]
+                if not keywords.get("units"):
+                    self.units = d["units"]
 
         # Match keywords of provided dictionary to corresponding instance variables.
-        if keywords.get('type'):
-            self.type = keywords.get('type')
-        if keywords.get('version'):
-            self.version = keywords.get('version')
-        if keywords.get('data'):
-            self.data = keywords.get('data')
-        if keywords.get('pahdb'):
-            self.pahdb = keywords.get('pahdb')
-        if keywords.get('uids'):
-            self.uids = keywords.get('uids')
-        if keywords.get('model'):
-            self.model = keywords.get('model')
-        if keywords.get('units'):
-            self.units = keywords.get('units')
+        if keywords.get("type"):
+            self.type = keywords.get("type")
+        if keywords.get("version"):
+            self.version = keywords.get("version")
+        if keywords.get("data"):
+            self.data = keywords.get("data")
+        if keywords.get("pahdb"):
+            self.pahdb = keywords.get("pahdb")
+        if keywords.get("uids"):
+            self.uids = keywords.get("uids")
+        if keywords.get("model"):
+            self.model = keywords.get("model")
+        if keywords.get("units"):
+            self.units = keywords.get("units")
 
         # Check for database and versioning mismatch between provided dictionary and parsed database.
         if self.pahdb:
-            if self.pahdb['database'] != self.type:
+            if self.pahdb["database"] != self.type:
 
-                message(
-                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
+                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
                 return
 
-            if self.pahdb['version'] != self.version:
+            if self.pahdb["version"] != self.version:
 
-                message(
-                    f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
+                message(f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
                 return
 
     def get(self):
@@ -88,13 +87,15 @@ class Data(object):
         Return data dictionary with expected keywords.
 
         """
-        return {'type': self.__class__.__name__,
-                'database': self.type,
-                'version': self.version,
-                'data': self.data,
-                'uids': self.uids,
-                'model': self.model,
-                'units': self.units}
+        return {
+            "type": self.__class__.__name__,
+            "database": self.type,
+            "version": self.version,
+            "data": self.data,
+            "uids": self.uids,
+            "model": self.model,
+            "units": self.units,
+        }
 
     def getuids(self) -> list:
         """
@@ -117,11 +118,11 @@ class Data(object):
 
         if count == 0:
 
-            message('NO INTERSECTION FOUND')
+            message("NO INTERSECTION FOUND")
 
             return
 
-        message(f'INTERSECTION FOUND: {count}')
+        message(f"INTERSECTION FOUND: {count}")
 
         self.uids = keep
 
@@ -142,11 +143,11 @@ class Data(object):
 
         if count == 0:
 
-            message('NO DIFFERENCE FOUND')
+            message("NO DIFFERENCE FOUND")
 
             return
 
-        message(f'DIFFERENCE FOUND: {keep}')
+        message(f"DIFFERENCE FOUND: {keep}")
 
         self.uids = keep
 

@@ -64,6 +64,9 @@ class TestSpectrum():
         # Check plotting function.
         monkeypatch.setattr(plt, 'show', lambda: None)
         spectrum.plot()
+        # Check normalization
+        spectrum.normalize()
+        assert spectrum.data[73].max() == 1.0
 
     def test_getset(self, pahdb_theoretical):
         # Read the database.
