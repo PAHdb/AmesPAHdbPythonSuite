@@ -159,10 +159,11 @@
 <map id="inheritanceb13f24d4ba" name="inheritanceb13f24d4ba">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="5,55,344,80"/>
 <area shape="rect" id="node2" href="#amespahdbpythonsuite.species.Species" target="_top" title="AmesPAHdbPythonSuite species class." alt="" coords="33,5,316,31"/>
-</map><div class="graphviz"><img src="_images/inheritance-0fb7bfd9ab9ddf38cf9f2cce182b81f81045de69.png" alt="Inheritance diagram of amespahdbpythonsuite.geometry, amespahdbpythonsuite.amespahdb" usemap="#inheritanceff75363379" class="inheritance graphviz" /></div>
+</map><div class="graphviz"><img src="_images/inheritance-bcc5a113f1cf3591c1303e85810bb3f4db60cdad.png" alt="Inheritance diagram of amespahdbpythonsuite.geometry, amespahdbpythonsuite.amespahdb" usemap="#inheritanceff75363379" class="inheritance graphviz" /></div>
 <map id="inheritanceff75363379" name="inheritanceff75363379">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="5,55,344,80"/>
-<area shape="rect" id="node2" href="#amespahdbpythonsuite.geometry.Geometry" target="_top" title="AmesPAHdbPythonSuite geometry class" alt="" coords="20,5,329,31"/>
+<area shape="rect" id="node2" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="53,5,296,31"/>
+<area shape="rect" id="node3" href="#amespahdbpythonsuite.geometry.Geometry" target="_top" title="AmesPAHdbPythonSuite geometry class" alt="" coords="392,5,701,31"/>
 </map><div class="graphviz"><img src="_images/inheritance-15f3d1b8df5f0c0f284c15ca073bba8024b6b845.png" alt="Inheritance diagram of amespahdbpythonsuite.amespahdb, amespahdbpythonsuite.transitions" usemap="#inheritance02695de3d5" class="inheritance graphviz" /></div>
 <map id="inheritance02695de3d5" name="inheritance02695de3d5">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="5,55,344,80"/>
@@ -214,9 +215,10 @@
 </map><div class="graphviz"><img src="_images/inheritance-394995f8689a8ebec7eafa0ba7ee7bdea1d36375.png" alt="Inheritance diagram of amespahdbpythonsuite.xmlparser" usemap="#inheritance600fde76fc" class="inheritance graphviz" /></div>
 <map id="inheritance600fde76fc" name="inheritance600fde76fc">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.xmlparser.XMLparser" target="_top" title="Parse a NASA Ames PAH IR Spectroscopic library XML&#45;file." alt="" coords="5,5,323,31"/>
-</map><div class="graphviz"><img src="_images/inheritance-ead52fcb24bf591ff2084d89ae6c621a1a08bd98.png" alt="Inheritance diagram of amespahdbpythonsuite.geometry" usemap="#inheritance8761091f53" class="inheritance graphviz" /></div>
+</map><div class="graphviz"><img src="_images/inheritance-55d84174956af523a59a51c8f4e18895714dbfc5.png" alt="Inheritance diagram of amespahdbpythonsuite.geometry" usemap="#inheritance8761091f53" class="inheritance graphviz" /></div>
 <map id="inheritance8761091f53" name="inheritance8761091f53">
-<area shape="rect" id="node1" href="#amespahdbpythonsuite.geometry.Geometry" target="_top" title="AmesPAHdbPythonSuite geometry class" alt="" coords="5,5,315,31"/>
+<area shape="rect" id="node1" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="5,5,248,31"/>
+<area shape="rect" id="node2" href="#amespahdbpythonsuite.geometry.Geometry" target="_top" title="AmesPAHdbPythonSuite geometry class" alt="" coords="296,5,605,31"/>
 </map><div class="graphviz"><img src="_images/inheritance-cc9b578b9e107b5ac40d1ac604407641b2fedec2.png" alt="Inheritance diagram of amespahdbpythonsuite.laboratory" usemap="#inheritanceef0412fc5a" class="inheritance graphviz" /></div>
 <map id="inheritanceef0412fc5a" name="inheritanceef0412fc5a">
 <area shape="rect" id="node1" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="5,5,248,31"/>
@@ -807,8 +809,51 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.
 <dl class="py class">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.geometry.</span></span><span class="sig-name descname"><span class="pre">Geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#amespahdbpythonsuite.data.Data" title="amespahdbpythonsuite.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
 <p>AmesPAHdbPythonSuite geometry class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.area">
+<span class="sig-name descname"><span class="pre">area</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.area"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the area.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.diagonalize">
+<span class="sig-name descname"><span class="pre">diagonalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.diagonalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.diagonalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Diagonalize the moment of inertia and align structure
+with the x-y plane</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assigns class variables from inherited dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.inertia">
+<span class="sig-name descname"><span class="pre">inertia</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.inertia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.inertia" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the moment of inertia.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.mass">
+<span class="sig-name descname"><span class="pre">mass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes molecular mass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.rings">
+<span class="sig-name descname"><span class="pre">rings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.rings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.rings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the number of rings per type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls class: :class:<a href="#id13"><span class="problematic" id="id14">`</span></a>amespahdbpythonsuite.data.Data.set to parse keywords.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -823,14 +868,13 @@ Contains methods to work with a laboratory spectrum.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls class: :class:<a href="#id13"><span class="problematic" id="id14">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.get.
-Assigns class variables from inherited dictionary.</p>
+<dd><p>Assigns class variables from inherited dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory.set">
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory.set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls class: :class:<a href="#id15"><span class="problematic" id="id16">`</span></a>amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.</p>
+<dd><p>Calls class: :class:<a href="#id15"><span class="problematic" id="id16">`</span></a>amespahdbpythonsuite.data.Data.set to parse keywords.</p>
 </dd></dl>
 
 </dd></dl>

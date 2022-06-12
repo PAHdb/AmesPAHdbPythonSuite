@@ -1,0 +1,5 @@
+<map id="inheritanceff75363379" name="inheritanceff75363379">
+<area shape="rect" id="node1" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb" target="_top" title="AmesPAHdbPythonSuite main class." alt="" coords="5,55,344,80"/>
+<area shape="rect" id="node2" href="#amespahdbpythonsuite.data.Data" target="_top" title="AmesPAHdbPythonSuite data class" alt="" coords="53,5,296,31"/>
+<area shape="rect" id="node3" href="#amespahdbpythonsuite.geometry.Geometry" target="_top" title="AmesPAHdbPythonSuite geometry class" alt="" coords="392,5,701,31"/>
+</map>

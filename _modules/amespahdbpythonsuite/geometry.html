@@ -114,14 +114,488 @@
   <h1>Source code for amespahdbpythonsuite.geometry</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
-<div class="viewcode-block" id="Geometry"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry">[docs]</a><span class="k">class</span> <span class="nc">Geometry</span><span class="p">():</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.data</span> <span class="kn">import</span> <span class="n">Data</span>
+
+
+<div class="viewcode-block" id="Geometry"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry">[docs]</a><span class="k">class</span> <span class="nc">Geometry</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    AmesPAHdbPythonSuite geometry class</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atomic_mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="mf">0.0</span><span class="p">,</span>
+                <span class="mf">1.007940</span><span class="p">,</span>
+                <span class="mf">4.002602</span><span class="p">,</span>
+                <span class="mf">6.941000</span><span class="p">,</span>
+                <span class="mf">9.012182</span><span class="p">,</span>
+                <span class="mf">10.811000</span><span class="p">,</span>
+                <span class="mf">12.011000</span><span class="p">,</span>
+                <span class="mf">14.006740</span><span class="p">,</span>
+                <span class="mf">15.999400</span><span class="p">,</span>
+                <span class="mf">18.998404</span><span class="p">,</span>
+                <span class="mf">20.179701</span><span class="p">,</span>
+                <span class="mf">22.989767</span><span class="p">,</span>
+                <span class="mf">24.305000</span><span class="p">,</span>
+                <span class="mf">26.981539</span><span class="p">,</span>
+                <span class="mf">28.085501</span><span class="p">,</span>
+                <span class="mf">30.973763</span><span class="p">,</span>
+                <span class="mf">32.066002</span><span class="p">,</span>
+                <span class="mf">35.452702</span><span class="p">,</span>
+                <span class="mf">39.948002</span><span class="p">,</span>
+                <span class="mf">39.098301</span><span class="p">,</span>
+                <span class="mf">40.077999</span><span class="p">,</span>
+                <span class="mf">44.955910</span><span class="p">,</span>
+                <span class="mf">47.880001</span><span class="p">,</span>
+                <span class="mf">50.941502</span><span class="p">,</span>
+                <span class="mf">51.996101</span><span class="p">,</span>
+                <span class="mf">54.938049</span><span class="p">,</span>
+                <span class="mf">55.847000</span><span class="p">,</span>
+                <span class="mf">58.933201</span><span class="p">,</span>
+                <span class="mf">58.693401</span><span class="p">,</span>
+                <span class="mf">63.546001</span><span class="p">,</span>
+                <span class="mf">65.389999</span><span class="p">,</span>
+                <span class="mf">69.723000</span><span class="p">,</span>
+                <span class="mf">72.610001</span><span class="p">,</span>
+                <span class="mf">74.921593</span><span class="p">,</span>
+                <span class="mf">78.959999</span><span class="p">,</span>
+                <span class="mf">79.903999</span><span class="p">,</span>
+                <span class="mf">83.800003</span><span class="p">,</span>
+                <span class="mf">85.467796</span><span class="p">,</span>
+                <span class="mf">87.620003</span><span class="p">,</span>
+                <span class="mf">88.905853</span><span class="p">,</span>
+                <span class="mf">91.223999</span><span class="p">,</span>
+                <span class="mf">92.906380</span><span class="p">,</span>
+                <span class="mf">95.940002</span><span class="p">,</span>
+                <span class="mf">98.000000</span><span class="p">,</span>
+                <span class="mf">101.070000</span><span class="p">,</span>
+                <span class="mf">102.905502</span><span class="p">,</span>
+                <span class="mf">106.419998</span><span class="p">,</span>
+                <span class="mf">107.868202</span><span class="p">,</span>
+                <span class="mf">112.411003</span><span class="p">,</span>
+                <span class="mf">114.820000</span><span class="p">,</span>
+                <span class="mf">118.709999</span><span class="p">,</span>
+                <span class="mf">121.757004</span><span class="p">,</span>
+                <span class="mf">127.599998</span><span class="p">,</span>
+                <span class="mf">126.904472</span><span class="p">,</span>
+                <span class="mf">131.289993</span><span class="p">,</span>
+                <span class="mf">132.905426</span><span class="p">,</span>
+                <span class="mf">137.326996</span><span class="p">,</span>
+                <span class="mf">138.905502</span><span class="p">,</span>
+                <span class="mf">140.115005</span><span class="p">,</span>
+                <span class="mf">140.907654</span><span class="p">,</span>
+                <span class="mf">144.240005</span><span class="p">,</span>
+                <span class="mf">145.000000</span><span class="p">,</span>
+                <span class="mf">150.360001</span><span class="p">,</span>
+                <span class="mf">151.964996</span><span class="p">,</span>
+                <span class="mf">157.250000</span><span class="p">,</span>
+                <span class="mf">158.925339</span><span class="p">,</span>
+                <span class="mf">162.500000</span><span class="p">,</span>
+                <span class="mf">164.930313</span><span class="p">,</span>
+                <span class="mf">167.259995</span><span class="p">,</span>
+                <span class="mf">168.934204</span><span class="p">,</span>
+                <span class="mf">173.039993</span><span class="p">,</span>
+                <span class="mf">174.966995</span><span class="p">,</span>
+                <span class="mf">178.490005</span><span class="p">,</span>
+                <span class="mf">180.947906</span><span class="p">,</span>
+                <span class="mf">183.850006</span><span class="p">,</span>
+                <span class="mf">186.207001</span><span class="p">,</span>
+                <span class="mf">190.199997</span><span class="p">,</span>
+                <span class="mf">192.220001</span><span class="p">,</span>
+                <span class="mf">195.080002</span><span class="p">,</span>
+                <span class="mf">196.966537</span><span class="p">,</span>
+                <span class="mf">200.589996</span><span class="p">,</span>
+                <span class="mf">204.383301</span><span class="p">,</span>
+                <span class="mf">207.199997</span><span class="p">,</span>
+                <span class="mf">208.980377</span><span class="p">,</span>
+                <span class="mf">209.000000</span><span class="p">,</span>
+                <span class="mf">210.000000</span><span class="p">,</span>
+                <span class="mf">222.000000</span><span class="p">,</span>
+                <span class="mf">223.000000</span><span class="p">,</span>
+                <span class="mf">226.024994</span><span class="p">,</span>
+                <span class="mf">227.028000</span><span class="p">,</span>
+                <span class="mf">232.038101</span><span class="p">,</span>
+                <span class="mf">231.035904</span><span class="p">,</span>
+                <span class="mf">238.028900</span><span class="p">,</span>
+                <span class="mf">237.048004</span><span class="p">,</span>
+                <span class="mf">244.000000</span><span class="p">,</span>
+                <span class="mf">243.000000</span><span class="p">,</span>
+                <span class="mf">247.000000</span><span class="p">,</span>
+                <span class="mf">247.000000</span><span class="p">,</span>
+                <span class="mf">251.000000</span><span class="p">,</span>
+                <span class="mf">252.000000</span><span class="p">,</span>
+                <span class="mf">257.000000</span><span class="p">,</span>
+                <span class="mf">258.000000</span><span class="p">,</span>
+                <span class="mf">259.000000</span><span class="p">,</span>
+                <span class="mf">262.000000</span><span class="p">,</span>
+                <span class="mf">261.000000</span><span class="p">,</span>
+                <span class="mf">262.000000</span><span class="p">,</span>
+                <span class="mf">263.000000</span><span class="p">,</span>
+                <span class="mf">262.000000</span><span class="p">,</span>
+                <span class="mf">265.000000</span><span class="p">,</span>
+                <span class="mf">266.000000</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Geometry.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.set to parse keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Data</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Geometry.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assigns class variables from inherited dictionary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Geometry.inertia"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.inertia">[docs]</a>    <span class="k">def</span> <span class="nf">inertia</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the moment of inertia.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inertia</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">geometry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomic_mass</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">])</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">])</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">])</span>
+
+            <span class="n">tensor11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">tensor22</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">tensor33</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">tensor12</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">tensor13</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+            <span class="n">tensor23</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+
+            <span class="n">inertia</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">[</span><span class="n">tensor11</span><span class="p">,</span> <span class="n">tensor12</span><span class="p">,</span> <span class="n">tensor13</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">tensor12</span><span class="p">,</span> <span class="n">tensor22</span><span class="p">,</span> <span class="n">tensor23</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">tensor13</span><span class="p">,</span> <span class="n">tensor23</span><span class="p">,</span> <span class="n">tensor33</span><span class="p">],</span>
+                <span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">inertia</span></div>
+
+<div class="viewcode-block" id="Geometry.diagonalize"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.diagonalize">[docs]</a>    <span class="k">def</span> <span class="nf">diagonalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">equal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Diagonalize the moment of inertia and align structure</span>
+<span class="sd">        with the x-y plane</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">equal</span><span class="p">:</span>
+            <span class="n">masses</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atomic_mass</span><span class="p">)</span>
+            <span class="n">masses</span><span class="p">[[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">26</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atomic_mass</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">geometry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">],</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
+                <span class="n">masses</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)],</span>
+                <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">coordinates</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">coordinates</span> <span class="o">*</span> <span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">)),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="n">tensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">full</span><span class="p">:</span>
+                <span class="n">tensor</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]),</span>
+                        <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="n">tensor</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
+
+                <span class="n">tensor</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="p">)):</span>
+                <span class="n">coordinates</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
+
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">v</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+
+            <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="p">))):</span>
+                <span class="n">g</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+                <span class="n">g</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+                <span class="n">g</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Geometry.mass"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.mass">[docs]</a>    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes molecular mass.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mass</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">geometry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">mass</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_atomic_mass</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mass</span></div>
+
+<div class="viewcode-block" id="Geometry.rings"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.rings">[docs]</a>    <span class="k">def</span> <span class="nf">rings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the number of rings per type.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">geometry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">num</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;three&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;four&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;five&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;six&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;seven&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;eight&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">])</span>
+
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">])</span>
+
+            <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometry</span><span class="p">])</span>
+
+            <span class="n">numn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+            <span class="n">nlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+                <span class="n">bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">dd</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dd</span> <span class="o">&lt;</span> <span class="mf">1.7</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">numn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+
+                <span class="n">nlist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="n">numn</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bounds</span>
+
+            <span class="n">iring</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+                <span class="n">iring</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numn</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+
+                    <span class="n">i2</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">i2</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">iring</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">i2</span>
+
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numn</span><span class="p">[</span><span class="n">i2</span><span class="p">]):</span>
+
+                        <span class="n">i3</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span><span class="n">i2</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+
+                        <span class="k">if</span> <span class="n">i3</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">iring</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">i3</span>
+
+                        <span class="k">if</span> <span class="n">i3</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+
+                            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numn</span><span class="p">[</span><span class="n">i3</span><span class="p">]):</span>
+
+                                <span class="n">i4</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span><span class="n">i3</span><span class="p">,</span> <span class="n">r</span><span class="p">]</span>
+
+                                <span class="k">if</span> <span class="n">i4</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                                    <span class="k">continue</span>
+
+                                <span class="n">iring</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">i4</span>
+
+                                <span class="k">if</span> <span class="n">i4</span> <span class="o">==</span> <span class="n">i2</span><span class="p">:</span>
+                                    <span class="k">continue</span>
+
+                                <span class="k">if</span> <span class="n">i4</span> <span class="o">!=</span> <span class="n">i</span> <span class="ow">or</span> <span class="n">iring</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">iring</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+
+                                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numn</span><span class="p">[</span><span class="n">i4</span><span class="p">]):</span>
+
+                                        <span class="n">i5</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span><span class="n">i4</span><span class="p">,</span> <span class="n">m</span><span class="p">]</span>
+
+                                        <span class="k">if</span> <span class="n">i5</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                                            <span class="k">continue</span>
+
+                                        <span class="n">iring</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">i5</span>
+
+                                        <span class="k">if</span> <span class="n">i5</span> <span class="o">==</span> <span class="n">i2</span> <span class="ow">or</span> <span class="n">i5</span> <span class="o">==</span> <span class="n">i3</span><span class="p">:</span>
+                                            <span class="k">continue</span>
+
+                                        <span class="k">if</span> <span class="n">i5</span> <span class="o">!=</span> <span class="n">i</span> <span class="ow">or</span> <span class="n">iring</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">iring</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+
+                                            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numn</span><span class="p">[</span><span class="n">i5</span><span class="p">]):</span>
+
+                                                <span class="n">i6</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span><span class="n">i5</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
+
+                                                <span class="k">if</span> <span class="n">i6</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                                                    <span class="k">continue</span>
+
+                                                <span class="n">iring</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">i6</span>
+
+                                                <span class="k">if</span> <span class="n">i6</span> <span class="o">==</span> <span class="n">i2</span> <span class="ow">or</span> <span class="n">i6</span> <span class="o">==</span> <span class="n">i3</span> <span class="ow">or</span> <span class="n">i6</span> <span class="o">==</span> <span class="n">i4</span><span class="p">:</span>
+                                                    <span class="k">continue</span>
+
+                                                <span class="k">if</span> <span class="n">i6</span> <span class="o">!=</span> <span class="n">i</span> <span class="ow">or</span> <span class="n">iring</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">iring</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span>
+
+                                                    <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numn</span><span class="p">[</span><span class="n">i6</span><span class="p">]):</span>
+
+                                                        <span class="n">i7</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span><span class="n">i6</span><span class="p">,</span> <span class="n">o</span><span class="p">]</span>
+
+                                                        <span class="k">if</span> <span class="n">i7</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                                                            <span class="k">continue</span>
+
+                                                        <span class="n">iring</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">i7</span>
+
+                                                        <span class="k">if</span> <span class="p">(</span>
+                                                            <span class="n">i7</span> <span class="o">==</span> <span class="n">i2</span>
+                                                            <span class="ow">or</span> <span class="n">i7</span> <span class="o">==</span> <span class="n">i3</span>
+                                                            <span class="ow">or</span> <span class="n">i7</span> <span class="o">==</span> <span class="n">i4</span>
+                                                            <span class="ow">or</span> <span class="n">i7</span> <span class="o">==</span> <span class="n">i5</span>
+                                                        <span class="p">):</span>
+                                                            <span class="k">continue</span>
+
+                                                        <span class="k">if</span> <span class="p">(</span>
+                                                            <span class="n">i7</span> <span class="o">!=</span> <span class="n">i</span>
+                                                            <span class="ow">or</span> <span class="n">iring</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">iring</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+                                                        <span class="p">):</span>
+
+                                                            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numn</span><span class="p">[</span><span class="n">i7</span><span class="p">]):</span>
+
+                                                                <span class="n">i8</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span><span class="n">i7</span><span class="p">,</span> <span class="n">p</span><span class="p">]</span>
+
+                                                                <span class="k">if</span> <span class="n">i8</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                                                                    <span class="k">continue</span>
+
+                                                                <span class="n">iring</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">i8</span>
+
+                                                                <span class="k">if</span> <span class="p">(</span>
+                                                                    <span class="n">i8</span> <span class="o">==</span> <span class="n">i2</span>
+                                                                    <span class="ow">or</span> <span class="n">i8</span> <span class="o">==</span> <span class="n">i3</span>
+                                                                    <span class="ow">or</span> <span class="n">i8</span> <span class="o">==</span> <span class="n">i4</span>
+                                                                    <span class="ow">or</span> <span class="n">i8</span> <span class="o">==</span> <span class="n">i5</span>
+                                                                    <span class="ow">or</span> <span class="n">i8</span> <span class="o">==</span> <span class="n">i6</span>
+                                                                <span class="p">):</span>
+                                                                    <span class="k">continue</span>
+
+                                                                <span class="k">if</span> <span class="p">(</span>
+                                                                    <span class="n">i8</span> <span class="o">!=</span> <span class="n">i</span>
+                                                                    <span class="ow">or</span> <span class="n">iring</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                                                                    <span class="o">&lt;</span> <span class="n">iring</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+                                                                <span class="p">):</span>
+
+                                                                    <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                                                                        <span class="n">numn</span><span class="p">[</span><span class="n">i8</span><span class="p">]</span>
+                                                                    <span class="p">):</span>
+
+                                                                        <span class="n">i9</span> <span class="o">=</span> <span class="n">nlist</span><span class="p">[</span>
+                                                                            <span class="n">i8</span><span class="p">,</span> <span class="n">q</span>
+                                                                        <span class="p">]</span>
+
+                                                                        <span class="k">if</span> <span class="n">i9</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
+                                                                            <span class="k">continue</span>
+
+                                                                        <span class="n">iring</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="n">i9</span>
+
+                                                                        <span class="k">if</span> <span class="p">(</span>
+                                                                            <span class="n">i9</span> <span class="o">==</span> <span class="n">i2</span>
+                                                                            <span class="ow">or</span> <span class="n">i9</span> <span class="o">==</span> <span class="n">i3</span>
+                                                                            <span class="ow">or</span> <span class="n">i9</span> <span class="o">==</span> <span class="n">i4</span>
+                                                                            <span class="ow">or</span> <span class="n">i9</span> <span class="o">==</span> <span class="n">i5</span>
+                                                                            <span class="ow">or</span> <span class="n">i9</span> <span class="o">==</span> <span class="n">i6</span>
+                                                                            <span class="ow">or</span> <span class="n">i9</span> <span class="o">==</span> <span class="n">i7</span>
+                                                                        <span class="p">):</span>
+                                                                            <span class="k">continue</span>
+
+                                                                        <span class="k">if</span> <span class="p">(</span>
+                                                                            <span class="n">i9</span> <span class="o">!=</span> <span class="n">i</span>
+                                                                            <span class="ow">or</span> <span class="n">iring</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                                                                            <span class="o">&lt;</span> <span class="n">iring</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+                                                                        <span class="p">):</span>
+                                                                            <span class="k">continue</span>
+
+                                                                        <span class="k">else</span><span class="p">:</span>
+                                                                            <span class="n">num</span><span class="p">[</span>
+                                                                                <span class="s2">&quot;eight&quot;</span>
+                                                                            <span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                                                                <span class="k">else</span><span class="p">:</span>
+                                                                    <span class="n">num</span><span class="p">[</span><span class="s2">&quot;seven&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                                                        <span class="k">else</span><span class="p">:</span>
+                                                            <span class="n">num</span><span class="p">[</span><span class="s2">&quot;six&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                                                <span class="k">else</span><span class="p">:</span>
+                                                    <span class="n">num</span><span class="p">[</span><span class="s2">&quot;five&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                                        <span class="k">else</span><span class="p">:</span>
+                                            <span class="n">num</span><span class="p">[</span><span class="s2">&quot;four&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">num</span><span class="p">[</span><span class="s2">&quot;three&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">rings</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span>
+
+        <span class="k">return</span> <span class="n">rings</span></div>
+
+<div class="viewcode-block" id="Geometry.area"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.area">[docs]</a>    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the area.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">per_ring</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;three&quot;</span><span class="p">:</span> <span class="mf">0.848</span><span class="p">,</span>
+            <span class="s2">&quot;four&quot;</span><span class="p">:</span> <span class="mf">1.96</span><span class="p">,</span>
+            <span class="s2">&quot;five&quot;</span><span class="p">:</span> <span class="mf">3.37</span><span class="p">,</span>
+            <span class="s2">&quot;six&quot;</span><span class="p">:</span> <span class="mf">5.09</span><span class="p">,</span>
+            <span class="s2">&quot;seven&quot;</span><span class="p">:</span> <span class="mf">7.12</span><span class="p">,</span>
+            <span class="s2">&quot;eight&quot;</span><span class="p">:</span> <span class="mf">9.46</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">area</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">rings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rings</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">nr</span> <span class="ow">in</span> <span class="n">rings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">per_ring</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
+            <span class="n">area</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+
+        <span class="k">return</span> <span class="n">area</span></div></div>
 </pre></div>
 
            </div>
