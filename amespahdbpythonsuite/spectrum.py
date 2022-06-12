@@ -73,10 +73,12 @@ class Spectrum(Transitions):
 
         if yerr is None:
             # Do NNLS.
+            method = 'NNLS'
             b = list(y)
             m = matrix
         else:
             # Do NNLC.
+            method = 'NNLC'
             b = list(np.divide(y, yerr))
             m = np.divide(matrix, yerr)
 
@@ -112,7 +114,8 @@ class Spectrum(Transitions):
                       profile=self.profile,
                       fwhm=self.fwhm,
                       observation=list(y),
-                      weights=weights)
+                      weights=weights,
+                      method=method)
 
     def plot(self, **keywords):
         """

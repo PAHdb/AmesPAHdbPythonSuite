@@ -24,6 +24,7 @@ class Fitted(Spectrum):
 
         """
         super().__init__(d, **keywords)
+        self.method = ''
         self.weights = None
         self.observation = None
         self.atoms = None
@@ -191,11 +192,15 @@ class Fitted(Spectrum):
                     self.observation = d['observation']
                 if not keywords.get('weights'):
                     self.weights = d['weights']
+                if not keywords.get('method'):
+                    self.method = d['method']
 
         if len(keywords.get('observation', [])):
             self.observation = keywords.get('observation')
         if keywords.get('weights'):
             self.weights = keywords.get('weights')
+        if keywords.get('method'):
+            self.method = keywords.get('method')
 
     def get(self):
         """
@@ -207,8 +212,16 @@ class Fitted(Spectrum):
         d['type'] = self.__class__.__name__
         d['observation'] = self.observation
         d['weights'] = self.weights
+        d['method'] = self.method
 
         return d
+
+    def getmethod(self) -> str:
+      """
+      Retrieves the method used for the fit.
+
+      """
+      return self.method
 
     def getchisquared(self):
         """

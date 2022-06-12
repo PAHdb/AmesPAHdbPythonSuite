@@ -59,6 +59,8 @@ class TestFitted():
         spectrum = transitions.convolve(grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False)
         # fit the spectrum.
         fit = spectrum.fit(flux, sigma)
+        # Obtain method
+        assert fit.getmethod() == 'NNLC' 
         # Create temporary pytest directory.
         d = tmp_path / "sub"
         d.mkdir()
