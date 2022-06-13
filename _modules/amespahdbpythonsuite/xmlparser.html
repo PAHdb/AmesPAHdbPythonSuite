@@ -161,13 +161,14 @@
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Class representation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(&#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;filename=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">!r}</span><span class="s1">, &#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span> <span class="sa">f</span><span class="s2">&quot;filename=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">!r}</span><span class="s2">, &quot;</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A description of the object.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;XML parser from the AmesPAHdbPythonSuite. &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;XML file: </span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">!r}</span><span class="s1">.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;XML parser from the AmesPAHdbPythonSuite. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;XML file: </span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="XMLparser.verify_schema"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser.verify_schema">[docs]</a>    <span class="k">def</span> <span class="nf">verify_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Validate against linked schema.</span>
@@ -188,11 +189,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
 
         <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s1">&#39;{http://www.w3.org/2001/XMLSchema-instance}&#39;</span> <span class="o">+</span> <span class="s1">&#39;schemaLocation&#39;</span>
+            <span class="s2">&quot;{http://www.w3.org/2001/XMLSchema-instance}&quot;</span> <span class="o">+</span> <span class="s2">&quot;schemaLocation&quot;</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">uri</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">uri</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="n">HTTPError</span><span class="p">,</span> <span class="n">URLError</span><span class="p">):</span>
@@ -228,11 +229,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span> <span class="ow">or</span> <span class="n">validate</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">verify_schema</span><span class="p">()</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> \
-                <span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> \
-                <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree_to_pahdb_dict</span><span class="p">()</span>
 
@@ -251,16 +250,15 @@
             <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;start&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;species&#39;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">]</span> <span class="o">=</span> \
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_species_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;pahdatabase&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;species&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_species_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;pahdatabase&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;comment&#39;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span>
-                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;pahdatabase&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;comment&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span>
+                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;pahdatabase&quot;</span><span class="p">:</span>
                     <span class="k">break</span>
                 <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span>
@@ -273,13 +271,13 @@
             <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;start&#39;</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;specie&#39;</span><span class="p">:</span>
-                <span class="n">uid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;uid&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;specie&quot;</span><span class="p">:</span>
+                <span class="n">uid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">])</span>
                 <span class="n">species</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specie_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">action</span> <span class="o">!=</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">!=</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;species&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;species&quot;</span><span class="p">:</span>
                 <span class="k">break</span>
 
             <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -297,17 +295,17 @@
                 <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                 <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;atom&#39;</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;start&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;atom&quot;</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
                     <span class="n">atom_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                         <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-                        <span class="k">if</span> <span class="n">action</span> <span class="o">!=</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">action</span> <span class="o">!=</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
                             <span class="k">continue</span>
 
-                        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;atom&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;atom&quot;</span><span class="p">:</span>
                             <span class="n">geometry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_dict</span><span class="p">)</span>
                             <span class="k">break</span>
 
@@ -315,10 +313,10 @@
 
                         <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-                <span class="k">elif</span> <span class="n">action</span> <span class="o">!=</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">action</span> <span class="o">!=</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
                     <span class="k">continue</span>
 
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;geometry&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;geometry&quot;</span><span class="p">:</span>
                     <span class="k">break</span>
 
                 <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -333,17 +331,17 @@
                 <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                 <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span>
                     <span class="n">mode_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                         <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-                        <span class="k">if</span> <span class="n">action</span> <span class="o">!=</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">action</span> <span class="o">!=</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
                             <span class="k">continue</span>
 
-                        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span>
                             <span class="n">transitions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mode_dict</span><span class="p">)</span>
                             <span class="k">break</span>
 
@@ -357,10 +355,10 @@
                         <span class="n">mode_dict</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
                         <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-                <span class="k">elif</span> <span class="n">action</span> <span class="o">!=</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">action</span> <span class="o">!=</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
                     <span class="k">continue</span>
 
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;transitions&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;transitions&quot;</span><span class="p">:</span>
                     <span class="k">break</span>
 
                 <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -375,67 +373,70 @@
                 <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                 <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-                <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;frequency&#39;</span> <span class="ow">or</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;intensity&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;frequency&quot;</span> <span class="ow">or</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;intensity&quot;</span><span class="p">:</span>
                         <span class="nb">bin</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-                        <span class="n">laboratory</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="nb">bin</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;laboratory&#39;</span><span class="p">:</span>
+                        <span class="n">laboratory</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="nb">bin</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;laboratory&quot;</span><span class="p">:</span>
                         <span class="k">break</span>
 
                     <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
             <span class="k">return</span> <span class="n">laboratory</span>
 
-        <span class="n">specie_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;references&#39;</span><span class="p">:</span> <span class="p">(</span>
-        <span class="p">),</span> <span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;transitions&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;laboratory&#39;</span><span class="p">:</span> <span class="p">()}</span>
+        <span class="n">specie_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;comments&quot;</span><span class="p">:</span> <span class="p">(),</span>
+            <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="p">(),</span>
+            <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">(),</span>
+            <span class="s2">&quot;transitions&quot;</span><span class="p">:</span> <span class="p">(),</span>
+            <span class="s2">&quot;laboratory&quot;</span><span class="p">:</span> <span class="p">(),</span>
+        <span class="p">}</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;start&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;comments&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;comments&quot;</span><span class="p">:</span>
                     <span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>
 
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                         <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-                        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;comment&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;comment&quot;</span><span class="p">:</span>
                                 <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-                            <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;comments&#39;</span><span class="p">:</span>
+                            <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;comments&quot;</span><span class="p">:</span>
                                 <span class="k">break</span>
 
                             <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-                    <span class="n">specie_dict</span><span class="p">[</span><span class="s1">&#39;comments&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments</span>
-                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;references&#39;</span><span class="p">:</span>
+                    <span class="n">specie_dict</span><span class="p">[</span><span class="s2">&quot;comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments</span>
+                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;references&quot;</span><span class="p">:</span>
                     <span class="n">references</span> <span class="o">=</span> <span class="p">[]</span>
 
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                         <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
-                        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;reference&quot;</span><span class="p">:</span>
                                 <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-                            <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;references&#39;</span><span class="p">:</span>
+                            <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;references&quot;</span><span class="p">:</span>
                                 <span class="k">break</span>
 
                             <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-                    <span class="n">specie_dict</span><span class="p">[</span><span class="s1">&#39;references&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">references</span>
-                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;geometry&#39;</span><span class="p">:</span>
-                    <span class="n">specie_dict</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">specie_geometry_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;transitions&#39;</span><span class="p">:</span>
-                    <span class="n">specie_dict</span><span class="p">[</span><span class="s1">&#39;transitions&#39;</span><span class="p">]</span> <span class="o">=</span> \
-                        <span class="n">specie_transitions_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;laboratory&#39;</span><span class="p">:</span>
-                    <span class="n">specie_dict</span><span class="p">[</span><span class="s1">&#39;laboratory&#39;</span><span class="p">]</span> <span class="o">=</span> \
-                        <span class="n">specie_laboratory_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;specie&#39;</span><span class="p">:</span>
+                    <span class="n">specie_dict</span><span class="p">[</span><span class="s2">&quot;references&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">references</span>
+                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;geometry&quot;</span><span class="p">:</span>
+                    <span class="n">specie_dict</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">specie_geometry_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;transitions&quot;</span><span class="p">:</span>
+                    <span class="n">specie_dict</span><span class="p">[</span><span class="s2">&quot;transitions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">specie_transitions_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;laboratory&quot;</span><span class="p">:</span>
+                    <span class="n">specie_dict</span><span class="p">[</span><span class="s2">&quot;laboratory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">specie_laboratory_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;specie&quot;</span><span class="p">:</span>
                     <span class="k">break</span>
 
                 <span class="k">try</span><span class="p">:</span>
