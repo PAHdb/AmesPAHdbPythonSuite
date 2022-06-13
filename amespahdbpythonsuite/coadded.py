@@ -30,16 +30,16 @@ class Coadded(Spectrum):
 
         """
         if d:
-            if d.get('type', '') == self.__class__.__name__:
-                if 'weights' not in keywords:
-                    self.weights = d['weights']
-                if 'averaged' not in keywords:
-                    self.averaged = d['averaged']
+            if d.get("type", "") == self.__class__.__name__:
+                if "weights" not in keywords:
+                    self.weights = d["weights"]
+                if "averaged" not in keywords:
+                    self.averaged = d["averaged"]
 
-        if len(keywords.get('weights', [])):
-            self.weights = keywords.get('weights')
-        if 'averaged' in keywords:
-            self.averaged = keywords.get('averaged')
+        if len(keywords.get("weights", [])):
+            self.weights = keywords.get("weights")
+        if "averaged" in keywords:
+            self.averaged = keywords.get("averaged")
 
     def get(self):
         """
@@ -48,8 +48,8 @@ class Coadded(Spectrum):
 
         """
         d = Spectrum.get(self)
-        d['type'] = self.__class__.__name__
-        d['weights'] = self.weights
-        d['averaged'] = self.averaged
+        d["type"] = self.__class__.__name__
+        d["weights"] = self.weights
+        d["averaged"] = self.averaged
 
         return d

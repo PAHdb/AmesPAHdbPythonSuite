@@ -16,22 +16,26 @@ from amespahdbpythonsuite import coadded
 
 @pytest.fixture(scope="module")
 def pahdb_theoretical():
-    xml = 'resources/pahdb-theoretical_cutdown.xml'
-    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False, update=False)
+    xml = "resources/pahdb-theoretical_cutdown.xml"
+    pahdb = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+        update=False,
+    )
     return pahdb
 
 
 @pytest.fixture(scope="module")
 def test_coadded():
 
-    file = 'resources/coadded_test_data.npy'
-    spec = np.load(resource_filename('amespahdbpythonsuite', file))
+    file = "resources/coadded_test_data.npy"
+    spec = np.load(resource_filename("amespahdbpythonsuite", file))
 
     return spec
 
 
-class TestCoadded():
+class TestCoadded:
     """
     Test Coadded class.
 
@@ -58,8 +62,8 @@ class TestCoadded():
         spec = trans.convolve(fwhm=15.0)
         coadded1 = spec.coadd(weights={18: 1.0, 73: 2.0})
         c1 = coadded1.get()
-        assert(c1['type'] == 'Coadded')
+        assert c1["type"] == "Coadded"
         coadded2 = coadded.Coadded()
         coadded2.set(c1)
         c2 = coadded2.get()
-        assert(c2['type'] == 'Coadded')
+        assert c2["type"] == "Coadded"

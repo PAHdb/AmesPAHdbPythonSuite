@@ -18,13 +18,17 @@ from amespahdbpythonsuite import spectrum
 
 @pytest.fixture(scope="module")
 def pahdb_theoretical():
-    xml = 'resources/pahdb-theoretical_cutdown.xml'
-    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False, update=False)
+    xml = "resources/pahdb-theoretical_cutdown.xml"
+    pahdb = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+        update=False,
+    )
     return pahdb
 
 
-class TestSpectrum():
+class TestSpectrum:
     """
     Test Spectrum class.
 
@@ -35,12 +39,11 @@ class TestSpectrum():
 
     def test_fit(self, pahdb_theoretical, monkeypatch):
         # Read input spectrum.
-        spec = resource_filename(
-            'amespahdbpythonsuite', 'resources/galaxy_spec.ipac')
+        spec = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
         f = ascii.read(spec)
-        wave = f['wavelength']
-        flux = f['flux']
-        sigma = f['sigma']
+        wave = f["wavelength"]
+        flux = f["flux"]
+        sigma = f["sigma"]
         waven = [1e4 / x for x in wave]
         # Read the database.
         pahdb = pahdb_theoretical
@@ -54,7 +57,8 @@ class TestSpectrum():
         transitions.shift(-15.0)
         # convolve the transitions into a spectrum.
         spectrum = transitions.convolve(
-            grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False)
+            grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False
+        )
         # fit the spectrum.
         fit = spectrum.fit(flux, sigma)
         # Assert results.
@@ -62,7 +66,7 @@ class TestSpectrum():
         assert fit.uids == [73, 2054, 223]
         np.testing.assert_allclose(fit.grid, np.array(waven))
         # Check plotting function.
-        monkeypatch.setattr(plt, 'show', lambda: None)
+        monkeypatch.setattr(plt, "show", lambda: None)
         spectrum.plot()
         # Check normalization
         spectrum.normalize()
@@ -76,8 +80,8 @@ class TestSpectrum():
         trans = pahdb.gettransitionsbyuid(uids)
         spec1 = trans.convolve(fwhm=15.0)
         d1 = spec1.get()
-        assert(d1['type'] == 'Spectrum')
+        assert d1["type"] == "Spectrum"
         spec2 = spectrum.Spectrum()
         spec2.set(d1)
         d2 = spec2.get()
-        assert(d2['type'] == 'Spectrum')
+        assert d2["type"] == "Spectrum"

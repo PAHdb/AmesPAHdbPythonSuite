@@ -17,14 +17,18 @@ from amespahdbpythonsuite import laboratory
 
 @pytest.fixture(scope="module")
 def species_test():
-    xml = 'resources/pahdb-theoretical_cutdown.xml'
-    db = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                   check=False, cache=False, update=False)
+    xml = "resources/pahdb-theoretical_cutdown.xml"
+    db = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+        update=False,
+    )
     s = db.getspeciesbyuid([18, 73, 726, 2054, 223])
     return s
 
 
-class TestSpecies():
+class TestSpecies:
     """
     Test Species class.
 
@@ -50,11 +54,11 @@ class TestSpecies():
 
     def test_getset(self, species_test):
         s1 = species_test.get()
-        assert(s1['type'] == 'Species')
+        assert s1["type"] == "Species"
         species2 = species.Species()
         species2.set(s1)
         s2 = species2.get()
-        assert(s2['type'] == 'Species')
+        assert s2["type"] == "Species"
 
     def test_intersect(self, species_test):
         sub_uids = [18, 223]

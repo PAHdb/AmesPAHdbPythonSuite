@@ -8,10 +8,11 @@ import copy
 from typing import Union
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+
 message = AmesPAHdb.message
 
 
-class Species():
+class Species:
     """
     AmesPAHdbPythonSuite species class.
     Contains methods to work with PAH species.
@@ -19,8 +20,8 @@ class Species():
     """
 
     def __init__(self, d=None, **keywords):
-        self.type = ''
-        self.version = ''
+        self.type = ""
+        self.version = ""
         self.data = dict()
         self.pahdb = None
         self.uids = []
@@ -32,38 +33,36 @@ class Species():
 
         """
         if d:
-            if d.get('type', '') == self.__class__.__name__:
-                if not keywords.get('type'):
-                    self.type = d['database']
-                if not keywords.get('version'):
-                    self.version = d['version']
-                if not keywords.get('data'):
-                    self.data = d['data']
-                if not keywords.get('uids'):
-                    self.uids = d['uids']
+            if d.get("type", "") == self.__class__.__name__:
+                if not keywords.get("type"):
+                    self.type = d["database"]
+                if not keywords.get("version"):
+                    self.version = d["version"]
+                if not keywords.get("data"):
+                    self.data = d["data"]
+                if not keywords.get("uids"):
+                    self.uids = d["uids"]
 
-        if keywords.get('type'):
-            self.type = keywords.get('type')
-        if keywords.get('version'):
-            self.version = keywords.get('version')
-        if keywords.get('data'):
-            self.data = keywords.get('data')
-        if keywords.get('pahdb'):
-            self.pahdb = keywords.get('pahdb')
-        if keywords.get('uids'):
-            self.uids = keywords.get('uids')
+        if keywords.get("type"):
+            self.type = keywords.get("type")
+        if keywords.get("version"):
+            self.version = keywords.get("version")
+        if keywords.get("data"):
+            self.data = keywords.get("data")
+        if keywords.get("pahdb"):
+            self.pahdb = keywords.get("pahdb")
+        if keywords.get("uids"):
+            self.uids = keywords.get("uids")
 
         if self.pahdb:
-            if self.pahdb['database'] != self.type:
+            if self.pahdb["database"] != self.type:
 
-                message(
-                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
+                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
                 return
 
-            if self.pahdb['version'] != self.version:
+            if self.pahdb["version"] != self.version:
 
-                message(
-                    f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
+                message(f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
                 return
 
     def get(self) -> dict:
@@ -71,11 +70,13 @@ class Species():
         Return data dictionary with expected keywords.
 
         """
-        return {'type': self.__class__.__name__,
-                'database': self.type,
-                'version': self.version,
-                'data': self.data,
-                'uids': self.uids}
+        return {
+            "type": self.__class__.__name__,
+            "database": self.type,
+            "version": self.version,
+            "data": self.data,
+            "uids": self.uids,
+        }
 
     def getuids(self) -> list:
         """
@@ -98,11 +99,11 @@ class Species():
 
         if count == 0:
 
-            message('NO INTERSECTION FOUND')
+            message("NO INTERSECTION FOUND")
 
             return
 
-        message(f'INTERSECTION FOUND: {count}')
+        message(f"INTERSECTION FOUND: {count}")
 
         self.uids = keep
 
@@ -123,11 +124,11 @@ class Species():
 
         if count == 0:
 
-            message('NO DIFFERENCE FOUND')
+            message("NO DIFFERENCE FOUND")
 
             return
 
-        message(f'DIFFERENCE FOUND: {keep}')
+        message(f"DIFFERENCE FOUND: {keep}")
 
         self.uids = keep
 
@@ -143,19 +144,18 @@ class Species():
 
         """
 
-        return transitions.Transitions(type=self.type,
-                                       version=self.version,
-                                       data=self.__getkey('transitions'),
-                                       pahdb=self.pahdb,
-                                       uids=self.uids,
-                                       model={'type': 'zerokelvin_m',
-                                              'temperature': 0.0,
-                                              'description': ''},
-                                       units={'abscissa': {'unit': 1,
-                                                           'str': 'frequency [wavenumber]'},
-                                              'ordinate': {'unit': 2,
-                                                           'str': 'integrated cross-section' + '[km/mol]'}}
-                                       )
+        return transitions.Transitions(
+            type=self.type,
+            version=self.version,
+            data=self.__getkey("transitions"),
+            pahdb=self.pahdb,
+            uids=self.uids,
+            model={"type": "zerokelvin_m", "temperature": 0.0, "description": ""},
+            units={
+                "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
+                "ordinate": {"unit": 2, "str": "integrated cross-section" + "[km/mol]"},
+            },
+        )
 
     def geometry(self) -> geometry.Geometry:
         """
@@ -167,12 +167,13 @@ class Species():
 
         """
 
-        return geometry.Geometry(type=self.type,
-                                 version=self.version,
-                                 data=self.__getkey('geometry'),
-                                 pahdb=self.pahdb,
-                                 uids=self.uids
-                                 )
+        return geometry.Geometry(
+            type=self.type,
+            version=self.version,
+            data=self.__getkey("geometry"),
+            pahdb=self.pahdb,
+            uids=self.uids,
+        )
 
     def laboratory(self) -> Union[laboratory.Laboratory, None]:
         """
@@ -184,25 +185,24 @@ class Species():
 
         """
 
-        if self.__data['database'] != 'experimental':
+        if self.__data["database"] != "experimental":
 
-            message('EXPERIMENTAL DATABASE REQUIRED')
+            message("EXPERIMENTAL DATABASE REQUIRED")
 
             return None
 
-        return laboratory.Laboratory(type=self.type,
-                                     version=self.version,
-                                     data=self.__getkey('laboratory'),
-                                     pahdb=self.pahdb,
-                                     uids=self.uids,
-                                     model={'type': 'laboratory_m',
-                                            'temperature': 0.0,
-                                            'description': ''},
-                                     units={'abscissa': {'unit': 1,
-                                                         'str': 'frequency [wavenumber]'},
-                                            'ordinate': {'unit': 2,
-                                                         'str': 'absorbance' + '[-log(I/I$_{0})$'}}
-                                     )
+        return laboratory.Laboratory(
+            type=self.type,
+            version=self.version,
+            data=self.__getkey("laboratory"),
+            pahdb=self.pahdb,
+            uids=self.uids,
+            model={"type": "laboratory_m", "temperature": 0.0, "description": ""},
+            units={
+                "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
+                "ordinate": {"unit": 2, "str": "absorbance" + "[-log(I/I$_{0})$"},
+            },
+        )
 
     def references(self) -> dict:
         """
@@ -213,7 +213,7 @@ class Species():
 
         """
 
-        return self.__getkey('references')
+        return self.__getkey("references")
 
     def comments(self) -> dict:
         """
@@ -224,7 +224,7 @@ class Species():
 
         """
 
-        return self.__getkey('comments')
+        return self.__getkey("comments")
 
     def __getkey(self, key) -> dict:
         """
@@ -240,5 +240,10 @@ class Species():
 
         """
 
-        return copy.deepcopy(dict((uid, self.data[uid][key])
-                                  for uid in self.uids if uid in self.data.keys()))
+        return copy.deepcopy(
+            dict(
+                (uid, self.data[uid][key])
+                for uid in self.uids
+                if uid in self.data.keys()
+            )
+        )

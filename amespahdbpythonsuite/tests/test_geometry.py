@@ -77,7 +77,7 @@ class TestGeometry:
     def test_diagonalize(self, geometry_test, test_diagonalized):
         geometry_test.diagonalize()
         g = geometry_test.get()
-        x = [d['x'] for d in g['data'][18]]
+        x = [d["x"] for d in g["data"][18]]
         np.testing.assert_allclose(x, test_diagonalized)
 
     def test_rings(self, geometry_test, test_nrings):

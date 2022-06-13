@@ -41,41 +41,52 @@ class AmesPAHdb:
 
         """
 
-        intro = ['AmesPAHdbPythonSuite', 'by', 'Dr. Christiaan Boersma', 'and',
-                 'Dr. Alexandros Maragkoudakis']
+        intro = [
+            "AmesPAHdbPythonSuite",
+            "by",
+            "Dr. Christiaan Boersma",
+            "and",
+            "Dr. Alexandros Maragkoudakis",
+        ]
         self.message(intro)
 
-        self.message(f'SUITE VERSION: {suite.__version__}')
+        self.message(f"SUITE VERSION: {suite.__version__}")
 
-        if(keywords.get('update', True)):
+        if keywords.get("update", True):
             github = "http://api.github.com/repos/pahdb/amespahdbpythonsuite/tags"
             try:
                 with urllib.request.urlopen(github) as url:
                     data = json.load(url)
-                    versions = [Version(tag['name']) for tag in data]
+                    versions = [Version(tag["name"]) for tag in data]
                     versions.sort()
-                    if(Version(suite.__version__) < versions[-1]):
+                    if Version(suite.__version__) < versions[-1]:
                         update = versions[-1].public
                         self.message(f"V{update} UPDATE AVAILABLE")
             except HTTPError:
                 self.message("FAILED TO CHECK VERSION")
 
-        self.message('WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/')
-        self.message('CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV')
+        self.message("WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/")
+        self.message("CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV")
 
-        filename = keywords.get('filename')
+        filename = keywords.get("filename")
         if not filename:
             filename = os.environ.get("AMESPAHDEFAULTDB")
             if not filename:
-                msg = ['DATABASE NOT FOUND:',
-                       'SET SYSTEM AMESPAHDEFAULTDB',
-                       'ENVIRONMENT VARIABLE']
-                self.message(' '.join(msg))
+                msg = [
+                    "DATABASE NOT FOUND:",
+                    "SET SYSTEM AMESPAHDEFAULTDB",
+                    "ENVIRONMENT VARIABLE",
+                ]
+                self.message(" ".join(msg))
                 # TODO: Turn the sys.exit into exceptions.
                 sys.exit(1)
 
-        if not filename or not os.path.isfile(filename) or not os.access(filename, os.R_OK):
-            self.message(f'UNABLE TO READ: {filename}')
+        if (
+            not filename
+            or not os.path.isfile(filename)
+            or not os.access(filename, os.R_OK)
+        ):
+            self.message(f"UNABLE TO READ: {filename}")
             # TODO: Turn the sys.exit into exceptions.
             sys.exit(2)
 
@@ -83,9 +94,11 @@ class AmesPAHdb:
 
         self._joined = None
 
-        self.parsefile(filename,
-                       cache=keywords.get('cache', True),
-                       check=keywords.get('check', True))
+        self.parsefile(
+            filename,
+            cache=keywords.get("cache", True),
+            check=keywords.get("check", True),
+        )
 
     def parsefile(self, filename, **keywords):
         """
@@ -101,64 +114,74 @@ class AmesPAHdb:
         """
 
         # Create MD5 hash function pickle.
-        md5 = tempfile.gettempdir() + \
-            '/' + hashlib.md5(open(filename, 'r').read().encode()
-                              ).hexdigest() + '.pkl'
+        md5 = (
+            tempfile.gettempdir()
+            + "/"
+            + hashlib.md5(open(filename, "r").read().encode()).hexdigest()
+            + ".pkl"
+        )
 
         # Check if database is dumped in cache and restore it.
-        if (keywords.get('cache', True) and os.path.isfile(md5) and os.access(md5, os.R_OK)):
+        if (
+            keywords.get("cache", True)
+            and os.path.isfile(md5)
+            and os.access(md5, os.R_OK)
+        ):
 
-            self.message('RESTORING DATABASE FROM CACHE')
+            self.message("RESTORING DATABASE FROM CACHE")
 
             # Start timer.
             tstart = time.perf_counter()
 
             # Open and read the dumped database.
-            with open(md5, 'rb') as f:
+            with open(md5, "rb") as f:
                 self.__data = pickle.load(f)
 
             # Store the dumped database filename.
-            self.__data['filename'] = md5
+            self.__data["filename"] = md5
 
             # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
 
-            info = [f'FILENAME                    : {md5}',
-                    f'ORIGNINAL FILENAME          : {filename}',
-                    f'PARSE TIME                  : {elapsed}',
-                    f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
-                    f'COMMENT                     : {self.__data["comment"]}']
+            info = [
+                f"FILENAME                    : {md5}",
+                f"ORIGNINAL FILENAME          : {filename}",
+                f"PARSE TIME                  : {elapsed}",
+                f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
+                f'COMMENT                     : {self.__data["comment"]}',
+            ]
             self.message(info, space=0)
 
         else:
 
-            self.message('PARSING DATABASE: THIS MAY TAKE A FEW MINUTES')
+            self.message("PARSING DATABASE: THIS MAY TAKE A FEW MINUTES")
 
             # Start timer.
             tstart = time.perf_counter()
 
             # Call XMLparser module to parse the database.
-            parser = XMLparser(filename=filename,
-                               validate=keywords.get('check', True))
+            parser = XMLparser(filename=filename, validate=keywords.get("check", True))
 
             # Store the database into self.__self.data.
             self.__data = parser.to_pahdb_dict()
 
             # Dump the database into pickle in the cache directory.
-            if keywords.get('cache', True):
-                with open(md5, 'wb') as f:
+            if keywords.get("cache", True):
+                with open(md5, "wb") as f:
                     pickle.dump(self.__data, f, pickle.HIGHEST_PROTOCOL)
 
             # Store the dumped database filename.
-            self.__data['filename'] = md5
+            self.__data["filename"] = md5
 
             # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
 
-            info = [f'FILENAME                    : {filename}',
-                    f'PARSE TIME                  : {elapsed}',
-                    f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
-                    f'COMMENT                     : {self.__data["comment"]}']
+            info = [
+                f"FILENAME                    : {filename}",
+                f"PARSE TIME                  : {elapsed}",
+                f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
+                f'COMMENT                     : {self.__data["comment"]}',
+            ]
 
             self.message(info, space=0)
 
@@ -178,12 +201,22 @@ class AmesPAHdb:
 
         """
 
-        if key == 'species':
-            return copy.deepcopy(dict((uid, self.__data['species'][uid])
-                                      for uid in uids if uid in self.__data['species'].keys()))
+        if key == "species":
+            return copy.deepcopy(
+                dict(
+                    (uid, self.__data["species"][uid])
+                    for uid in uids
+                    if uid in self.__data["species"].keys()
+                )
+            )
         else:
-            return copy.deepcopy(dict((uid, self.__data['species'][uid][key])
-                                      for uid in uids if uid in self.__data['species'].keys()))
+            return copy.deepcopy(
+                dict(
+                    (uid, self.__data["species"][uid][key])
+                    for uid in uids
+                    if uid in self.__data["species"].keys()
+                )
+            )
 
     def gettransitionsbyuid(self, uids):
         """
@@ -200,22 +233,22 @@ class AmesPAHdb:
 
         """
         from amespahdbpythonsuite.transitions import Transitions
+
         if type(uids) == int:
             uids = [uids]
 
-        return Transitions(type=self.__data['database'],
-                           version=self.__data['version'],
-                           data=self.__getkeybyuids('transitions', uids),
-                           pahdb=self.__data,
-                           uids=uids,
-                           model={'type': 'zerokelvin_m',
-                                  'temperature': 0.0,
-                                  'description': ''},
-                           units={'abscissa': {'unit': 1,
-                                               'str': 'frequency [wavenumber]'},
-                                  'ordinate': {'unit': 2,
-                                               'str': 'integrated cross-section' + '[km/mol]'}}
-                           )
+        return Transitions(
+            type=self.__data["database"],
+            version=self.__data["version"],
+            data=self.__getkeybyuids("transitions", uids),
+            pahdb=self.__data,
+            uids=uids,
+            model={"type": "zerokelvin_m", "temperature": 0.0, "description": ""},
+            units={
+                "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
+                "ordinate": {"unit": 2, "str": "integrated cross-section" + "[km/mol]"},
+            },
+        )
 
     def getlaboratorybyuid(self, uids):
         """
@@ -232,9 +265,9 @@ class AmesPAHdb:
 
         """
         # Check if the experimental database is loaded.
-        if self.__data['database'] != 'experimental':
+        if self.__data["database"] != "experimental":
 
-            self.message('EXPERIMENTAL DATABASE REQUIRED')
+            self.message("EXPERIMENTAL DATABASE REQUIRED")
 
             return None
 
@@ -243,19 +276,18 @@ class AmesPAHdb:
         if type(uids) == int:
             uids = [uids]
 
-        return Laboratory(type=self.__data['database'],
-                          version=self.__data['version'],
-                          data=self.__getkeybyuids('laboratory', uids),
-                          pahdb=self.__data,
-                          uids=uids,
-                          model={'type': 'laboratory_m',
-                                 'temperature': 0.0,
-                                 'description': ''},
-                          units={'abscissa': {'unit': 1,
-                                              'str': 'frequency [wavenumber]'},
-                                 'ordinate': {'unit': 2,
-                                              'str': 'absorbance' + '[-log(I/I$_{0})$'}}
-                          )
+        return Laboratory(
+            type=self.__data["database"],
+            version=self.__data["version"],
+            data=self.__getkeybyuids("laboratory", uids),
+            pahdb=self.__data,
+            uids=uids,
+            model={"type": "laboratory_m", "temperature": 0.0, "description": ""},
+            units={
+                "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
+                "ordinate": {"unit": 2, "str": "absorbance" + "[-log(I/I$_{0})$"},
+            },
+        )
 
     def getspeciesbyuid(self, uids):
         """
@@ -277,14 +309,15 @@ class AmesPAHdb:
         if type(uids) == int:
             uids = [uids]
 
-        return Species(type=self.__data['database'],
-                       version=self.__data['version'],
-                       data=self.__getkeybyuids('species', uids),
-                       pahdb=self.__data,
-                       uids=uids,
-                       references=self.__getkeybyuids('references', uids),
-                       comments=self.__getkeybyuids('comments', uids)
-                       )
+        return Species(
+            type=self.__data["database"],
+            version=self.__data["version"],
+            data=self.__getkeybyuids("species", uids),
+            pahdb=self.__data,
+            uids=uids,
+            references=self.__getkeybyuids("references", uids),
+            comments=self.__getkeybyuids("comments", uids),
+        )
 
     def getgeometrybyuid(self, uids):
         """
@@ -306,11 +339,13 @@ class AmesPAHdb:
         if type(uids) == int:
             uids = [uids]
 
-        return Geometry(type=self.__data['database'],
-                        version=self.__data['version'],
-                        data=self.__getkeybyuids('geometry', uids),
-                        pahdb=self.__data,
-                        uids=uids)
+        return Geometry(
+            type=self.__data["database"],
+            version=self.__data["version"],
+            data=self.__getkeybyuids("geometry", uids),
+            pahdb=self.__data,
+            uids=uids,
+        )
 
     def search(self, query):
         """
@@ -342,7 +377,7 @@ class AmesPAHdb:
             if i == n:
                 break
 
-            while query[i] == ' ':
+            while query[i] == " ":
                 i += 1
 
             token = query[i]
@@ -368,7 +403,17 @@ class AmesPAHdb:
                     i += 1
             else:
                 i += 1
-                while i < n and query[i] not in [" ", "=", "<", ">", "&", "|", "(", ")", "!"]:
+                while i < n and query[i] not in [
+                    " ",
+                    "=",
+                    "<",
+                    ">",
+                    "&",
+                    "|",
+                    "(",
+                    ")",
+                    "!",
+                ]:
                     token += query[i]
                     i += 1
 
@@ -385,7 +430,9 @@ class AmesPAHdb:
             return None
 
         found = eval(
-            f"[item[0] for item in _AmesPAHdb__data['species'].items() if ({code})]", self.__dict__)
+            f"[item[0] for item in _AmesPAHdb__data['species'].items() if ({code})]",
+            self.__dict__,
+        )
 
         return found
 
@@ -403,90 +450,108 @@ class AmesPAHdb:
 
         token = {}
 
-        charge = {'anion': 'item[1]["charge"] < 0',
-                  'cation': 'item[1]["charge"] > 0',
-                  'neutral': 'item[1]["charge"] == 0',
-                  'positive': 'item[1]["charge"] > 0',
-                  'negative': 'item[1]["charge"] < 0',
-                  '-': 'item[1]["charge"] == -1',
-                  '+': 'item[1]["charge"] == 1',
-                  '++': 'item[1]["charge"] == 2',
-                  '+++': 'item[1]["charge"] == 3',
-                  '---': 'item[1]["charge"] == -3'}
+        charge = {
+            "anion": 'item[1]["charge"] < 0',
+            "cation": 'item[1]["charge"] > 0',
+            "neutral": 'item[1]["charge"] == 0',
+            "positive": 'item[1]["charge"] > 0',
+            "negative": 'item[1]["charge"] < 0',
+            "-": 'item[1]["charge"] == -1',
+            "+": 'item[1]["charge"] == 1',
+            "++": 'item[1]["charge"] == 2',
+            "+++": 'item[1]["charge"] == 3',
+            "---": 'item[1]["charge"] == -3',
+        }
 
-        identities = {'uid': 'item[0]',
-                      'identifier': 'item[0]',
-                      'atoms': 'len(item[1]["geometry"])',
-                      'hydrogen': 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
-                      'carbon': 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
-                      'nitrogen': 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
-                      'oxygen': 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
-                      'magnesium': 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
-                      'silicium': 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
-                      'iron': 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
-                      'h': 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
-                      'c': 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
-                      'n': 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
-                      'o': 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
-                      'mg': 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
-                      'si': 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
-                      'fe': 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
-                      # TODO make transition search work
-                      # 'wavenumber': 'item[1]["transitions"]["frequency"]',
-                      # 'absorbance': 'item[1]["transitions"]["intensity"]',
-                      # 'frequency': 'item[1]["transitions"]["frequency"]',
-                      # 'intensity': 'item[1]["transitions"]["intensity"]',
-                      'ch2': 'item[1]["n_ch2"]',
-                      'chx': 'item[1]["n_chx"]',
-                      'solo': 'item[1]["n_solo"]',
-                      'duo': 'item[1]["n_duo"]',
-                      'trio': 'item[1]["n_trio"]',
-                      'quartet': 'item[1]["n_quartet"]',
-                      'quintet': 'item[1]["n_quintet"]',
-                      'charge': 'item[1]["charge"]',
-                      'symmetry': 'item[1]["symmetry"]',
-                      'weight': 'item[1]["weight"]',
-                      'scale': 'item[1]["scale"]',
-                      'energy': 'item[1]["total_e"]',
-                      'zeropoint': 'item[1]m["vib_e"]',
-                      'experiment': 'item[1]["exp"]'}
+        identities = {
+            "uid": "item[0]",
+            "identifier": "item[0]",
+            "atoms": 'len(item[1]["geometry"])',
+            "hydrogen": 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
+            "carbon": 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
+            "nitrogen": 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
+            "oxygen": 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
+            "magnesium": 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
+            "silicium": 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
+            "iron": 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
+            "h": 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
+            "c": 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
+            "n": 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
+            "o": 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
+            "mg": 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
+            "si": 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
+            "fe": 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
+            # TODO make transition search work
+            # 'wavenumber': 'item[1]["transitions"]["frequency"]',
+            # 'absorbance': 'item[1]["transitions"]["intensity"]',
+            # 'frequency': 'item[1]["transitions"]["frequency"]',
+            # 'intensity': 'item[1]["transitions"]["intensity"]',
+            "ch2": 'item[1]["n_ch2"]',
+            "chx": 'item[1]["n_chx"]',
+            "solo": 'item[1]["n_solo"]',
+            "duo": 'item[1]["n_duo"]',
+            "trio": 'item[1]["n_trio"]',
+            "quartet": 'item[1]["n_quartet"]',
+            "quintet": 'item[1]["n_quintet"]',
+            "charge": 'item[1]["charge"]',
+            "symmetry": 'item[1]["symmetry"]',
+            "weight": 'item[1]["weight"]',
+            "scale": 'item[1]["scale"]',
+            "energy": 'item[1]["total_e"]',
+            "zeropoint": 'item[1]m["vib_e"]',
+            "experiment": 'item[1]["exp"]',
+        }
 
-        logical = {'and': 'and', 'or': 'or', '|': 'or', '&': 'and'}
+        logical = {"and": "and", "or": "or", "|": "or", "&": "and"}
 
-        comparison = {'<': '<', 'lt': '<', '>': '>', 'gt': '>', '=': '==', 'eq': '==',
-                      '<=': '<=', 'le': '<=', '>=': '>=', 'ge': '>=', 'with': 'and', 'ne': '!=', '!=': '!='}
+        comparison = {
+            "<": "<",
+            "lt": "<",
+            ">": ">",
+            "gt": ">",
+            "=": "==",
+            "eq": "==",
+            "<=": "<=",
+            "le": "<=",
+            ">=": ">=",
+            "ge": ">=",
+            "with": "and",
+            "ne": "!=",
+            "!=": "!=",
+        }
 
-        transfer = {'(': '(', ')': ')'}
+        transfer = {"(": "(", ")": ")"}
 
         if word.isnumeric():
-            token['type'] = "NUMERIC"
-            token['translation'] = word
+            token["type"] = "NUMERIC"
+            token["translation"] = word
         elif word in charge:
-            token['type'] = "CHARGE"
-            token['translation'] = charge[word]
+            token["type"] = "CHARGE"
+            token["translation"] = charge[word]
         elif word in identities:
-            token['type'] = "IDENTITY"
-            token['translation'] = identities[word]
+            token["type"] = "IDENTITY"
+            token["translation"] = identities[word]
         elif word in logical:
-            token['type'] = "LOGICAL"
-            token['translation'] = logical[word]
+            token["type"] = "LOGICAL"
+            token["translation"] = logical[word]
         elif word in comparison:
-            token['type'] = "COMPARISON"
-            token['translation'] = comparison[word]
+            token["type"] = "COMPARISON"
+            token["translation"] = comparison[word]
         elif word in transfer:
-            token['type'] = "TRANSFER"
-            token['translation'] = transfer[word]
+            token["type"] = "TRANSFER"
+            token["translation"] = transfer[word]
         elif re.search(
-            '(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]*)([0-9]*)',
-                word):
-            token['type'] = "FORMULA"
-            token['translation'] = f"item[1]['formula'] == '{word.upper()}'"
+            "(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]*)([0-9]*)",
+            word,
+        ):
+            token["type"] = "FORMULA"
+            token["translation"] = f"item[1]['formula'] == '{word.upper()}'"
         else:
             # TODO: add search by compound name
-            token['type'] = "IGNORE"
-            token['translation'] = word
+            token["type"] = "IGNORE"
+            token["translation"] = word
 
-        token['valid'] = True
+        token["valid"] = True
 
         return token
 
@@ -517,72 +582,87 @@ class AmesPAHdb:
         else:
             next = None
 
-        parsed = ''
+        parsed = ""
 
         while current is not None:
 
-            if tokens[current]['type'] == 'FORMULA':
+            if tokens[current]["type"] == "FORMULA":
                 if prev is not None:
-                    if not (tokens[prev]['type'] != 'LOGICAL' and tokens[prev]['valid']):
-                        parsed += ' or '
-                parsed += tokens[current]['translation']
-            elif tokens[current]['type'] == 'IDENTITY':
+                    if not (
+                        tokens[prev]["type"] != "LOGICAL" and tokens[prev]["valid"]
+                    ):
+                        parsed += " or "
+                parsed += tokens[current]["translation"]
+            elif tokens[current]["type"] == "IDENTITY":
                 if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL' or
-                       tokens[prev]['type'] == 'TRANSFER' or
-                       tokens[prev]['type'] == 'TRANSFER' and tokens[prev]['valid']):
-                        parsed += ' and '
+                    if not (
+                        tokens[prev]["type"] == "LOGICAL"
+                        or tokens[prev]["type"] == "TRANSFER"
+                        or tokens[prev]["type"] == "TRANSFER"
+                        and tokens[prev]["valid"]
+                    ):
+                        parsed += " and "
                 if next is not None:
-                    if tokens[next]['type'] == 'COMPARISON':
-                        parsed += ' ' + tokens[current]['translation']
+                    if tokens[next]["type"] == "COMPARISON":
+                        parsed += " " + tokens[current]["translation"]
                     else:
-                        parsed += ' ' + tokens[current]['translation'] + ' > 0'
-            elif tokens[current]['type'] == 'NUMERIC':
+                        parsed += " " + tokens[current]["translation"] + " > 0"
+            elif tokens[current]["type"] == "NUMERIC":
                 if prev is not None:
-                    if tokens[prev]['type'] == 'COMPARISON' and tokens[prev]['valid']:
-                        parsed += ' ' + tokens[current]['translation']
+                    if tokens[prev]["type"] == "COMPARISON" and tokens[prev]["valid"]:
+                        parsed += " " + tokens[current]["translation"]
                     else:
                         tokens[current].valid = False
-            elif tokens[current]['type'] == 'LOGICAL':
+            elif tokens[current]["type"] == "LOGICAL":
                 if prev is not None:
-                    if (tokens[prev]['type'] == 'IDENTITY' or tokens[prev]['type'] == 'NUMERIC' or
-                        tokens[prev]['type'] == 'FORMULA' or tokens[prev]['type'] == 'CHARGE' and
-                            tokens[prev]['valid']):
+                    if (
+                        tokens[prev]["type"] == "IDENTITY"
+                        or tokens[prev]["type"] == "NUMERIC"
+                        or tokens[prev]["type"] == "FORMULA"
+                        or tokens[prev]["type"] == "CHARGE"
+                        and tokens[prev]["valid"]
+                    ):
                         if next is not None:
-                            if (tokens[next]['type'] == 'TRANSFER'):
-                                parsed += tokens[current]['translation']
-                            elif (tokens[next]['type'] == 'IDENTITY' or
-                                  tokens[next]['type'] == 'NUMERIC' or
-                                  tokens[next]['type'] == 'FORMULA' or
-                                  tokens[next]['type'] == 'CHARGE'):
-                                parsed += ' ' + tokens[current]['translation']
+                            if tokens[next]["type"] == "TRANSFER":
+                                parsed += tokens[current]["translation"]
+                            elif (
+                                tokens[next]["type"] == "IDENTITY"
+                                or tokens[next]["type"] == "NUMERIC"
+                                or tokens[next]["type"] == "FORMULA"
+                                or tokens[next]["type"] == "CHARGE"
+                            ):
+                                parsed += " " + tokens[current]["translation"]
                             else:
                                 tokens[current].valid = False
-            elif tokens[current]['type'] == 'COMPARISON':
+            elif tokens[current]["type"] == "COMPARISON":
                 if prev is not None:
-                    if tokens[prev]['type'] == 'IDENTITY' and tokens[prev]['valid']:
+                    if tokens[prev]["type"] == "IDENTITY" and tokens[prev]["valid"]:
                         if next is not None:
-                            if tokens[next]['type'] == 'NUMERIC':
-                                parsed += ' ' + tokens[current]['translation']
+                            if tokens[next]["type"] == "NUMERIC":
+                                parsed += " " + tokens[current]["translation"]
                             else:
-                                tokens[current]['valid'] = False
-            elif tokens[current]['type'] == 'CHARGE':
+                                tokens[current]["valid"] = False
+            elif tokens[current]["type"] == "CHARGE":
                 if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL' and tokens[prev]['valid']):
-                        parsed += ' and '
-                parsed += ' ' + tokens[current]['translation']
-            elif tokens[current]['type'] == 'TRANSFER':
-                parsed += tokens[current]['translation']
-            elif tokens[current]['type'] == 'NAME':
+                    if not (
+                        tokens[prev]["type"] == "LOGICAL" and tokens[prev]["valid"]
+                    ):
+                        parsed += " and "
+                parsed += " " + tokens[current]["translation"]
+            elif tokens[current]["type"] == "TRANSFER":
+                parsed += tokens[current]["translation"]
+            elif tokens[current]["type"] == "NAME":
                 if prev is not None:
-                    if not (tokens[prev]['type'] == 'LOGICAL' and tokens[prev]['valid']):
-                        parsed += ' and '
+                    if not (
+                        tokens[prev]["type"] == "LOGICAL" and tokens[prev]["valid"]
+                    ):
+                        parsed += " and "
                 # TODO implement name
                 # parsed += f"item[1]['comments'] == {tokens[current]['translation']}"
-            elif tokens[current]['type'] == 'IGNORE':
+            elif tokens[current]["type"] == "IGNORE":
                 print(f"'{tokens[current]['translation']}' NOT UNDERSTOOD")
 
-                return ''
+                return ""
 
             prev = current
 
@@ -604,7 +684,7 @@ class AmesPAHdb:
             String of PAHdb version.
 
         """
-        return self.__data['version']
+        return self.__data["version"]
 
     def checkversion(self, version: str) -> bool:
         """
@@ -614,7 +694,7 @@ class AmesPAHdb:
             Boolean whether a provided version matched the PAHdb version.
 
         """
-        return version == self.__data['version']
+        return version == self.__data["version"]
 
     def gettype(self):
         """
@@ -624,7 +704,7 @@ class AmesPAHdb:
             String of PAHdb type.
 
         """
-        return self.__data['type']
+        return self.__data["type"]
 
     def getdatabaseref(self):
         """
@@ -648,7 +728,7 @@ class AmesPAHdb:
                 Number to indent the text.
 
         """
-        line = (space + 2) * '='
+        line = (space + 2) * "="
         print(line)
         if type(text) is list:
             for t in text:

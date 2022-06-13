@@ -9,6 +9,8 @@ import pytest
 from os.path import exists
 from pkg_resources import resource_filename
 
+import matplotlib.pyplot as plt
+
 from astropy.io import ascii
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -16,31 +18,35 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 @pytest.fixture(scope="module")
 def pahdb_theoretical():
-    xml = 'resources/pahdb-theoretical_cutdown.xml'
-    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False, update=False)
+    xml = "resources/pahdb-theoretical_cutdown.xml"
+    pahdb = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+        update=False,
+    )
     return pahdb
 
 
-class TestFitted():
+class TestFitted:
     """
     Test Fitted class.
 
     """
 
-    def test_fit(self, pahdb_theoretical, tmp_path):
+    def test_fit(self, pahdb_theoretical, tmp_path, monkeypatch):
         # Read input spectrum.
-        spec = resource_filename('amespahdbpythonsuite', 'resources/galaxy_spec.ipac')
+        spec = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
         f = ascii.read(spec)
-        wave = f['wavelength']
-        flux = f['flux']
-        sigma = f['sigma']
+        wave = f["wavelength"]
+        flux = f["flux"]
+        sigma = f["sigma"]
         waven = [1e4 / x for x in wave]
         # Define output name.
-        outputname = spec.split('/')[-1].split('.')[0]
+        outputname = spec.split("/")[-1].split(".")[0]
         # Obtain units.
-        if f[f.colnames[0]].unit == 'micron':
-            xunit = '$\\mu$m'
+        if f[f.colnames[0]].unit == "micron":
+            xunit = "$\\mu$m"
         else:
             xunit = f[f.colnames[0]].unit
         yunit = f[f.colnames[1]].unit
@@ -56,43 +62,109 @@ class TestFitted():
         # Shift data 15 wavenumber to the red.
         transitions.shift(-15.0)
         # convolve the transitions into a spectrum.
-        spectrum = transitions.convolve(grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False)
+        spectrum = transitions.convolve(
+            grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False
+        )
         # fit the spectrum.
         fit = spectrum.fit(flux, sigma)
         # Obtain method
-        assert fit.getmethod() == 'NNLC'
+        assert fit.getmethod() == "NNLC"
         # Create temporary pytest directory.
         d = tmp_path / "sub"
         d.mkdir()
-        out = f'{d}/{outputname}'
+        out = f"{d}/{outputname}"
         # Create plots.
-        fit.plot(wavelength=True, sigma=sigma, outputname=out,
-                 ptype='UIDs', ftype='pdf', units=units)
-        assert exists(f'{out}_UIDs.pdf')
-        fit.plot(wavelength=True, residual=True, sigma=sigma, outputname=out,
-                 ptype='residual', ftype='pdf', units=units)
-        assert exists(f'{out}_residual.pdf')
-        fit.plot(wavelength=True, size=True, sigma=sigma, outputname=out,
-                 ptype='size', ftype='pdf', units=units)
-        assert exists(f'{out}_size.pdf')
-        fit.plot(wavelength=True, charge=True, sigma=sigma, outputname=out,
-                 ptype='charge', ftype='pdf', units=units)
-        assert exists(f'{out}_charge.pdf')
-        fit.plot(wavelength=True, composition=True, sigma=sigma, outputname=out,
-                 ptype='composition', ftype='pdf', units=units)
-        assert exists(f'{out}_composition.pdf')
+        monkeypatch.setattr(plt, "show", lambda: None)
+        fit.plot(sizedistribution=True)
+        fit.plot(
+            wavelength=True,
+            sigma=sigma,
+            outputname=out,
+            ptype="UIDs",
+            ftype="pdf",
+            units=units,
+        )
+        assert exists(f"{out}_UIDs.pdf")
+        fit.plot(
+            wavelength=True,
+            residual=True,
+            sigma=sigma,
+            outputname=out,
+            ptype="residual",
+            ftype="pdf",
+            units=units,
+        )
+        assert exists(f"{out}_residual.pdf")
+        fit.plot(
+            wavelength=True,
+            size=True,
+            sigma=sigma,
+            outputname=out,
+            ptype="size",
+            ftype="pdf",
+            units=units,
+        )
+        assert exists(f"{out}_size.pdf")
+        fit.plot(
+            wavelength=True,
+            charge=True,
+            sigma=sigma,
+            outputname=out,
+            ptype="charge",
+            ftype="pdf",
+            units=units,
+        )
+        assert exists(f"{out}_charge.pdf")
+        fit.plot(
+            wavelength=True,
+            composition=True,
+            sigma=sigma,
+            outputname=out,
+            ptype="composition",
+            ftype="pdf",
+            units=units,
+        )
+        assert exists(f"{out}_composition.pdf")
         # Save to a temporary file.
         fit.write(out)
-        colnames = ['UID', 'formula', 'Nc', 'charge', 'mweight',
-                    'n_solo', 'n_duo', 'n_trio', 'n_quartet', 'n_quintet', 'fweight']
-        f = ascii.read(f'{out}_results.txt')
+        colnames = [
+            "UID",
+            "formula",
+            "Nc",
+            "charge",
+            "mweight",
+            "n_solo",
+            "n_duo",
+            "n_trio",
+            "n_quartet",
+            "n_quintet",
+            "fweight",
+        ]
+        f = ascii.read(f"{out}_results.txt")
         assert f.colnames == colnames
         # Obtain fit breakdown.
         bd = fit.getbreakdown()
-        lkeys = ['solo', 'duo', 'trio', 'quartet', 'quintet',
-                 'anion', 'neutral', 'cation', 'small', 'large',
-                 'nitrogen', 'pure', 'nc', 'err',
-                 'e127', 'e112', 'e77', 'e62', 'e33']
+        lkeys = [
+            "solo",
+            "duo",
+            "trio",
+            "quartet",
+            "quintet",
+            "anion",
+            "neutral",
+            "cation",
+            "small",
+            "large",
+            "nitrogen",
+            "pure",
+            "nc",
+            "err",
+            "e127",
+            "e112",
+            "e77",
+            "e62",
+            "e33",
+        ]
         assert list(bd.keys()) == lkeys
         # Obtain size distribution
         h, edges = fit.getsizedistribution()

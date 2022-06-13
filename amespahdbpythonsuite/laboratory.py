@@ -27,6 +27,6 @@ class Laboratory(Data):
 
         """
         d = Data.get(self)
-        d['type'] = self.__class__.__name__
+        d["type"] = self.__class__.__name__
 
         return d

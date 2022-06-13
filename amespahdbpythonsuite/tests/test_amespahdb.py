@@ -13,21 +13,29 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 @pytest.fixture(scope="module")
 def pahdb_theoretical():
-    xml = 'resources/pahdb-theoretical_cutdown.xml'
-    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False, update=False)
+    xml = "resources/pahdb-theoretical_cutdown.xml"
+    pahdb = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+        update=False,
+    )
     return pahdb
 
 
 @pytest.fixture(scope="module")
 def pahdb_laboratory():
-    xml = 'resources/pahdb-experimental_cutdown.xml'
-    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False, update=False)
+    xml = "resources/pahdb-experimental_cutdown.xml"
+    pahdb = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+        update=False,
+    )
     return pahdb
 
 
-class TestAmesPAHdb():
+class TestAmesPAHdb:
     """
     Test AmesPAHdb class.
 
@@ -35,18 +43,18 @@ class TestAmesPAHdb():
 
     def test_instance(self, pahdb_theoretical):
         # Read the database.
-        assert isinstance(pahdb_theoretical,
-                          amespahdbpythonsuite.amespahdb.AmesPAHdb)
+        assert isinstance(pahdb_theoretical, amespahdbpythonsuite.amespahdb.AmesPAHdb)
 
     def test_update(self):
-        xml = 'resources/pahdb-theoretical_cutdown.xml'
-        path = resource_filename('amespahdbpythonsuite', xml)
+        xml = "resources/pahdb-theoretical_cutdown.xml"
+        path = resource_filename("amespahdbpythonsuite", xml)
         AmesPAHdb(filename=path, check=False, cache=False, update=True)
 
     def test_env(self):
         # TODO: Turn the sys.exit into exceptions.
         import os
-        if 'AMESPAHDEFAULTDB' in os.environ:
+
+        if "AMESPAHDEFAULTDB" in os.environ:
             del os.environ["AMESPAHDEFAULTDB"]
         with pytest.raises(SystemExit) as pytest_wrapped_e:
             AmesPAHdb(check=False, cache=False, update=False)
@@ -56,32 +64,40 @@ class TestAmesPAHdb():
     def test_file_not_exist(self):
         # TODO: Turn the sys.exit into exceptions.
         with pytest.raises(SystemExit) as pytest_wrapped_e:
-            AmesPAHdb(filename='file_does_not_exist.xml', update=False)
+            AmesPAHdb(filename="file_does_not_exist.xml", update=False)
             assert pytest_wrapped_e.type == SystemExit
             assert pytest_wrapped_e.value.code == 2
 
     def test_cache(self, capsys):
-        xml = 'resources/pahdb-experimental_cutdown.xml'
+        xml = "resources/pahdb-experimental_cutdown.xml"
         # Make sure the AmesPAHdb module is called to create the cached database.
         with capsys.disabled():
-            AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=True, update=False)
-        AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                  check=False, cache=True, update=False)
+            AmesPAHdb(
+                filename=resource_filename("amespahdbpythonsuite", xml),
+                check=False,
+                cache=True,
+                update=False,
+            )
+        AmesPAHdb(
+            filename=resource_filename("amespahdbpythonsuite", xml),
+            check=False,
+            cache=True,
+            update=False,
+        )
         capture = capsys.readouterr()
-        assert capture.out.find('RESTORING DATABASE FROM CACHE') >= 0
+        assert capture.out.find("RESTORING DATABASE FROM CACHE") >= 0
 
     def test_checkversion(self, pahdb_theoretical):
         # Read the database.
         pahdb = pahdb_theoretical
-        assert not pahdb.checkversion('wrong')
+        assert not pahdb.checkversion("wrong")
 
     def test_keybyuids(self, pahdb_theoretical):
         # Read the database.
         pahdb = pahdb_theoretical
         # UIDs test list.
         uids = [18, 73, 726, 2054, 223]
-        res = pahdb._AmesPAHdb__getkeybyuids('formula', uids)
+        res = pahdb._AmesPAHdb__getkeybyuids("formula", uids)
         assert sorted(uids) == sorted(list(res.keys()))
 
     def test_gettransitionsbyuid(self, pahdb_theoretical):

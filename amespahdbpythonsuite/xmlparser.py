@@ -47,13 +47,14 @@ class XMLparser:
 
     def __repr__(self):
         """Class representation."""
-        return (f'{self.__class__.__name__}('
-                f'filename={self.filename!r}, ')
+        return f"{self.__class__.__name__}(" f"filename={self.filename!r}, "
 
     def __str__(self):
         """A description of the object."""
-        return (f'XML parser from the AmesPAHdbPythonSuite. '
-                f'XML file: \n{self.filename!r}.')
+        return (
+            f"XML parser from the AmesPAHdbPythonSuite. "
+            f"XML file: \n{self.filename!r}."
+        )
 
     def verify_schema(self):
         """Validate against linked schema.
@@ -74,11 +75,11 @@ class XMLparser:
         self._root = self._tree.getroot()
 
         schema = self._root.get(
-            '{http://www.w3.org/2001/XMLSchema-instance}' + 'schemaLocation'
+            "{http://www.w3.org/2001/XMLSchema-instance}" + "schemaLocation"
         )
 
         if schema:
-            _, uri = schema.split(' ', 1)
+            _, uri = schema.split(" ", 1)
             try:
                 response = urllib.request.urlopen(uri, timeout=3.0)
             except (HTTPError, URLError):
@@ -114,11 +115,9 @@ class XMLparser:
         if self.validate or validate:
             self.verify_schema()
 
-            self._context = \
-                etree.iterwalk(self._tree, events=("start", "end"))
+            self._context = etree.iterwalk(self._tree, events=("start", "end"))
         else:
-            self._context = \
-                etree.iterparse(self.filename, events=("start", "end"))
+            self._context = etree.iterparse(self.filename, events=("start", "end"))
 
         self.library = self._tree_to_pahdb_dict()
 
@@ -137,16 +136,15 @@ class XMLparser:
             action, elem = next(self._context)
             tag = etree.QName(elem).localname
 
-            if action == 'start':
-                if tag == 'species':
-                    self.library['species'] = \
-                        self._species_handler(self._context)
-                elif tag == 'pahdatabase':
+            if action == "start":
+                if tag == "species":
+                    self.library["species"] = self._species_handler(self._context)
+                elif tag == "pahdatabase":
                     self.library.update(elem.attrib)
-            elif action == 'end':
-                if tag == 'comment':
-                    self.library['comment'] = elem.text
-                elif tag == 'pahdatabase':
+            elif action == "end":
+                if tag == "comment":
+                    self.library["comment"] = elem.text
+                elif tag == "pahdatabase":
                     break
                 elem.clear()
         return self.library
@@ -159,13 +157,13 @@ class XMLparser:
             action, elem = next(context)
             tag = etree.QName(elem).localname
 
-            if action == 'start' and tag == 'specie':
-                uid = int(elem.attrib['uid'])
+            if action == "start" and tag == "specie":
+                uid = int(elem.attrib["uid"])
                 species[uid] = self._specie_handler(context)
-            elif action != 'end':
+            elif action != "end":
                 continue
 
-            if tag == 'species':
+            if tag == "species":
                 break
 
             elem.clear()
@@ -183,17 +181,17 @@ class XMLparser:
                 action, elem = next(context)
                 tag = etree.QName(elem).localname
 
-                if tag == 'atom' and action == 'start':
+                if tag == "atom" and action == "start":
                     atom_dict = {}
 
                     while True:
                         action, elem = next(context)
                         tag = etree.QName(elem).localname
 
-                        if action != 'end':
+                        if action != "end":
                             continue
 
-                        if tag == 'atom':
+                        if tag == "atom":
                             geometry.append(atom_dict)
                             break
 
@@ -201,10 +199,10 @@ class XMLparser:
 
                         elem.clear()
 
-                elif action != 'end':
+                elif action != "end":
                     continue
 
-                if tag == 'geometry':
+                if tag == "geometry":
                     break
 
                 elem.clear()
@@ -219,17 +217,17 @@ class XMLparser:
                 action, elem = next(context)
                 tag = etree.QName(elem).localname
 
-                if tag == 'mode':
+                if tag == "mode":
                     mode_dict = {}
 
                     while True:
                         action, elem = next(context)
                         tag = etree.QName(elem).localname
 
-                        if action != 'end':
+                        if action != "end":
                             continue
 
-                        if tag == 'mode':
+                        if tag == "mode":
                             transitions.append(mode_dict)
                             break
 
@@ -243,10 +241,10 @@ class XMLparser:
                         mode_dict[tag] = value
 
                         elem.clear()
-                elif action != 'end':
+                elif action != "end":
                     continue
 
-                if tag == 'transitions':
+                if tag == "transitions":
                     break
 
                 elem.clear()
@@ -261,67 +259,70 @@ class XMLparser:
                 action, elem = next(context)
                 tag = etree.QName(elem).localname
 
-                if action == 'end':
-                    if tag == 'frequency' or tag == 'intensity':
+                if action == "end":
+                    if tag == "frequency" or tag == "intensity":
                         bin = base64.b64decode(elem.text)
-                        laboratory[tag] = array.array('f', bin)
-                    elif tag == 'laboratory':
+                        laboratory[tag] = array.array("f", bin)
+                    elif tag == "laboratory":
                         break
 
                     elem.clear()
 
             return laboratory
 
-        specie_dict = {'comments': (), 'references': (
-        ), 'geometry': (), 'transitions': (), 'laboratory': ()}
+        specie_dict = {
+            "comments": (),
+            "references": (),
+            "geometry": (),
+            "transitions": (),
+            "laboratory": (),
+        }
 
         while True:
             action, elem = next(context)
             tag = etree.QName(elem).localname
 
-            if action == 'start':
-                if tag == 'comments':
+            if action == "start":
+                if tag == "comments":
                     comments = []
 
                     while True:
                         action, elem = next(context)
                         tag = etree.QName(elem).localname
 
-                        if action == 'end':
-                            if tag == 'comment':
+                        if action == "end":
+                            if tag == "comment":
                                 comments.append(elem.text)
-                            elif tag == 'comments':
+                            elif tag == "comments":
                                 break
 
                             elem.clear()
 
-                    specie_dict['comments'] = comments
-                elif tag == 'references':
+                    specie_dict["comments"] = comments
+                elif tag == "references":
                     references = []
 
                     while True:
                         action, elem = next(context)
                         tag = etree.QName(elem).localname
 
-                        if action == 'end':
-                            if tag == 'reference':
+                        if action == "end":
+                            if tag == "reference":
                                 references.append(elem.text)
-                            elif tag == 'references':
+                            elif tag == "references":
                                 break
 
                             elem.clear()
 
-                    specie_dict['references'] = references
-                elif tag == 'geometry':
-                    specie_dict['geometry'] = specie_geometry_handler(context)
-                elif tag == 'transitions':
-                    specie_dict['transitions'] = \
-                        specie_transitions_handler(context)
-                elif tag == 'laboratory':
-                    specie_dict['laboratory'] = \
-                        specie_laboratory_handler(context)
-            elif action == 'end':
-                if tag == 'specie':
+                    specie_dict["references"] = references
+                elif tag == "geometry":
+                    specie_dict["geometry"] = specie_geometry_handler(context)
+                elif tag == "transitions":
+                    specie_dict["transitions"] = specie_transitions_handler(context)
+                elif tag == "laboratory":
+                    specie_dict["laboratory"] = specie_laboratory_handler(context)
+            elif action == "end":
+                if tag == "specie":
                     break
 
                 try:

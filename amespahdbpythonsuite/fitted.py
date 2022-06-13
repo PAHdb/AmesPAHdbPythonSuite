@@ -46,7 +46,7 @@ class Fitted(Spectrum):
 
         if keywords.get("sizedistribution", False):
             h, edges = self.getsizedistribution()
-            h /= np.sum(h)
+            h = 100.0 * h / np.sum(h)
             plt.bar(
                 edges[:-1],
                 h,

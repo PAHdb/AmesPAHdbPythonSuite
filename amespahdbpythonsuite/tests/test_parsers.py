@@ -15,32 +15,33 @@ from amespahdbpythonsuite.xmlparser import XMLparser
 
 @pytest.fixture(scope="module")
 def real_xml_file():
-    xml = 'resources/pahdb-theoretical_cutdown.xml'
-    return resource_filename('amespahdbpythonsuite', xml)
+    xml = "resources/pahdb-theoretical_cutdown.xml"
+    return resource_filename("amespahdbpythonsuite", xml)
 
 
 @pytest.fixture(scope="module")
 def real_xml_file_experimental():
-    xml = 'resources/pahdb-experimental_cutdown.xml'
-    return resource_filename('amespahdbpythonsuite', xml)
+    xml = "resources/pahdb-experimental_cutdown.xml"
+    return resource_filename("amespahdbpythonsuite", xml)
 
 
 @pytest.fixture(scope="module")
 def illformed_xml_file():
-    xml = 'resources/pahdb-theoretical_cutdown_illformed.xml'
-    return resource_filename('amespahdbpythonsuite', xml)
+    xml = "resources/pahdb-theoretical_cutdown_illformed.xml"
+    return resource_filename("amespahdbpythonsuite", xml)
 
 
 @pytest.fixture(scope="module")
 def not_an_xml_file(tmpdir_factory):
     tmp_file = tmpdir_factory.mktemp("data").join("not_xml.xml")
-    with open(tmp_file, 'w') as file:
-        file.write('Not an xml file.')
+    with open(tmp_file, "w") as file:
+        file.write("Not an xml file.")
     return tmp_file
 
 
 class TestXMLparser:
     """Test the XMLparser class."""
+
     def test_real_xml_file(self, real_xml_file, validate=True):
         parser = XMLparser(real_xml_file, validate=validate)
         assert isinstance(parser, amespahdbpythonsuite.xmlparser.XMLparser)
@@ -75,5 +76,5 @@ class TestXMLparser:
             parser.to_pahdb_dict()
 
     with pytest.raises(OSError):
-        parser = XMLparser(filename='fake.txt')
+        parser = XMLparser(filename="fake.txt")
         parser.verify_schema()
