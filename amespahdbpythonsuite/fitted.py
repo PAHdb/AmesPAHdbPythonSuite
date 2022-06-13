@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import builtins
 import operator
 import numpy as np
 
@@ -42,6 +43,21 @@ class Fitted(Spectrum):
 
         mpl.rc("xtick", labelsize=12)
         mpl.rc("ytick", labelsize=12)
+
+        if keywords.get("sizedistribution", False):
+            h, edges = self.getsizedistribution()
+            h /= np.sum(h)
+            plt.bar(
+                edges[:-1],
+                h,
+                align="edge",
+                edgecolor="black",
+                width=(np.roll(edges, -1) - edges)[:-1],
+            )
+            plt.xlabel(r"n$_{\mathregular{carbon}}$")
+            plt.ylabel("frequency [%]")
+            plt.show()
+            return
 
         if keywords.get("residual", False):
             figures = plt.figure()
@@ -293,6 +309,28 @@ class Fitted(Spectrum):
 
         """
         return self.weights
+
+    def getsizedistribution(self, nbins=None, min=None, max=None) -> list:
+        """
+        Retrieves the size distribution of the fitted PAHs.
+
+        """
+
+        if not self.atoms:
+            self._atoms()
+
+        nc = [self.atoms[uid]["nc"] for uid in self.weights]
+
+        if not min:
+            min = builtins.min(nc)
+
+        if not max:
+            max = builtins.max(nc)
+
+        if not nbins:
+            nbins = np.ceil(2.0 * len(self.uids) ** (1.0 / 3.0))
+
+        return np.histogram(nc, bins=int(nbins), weights=list(self.weights.values()))
 
     def write(self, prefix=""):
         """

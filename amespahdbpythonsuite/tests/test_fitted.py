@@ -94,5 +94,8 @@ class TestFitted():
                  'nitrogen', 'pure', 'nc', 'err',
                  'e127', 'e112', 'e77', 'e62', 'e33']
         assert list(bd.keys()) == lkeys
+        # Obtain size distribution
+        h, edges = fit.getsizedistribution()
+        assert len(h) == 3 and len(edges) == 4
         # Obtain weights
         assert fit.sort() != fit.sort(flux=True)
