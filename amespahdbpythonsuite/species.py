@@ -4,6 +4,7 @@ from amespahdbpythonsuite import laboratory
 from amespahdbpythonsuite import geometry
 from amespahdbpythonsuite import transitions
 import copy
+import re
 
 from typing import Union
 
@@ -247,3 +248,15 @@ class Species:
                 if uid in self.data.keys()
             )
         )
+
+
+def formatformula(formula: str) -> str:
+    """
+    Make the formulae look pretty by embedding LaTeX formatting commands.
+    """
+
+    formatted = re.sub(r"([A-Z][a-z]?)([0-9]+)", r"\1$_{\\mathregular{\2}}", formula)
+
+    return re.sub(
+        r"((\+)+|(\+[0-9])|(-)+|(-[0-9]))", r"$^{\\mathregular{\1}}", formatted
+    )

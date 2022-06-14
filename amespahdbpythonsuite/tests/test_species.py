@@ -10,9 +10,7 @@ import copy
 from pkg_resources import resource_filename
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import geometry, species
-from amespahdbpythonsuite import transitions
-from amespahdbpythonsuite import laboratory
+from amespahdbpythonsuite import geometry, species, transitions, laboratory
 
 
 @pytest.fixture(scope="module")
@@ -73,3 +71,9 @@ class TestSpecies:
         s.difference(sub_uids)
         assert list(s.uids) == [73, 726, 2054]
         assert list(s.data.keys()) == [73, 726, 2054]
+
+    def test_formatformula(self):
+        assert (
+            species.formatformula("C10H8++")
+            == r"C$_{\mathregular{10}}H$_{\mathregular{8}}$^{\mathregular{++}}"
+        )
