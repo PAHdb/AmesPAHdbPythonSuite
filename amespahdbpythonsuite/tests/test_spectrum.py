@@ -72,6 +72,15 @@ class TestSpectrum:
         spectrum.normalize()
         assert spectrum.data[73].max() == 1.0
 
+    def test_resample(self, pahdb_theoretical):
+        db = pahdb_theoretical
+        uids = [18, 73, 726, 2054, 223]
+        transitions = db.gettransitionsbyuid(uids)
+        spectrum = transitions.convolve(fwhm=15.0, gaussian=True, multiprocessing=False)
+        g = np.arange(1000, 1600, 5)
+        spectrum.resample(g)
+        assert spectrum.grid.min() == g[0] and spectrum.grid.max() == g[-1]
+
     def test_getset(self, pahdb_theoretical):
         # Read the database.
         pahdb = pahdb_theoretical

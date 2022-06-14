@@ -4,6 +4,10 @@ from typing import Union
 
 import numpy as np
 
+from specutils import Spectrum1D
+from specutils import manipulation
+from astropy import units as u
+
 from scipy import optimize
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -230,3 +234,19 @@ class Spectrum(Transitions):
                 max[uid] = m
 
         return max
+
+    def resample(self, grid: np.ndarray) -> None:
+        """
+        Resample the spectral data.
+
+        """
+
+        resampler = manipulation.FluxConservingResampler()
+        for uid, intensities in self.data.items():
+            s = resampler(
+                Spectrum1D(spectral_axis=self.grid / u.cm, flux=intensities * u.Unit()),
+                grid / u.cm,
+            )
+            self.data[uid] = s.flux.value
+
+        self.grid = grid
