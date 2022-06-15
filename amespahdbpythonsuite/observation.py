@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
 import warnings
-
+from typing import Union
 import numpy as np
 
-from astropy.io import ascii
-from astropy.io import fits
+from astropy.io import fits, ascii
 
 from astropy.io.registry import IORegistryError
 from astropy.io.fits.verify import VerifyWarning
 from astropy import units as u
-from specutils import Spectrum1D
+from specutils import Spectrum1D, SpectralRegion, manipulation
+
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
+
+message = AmesPAHdb.message
 
 
 class Observation:
@@ -152,6 +155,8 @@ class Observation:
 
         try:
             data = ascii.read(self.filepath)
+            for name in data.colnames:
+                data.rename_column(name, name.upper())
             # Always work as if spectrum is a cube.
             flux = np.reshape(
                 data["FLUX"].quantity,
@@ -162,8 +167,6 @@ class Observation:
                 + data["FLUX"].quantity.shape,
             )
             # Create Spectrum1D object.
-            for name in data.colnames:
-                data.rename_column(name, name.upper())
             wave = data["WAVELENGTH"].quantity
             self.spectrum = Spectrum1D(flux, spectral_axis=wave)
             str = ""
@@ -178,3 +181,58 @@ class Observation:
         # Like astropy.io we, simply raise a generic OSError when
         # we fail to read the file.
         raise OSError(self.filepath + ": Format not recognized")
+
+    def getgrid(self) -> None:
+        """
+        Retreive the spectral axis.
+
+        """
+
+        return self.spectrum.spectral_axis.value
+
+    def rebin(
+        self, x: Union[np.ndarray, float], uniform=False, resolution=False
+    ) -> None:
+        """
+        Resample the spectral data.
+
+        """
+
+        if uniform or resolution:
+            min = self.spectrum.spectral_axis.value.min()
+            max = self.spectrum.spectral_axis.value.max()
+            if uniform:
+                message(f"REBINNING TO UNIFORM GRID: DELTA={x}")
+                g = np.arange(min, max, x)
+                if g[-1] != max:
+                    g = np.append(g, max)
+            elif resolution:
+                message(f"REBINNING TO RESOLUTION: R={x}")
+                g = [min]
+                while g[-1] < max:
+                    g.append(g[-1] + g[-1] / x)
+                g[-1] = max
+                g = np.array(g)
+        else:
+            message("REBINNING TO SET GRID")
+            g = x
+
+        resampler = manipulation.FluxConservingResampler(
+            extrapolation_treatment="nan_fill"
+        )
+
+        self.spectrum = resampler(self.spectrum, g * self.spectrum.spectral_axis.unit)
+
+    def setgridrange(self, min: float, max=None) -> None:
+        """
+        Truncate the data to the given range.
+        """
+
+        if not max:
+            max = self.spectrum._spectral_axis.value.max()
+
+        u = self.spectrum._spectral_axis.unit
+
+        self.spectrum = manipulation.extract_region(
+            self.spectrum, SpectralRegion(min * u, max * u)
+        )
