@@ -4,6 +4,7 @@ import os
 import sys
 import copy
 import json
+import random
 from urllib.error import HTTPError
 import urllib.request
 from packaging.version import Version
@@ -53,7 +54,8 @@ class AmesPAHdb:
 
         self.message(f"SUITE VERSION: {suite.__version__}")
 
-        if keywords.get("update", True):
+        if keywords.get("update", True) and random.randint(0, 4) == 4:
+            self.message("CHECKING FOR UPDATE")
             github = "http://api.github.com/repos/pahdb/amespahdbpythonsuite/tags"
             try:
                 with urllib.request.urlopen(github) as url:
@@ -64,7 +66,7 @@ class AmesPAHdb:
                         update = versions[-1].public
                         self.message(f"V{update} UPDATE AVAILABLE")
             except HTTPError:
-                self.message("FAILED TO CHECK VERSION")
+                self.message("FAILED TO CHECK FOR UPDATE")
 
         self.message("WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/")
         self.message("CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV")
