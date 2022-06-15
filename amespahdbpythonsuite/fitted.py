@@ -95,7 +95,12 @@ class Fitted(Spectrum):
         else:
             x = self.grid
             axis[0].set_xlim((max(x), min(x)))
-            xtitle = self.units["abscissa"]["str"]
+            xtitle = (
+                self.units["abscissa"]["label"]
+                + " ["
+                + self.units["abscissa"]["unit"].to_string("latex_inline")
+                + "]",
+            )
 
         axis[0].errorbar(
             x,
@@ -187,7 +192,13 @@ class Fitted(Spectrum):
                     axis[1].text(0.05, ypos, "more...", family="monospace")
                     break
 
-        axis[0].set_ylabel(keywords["units"][1], fontsize=14)
+        axis[0].set_ylabel(
+            self.units["ordinate"]["label"]
+            + " ["
+            + self.units["ordinate"]["unit"].to_string('latex_inline')
+            + "]",
+            fontsize=14,
+        )
         if keywords.get("residual", False):
             axis[1].set_xlabel(f"{xtitle} ({keywords['units'][0]})", fontsize=14)
             axis[1].set_ylabel("residual", fontsize=14)

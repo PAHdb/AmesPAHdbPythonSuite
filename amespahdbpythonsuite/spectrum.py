@@ -6,7 +6,6 @@ import numpy as np
 
 from specutils import Spectrum1D
 from specutils import manipulation
-from astropy import units as u
 
 from scipy import optimize
 
@@ -165,8 +164,29 @@ class Spectrum(Transitions):
         ax.set_xlim((max(self.grid), min(self.grid)))
         ax.tick_params(axis="both", labelsize=14)
 
-        ax.set_xlabel(self.units["abscissa"]["str"], fontsize=14)
-        ax.set_ylabel(self.units["ordinate"]["str"], fontsize=14)
+        ax.set_xlabel(
+            self.units["abscissa"]["label"]
+            + " ["
+            + self.units["abscissa"]["unit"].to_string("latex_inline")
+            + "]",
+            fontsize=14,
+        )
+        unit = self.units["ordinate"]["unit"]
+        scale = unit.scale
+        unit /= scale
+        unit = unit.decompose().cgs.unit
+        pre = ""
+        if scale != 1.0:
+            s = np.log10(scale)
+            pre = r"$\times10^{" + f"{s:.0f}" + r"}$ "
+        ax.set_ylabel(
+            self.units["ordinate"]["label"]
+            + " ["
+            + pre
+            + unit.to_string("latex_inline")
+            + "]",
+            fontsize=14,
+        )
 
         plt.show()
 
@@ -241,11 +261,16 @@ class Spectrum(Transitions):
 
         """
 
-        resampler = manipulation.FluxConservingResampler()
+        resampler = manipulation.FluxConservingResampler(
+            extrapolation_treatment="nan_fill"
+        )
         for uid, intensities in self.data.items():
             s = resampler(
-                Spectrum1D(spectral_axis=self.grid / u.cm, flux=intensities * u.Unit()),
-                grid / u.cm,
+                Spectrum1D(
+                    spectral_axis=self.grid * self.units["abscissa"]["unit"],
+                    flux=intensities * self.units["ordinate"]["unit"],
+                ),
+                grid * self.units["abscissa"]["unit"],
             )
             self.data[uid] = s.flux.value
 

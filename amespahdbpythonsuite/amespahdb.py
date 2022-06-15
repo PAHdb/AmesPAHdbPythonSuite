@@ -12,6 +12,7 @@ import tempfile
 import time
 import re
 from datetime import timedelta
+import astropy.units as u
 
 import pickle
 
@@ -245,8 +246,11 @@ class AmesPAHdb:
             uids=uids,
             model={"type": "zerokelvin_m", "temperature": 0.0, "description": ""},
             units={
-                "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
-                "ordinate": {"unit": 2, "str": "integrated cross-section" + "[km/mol]"},
+                "abscissa": {
+                    "unit": u.cm**-1,
+                    "label": "frequency",
+                },
+                "ordinate": {"unit": u.km / u.mol, "label": "integrated cross-section"},
             },
         )
 
@@ -284,8 +288,15 @@ class AmesPAHdb:
             uids=uids,
             model={"type": "laboratory_m", "temperature": 0.0, "description": ""},
             units={
-                "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
-                "ordinate": {"unit": 2, "str": "absorbance" + "[-log(I/I$_{0})$"},
+                "abscissa": {"unit": u.cm**-1, "label": "frequency"},
+                "ordinate": {
+                    "unit": u.def_unit(
+                        "absorbance",
+                        format={"latex": r"-\log(I/I_{0})"},
+                        doc="Absorbance",
+                    ),
+                    "label": "absorbance [",
+                },
             },
         )
 

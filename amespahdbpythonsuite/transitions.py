@@ -10,6 +10,8 @@ from functools import partial
 from scipy import integrate
 from scipy import optimize
 
+import astropy.units as u
+
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
 
@@ -47,12 +49,12 @@ class Transitions(Data):
 
         """
         if d:
-            if d.get('type', '') == self.__class__.__name__:
-                if not keywords.get('shift'):
-                    self._shift = d['shift']
+            if d.get("type", "") == self.__class__.__name__:
+                if not keywords.get("shift"):
+                    self._shift = d["shift"]
 
-        if keywords.get('shift'):
-            self._shift = keywords.get('shift')
+        if keywords.get("shift"):
+            self._shift = keywords.get("shift")
 
     def get(self):
         """
@@ -60,8 +62,8 @@ class Transitions(Data):
 
         """
         d = Data.get(self)
-        d['type'] = self.__class__.__name__
-        d['shift'] = self._shift
+        d["type"] = self.__class__.__name__
+        d["shift"] = self._shift
         return copy.deepcopy(d)
 
     def shift(self, shift):
@@ -73,8 +75,8 @@ class Transitions(Data):
 
         for key in self.data:
             for d in self.data[key]:
-                d['frequency'] += shift
-        message(f'TOTAL SHIFT: {self._shift} /cm')
+                d["frequency"] += shift
+        message(f"TOTAL SHIFT: {self._shift} /cm")
 
     def fixedtemperature(self, t):
         """
@@ -87,20 +89,36 @@ class Transitions(Data):
 
         """
         if self.model:
-            if self.model['type'] != 'zerokelvin_m':
+            if self.model["type"] != "zerokelvin_m":
                 message(
-                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
+                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}'
+                )
                 return
 
-        message('APPLYING FIXED TEMPERATURE EMISSION MODEL')
+        message("APPLYING FIXED TEMPERATURE EMISSION MODEL")
+
+        self.model = {
+            "type": "fixedtemperature_m",
+            "energy": 0.0,
+            "temperatures": [t],
+            "description": "",
+        }
+
+        self.units["ordinate"] = {
+            "unit": u.erg / u.second / u.def_unit("molecule", doc="Molecule"),
+            "label": "integrated spectral radiance",
+        }
 
         for uid in self.uids:
-            f = np.array([d['frequency'] for d in self.data[uid]])
+            f = np.array([d["frequency"] for d in self.data[uid]])
 
-            intensity = 2.4853427121856266e-23 * f ** 3 / \
-                (np.exp(1.4387751297850830401 * f / t) - 1.0)
+            intensity = (
+                2.4853427121856266e-23
+                * f**3
+                / (np.exp(1.4387751297850830401 * f / t) - 1.0)
+            )
             for (d, i) in zip(self.data[uid], intensity):
-                d['intensity'] *= i
+                d["intensity"] *= i
 
     def calculatedtemperature(self, e, **keywords):
         """
@@ -112,31 +130,36 @@ class Transitions(Data):
             Excitation energy in erg.
 
         """
-        if self.type != 'theoretical':
-            message('THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL')
+        if self.type != "theoretical":
+            message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
 
         if self.model:
-            if self.model['type'] != 'zerokelvin_m':
+            if self.model["type"] != "zerokelvin_m":
                 message(
-                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
+                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}'
+                )
                 return
 
-        message('APPLYING CALCULATED TEMPERATURE EMISSION MODEL')
+        message("APPLYING CALCULATED TEMPERATURE EMISSION MODEL")
 
         global energy
 
         energy = e
 
-        self.model = {'type': 'calculatedtemperature_m',
-                      'energy': e,
-                      'temperatures': [],
-                      'description': ''}
+        self.model = {
+            "type": "calculatedtemperature_m",
+            "energy": e,
+            "temperatures": [],
+            "description": "",
+        }
 
-        self.units['ordinate'] = {'unit': 2,
-                                  'str': 'integrated spectral radiance [erg/s/PAH]'}
+        self.units["ordinate"] = {
+            "unit": u.erg / u.second / u.def_unit("molecule", doc="Molecule"),
+            "label": "integrated spectral radiance",
+        }
 
-        print(57 * '=')
+        print(57 * "=")
 
         i = 0
 
@@ -146,35 +169,37 @@ class Transitions(Data):
             # Start timer.
             tstart = time.perf_counter()
 
-            print('SPECIES                          : %d/%d' % (i + 1, nuids))
-            print('UID                              : %d' % uid)
-            print('MEAN ABSORBED ENERGY             : %f +/- %f eV' %
-                  (e / 1.6021765e-12, 0.0))
+            print("SPECIES                          : %d/%d" % (i + 1, nuids))
+            print("UID                              : %d" % uid)
+            print(
+                "MEAN ABSORBED ENERGY             : %f +/- %f eV"
+                % (e / 1.6021765e-12, 0.0)
+            )
 
             global frequencies
-            frequencies = np.array([d['frequency'] for d in self.data[uid]])
+            frequencies = np.array([d["frequency"] for d in self.data[uid]])
 
             Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
-            print('MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin' % Tmax)
+            print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-            self.model['temperatures'].append(
-                {'uid': uid, 'temperature': Tmax})
+            self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
 
             for d in self.data[uid]:
-                if d['intensity'] > 0:
-                    d['intensity'] *= 2.4853427121856266e-23 * \
-                        d['frequency'] ** 3 / \
-                        (np.exp(1.4387751297850830401 *
-                         d['frequency'] / Tmax) - 1.0)
+                if d["intensity"] > 0:
+                    d["intensity"] *= (
+                        2.4853427121856266e-23
+                        * d["frequency"] ** 3
+                        / (np.exp(1.4387751297850830401 * d["frequency"] / Tmax) - 1.0)
+                    )
 
             # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
-            print(f'Elapsed time: {elapsed}')
+            print(f"Elapsed time: {elapsed}")
 
             i += 1
 
-        print(57 * '=')
+        print(57 * "=")
 
     def _cascade_em_model(self, e, uid):
         """
@@ -199,21 +224,23 @@ class Transitions(Data):
         energy = e
 
         global frequencies
-        frequencies = np.array([d['frequency'] for d in self.data[uid]])
+        frequencies = np.array([d["frequency"] for d in self.data[uid]])
 
         global intensities
-        intensities = np.array([d['intensity'] for d in self.data[uid]])
+        intensities = np.array([d["intensity"] for d in self.data[uid]])
 
         Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
         for d in self.data[uid]:
-            if d['intensity'] > 0:
+            if d["intensity"] > 0:
                 global frequency
-                frequency = d['frequency']
-                d['intensity'] *= d['frequency'] ** 3 * \
-                    integrate.quad(self.featurestrength, 2.73, Tmax)[0]
+                frequency = d["frequency"]
+                d["intensity"] *= (
+                    d["frequency"] ** 3
+                    * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
+                )
 
-        temp = {'uid': uid, 'temperature': Tmax}
+        temp = {"uid": uid, "temperature": Tmax}
         ud = {uid: self.data[uid]}
         return ud, temp
 
@@ -227,17 +254,18 @@ class Transitions(Data):
             Excitation energy in erg.
 
         """
-        if self.type != 'theoretical':
-            message('THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL')
+        if self.type != "theoretical":
+            message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
 
         if self.model:
-            if self.model['type'] != 'zerokelvin_m':
+            if self.model["type"] != "zerokelvin_m":
                 message(
-                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}')
+                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}'
+                )
                 return
 
-        message('APPLYING CASCADE EMISSION MODEL')
+        message("APPLYING CASCADE EMISSION MODEL")
 
         tstart = time.perf_counter()
 
@@ -245,25 +273,26 @@ class Transitions(Data):
 
         energy = e
 
-        self.model = {'type': 'cascade_m',
-                      'energy': e,
-                      'temperatures': [],
-                      'description': ''}
+        self.model = {
+            "type": "cascade_m",
+            "energy": e,
+            "temperatures": [],
+            "description": "",
+        }
 
-        self.units['ordinate'] = {'unit': 3,
-                                  'str': 'integrated radiant energy [erg]'}
+        self.units["ordinate"] = {"unit": u.erg, "label": "integrated radiant energy"}
 
-        print(57 * '=')
+        print(57 * "=")
 
-        if keywords.get('multiprocessing'):
+        if keywords.get("multiprocessing"):
             cascade_em_model = partial(self._cascade_em_model, e)
-            if keywords.get('ncores'):
-                ncores = keywords.get('ncores')
-                print(f'Using multiprocessing module with {ncores} cores')
+            if keywords.get("ncores"):
+                ncores = keywords.get("ncores")
+                print(f"Using multiprocessing module with {ncores} cores")
                 pool = multiprocessing.Pool(processes=ncores)
                 data, temp = zip(*pool.map(cascade_em_model, self.uids))
             else:
-                print('Using multiprocessing module with 2 cores')
+                print("Using multiprocessing module with 2 cores")
                 pool = multiprocessing.Pool(processes=2)
                 data, temp = zip(*pool.map(cascade_em_model, self.uids))
             pool.close()
@@ -275,49 +304,51 @@ class Transitions(Data):
                 for k, v in d.items():
                     self.data[k] = v
 
-            self.model['temperatures'] = temp
+            self.model["temperatures"] = temp
 
         else:
             i = 0
             nuids = len(self.uids)
             for uid in self.uids:
 
-                print('SPECIES                          : %d/%d' %
-                      (i + 1, nuids))
-                print('UID                              : %d' % uid)
-                print('MEAN ABSORBED ENERGY             : %f +/- %f eV' %
-                      (e / 1.6021765e-12, 0.0))
+                print("SPECIES                          : %d/%d" % (i + 1, nuids))
+                print("UID                              : %d" % uid)
+                print(
+                    "MEAN ABSORBED ENERGY             : %f +/- %f eV"
+                    % (e / 1.6021765e-12, 0.0)
+                )
 
                 global frequencies
-                frequencies = np.array([d['frequency']
-                                       for d in self.data[uid]])
+                frequencies = np.array([d["frequency"] for d in self.data[uid]])
 
                 global intensities
-                intensities = np.array([d['intensity']
-                                       for d in self.data[uid]])
+                intensities = np.array([d["intensity"] for d in self.data[uid]])
 
                 Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
-                print('MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin' % Tmax)
+                print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-                self.model['temperatures'].append(
-                    {'uid': uid, 'temperature': Tmax})
+                self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
 
                 for d in self.data[uid]:
-                    if d['intensity'] > 0:
+                    if d["intensity"] > 0:
                         global frequency
-                        frequency = d['frequency']
-                        d['intensity'] *= d['frequency'] ** 3 * \
-                            integrate.quad(self.featurestrength, 2.73, Tmax)[0]
+                        frequency = d["frequency"]
+                        d["intensity"] *= (
+                            d["frequency"] ** 3
+                            * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
+                        )
 
                 i += 1
 
-            print(57 * '=')
+            print(57 * "=")
 
         elapsed = timedelta(seconds=(time.perf_counter() - tstart))
-        print(f'Elapsed time: {elapsed}\n')
+        print(f"Elapsed time: {elapsed}\n")
 
-    def _get_intensities(self, npoints, xmin, xmax, clip, width, x, gaussian, drude, uid):
+    def _get_intensities(
+        self, npoints, xmin, xmax, clip, width, x, gaussian, drude, uid
+    ):
         """
         A partial method of :meth:`amespahdbpythonsuite.transitions.convolve`
         used when multiprocessing is required.
@@ -351,16 +382,17 @@ class Transitions(Data):
 
         """
         s = np.zeros(npoints)
-        f = [v for v in self.data[uid] if v['frequency'] >= xmin - clip * width
-             and v['frequency'] <= xmax + clip * width]
+        f = [
+            v
+            for v in self.data[uid]
+            if v["frequency"] >= xmin - clip * width
+            and v["frequency"] <= xmax + clip * width
+        ]
         for t in f:
-            if t['intensity'] > 0:
-                s += t['intensity'] * \
-                    self.__lineprofile(x,
-                                       t['frequency'],
-                                       width,
-                                       gaussian=gaussian,
-                                       drude=drude)
+            if t["intensity"] > 0:
+                s += t["intensity"] * self.__lineprofile(
+                    x, t["frequency"], width, gaussian=gaussian, drude=drude
+                )
 
         ud = {uid: s}
         return ud
@@ -373,29 +405,29 @@ class Transitions(Data):
 
         """
 
-        fwhm = keywords.get('fwhm', 15.0)
+        fwhm = keywords.get("fwhm", 15.0)
 
-        if keywords.get('gaussian'):
+        if keywords.get("gaussian"):
             width = 0.5 * fwhm / np.sqrt(2.0 * np.log(2.0))
             clip = 3.0
-            profile = 'Gaussian'
-            message('USING GAUSSIAN LINE PROFILES')
+            profile = "Gaussian"
+            message("USING GAUSSIAN LINE PROFILES")
 
-        elif keywords.get('drude'):
+        elif keywords.get("drude"):
             width = 1.0 / fwhm
             clip = 11.0
-            profile = 'Drude'
-            message('USING DRUDE LINE PROFILES')
+            profile = "Drude"
+            message("USING DRUDE LINE PROFILES")
 
         else:
             width = 0.5 * fwhm
             clip = 22.0
-            profile = 'Lorentzian'
-            message('USING LORENTZIAN LINE PROFILES')
+            profile = "Lorentzian"
+            message("USING LORENTZIAN LINE PROFILES")
 
-        x = keywords.get('grid', [])
+        x = keywords.get("grid", [])
         if not len(x):
-            r = keywords.get('xrange', [])
+            r = keywords.get("xrange", [])
             if len(r):
                 xmin = min(r)
                 xmax = max(r)
@@ -403,7 +435,7 @@ class Transitions(Data):
                 xmin = 1.0
                 xmax = 4000.0
 
-            npoints = keywords.get('npoints', False)
+            npoints = keywords.get("npoints", False)
             if not npoints:
                 npoints = 400
 
@@ -415,25 +447,32 @@ class Transitions(Data):
             xmax = max(x)
             npoints = len(x)
 
-        message(
-            f'GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS')
-        message(f'FWHM: {fwhm} /cm')
+        message(f"GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS")
+        message(f"FWHM: {fwhm} /cm")
 
-        gaussian = keywords.get('gaussian', False)
-        drude = keywords.get('drude', False)
+        gaussian = keywords.get("gaussian", False)
+        drude = keywords.get("drude", False)
         d = {}
 
-        if keywords.get('multiprocessing'):
-            get_intensities = partial(self._get_intensities, npoints,
-                                      xmin, xmax, clip, width,
-                                      x, gaussian, drude)
-            if keywords.get('ncores'):
-                ncores = keywords.get('ncores')
-                print(f'Using multiprocessing module with {ncores} cores')
+        if keywords.get("multiprocessing"):
+            get_intensities = partial(
+                self._get_intensities,
+                npoints,
+                xmin,
+                xmax,
+                clip,
+                width,
+                x,
+                gaussian,
+                drude,
+            )
+            if keywords.get("ncores"):
+                ncores = keywords.get("ncores")
+                print(f"Using multiprocessing module with {ncores} cores")
                 pool = multiprocessing.Pool(processes=ncores)
                 data = pool.map(get_intensities, self.uids)
             else:
-                print('Using multiprocessing module with 2 cores')
+                print("Using multiprocessing module with 2 cores")
                 pool = multiprocessing.Pool(processes=2)
                 data = pool.map(get_intensities, self.uids)
             pool.close()
@@ -447,40 +486,60 @@ class Transitions(Data):
         else:
             for uid in self.uids:
                 s = np.zeros(npoints)
-                f = [v for v in self.data[uid] if
-                     (v['frequency'] >= xmin - clip * width) and
-                     (v['frequency'] <= xmax + clip * width)]
+                f = [
+                    v
+                    for v in self.data[uid]
+                    if (v["frequency"] >= xmin - clip * width)
+                    and (v["frequency"] <= xmax + clip * width)
+                ]
                 for t in f:
-                    if t['intensity'] > 0:
-                        s += t['intensity'] * self.__lineprofile(x,
-                                                                 t['frequency'],
-                                                                 width,
-                                                                 gaussian=keywords.get(
-                                                                     'gaussian', False),
-                                                                 drude=keywords.get('drude', False))
+                    if t["intensity"] > 0:
+                        s += t["intensity"] * self.__lineprofile(
+                            x,
+                            t["frequency"],
+                            width,
+                            gaussian=keywords.get("gaussian", False),
+                            drude=keywords.get("drude", False),
+                        )
                 d[uid] = s
 
-        if self.model['type'] == 'zerokelvin_m':
-            self.units['ordinate'] = {'unit': 2,
-                                      'str': 'cross-section [x10$^{5}$ cm$^{2}$/mol]'}
-        elif self.model['type'] == 'cascade_m':
-            self.units['ordinate'] = {'unit': 3,
-                                      'str': 'radiant energy [x10$^{5}$ erg/cm$^{-1}$/mol]'}
+        if self.model["type"] == "zerokelvin_m":
+            self.units["ordinate"] = {
+                "unit": (u.km * u.cm / u.mol).cgs,
+                "label": "cross-section",
+            }
+        elif (
+            self.model["type"] == "fixedtemperature_m"
+            or self.model["type"] == "calculatedtemperature_m"
+        ):
+            self.units["ordinate"] = {
+                "unit": u.erg * u.cm / u.mol,
+                "label": "radiant energy",
+            }
+        elif self.model["type"] == "cascade_m":
+            self.units["ordinate"] = {
+                "unit": u.erg * u.cm / u.mol,
+                "label": "radiant energy",
+            }
 
         from amespahdbpythonsuite.spectrum import Spectrum
 
-        return Spectrum(type=self.type,
-                        version=self.version,
-                        data=d,
-                        pahdb=self.pahdb,
-                        uids=self.uids,
-                        model=self.model,
-                        units={'abscissa': self.units['abscissa'],
-                               'ordinate': self.units['ordinate']},
-                        shift=self._shift,
-                        grid=x,
-                        profile=profile,
-                        fwhm=fwhm)
+        return Spectrum(
+            type=self.type,
+            version=self.version,
+            data=d,
+            pahdb=self.pahdb,
+            uids=self.uids,
+            model=self.model,
+            units={
+                "abscissa": self.units["abscissa"],
+                "ordinate": self.units["ordinate"],
+            },
+            shift=self._shift,
+            grid=x,
+            profile=profile,
+            fwhm=fwhm,
+        )
 
     def __lineprofile(self, x, x0, width, **keywords):
         """
@@ -496,14 +555,18 @@ class Transitions(Data):
             Width of the line profile.
 
         """
-        if keywords.get('gaussian', False):
-            return (1.0 / (width * np.sqrt(2.0 * np.pi))) * \
-                np.exp(-(x - x0) ** 2 / (2.0 * width ** 2))
-        elif keywords.get('drude', False):
-            return (2.0 / (np.pi * x0 * width)) * \
-                width ** 2 / ((x / x0 - x0 / x) ** 2 + width ** 2)
-        elif keywords.get('lorentzian', True):
-            return (width / np.pi) / ((x - x0) ** 2 + width ** 2)
+        if keywords.get("gaussian", False):
+            return (1.0 / (width * np.sqrt(2.0 * np.pi))) * np.exp(
+                -((x - x0) ** 2) / (2.0 * width**2)
+            )
+        elif keywords.get("drude", False):
+            return (
+                (2.0 / (np.pi * x0 * width))
+                * width**2
+                / ((x / x0 - x0 / x) ** 2 + width**2)
+            )
+        elif keywords.get("lorentzian", True):
+            return (width / np.pi) / ((x - x0) ** 2 + width**2)
 
     def plot(self, **keywords):
         """
@@ -515,27 +578,37 @@ class Transitions(Data):
 
         _, ax = plt.subplots()
         ax.minorticks_on()
-        ax.tick_params(which='major', right='on',
-                       top='on', direction='in', length=5)
-        ax.tick_params(which='minor', right='on',
-                       top='on', direction='in', length=3)
+        ax.tick_params(which="major", right="on", top="on", direction="in", length=5)
+        ax.tick_params(which="minor", right="on", top="on", direction="in", length=3)
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
         for uid, col in zip(self.uids, colors):
             f = [v for v in self.data[uid]]
-            x = [d['frequency'] for d in f]
-            y = [d['intensity'] for d in f]
+            x = [d["frequency"] for d in f]
+            y = [d["intensity"] for d in f]
             ax.bar(x, y, 20, color=col, alpha=0.5)
-            ax.tick_params(axis='both', labelsize=14)
+            ax.tick_params(axis="both", labelsize=14)
 
         plt.gca().invert_xaxis()
-        plt.xlabel(self.units['abscissa']['str'], fontsize=14)
-        plt.ylabel(self.units['ordinate']['str'], fontsize=14)
+        plt.xlabel(
+            self.units["abscissa"]["label"]
+            + " ["
+            + self.units["abscissa"]["unit"].to_string("latex_inline")
+            + "]",
+            fontsize=14,
+        )
+        plt.ylabel(
+            self.units["ordinate"]["label"]
+            + " ["
+            + self.units["ordinate"]["unit"].to_string("latex_inline")
+            + "]",
+            fontsize=14,
+        )
 
-        if keywords.get('show'):
+        if keywords.get("show"):
             plt.show()
-        elif keywords.get('outfile'):
-            outfile = keywords.get('outfile')
-            plt.savefig(f'{outfile}.pdf', bbox_inches='tight')
+        elif keywords.get("outfile"):
+            outfile = keywords.get("outfile")
+            plt.savefig(f"{outfile}.pdf", bbox_inches="tight")
 
     @staticmethod
     def featurestrength(T):
@@ -560,9 +633,12 @@ class Transitions(Data):
 
         valid = np.where((val2 < np.log(np.finfo(float).max)))
 
-        return (Transitions.heatcapacity(T) / np.expm1(val1)) * \
-            (1.0 / np.sum(intensities[valid] *
-             (frequencies[valid]) ** 3 / np.expm1(val2[valid])))
+        return (Transitions.heatcapacity(T) / np.expm1(val1)) * (
+            1.0
+            / np.sum(
+                intensities[valid] * (frequencies[valid]) ** 3 / np.expm1(val2[valid])
+            )
+        )
 
     @staticmethod
     def attainedtemperature(T):
