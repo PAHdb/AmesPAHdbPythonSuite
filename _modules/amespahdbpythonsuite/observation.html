@@ -122,6 +122,7 @@
 
 <span class="kn">from</span> <span class="nn">astropy.io.registry</span> <span class="kn">import</span> <span class="n">IORegistryError</span>
 <span class="kn">from</span> <span class="nn">astropy.io.fits.verify</span> <span class="kn">import</span> <span class="n">VerifyWarning</span>
+<span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">StdDevUncertainty</span>
 <span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span> <span class="nn">specutils</span> <span class="kn">import</span> <span class="n">Spectrum1D</span><span class="p">,</span> <span class="n">SpectralRegion</span><span class="p">,</span> <span class="n">manipulation</span>
 
@@ -271,18 +272,15 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-            <span class="c1"># Always work as if spectrum is a cube.</span>
-            <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;FLUX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
-                <span class="p">(</span>
-                    <span class="mi">1</span><span class="p">,</span>
-                    <span class="mi">1</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;FLUX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">unc</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="s2">&quot;FLUX_UNCERTAINTY&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">unc</span> <span class="o">=</span> <span class="n">StdDevUncertainty</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;FLUX_UNCERTAINTY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span>
             <span class="c1"># Create Spectrum1D object.</span>
-            <span class="n">wave</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;WAVELENGTH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum1D</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">spectral_axis</span><span class="o">=</span><span class="n">wave</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum1D</span><span class="p">(</span>
+                <span class="n">flux</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;FLUX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+                <span class="n">spectral_axis</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;WAVELENGTH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+                <span class="n">uncertainty</span><span class="o">=</span><span class="n">unc</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;keywords&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;keywords&quot;</span><span class="p">][</span><span class="n">card</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
@@ -296,7 +294,7 @@
         <span class="c1"># we fail to read the file.</span>
         <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">+</span> <span class="s2">&quot;: Format not recognized&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Observation.getgrid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.getgrid">[docs]</a>    <span class="k">def</span> <span class="nf">getgrid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Observation.getgrid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.getgrid">[docs]</a>    <span class="k">def</span> <span class="nf">getgrid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retreive the spectral axis.</span>
 
@@ -340,6 +338,7 @@
 <div class="viewcode-block" id="Observation.setgridrange"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.setgridrange">[docs]</a>    <span class="k">def</span> <span class="nf">setgridrange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Truncate the data to the given range.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">max</span><span class="p">:</span>
@@ -349,6 +348,18 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">manipulation</span><span class="o">.</span><span class="n">extract_region</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">SpectralRegion</span><span class="p">(</span><span class="nb">min</span> <span class="o">*</span> <span class="n">u</span><span class="p">,</span> <span class="nb">max</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Observation.abscissaunitsto"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.abscissaunitsto">[docs]</a>    <span class="k">def</span> <span class="nf">abscissaunitsto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert abscissa units.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum1D</span><span class="p">(</span>
+            <span class="n">flux</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span>
+            <span class="n">spectral_axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">),</span>
+            <span class="n">uncertainty</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span>
         <span class="p">)</span></div></div>
 </pre></div>
 
