@@ -80,3 +80,7 @@ class TestObservation:
         obs2.set(o1)
         o2 = obs2.get()
         assert o2["type"] == "Observation"
+
+    def test_abscissaunitsto(self, test_obs):
+        test_obs.abscissaunitsto("1/cm")
+        assert test_obs.spectrum.spectral_axis.unit == "1/cm"

@@ -182,7 +182,7 @@ class Observation:
         # we fail to read the file.
         raise OSError(self.filepath + ": Format not recognized")
 
-    def getgrid(self) -> None:
+    def getgrid(self) -> np.ndarray:
         """
         Retreive the spectral axis.
 
@@ -226,6 +226,7 @@ class Observation:
     def setgridrange(self, min: float, max=None) -> None:
         """
         Truncate the data to the given range.
+
         """
 
         if not max:
@@ -235,4 +236,14 @@ class Observation:
 
         self.spectrum = manipulation.extract_region(
             self.spectrum, SpectralRegion(min * u, max * u)
+        )
+
+    def abscissaunitsto(self, unit: u.Unit) -> None:
+        """
+        Convert abscissa units.
+
+        """
+
+        self.spectrum = Spectrum1D(
+            flux=self.spectrum.flux, spectral_axis=self.spectrum.spectral_axis.to(unit)
         )
