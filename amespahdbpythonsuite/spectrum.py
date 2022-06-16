@@ -4,12 +4,15 @@ from typing import Union
 
 import numpy as np
 
-from specutils import Spectrum1D
-from specutils import manipulation
+from specutils import Spectrum1D, manipulation
+from astropy.nddata import StdDevUncertainty
+
+import astropy.units as u
 
 from scipy import optimize
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+from amespahdbpythonsuite.observation import Observation
 from amespahdbpythonsuite.transitions import Transitions
 
 message = AmesPAHdb.message
@@ -70,25 +73,39 @@ class Spectrum(Transitions):
 
         return d
 
-    def fit(self, y, yerr=None, notice=True, **keywords):
+    def fit(self, y, yerr=[], notice=True, **keywords):
         """
         Fits the input spectrum.
 
         """
 
+        if isinstance(y, Spectrum1D):
+            obs = y
+        elif isinstance(y, Observation):
+            obs = y.spectrum
+        else:
+            unc = None
+            if np.any(yerr):
+                unc = StdDevUncertainty(yerr)
+            obs = Spectrum1D(
+                flux=y * u.Unit(),
+                spectral_axis=self.grid * self.units["abscissa"]["unit"],
+                uncertainty=unc,
+            )
+
+        obs.spectral_axis.to("1/cm")
+
         matrix = []
         matrix = np.array(list(self.data.values()))
 
-        if yerr is None:
-            # Do NNLS.
+        if obs.uncertainty is None:
             method = "NNLS"
-            b = list(y)
+            b = list(obs.flux.value)
             m = matrix
         else:
-            # Do NNLC.
             method = "NNLC"
-            b = list(np.divide(y, yerr))
-            m = np.divide(matrix, yerr)
+            b = list(np.divide(obs.flux.value, obs.uncertainty.array))
+            m = np.divide(matrix, obs.uncertainty.array)
 
         message(f"DOING {method}")
 
@@ -138,7 +155,7 @@ class Spectrum(Transitions):
             grid=self.grid,
             profile=self.profile,
             fwhm=self.fwhm,
-            observation=list(y),
+            observation=obs,
             weights=weights,
             method=method,
         )

@@ -13,19 +13,28 @@ from pkg_resources import resource_filename
 from astropy.io import ascii
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import spectrum
+from amespahdbpythonsuite import spectrum, observation
 
 
 @pytest.fixture(scope="module")
-def pahdb_theoretical():
+def test_transitions():
     xml = "resources/pahdb-theoretical_cutdown.xml"
-    pahdb = AmesPAHdb(
+    db = AmesPAHdb(
         filename=resource_filename("amespahdbpythonsuite", xml),
         check=False,
         cache=False,
         update=False,
     )
-    return pahdb
+    uids = [18, 73, 726, 2054, 223]
+    transitions = db.gettransitionsbyuid(uids)
+    transitions.cascade(6 * 1.603e-12, multiprocessing=False)
+    transitions.shift(-15.0)
+    return transitions
+
+
+@pytest.fixture(scope="module")
+def test_spectrum(test_transitions):
+    return test_transitions.convolve(fwhm=15.0)
 
 
 class TestSpectrum:
@@ -37,60 +46,75 @@ class TestSpectrum:
     def test_instance(self):
         assert isinstance(spectrum.Spectrum(), spectrum.Spectrum)
 
-    def test_fit(self, pahdb_theoretical, monkeypatch):
-        # Read input spectrum.
-        spec = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
-        f = ascii.read(spec)
-        wave = f["wavelength"]
-        flux = f["flux"]
-        sigma = f["sigma"]
-        waven = [1e4 / x for x in wave]
-        # Read the database.
-        pahdb = pahdb_theoretical
-        # UIDs test list.
-        uids = [18, 73, 726, 2054, 223]
-        # Retrieve the transitions from the database for the subset of PAHs.
-        transitions = pahdb.gettransitionsbyuid(uids)
-        # Set emission model.
-        transitions.cascade(6 * 1.603e-12, multiprocessing=False)
-        # Shift data 15 wavenumber to the red.
-        transitions.shift(-15.0)
-        # convolve the transitions into a spectrum.
-        spectrum = transitions.convolve(
-            grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False
-        )
-        # fit the spectrum.
-        fit = spectrum.fit(flux, sigma)
-        # Assert results.
-        assert spectrum.uids == uids
-        assert fit.uids == [73, 2054, 223]
-        np.testing.assert_allclose(fit.grid, np.array(waven))
-        # Check plotting function.
+    def test_plot(self, monkeypatch, test_spectrum):
         monkeypatch.setattr(plt, "show", lambda: None)
-        spectrum.plot()
-        # Check normalization
-        spectrum.normalize()
-        assert spectrum.data[73].max() == 1.0
+        test_spectrum.plot()
 
-    def test_resample(self, pahdb_theoretical):
-        db = pahdb_theoretical
-        uids = [18, 73, 726, 2054, 223]
-        transitions = db.gettransitionsbyuid(uids)
-        spectrum = transitions.convolve(fwhm=15.0, gaussian=True, multiprocessing=False)
+    def test_normalization(self, test_spectrum):
+        test_spectrum.normalize()
+        assert test_spectrum.data[73].max() == 1.0
+
+    def test_fit_with_errors(self, test_transitions):
+        file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+        f = ascii.read(file)
+        spectrum = test_transitions.convolve(
+            grid=[1e4 / x for x in f["wavelength"]],
+            fwhm=15.0,
+            gaussian=True,
+            multiprocessing=False,
+        )
+        fit = spectrum.fit(f["flux"], f["flux_uncertainty"])
+        assert fit.getmethod() == "NNLC"
+
+    def test_fit_without_errors(self, test_transitions):
+        file = resource_filename(
+            "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
+        )
+        f = ascii.read(file)
+        spectrum = test_transitions.convolve(
+            grid=[1e4 / x for x in f["WAVELENGTH"]],
+            fwhm=15.0,
+            gaussian=True,
+            multiprocessing=False,
+        )
+        fit = spectrum.fit(f["FLUX"])
+        assert fit.getmethod() == "NNLS"
+
+    def test_fit_with_obs_with_errors(self, test_transitions):
+        file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+        obs = observation.Observation(file)
+        spectrum = test_transitions.convolve(
+            grid=1e4 / obs.spectrum.spectral_axis.value,
+            fwhm=15.0,
+            gaussian=True,
+            multiprocessing=False,
+        )
+        fit = spectrum.fit(obs)
+        assert fit.getmethod() == "NNLC"
+
+    def test_fit_with_obs_without_errors(self, test_transitions):
+        file = resource_filename(
+            "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
+        )
+        obs = observation.Observation(file)
+        spectrum = test_transitions.convolve(
+            grid=1e4 / obs.spectrum.spectral_axis.value,
+            fwhm=15.0,
+            gaussian=True,
+            multiprocessing=False,
+        )
+        fit = spectrum.fit(obs)
+        assert fit.getmethod() == "NNLS"
+
+    def test_resample(self, test_spectrum):
         g = np.arange(1000, 1600, 5)
-        spectrum.resample(g)
-        assert spectrum.grid.min() == g[0] and spectrum.grid.max() == g[-1]
+        test_spectrum.resample(g)
+        assert test_spectrum.grid.min() == g[0] and test_spectrum.grid.max() == g[-1]
 
-    def test_getset(self, pahdb_theoretical):
-        # Read the database.
-        pahdb = pahdb_theoretical
-        # UIDs test list.
-        uids = [18, 73]
-        trans = pahdb.gettransitionsbyuid(uids)
-        spec1 = trans.convolve(fwhm=15.0)
-        d1 = spec1.get()
-        assert d1["type"] == "Spectrum"
+    def test_getset(self, test_spectrum):
+        s1 = test_spectrum.get()
+        assert s1["type"] == "Spectrum"
         spec2 = spectrum.Spectrum()
-        spec2.set(d1)
-        d2 = spec2.get()
-        assert d2["type"] == "Spectrum"
+        spec2.set(s1)
+        s2 = spec2.get()
+        assert s2["type"] == "Spectrum"

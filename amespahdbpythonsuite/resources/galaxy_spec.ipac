@@ -1,4 +1,4 @@
-|        wavelength|                  flux|                sigma|
+|        wavelength|                  flux|     flux_uncertainty|
 |            double|                double|               double|
 |                um|                    Jy|                   Jy|
 |              null|                  null|                 null|

@@ -8,6 +8,7 @@ from astropy.io import fits, ascii
 
 from astropy.io.registry import IORegistryError
 from astropy.io.fits.verify import VerifyWarning
+from astropy.nddata import StdDevUncertainty
 from astropy import units as u
 from specutils import Spectrum1D, SpectralRegion, manipulation
 
@@ -157,18 +158,15 @@ class Observation:
             data = ascii.read(self.filepath)
             for name in data.colnames:
                 data.rename_column(name, name.upper())
-            # Always work as if spectrum is a cube.
-            flux = np.reshape(
-                data["FLUX"].quantity,
-                (
-                    1,
-                    1,
-                )
-                + data["FLUX"].quantity.shape,
-            )
+            unc = None
+            if "FLUX_UNCERTAINTY" in data.colnames:
+                unc = StdDevUncertainty(data["FLUX_UNCERTAINTY"].quantity)
             # Create Spectrum1D object.
-            wave = data["WAVELENGTH"].quantity
-            self.spectrum = Spectrum1D(flux, spectral_axis=wave)
+            self.spectrum = Spectrum1D(
+                flux=data["FLUX"].quantity,
+                spectral_axis=data["WAVELENGTH"].quantity,
+                uncertainty=unc,
+            )
             str = ""
             for card in data.meta["keywords"].keys():
                 value = data.meta["keywords"][card]["value"]
@@ -245,5 +243,7 @@ class Observation:
         """
 
         self.spectrum = Spectrum1D(
-            flux=self.spectrum.flux, spectral_axis=self.spectrum.spectral_axis.to(unit)
+            flux=self.spectrum.flux,
+            spectral_axis=self.spectrum.spectral_axis.to(unit),
+            uncertainty=self.spectrum.uncertainty,
         )

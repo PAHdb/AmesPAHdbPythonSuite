@@ -41,7 +41,7 @@ class TestCoadded:
 
     """
 
-    def test_initialization(self, pahdb_theoretical, test_coadded):
+    def test_instance(self, pahdb_theoretical, test_coadded):
         # Read the database.
         pahdb = pahdb_theoretical
         # UIDs test list.

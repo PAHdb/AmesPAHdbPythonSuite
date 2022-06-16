@@ -104,7 +104,7 @@ class Fitted(Spectrum):
 
         axis[0].errorbar(
             x,
-            self.observation,
+            self.observation.flux.value,
             yerr=keywords["sigma"],
             fmt="o",
             mfc="white",
@@ -195,7 +195,7 @@ class Fitted(Spectrum):
         axis[0].set_ylabel(
             self.units["ordinate"]["label"]
             + " ["
-            + self.units["ordinate"]["unit"].to_string('latex_inline')
+            + self.units["ordinate"]["unit"].to_string("latex_inline")
             + "]",
             fontsize=14,
         )
@@ -245,7 +245,7 @@ class Fitted(Spectrum):
                 if not keywords.get("method"):
                     self.method = d["method"]
 
-        if len(keywords.get("observation", [])):
+        if keywords.get("observation", False):
             self.observation = keywords.get("observation")
         if keywords.get("weights"):
             self.weights = keywords.get("weights")
@@ -280,8 +280,8 @@ class Fitted(Spectrum):
         """
         if self.observation:
             return np.sum(
-                (self.observation.data.y - self.getfit()) ** 2
-                / self.observation.data.ystdev
+                (self.observation.flux.value - self.getfit()) ** 2
+                / self.observation.uncertainty.array
             )
 
         return None
@@ -291,7 +291,7 @@ class Fitted(Spectrum):
         Retrieves the Norm of the fit.
 
         """
-        return np.total((self.observation.data.y - self.getfit()) ** 2)
+        return np.sum((self.observation.flux.value - self.getfit()) ** 2)
 
     def getobservation(self):
         """
@@ -312,7 +312,7 @@ class Fitted(Spectrum):
         """
         Retrieves the residual of the fit.
         """
-        return self.observation - self.getfit()
+        return self.observation.flux.value - self.getfit()
 
     def getweights(self):
         """
@@ -348,6 +348,9 @@ class Fitted(Spectrum):
         Retrieve fitted PAH properties and write to file.
 
         """
+
+        if not self.atoms:
+            self._atoms()
 
         # Retrieve properties
         fweight = list(self.weights.values())
@@ -647,11 +650,13 @@ class Fitted(Spectrum):
                         self.grid >= range[key][0], self.grid <= range[key][1]
                     )
                 )[0]
-                total_area = np.trapz(np.array(self.observation)[sel], x=self.grid[sel])
+                total_area = np.trapz(
+                    self.observation.flux.value[sel], x=self.grid[sel]
+                )
                 if total_area == 0:
                     continue
                 resid_area = np.trapz(
-                    np.abs(np.array(self.observation)[sel] - self.getfit()[sel]),
+                    np.abs(self.observation.flux.value[sel] - self.getfit()[sel]),
                     x=self.grid[sel],
                 )
                 piecewise[key] = resid_area / total_area
@@ -678,6 +683,6 @@ class Fitted(Spectrum):
             )
         )
 
-        self.uids = self.weights.keys()
+        self.uids = list(self.weights.keys())
 
         return self.weights

@@ -14,18 +14,36 @@ import matplotlib.pyplot as plt
 from astropy.io import ascii
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+from amespahdbpythonsuite import observation, fitted
 
 
 @pytest.fixture(scope="module")
-def pahdb_theoretical():
+def test_fitted():
     xml = "resources/pahdb-theoretical_cutdown.xml"
-    pahdb = AmesPAHdb(
+    db = AmesPAHdb(
         filename=resource_filename("amespahdbpythonsuite", xml),
         check=False,
         cache=False,
         update=False,
     )
-    return pahdb
+    uids = [18, 73, 726, 2054, 223]
+    transitions = db.gettransitionsbyuid(uids)
+    transitions.cascade(6 * 1.603e-12, multiprocessing=False)
+    transitions.shift(-15.0)
+    obs = observation.Observation(
+        resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+    )
+    spectrum = transitions.convolve(
+        grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
+    )
+
+    return spectrum.fit(obs)
+
+
+@pytest.fixture(scope="module")
+def test_path(tmp_path_factory):
+    d = tmp_path_factory.mktemp("test_fitted")
+    return f"{d}/result"
 
 
 class TestFitted:
@@ -34,99 +52,14 @@ class TestFitted:
 
     """
 
-    def test_fit(self, pahdb_theoretical, tmp_path, monkeypatch):
-        # Read input spectrum.
-        spec = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
-        f = ascii.read(spec)
-        wave = f["wavelength"]
-        flux = f["flux"]
-        sigma = f["sigma"]
-        waven = [1e4 / x for x in wave]
-        # Define output name.
-        outputname = spec.split("/")[-1].split(".")[0]
-        # Obtain units.
-        if f[f.colnames[0]].unit == "micron":
-            xunit = "$\\mu$m"
-        else:
-            xunit = f[f.colnames[0]].unit
-        yunit = f[f.colnames[1]].unit
-        units = [xunit, yunit]
-        # Read the database.
-        pahdb = pahdb_theoretical
-        # UIDs test list.
-        uids = [18, 73, 726, 2054, 223]
-        # Retrieve the transitions from the database for the subset of PAHs.
-        transitions = pahdb.gettransitionsbyuid(uids)
-        # Set emission model.
-        transitions.cascade(6 * 1.603e-12, multiprocessing=False)
-        # Shift data 15 wavenumber to the red.
-        transitions.shift(-15.0)
-        # convolve the transitions into a spectrum.
-        spectrum = transitions.convolve(
-            grid=waven, fwhm=15.0, gaussian=True, multiprocessing=False
-        )
-        # fit the spectrum.
-        fit = spectrum.fit(flux, sigma)
-        # Obtain method
-        assert fit.getmethod() == "NNLC"
-        # Create temporary pytest directory.
-        d = tmp_path / "sub"
-        d.mkdir()
-        out = f"{d}/{outputname}"
-        # Create plots.
-        monkeypatch.setattr(plt, "show", lambda: None)
-        fit.plot(sizedistribution=True)
-        fit.plot(
-            wavelength=True,
-            sigma=sigma,
-            outputname=out,
-            ptype="UIDs",
-            ftype="pdf",
-            units=units,
-        )
-        assert exists(f"{out}_UIDs.pdf")
-        fit.plot(
-            wavelength=True,
-            residual=True,
-            sigma=sigma,
-            outputname=out,
-            ptype="residual",
-            ftype="pdf",
-            units=units,
-        )
-        assert exists(f"{out}_residual.pdf")
-        fit.plot(
-            wavelength=True,
-            size=True,
-            sigma=sigma,
-            outputname=out,
-            ptype="size",
-            ftype="pdf",
-            units=units,
-        )
-        assert exists(f"{out}_size.pdf")
-        fit.plot(
-            wavelength=True,
-            charge=True,
-            sigma=sigma,
-            outputname=out,
-            ptype="charge",
-            ftype="pdf",
-            units=units,
-        )
-        assert exists(f"{out}_charge.pdf")
-        fit.plot(
-            wavelength=True,
-            composition=True,
-            sigma=sigma,
-            outputname=out,
-            ptype="composition",
-            ftype="pdf",
-            units=units,
-        )
-        assert exists(f"{out}_composition.pdf")
-        # Save to a temporary file.
-        fit.write(out)
+    def test_instance(self):
+        assert isinstance(fitted.Fitted(), fitted.Fitted)
+
+    def test_method(self, test_fitted):
+        assert test_fitted.getmethod() == "NNLC"
+
+    def test_write(self, test_fitted, test_path):
+        test_fitted.write(test_path)
         colnames = [
             "UID",
             "formula",
@@ -140,10 +73,11 @@ class TestFitted:
             "n_quintet",
             "fweight",
         ]
-        f = ascii.read(f"{out}_results.txt")
+        f = ascii.read(f"{test_path}_results.txt")
         assert f.colnames == colnames
-        # Obtain fit breakdown.
-        bd = fit.getbreakdown()
+
+    def test_breakdown(self, test_fitted):
+        bd = test_fitted.getbreakdown()
         lkeys = [
             "solo",
             "duo",
@@ -166,8 +100,97 @@ class TestFitted:
             "e33",
         ]
         assert list(bd.keys()) == lkeys
-        # Obtain size distribution
-        h, edges = fit.getsizedistribution()
+
+    def test_plot(self, test_fitted, test_path):
+        test_fitted.plot(
+            wavelength=True,
+            sigma=test_fitted.observation.uncertainty.array,
+            outputname=test_path,
+            ptype="UIDs",
+            ftype="pdf",
+            units=[
+                test_fitted.observation.spectral_axis.unit.to_string(),
+                test_fitted.observation.flux.unit.to_string(),
+            ],
+        )
+        assert exists(f"{test_path}_UIDs.pdf")
+
+    def test_plot_residual(self, test_fitted, test_path):
+        test_fitted.plot(
+            wavelength=True,
+            residual=True,
+            sigma=test_fitted.observation.uncertainty.array,
+            outputname=test_path,
+            ptype="residual",
+            ftype="pdf",
+            units=[
+                test_fitted.observation.spectral_axis.unit.to_string(),
+                test_fitted.observation.flux.unit.to_string(),
+            ],
+        )
+        assert exists(f"{test_path}_residual.pdf")
+
+    def test_plot_size(self, test_fitted, test_path):
+        test_fitted.plot(
+            wavelength=True,
+            size=True,
+            sigma=test_fitted.observation.uncertainty.array,
+            outputname=test_path,
+            ptype="size",
+            ftype="pdf",
+            units=[
+                test_fitted.observation.spectral_axis.unit.to_string(),
+                test_fitted.observation.flux.unit.to_string(),
+            ],
+        )
+        assert exists(f"{test_path}_size.pdf")
+
+    def test_plot_charge(self, test_fitted, test_path):
+        test_fitted.plot(
+            wavelength=True,
+            charge=True,
+            sigma=test_fitted.observation.uncertainty.array,
+            outputname=test_path,
+            ptype="charge",
+            ftype="pdf",
+            units=[
+                test_fitted.observation.spectral_axis.unit.to_string(),
+                test_fitted.observation.flux.unit.to_string(),
+            ],
+        )
+        assert exists(f"{test_path}_charge.pdf")
+
+    def test_plot_composition(self, test_fitted, test_path):
+
+        test_fitted.plot(
+            wavelength=True,
+            composition=True,
+            sigma=test_fitted.observation.uncertainty.array,
+            outputname=test_path,
+            ptype="composition",
+            ftype="pdf",
+            units=[
+                test_fitted.observation.spectral_axis.unit.to_string(),
+                test_fitted.observation.flux.unit.to_string(),
+            ],
+        )
+        assert exists(f"{test_path}_composition.pdf")
+
+    def test_plot_sizedistribution(self, test_fitted, monkeypatch):
+        monkeypatch.setattr(plt, "show", lambda: None)
+        test_fitted.plot(sizedistribution=True, show=True)
+
+    def test_sizedistribution(self, test_fitted):
+        h, edges = test_fitted.getsizedistribution()
         assert len(h) == 3 and len(edges) == 4
-        # Obtain weights
-        assert fit.sort() != fit.sort(flux=True)
+
+    def test_sort(self, test_fitted):
+        assert test_fitted.sort() != test_fitted.sort(flux=True)
+
+    def test_getset(self, test_fitted):
+        f1 = test_fitted.get()
+        assert f1["type"] == "Fitted"
+        fit = fitted.Fitted()
+        fit.set(f1)
+        f2 = fit.get()
+        assert f2["type"] == "Fitted"
