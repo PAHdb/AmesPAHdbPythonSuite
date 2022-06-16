@@ -717,7 +717,7 @@ class AmesPAHdb:
             String of PAHdb type.
 
         """
-        return self.__data["type"]
+        return self.__data["database"]
 
     def getdatabaseref(self):
         """
