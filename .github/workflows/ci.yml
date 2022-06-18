@@ -31,6 +31,9 @@ jobs:
           files: coverage.xml
           fail_ci_if_error: true
           verbose: true
+      - name: Check code annotations
+        run: |
+          mypy amespahdbpythonsuite/*.py
       - name: Build documentation
         run: |
           make -C docs html

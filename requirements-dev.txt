@@ -3,6 +3,7 @@
 coverage
 flake8
 pytest
+mypy
 sphinx
 # These are dependencies of various sphinx extensions for documentation.
 ipython

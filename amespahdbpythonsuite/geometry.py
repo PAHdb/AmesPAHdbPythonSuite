@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 
+from typing import Optional
+
 import copy
 import numpy as np
 
+from scipy.spatial import KDTree  # type: ignore
+from scipy.spatial.distance import euclidean as edist  # type: ignore
+
 from amespahdbpythonsuite.data import Data
+
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
+
+message = AmesPAHdb.message
 
 
 class Geometry(Data):
@@ -12,7 +21,7 @@ class Geometry(Data):
 
     """
 
-    def __init__(self, d=None, **keywords):
+    def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         super().__init__(d, **keywords)
         self._atomic_mass = np.array(
             [
@@ -130,9 +139,9 @@ class Geometry(Data):
         )
         self.set(d, **keywords)
 
-    def set(self, d, **keywords) -> None:
+    def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
-        Calls class: :class:`amespahdbpythonsuite.data.Data.set to parse keywords.
+        Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.
 
         """
         Data.set(self, d, **keywords)
@@ -146,6 +155,120 @@ class Geometry(Data):
         d["type"] = self.__class__.__name__
 
         return d
+
+    def plot(self, uid: list, **keywords) -> None:
+        """
+        Plot the structure
+
+        """
+
+        import matplotlib.pyplot as plt  # type: ignore
+
+        # atom_names = ["H", "C", "N", "O", "Mg", "Si", "Fe"]
+
+        atom_numbers = [1, 6, 7, 8, 12, 14, 26]
+
+        atom_colors = ["grey", "black", "blue", "red", "green", "pink", "orange"]
+
+        atom_symsize = np.array([1, 2, 3, 3, 3.5, 4, 4]) * keywords.get("scale", 100.0)
+
+        g = self.data[uid]
+        ng = len(g)
+
+        numn = np.zeros(ng, dtype=int)
+        nlist = np.full((ng, 6), -1, dtype=int)
+
+        px = np.array([g["x"] for g in self.data[uid]])
+        py = np.array([g["y"] for g in self.data[uid]])
+        pz = np.array([g["z"] for g in self.data[uid]])
+
+        m = np.max([np.max(px), np.max(py)])
+
+        for x, y, z, i in zip(px, py, pz, range(ng)):
+            dd = np.sqrt((px - x) ** 2 + (py - y) ** 2 + (pz - z) ** 2)
+            sel = np.where((dd < 1.6))
+            nsel = len(sel[0])
+            numn[i] = nsel
+            nlist[i, 0:nsel] = sel[0]
+
+        _, ax = plt.subplots()
+        ax.set_xlim(-m, m)
+        ax.set_ylim(-m, m)
+
+        for x, y, i in zip(px, py, range(ng)):
+            for j in range(numn[i]):
+                ax.plot([x, px[nlist[i, j]]], [y, py[nlist[i, j]]], c="black", lw=5)
+
+                numn[nlist[i, j]] -= 1
+                if numn[nlist[i, j]] > 0:
+                    nlist[nlist[i, j], np.where(nlist[nlist[i, j], :] == i)[0]] = -1
+                    nlist[nlist[i, j], :] = nlist[
+                        nlist[i, j], np.argsort(nlist[nlist[i, j], :])[::-1]
+                    ]
+
+        pt = np.array([g["type"] for g in self.data[uid]])
+
+        for i in range(len(atom_numbers)):
+            ii = np.where(pt == atom_numbers[i])[0]
+            if len(ii) > 0:
+                ax.scatter(
+                    px[ii],
+                    py[ii],
+                    marker="o",
+                    s=atom_symsize[i],
+                    zorder=2,
+                    c=atom_colors[i],
+                )
+
+        ratio = 1.0
+        x_left, x_right = ax.get_xlim()
+        y_low, y_high = ax.get_ylim()
+        ax.set_aspect(abs((x_right - x_left) / (y_low - y_high)) * ratio)
+        plt.axis("off")
+
+        basename = keywords.get("save")
+        if basename:
+            if not isinstance(basename, str):
+                basename = "laboratory"
+            plt.savefig(f"{basename}.pdf")
+        elif keywords.get("show", False):
+            plt.show()
+
+    def structure(self, uid: list, **keywords) -> None:
+        """
+        Draw the 3D structure.
+        """
+
+        import matplotlib.pyplot as plt  # type: ignore
+
+        # from mpl_toolkits.mplot3d import Axes3D
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection="3d")
+        ax.scatter3D(
+            [d["x"] for d in self.data[uid] if d["type"] == 1],
+            [d["y"] for d in self.data[uid] if d["type"] == 1],
+            [d["z"] for d in self.data[uid] if d["type"] == 1],
+            s=20,
+            c="#ffffff",
+        )
+        ax.scatter3D(
+            [d["x"] for d in self.data[uid] if d["type"] == 6],
+            [d["y"] for d in self.data[uid] if d["type"] == 6],
+            [d["z"] for d in self.data[uid] if d["type"] == 6],
+            s=60,
+            c="#000000",
+        )
+
+        plt.axis("off")
+
+        basename = keywords.get("save")
+        if basename:
+            if not isinstance(basename, str):
+                basename = "laboratory"
+            plt.savefig(f"{basename}.pdf")
+        elif keywords.get("show", False):
+            plt.show()
 
     def inertia(self) -> dict:
         """
@@ -178,7 +301,7 @@ class Geometry(Data):
 
         return inertia
 
-    def diagonalize(self, full=False, equal=False) -> None:
+    def diagonalize(self, full: bool = False, equal: bool = False) -> None:
         """
         Diagonalize the moment of inertia and align structure
         with the x-y plane
@@ -259,7 +382,7 @@ class Geometry(Data):
 
         return mass
 
-    def rings(self) -> list:
+    def rings(self) -> dict:
         """
         Computes the number of rings per type.
 
@@ -482,3 +605,186 @@ class Geometry(Data):
             area[uid] = a
 
         return area
+
+    def bec(self) -> dict:
+        """Convert PAH carbon and hydrogen positions to a boundary-edge
+        code. Only makes sense to use this for regular PAHs. Return of
+        a tuple with a list of boundary carbons traversed in order and
+        the boundary-edge code. By Dr. Joseph E. Roser
+        <Joseph.E.Roser@nasa.gov>"""
+
+        becodes = dict()
+        for uid, geometry in self.data.items():
+            becode = self.__becode(
+                [(g["x"], g["y"], g["z"]) for g in geometry if g["type"] == 6],
+                [(g["x"], g["y"], g["z"]) for g in geometry if g["type"] == 1],
+            )
+            becodes[uid] = becode[1]
+
+        return becodes
+
+    def __becode(self, allcarbons: list, allhydrogens: list) -> tuple:
+        """The star of the show here is the function PAHbecode, which answers
+        the challenge of converting a list of PAH carbon atom and
+        hydrogen atom positions into a boundary-edge code of a PAH
+        molecule. Due to the possibilities of ring distortion,
+        non-planarity, ambiguity of orientation in space, and
+        topological challenges of bizarrely shaped PAH molecules,
+        we're going to do the best we can here. Please check the
+        results.
+
+        The function indicator simply calculates the sign of a scalar
+        triple product of three three-vectors. The function
+        pcone_to_be converts a PC-1 code to a boundary-edge
+        code. These are relatively simple helper functions, but
+        useable if you need them.
+
+        Author: Dr. Joseph E. Roser <Joseph.E.Roser@nasa.gov>
+
+        Given a list of 3D carbon atom positions and a list of 3D
+        hydrogen atom positions, this function will do its best to
+        return (a) the boundary carbon atoms traversed in order and
+        (b) the boundary-edge code string
+
+        """
+
+        # Step 1: Find any boundary edge.
+        carbontree = KDTree(allcarbons)
+
+        # Compute the center of mass of the carbon atom distribution
+        carbon_center = [
+            sum([Catom[i] for Catom in allcarbons]) / len(allcarbons)
+            for i in range(0, 3)
+        ]
+
+        # Rank distances of all carbon atoms from the center point
+        _, indices = carbontree.query(x=carbon_center, k=len(allcarbons))
+
+        # Initialize boundary_carbons list
+        boundary_carbons = [allcarbons[indices[-1]]]
+        _, nindex = carbontree.query(x=boundary_carbons[0], k=2)
+        boundary_carbons.append(allcarbons[nindex[-1]])
+
+        # Step 2: We need to specify a vector that is roughly normal
+        # to the surface of the PAH molecule.
+        v0 = np.subtract(boundary_carbons[0], carbon_center)
+        v1 = np.subtract(boundary_carbons[1], carbon_center)
+        normal = np.cross(v1, v0)
+
+        # Step 3: A length scale for bounding carbon-carbon nearest
+        # neighbor searches
+        dscale = 1.366025404 * edist(boundary_carbons[0], boundary_carbons[1])
+
+        # Step 4: Which carbon atom neighbor of a given hydrogen atom
+        # is really the one that it is bound to?
+        hydrogenated_carbons = [
+            allcarbons[index]
+            for index in map(lambda y: carbontree.query(x=y)[1], allhydrogens)
+        ]
+
+        # Step 5: Traverse the boundary step by step and add in the
+        # boundary carbon atoms one by one.
+        for _ in range(0, 2 * len(allhydrogens) - 8):
+            # Step 6: Look for carbon atoms one "hex vertex" away from
+            # the current end point of the boundary traversal.
+            _, indexlist = carbontree.query(
+                x=boundary_carbons[-1], k=4, distance_upper_bound=dscale
+            )
+
+            # Reject duplicate boundary points and invalid indicies in
+            # indexlist
+            trial_carbons = list(
+                filter(
+                    lambda x: x not in boundary_carbons,
+                    [allcarbons[item] for item in indexlist if item < len(allcarbons)],
+                )
+            )
+
+            # Step 7: Update the boundary carbon atoms list.
+            if len(trial_carbons) == 0:
+                message("BEC ERROR: SEARCH FOUND TOO FEW NEAREST-NEIGHBOR POINTS")
+                break
+            elif len(trial_carbons) == 1:
+                boundary_carbons.extend(trial_carbons)
+            elif len(trial_carbons) == 2:
+                # Compute an edge vector for the most recently added boundary edge
+                edgevector = np.subtract(boundary_carbons[-1], boundary_carbons[-2])
+
+                # If the boundary end point is hydrogenated, we move
+                # "clockwise", otherwise "counter-clockwise"
+                for Catom in trial_carbons:
+                    trialvector = np.subtract(Catom, boundary_carbons[-1])
+                    ivalue = self.__indicator(trialvector, edgevector, normal)
+                    if not np.logical_xor(
+                        ivalue == 1.0, boundary_carbons[-1] in hydrogenated_carbons
+                    ):
+                        boundary_carbons.append(Catom)
+                        break
+            else:
+                message("BEC ERROR: SEARCH FOUND TOO MANY NEAREST-NEIGHBOR POINTS")
+                break
+
+        # Step 8: We can then compute the boundary-edge code
+        if len(allcarbons) == 6:
+            message("BEC NOTICE: INPUT SUGGEST THE TRIVIAL PAH BENZENE WITH BEC '6'")
+            becode = "6"
+        else:
+            # Compute a PC-1 code from boundary_carbons
+            pcone_code = [
+                "0" if Catom in hydrogenated_carbons else "1"
+                for Catom in boundary_carbons
+            ]
+
+            # Compute the boundary-edge code and its reversed
+            # equivalent
+            becode = self.__pcone_to_be(pcone_code)
+            pcone_code.reverse()
+            reverse_becode = self.__pcone_to_be(pcone_code)
+
+            # Convert the boundary-edge code to its lexicographically
+            # maximum equalivalent.
+            if len(becode) > 2:
+                forward_best = max(
+                    [becode[i:] + becode[:i] for i in range(0, len(becode))]
+                )
+                reverse_best = max(
+                    [
+                        reverse_becode[i:] + reverse_becode[:i]
+                        for i in range(0, len(becode))
+                    ]
+                )
+                becode = max(forward_best, reverse_best)
+
+        # Step 9: Return a tuple containing the boundary-edge list
+        # (with an extra point for boundary closure) and the computed
+        # boundary edge code
+        boundary_carbons.append(boundary_carbons[0])
+        return (boundary_carbons, becode)
+
+    def __indicator(self, v1, v2, normal):
+        """Returns the sign of normal dot (v1 cross v2) assuming that these
+        are 3-element sequences of some kind. By Dr. Joseph E. Roser
+        <Joseph.E.Roser@nasa.gov
+
+        """
+        value = 0.0
+        value += normal[0] * (v1[1] * v2[2] - v1[2] * v2[1])
+        value += normal[1] * (v1[2] * v2[0] - v1[0] * v2[2])
+        value += normal[2] * (v1[0] * v2[1] - v1[1] * v2[0])
+        return np.sign(value)
+
+    def __pcone_to_be(self, pcone_code):
+        """Converts the PC-1 code of a PAH to its boundary-edge code.  By
+        Dr. Joseph E. Roser <Joseph.E.Roser@nasa.gov
+
+        """
+        becode = ""
+        csum = 0
+        x = pcone_code.index("1")
+        for item in pcone_code[x + 1:] + pcone_code[: x + 1]:
+            if item == "0":
+                csum += 1
+            else:
+                becode += str(csum + 1)
+                csum = 0
+        return becode

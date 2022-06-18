@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+from typing import Optional, Union, Literal
+
 import builtins
 import operator
 import numpy as np
 
-from scipy import integrate
-from astropy.io import ascii
+from scipy import integrate  # type: ignore
+from astropy.io import ascii  # type: ignore
+from specutils import Spectrum1D  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.spectrum import Spectrum
@@ -19,242 +22,227 @@ class Fitted(Spectrum):
 
     """
 
-    def __init__(self, d=None, **keywords):
+    def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Initialize fitted class.
 
         """
         super().__init__(d, **keywords)
-        self.method = ""
-        self.weights = None
-        self.observation = None
-        self.atoms = None
+        self.atoms = dict()  # type: dict
         self.__set(d, **keywords)
 
-    def plot(self, **keywords):
+    def plot(self, **keywords) -> None:
         """
         Plotting method for the fitted spectrum and breakdown components.
 
         """
-        import matplotlib as mpl
-        import matplotlib.pyplot as plt
-        import matplotlib.gridspec as gs
-        import matplotlib.cm as cm
 
-        mpl.rc("xtick", labelsize=12)
-        mpl.rc("ytick", labelsize=12)
+        import matplotlib.pyplot as plt  # type: ignore
+        import matplotlib.gridspec as gs  # type: ignore
+        import matplotlib.cm as cm  # type: ignore
 
         if keywords.get("sizedistribution", False):
+            fig, axis = plt.subplots()
+            axis = [axis]
             h, edges = self.getsizedistribution()
             h = 100.0 * h / np.sum(h)
-            plt.bar(
+            axis[0].bar(
                 edges[:-1],
                 h,
                 align="edge",
                 edgecolor="black",
                 width=(np.roll(edges, -1) - edges)[:-1],
             )
-            plt.xlabel(r"n$_{\mathregular{carbon}}$")
-            plt.ylabel("frequency [%]")
-            plt.show()
-            return
-
-        if keywords.get("residual", False):
-            figures = plt.figure()
-            spec = gs.GridSpec(2, 1, height_ratios=[3, 1])
-            axis = plt.subplot(spec[0])
-            axis = [axis, plt.subplot(spec[1], sharex=axis)]
-            figures.subplots_adjust(hspace=0)
-            axis[0].tick_params(axis="x", which="both", labelbottom="off")
-        elif (
-            keywords.get("charge", False)
-            or keywords.get("size", False)
-            or keywords.get("composition", False)
-        ):
-            figures, axis = plt.subplots()
-            axis = [axis]
+            axis[0].set_xlabel(r"n$_{\mathregular{carbon}}$")
+            axis[0].set_ylabel("frequency [%]")
         else:
-            figures = plt.figure()
-            spec = gs.GridSpec(1, 2, width_ratios=[2, 3])
-            axis = plt.subplot(spec[0])
-            axis = [axis, plt.subplot(spec[1])]
-            figures.subplots_adjust(wspace=0.25)
-            axis[0].tick_params(
-                axis="x", which="both", bottom="off", top="off", labelbottom="off"
-            )
-            axis[0].tick_params(
-                axis="y", which="both", left="off", right="off", labelleft="off"
-            )
-            axis[0].set_ylim((0, 1))
-            axis = list(reversed(axis))
-
-        if keywords.get("wavelength", False):
-            x = 1e4 / self.grid
-            axis[0].set_xlim((min(x), max(x)))
-            xtitle = "Wavelength"
-        else:
-            x = self.grid
-            axis[0].set_xlim((max(x), min(x)))
-            xtitle = (
-                self.units["abscissa"]["label"]
-                + " ["
-                + self.units["abscissa"]["unit"].to_string("latex_inline")
-                + "]",
-            )
-
-        axis[0].errorbar(
-            x,
-            self.observation.flux.value,
-            yerr=keywords["sigma"],
-            fmt="o",
-            mfc="white",
-            color="k",
-            ecolor="k",
-            markersize=3,
-            elinewidth=0.2,
-            capsize=0.8,
-            label="obs",
-        )
-        if keywords.get("title", False):
-            axis[0].set_title(keywords["title"])
-
-        axis[0].minorticks_on()
-        axis[0].tick_params(
-            which="major", right="on", top="on", direction="in", length=5
-        )
-        axis[0].tick_params(
-            which="minor", right="on", top="on", direction="in", length=3
-        )
-
-        colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
-        for uid, col in zip(self.uids, colors):
-            y = self.data[uid]
-            if (
-                not keywords.get("charge", False)
-                and not keywords.get("size", False)
-                and not keywords.get("composition", False)
+            if keywords.get("residual", False):
+                fig = plt.figure()
+                spec = gs.GridSpec(2, 1, height_ratios=[3, 1])
+                axis = plt.subplot(spec[0])
+                axis = [axis, plt.subplot(spec[1], sharex=axis)]
+                fig.subplots_adjust(hspace=0)
+                axis[0].tick_params(axis="x", which="both", labelbottom="off")
+            elif (
+                keywords.get("charge", False)
+                or keywords.get("size", False)
+                or keywords.get("composition", False)
             ):
-                axis[0].plot(x, y, color=col)
+                fig, axis = plt.subplots()
+                axis = [axis]
+            elif not keywords.get("sizedistribution", False):
+                fig = plt.figure()
+                spec = gs.GridSpec(1, 2, width_ratios=[2, 3])
+                axis = plt.subplot(spec[0])
+                axis = [axis, plt.subplot(spec[1])]
+                fig.subplots_adjust(wspace=0.25)
+                axis[0].tick_params(
+                    axis="x", which="both", bottom="off", top="off", labelbottom="off"
+                )
+                axis[0].tick_params(
+                    axis="y", which="both", left="off", right="off", labelleft="off"
+                )
+                axis[0].set_ylim((0, 1))
+                axis = list(reversed(axis))
 
-        axis[0].plot(x, self.getfit(), color="tab:purple", label="fit")
+            if keywords.get("wavelength", False):
+                x = 1e4 / self.grid
+                axis[0].set_xlim((min(x), max(x)))
+                xtitle = "Wavelength"
+            else:
+                x = self.grid
+                axis[0].set_xlim((max(x), min(x)))
+                xtitle = (
+                    self.units["abscissa"]["label"]
+                    + " ["
+                    + self.units["abscissa"]["unit"].to_string("latex_inline")
+                    + "]"
+                )
 
-        if (
-            keywords.get("charge", False)
-            or keywords.get("size", False)
-            or keywords.get("composition", False)
-        ):
-            classes = self.getclasses()
-            if keywords.get("charge", False):
-                if not isinstance(classes["anion"], int):
-                    axis[0].plot(x, classes["anion"], "r-", label="anion")
-                if not isinstance(classes["neutral"], int):
-                    axis[0].plot(x, classes["neutral"], "g-", label="neutral")
-                if not isinstance(classes["cation"], int):
-                    axis[0].plot(x, classes["cation"], "b-", label="cation")
-                axis[0].axhline(0, linestyle="--", color="gray")
-                axis[0].legend(fontsize=12)
-
-            elif keywords.get("size", False):
-                if not isinstance(classes["small"], int):
-                    axis[0].plot(x, classes["small"], "r-", label="small")
-                if not isinstance(classes["large"], int):
-                    axis[0].plot(x, classes["large"], "g-", label="large")
-                axis[0].axhline(0, linestyle="--", color="gray")
-                axis[0].legend(fontsize=12)
-
-            elif keywords.get("composition", False):
-                if not isinstance(classes["pure"], int):
-                    axis[0].plot(x, classes["pure"], "r-", label="pure")
-                if not isinstance(classes["nitrogen"], int):
-                    axis[0].plot(x, classes["nitrogen"], "g-", label="nitrogen")
-                axis[0].axhline(0, linestyle="--", color="gray")
-                axis[0].legend(fontsize=12)
-
-        elif keywords.get("residual", False):
-            y = self.getresidual()
-            axis[1].plot(x, y)
-
-        else:
-            axis[1].text(
-                0.05,
-                0.95,
-                ("%s" + 5 * " " + "%s") % ("UID", "WEIGHT"),
-                family="monospace",
+            axis[0].errorbar(
+                x,
+                self.observation.flux.value,
+                yerr=keywords["sigma"],
+                fmt="o",
+                mfc="white",
+                color="k",
+                ecolor="k",
+                markersize=3,
+                elinewidth=0.2,
+                capsize=0.8,
+                label="obs",
             )
-            axis[1].xaxis.set_visible(False)
-            axis[1].yaxis.set_visible(False)
-            ypos = 0.95 - 0.05
-            for uid, w, col in zip(self.uids, self.weights.values(), colors):
-                str = ("%d" + (5 * " ") + "%.2e") % (uid, w)
-                axis[1].text(0.05, ypos, str, color=col, family="monospace")
-                ypos -= 0.05
-                if ypos <= 0.05:
-                    axis[1].text(0.05, ypos, "more...", family="monospace")
-                    break
 
-        axis[0].set_ylabel(
-            self.units["ordinate"]["label"]
-            + " ["
-            + self.units["ordinate"]["unit"].to_string("latex_inline")
-            + "]",
-            fontsize=14,
-        )
-        if keywords.get("residual", False):
-            axis[1].set_xlabel(f"{xtitle} ({keywords['units'][0]})", fontsize=14)
-            axis[1].set_ylabel("residual", fontsize=14)
-            axis[1].minorticks_on()
-            axis[1].tick_params(
+            if "title" in keywords:
+                axis[0].set_title(keywords["title"])
+
+            axis[0].minorticks_on()
+            axis[0].tick_params(
                 which="major", right="on", top="on", direction="in", length=5
             )
-            axis[1].tick_params(
+            axis[0].tick_params(
                 which="minor", right="on", top="on", direction="in", length=3
             )
 
-        else:
-            axis[0].set_xlabel(f"{xtitle} ({keywords['units'][0]})", fontsize=14)
-        if keywords.get("show", False):
-            plt.show()
+            colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
+            for uid, col in zip(self.uids, colors):
+                y = self.data[uid]
+                if (
+                    keywords.get("charge", True)
+                    and keywords.get("size", True)
+                    and keywords.get("composition", False)
+                ):
+                    axis[0].plot(x, y, color=col)
 
-        # save plots
-        figures.tight_layout()
-        if keywords["ftype"]:
-            figures.savefig(
-                f"{keywords['outputname']}_{keywords['ptype']}.{keywords['ftype']}"
+            axis[0].plot(x, self.getfit(), color="tab:purple", label="fit")
+
+            if (
+                keywords.get("charge", False)
+                or keywords.get("size", False)
+                or keywords.get("composition", False)
+            ):
+                classes = self.getclasses()
+                if keywords.get("charge", False):
+                    if not isinstance(classes["anion"], int):
+                        axis[0].plot(x, classes["anion"], "r-", label="anion")
+                    if not isinstance(classes["neutral"], int):
+                        axis[0].plot(x, classes["neutral"], "g-", label="neutral")
+                    if not isinstance(classes["cation"], int):
+                        axis[0].plot(x, classes["cation"], "b-", label="cation")
+                    axis[0].axhline(0, linestyle="--", color="gray")
+                    axis[0].legend()
+                elif keywords.get("size", False):
+                    if not isinstance(classes["small"], int):
+                        axis[0].plot(x, classes["small"], "r-", label="small")
+                    if not isinstance(classes["large"], int):
+                        axis[0].plot(x, classes["large"], "g-", label="large")
+                    axis[0].axhline(0, linestyle="--", color="gray")
+                    axis[0].legend()
+                elif keywords.get("composition", False):
+                    if not isinstance(classes["pure"], int):
+                        axis[0].plot(x, classes["pure"], "r-", label="pure")
+                    if not isinstance(classes["nitrogen"], int):
+                        axis[0].plot(x, classes["nitrogen"], "g-", label="nitrogen")
+                    axis[0].axhline(0, linestyle="--", color="gray")
+                    axis[0].legend()
+            elif keywords.get("residual", False):
+                y = self.getresidual()
+                axis[1].plot(x, y)
+            else:
+                axis[1].text(
+                    0.05,
+                    0.95,
+                    ("%s" + 5 * " " + "%s") % ("UID", "WEIGHT"),
+                    family="monospace",
+                )
+                axis[1].xaxis.set_visible(False)
+                axis[1].yaxis.set_visible(False)
+                ypos = 0.95 - 0.05
+                for uid, w, col in zip(self.uids, self.weights.values(), colors):
+                    txt = ("%d" + (5 * " ") + "%.2e") % (uid, w)
+                    axis[1].text(0.05, ypos, txt, color=col, family="monospace")
+                    ypos -= 0.05
+                    if ypos <= 0.05:
+                        axis[1].text(0.05, ypos, "more...", family="monospace")
+                        break
+
+            axis[0].set_ylabel(
+                self.units["ordinate"]["label"]
+                + " ["
+                + self.units["ordinate"]["unit"].to_string("latex_inline")
+                + "]",
             )
-        plt.close(figures)
+            if keywords.get("residual", False):
+                axis[1].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
+                axis[1].set_ylabel("residual")
+                axis[1].minorticks_on()
+                axis[1].tick_params(
+                    which="major", right="on", top="on", direction="in", length=5
+                )
+                axis[1].tick_params(
+                    which="minor", right="on", top="on", direction="in", length=3
+                )
+            else:
+                axis[0].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
 
-    def set(self, d=None, **keywords):
+        basename = keywords.get("save")
+        if basename:
+            if not isinstance(basename, str):
+                basename = "fitted"
+            fig.savefig(f"{basename}_{keywords['ptype']}.{keywords['ftype']}")
+        elif keywords.get("show", False):
+            plt.show()
+        plt.close(fig)
+
+    def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
-        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.
+        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.set` to parse keywords.
 
         """
         Spectrum.set(self, d, **keywords)
         self.__set(d, **keywords)
 
-    def __set(self, d=None, **keywords):
+    def __set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate data dictionary helper.
 
         """
-        if d:
+        if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
-                if not keywords.get("observation"):
+                if "observation" not in keywords:
                     self.observation = d["observation"]
-                if not keywords.get("weights"):
+                if "weights" not in keywords:
                     self.weights = d["weights"]
-                if not keywords.get("method"):
+                if "method" not in keywords:
                     self.method = d["method"]
 
-        if keywords.get("observation", False):
-            self.observation = keywords.get("observation")
-        if keywords.get("weights"):
-            self.weights = keywords.get("weights")
-        if keywords.get("method"):
-            self.method = keywords.get("method")
+        self.observation = keywords.get("observation", None)
+        self.weights = keywords.get("weights", dict())
+        self.method = keywords.get("method", "")
 
-    def get(self):
+    def get(self) -> dict:
         """
-        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get.
+        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get`.
         Assigns class variables from inherited dictionary.
 
         """
@@ -273,7 +261,7 @@ class Fitted(Spectrum):
         """
         return self.method
 
-    def getchisquared(self):
+    def getchisquared(self) -> Optional[float]:
         """
         Calculates the chi-squared of the fit.
 
@@ -286,70 +274,72 @@ class Fitted(Spectrum):
 
         return None
 
-    def getnorm(self):
+    def getnorm(self) -> float:
         """
         Retrieves the Norm of the fit.
 
         """
         return np.sum((self.observation.flux.value - self.getfit()) ** 2)
 
-    def getobservation(self):
+    def getobservation(self) -> Spectrum1D:
         """
         Retrieves the ordinate values of the observation.
 
         """
         return self.observation
 
-    def getfit(self):
+    def getfit(self) -> Union[np.ndarray, Literal[0]]:
         """
         Retrieves the sum of fit values.
 
         """
-        fitsum = sum(self.data.values())
-        return fitsum
+        return sum(self.data.values())
 
-    def getresidual(self):
+    def getresidual(self) -> float:
         """
         Retrieves the residual of the fit.
         """
         return self.observation.flux.value - self.getfit()
 
-    def getweights(self):
+    def getweights(self) -> dict:
         """
         Retrieves the weights of the fitted PAHs.
 
         """
         return self.weights
 
-    def getsizedistribution(self, nbins=None, min=None, max=None) -> list:
+    def getsizedistribution(
+        self,
+        nbins: int = 0,
+        min: Optional[float] = None,
+        max: Optional[float] = None,
+    ) -> tuple:
         """
         Retrieves the size distribution of the fitted PAHs.
 
         """
 
-        if not self.atoms:
+        if not len(self.atoms):
             self._atoms()
 
         nc = [self.atoms[uid]["nc"] for uid in self.weights]
 
         if not min:
             min = builtins.min(nc)
-
         if not max:
             max = builtins.max(nc)
+        if nbins == 0:
+            nbins = int(np.ceil(2.0 * len(self.uids) ** (1.0 / 3.0)))
 
-        if not nbins:
-            nbins = np.ceil(2.0 * len(self.uids) ** (1.0 / 3.0))
+        return np.histogram(nc, bins=nbins, weights=list(self.weights.values()))
 
-        return np.histogram(nc, bins=int(nbins), weights=list(self.weights.values()))
-
-    def write(self, prefix=""):
+    def write(self, prefix: str = "") -> None:
         """
         Retrieve fitted PAH properties and write to file.
 
         """
 
-        if not self.atoms:
+        if not len(self.atoms):
             self._atoms()
 
         # Retrieve properties
@@ -403,23 +393,22 @@ class Fitted(Spectrum):
 
         message(f"WRITTEN: {filename}")
 
-    def getclasses(self, **keywords):
+    def getclasses(self, **keywords) -> dict:
         """
         Retrieves the spectra of the different classes of the fitted PAHs.
 
         """
         if not self.pahdb:
             message("VALID DATABASE NEEDED TO GET CLASSES")
+            return dict()
 
-            return None
-
-        # Set atom keywords in species dictionary.
-        self._atoms()
+        if not len(self.atoms):
+            self._atoms()
 
         # Set subclasses dictionary.
         subclasses = self._subclasses(**keywords)
 
-        classes = dict()
+        classes = dict()  # type: dict
 
         for key in subclasses:
             classes[key] = self.__classes(subclasses[key])
@@ -439,7 +428,7 @@ class Fitted(Spectrum):
 
         return classes
 
-    def __classes(self, s):
+    def __classes(self, s: dict) -> Union[list, Literal[0]]:
         """
         Retrieves the intensities of a given subclass.
 
@@ -460,21 +449,19 @@ class Fitted(Spectrum):
                 if s["operator"](self.atoms[uid][s["subclass"]], s["operand"])
             ]
 
-        intensities = sum({k: v for k, v in self.data.items() if k in uids}.values())
-        return intensities
+        return sum({k: v for k, v in self.data.items() if k in uids}.values())
 
-    def getbreakdown(self, **keywords):
+    def getbreakdown(self, **keywords) -> Optional[dict]:
         """
         Retrieves the breakdown of the fitted PAHs.
 
         """
         if not self.pahdb:
             message("VALID DATABASE NEEDED TO GET CLASSES")
-
             return None
 
         # Set atom dictionary if it doesn't exist.
-        if not self.atoms:
+        if not len(self.atoms):
             self._atoms()
 
         # Getting fit weights
@@ -497,16 +484,18 @@ class Fitted(Spectrum):
         if keywords.get("flux", False):
             if not self.grid:
                 message("GRID IS NOT SET")
-
                 return None
 
             classes = self.getclasses(**keywords)
 
-            if not keywords.get("absolute", False):
+            if keywords.get("absolute", False):
                 total, err = -integrate.trapezoid(self.getfit(), x=self.grid)
 
-            for key in classes:
-                breakdown[key] = -integrate.trapezoid(classes[key], x=self.grid) / total
+            if classes:
+                for key in classes:
+                    breakdown[key] = (
+                        -integrate.trapezoid(classes[key], x=self.grid) / total
+                    )
 
             return breakdown
 
@@ -515,7 +504,7 @@ class Fitted(Spectrum):
 
             return None
 
-        if not keywords.get("absolute", False):
+        if "absolute" not in keywords:
             total = np.sum(fweight)
 
         # Set subclasses dictionary.
@@ -541,14 +530,10 @@ class Fitted(Spectrum):
         # Getting Nc.
         nc = np.array([self.atoms[uid]["nc"] for uid in self.uids])
         breakdown["nc"] = np.sum(nc * fweight) / np.sum(fweight)
-        # Getting fit uncertainty.
-        pahdberr = self.__geterror()
-        for key in pahdberr.keys():
-            breakdown[key] = pahdberr[key]
 
         return breakdown
 
-    def __breakdown(self, s):
+    def __breakdown(self, s: dict) -> float:
         """
         Retrieve the sum of the fitting weights for the fitted PAHs.
 
@@ -570,11 +555,10 @@ class Fitted(Spectrum):
 
         if len(uids) > 0:
             return np.sum([self.weights[uid] for uid in uids])
-
         else:
             return 0.0
 
-    def _subclasses(self, **keywords):
+    def _subclasses(self, **keywords) -> dict:
         """
         Create subclasses dictionary.
 
@@ -599,7 +583,7 @@ class Fitted(Spectrum):
 
         return subclasses
 
-    def _atoms(self):
+    def _atoms(self) -> None:
         """
         Create atoms dictionary.
 
@@ -625,7 +609,7 @@ class Fitted(Spectrum):
                 )
             self.atoms[uid] = dnelem
 
-    def __geterror(self):
+    def geterror(self) -> Optional[dict]:
         """
         Calculates the PAHdb fitting uncertainty
         as the ratio of the residual over the total spectrum area.
@@ -633,9 +617,9 @@ class Fitted(Spectrum):
         """
         tags = ["err", "e127", "e112", "e77", "e62", "e33"]
 
-        piecewise = dict.fromkeys(tags)
+        piecewise = dict.fromkeys(tags, None)
 
-        range = dict.fromkeys(tags)
+        range = dict()
         range["err"] = [min(self.grid), max(self.grid)]
         range["e127"] = [754.0, 855.0]
         range["e112"] = [855.0, 1000.0]
@@ -655,14 +639,17 @@ class Fitted(Spectrum):
                 )
                 if total_area == 0:
                     continue
-                resid_area = np.trapz(
-                    np.abs(self.observation.flux.value[sel] - self.getfit()[sel]),
-                    x=self.grid[sel],
-                )
-                piecewise[key] = resid_area / total_area
-            return piecewise
+                fit = self.getfit()
+                if isinstance(fit, np.ndarray):
+                    resid_area = np.trapz(
+                        np.abs(self.observation.flux.value[sel] - fit[sel]),
+                        x=self.grid[sel],
+                    )
+                    piecewise[key] = resid_area / total_area
 
-    def sort(self, flux=False) -> dict:
+        return piecewise
+
+    def sort(self, flux: bool = False) -> dict:
         """
         Sort UIDs and weights by their contribution to the fit
 
@@ -676,11 +663,7 @@ class Fitted(Spectrum):
                 w[uid] = -integrate.trapezoid(flux, x=self.grid)
 
         self.weights = dict(
-            sorted(
-                w.items(),
-                key=lambda item: (item[1], item[0]),
-                reverse=True,
-            )
+            sorted(w.items(), key=lambda item: (item[1], item[0]), reverse=True)
         )
 
         self.uids = list(self.weights.keys())

@@ -25,8 +25,7 @@ def test_transitions():
         cache=False,
         update=False,
     )
-    uids = [18, 73, 726, 2054, 223]
-    transitions = db.gettransitionsbyuid(uids)
+    transitions = db.gettransitionsbyuid([18, 73, 726, 2054, 223])
     transitions.cascade(6 * 1.603e-12, multiprocessing=False)
     transitions.shift(-15.0)
     return transitions
@@ -48,7 +47,7 @@ class TestSpectrum:
 
     def test_plot(self, monkeypatch, test_spectrum):
         monkeypatch.setattr(plt, "show", lambda: None)
-        test_spectrum.plot()
+        test_spectrum.plot(show=True)
 
     def test_normalization(self, test_spectrum):
         test_spectrum.normalize()

@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 
+from typing import Optional, Union
+
 import warnings
-from typing import Union
 import numpy as np
 
-from astropy.io import fits, ascii
+from astropy.io import fits, ascii  # type: ignore
 
-from astropy.io.registry import IORegistryError
-from astropy.io.fits.verify import VerifyWarning
-from astropy.nddata import StdDevUncertainty
-from astropy import units as u
-from specutils import Spectrum1D, SpectralRegion, manipulation
+from astropy.io.registry import IORegistryError  # type: ignore
+from astropy.io.fits.verify import VerifyWarning  # type: ignore
+from astropy.nddata import StdDevUncertainty  # type: ignore
+from astropy import units as u  # type: ignore
+from specutils import Spectrum1D, SpectralRegion, manipulation  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
@@ -24,9 +25,7 @@ class Observation:
 
     """
 
-    def __init__(self, d=None, **keywords):
-        self.filepath = ""
-        self.spectrum = Spectrum1D
+    def __init__(self, d: Optional[None] = None, **keywords) -> None:
         self.set(d, **keywords)
 
     def set(self, d, **keywords) -> None:
@@ -39,7 +38,7 @@ class Observation:
             self.read(d)
             return
 
-        if d:
+        if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "filepath" not in keywords:
                     self.filepath = d["filepath"]
@@ -47,7 +46,7 @@ class Observation:
                     self.spectrum = d["spectrum"]
 
         if "filepath" in keywords:
-            self.filepath = keywords.get("filepath")
+            self.filepath = keywords.get("filepath", "")
         if "spectrum" in keywords:
             self.spectrum = keywords.get("spectrum")
 
@@ -62,6 +61,33 @@ class Observation:
         d["spectrum"] = self.spectrum
 
         return d
+
+    def plot(self, **keywords) -> None:
+        """
+        Plot the spectrum.
+        """
+
+        import matplotlib.pyplot as plt  # type: ignore
+
+        if self.spectrum.uncertainty:
+            plt.errorbar(
+                self.spectrum.spectral_axis.value,
+                self.spectrum.flux.value,
+                self.spectrum.uncertainty.array,
+                capsize=2,
+            )
+        else:
+            plt.plot(self.spectrum.spectral_axis, self.spectrum.flux)
+        plt.xlabel(self.spectrum.spectral_axis.unit.to_string("latex_inline"))
+        plt.ylabel(self.spectrum.flux.unit.to_string("latex_inline"))
+
+        basename = keywords.get("save")
+        if basename:
+            if not isinstance(basename, str):
+                basename = "laboratory"
+            plt.savefig(f"{basename}.pdf")
+        elif keywords.get("show", False):
+            plt.show()
 
     def read(self, filename: str) -> None:
         """
@@ -196,6 +222,7 @@ class Observation:
 
         """
 
+        g = x  # type: Union[np.ndarray, list, float]
         if uniform or resolution:
             min = self.spectrum.spectral_axis.value.min()
             max = self.spectrum.spectral_axis.value.max()
@@ -213,7 +240,6 @@ class Observation:
                 g = np.array(g)
         else:
             message("REBINNING TO SET GRID")
-            g = x
 
         resampler = manipulation.FluxConservingResampler(
             extrapolation_treatment="nan_fill"
@@ -221,7 +247,7 @@ class Observation:
 
         self.spectrum = resampler(self.spectrum, g * self.spectrum.spectral_axis.unit)
 
-    def setgridrange(self, min: float, max=None) -> None:
+    def setgridrange(self, min: float, max: float = None) -> None:
         """
         Truncate the data to the given range.
 

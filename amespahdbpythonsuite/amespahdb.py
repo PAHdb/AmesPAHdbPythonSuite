@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import Optional
+
 import os
 import sys
 import copy
@@ -13,7 +15,7 @@ import tempfile
 import time
 import re
 from datetime import timedelta
-import astropy.units as u
+import astropy.units as u  # type: ignore
 
 import pickle
 
@@ -35,7 +37,7 @@ class AmesPAHdb:
 
     """
 
-    def __init__(self, **keywords):
+    def __init__(self, **keywords) -> None:
         """
         Initialize amespahdbpythonsuite class. Prints basic PAHdb info
         and calls the :meth:`amespahdbpythonsuite.amespahdb.parsefile`
@@ -44,17 +46,21 @@ class AmesPAHdb:
         """
 
         intro = [
-            "AmesPAHdbPythonSuite",
-            "by",
-            "Dr. Christiaan Boersma",
-            "and",
-            "Dr. Alexandros Maragkoudakis",
+            "AmesPAHdbPythonSuite\n",
+            "by\n",
+            "Dr. Christiaan Boersma\n",
+            "and\n",
+            "Dr. Alexandros Maragkoudakis\n",
+            "Dr. Matthew J. Shannanon\n",
+            "Dr. Joseph E. Roser\n",
         ]
         self.message(intro)
 
         self.message(f"SUITE VERSION: {suite.__version__}")
 
-        if keywords.get("update", True) and random.randint(0, 4) == 4:
+        if keywords.get("update", False) or (
+            keywords.get("update", True) and random.randint(0, 4) == 4
+        ):
             self.message("CHECKING FOR UPDATE")
             github = "http://api.github.com/repos/pahdb/amespahdbpythonsuite/tags"
             try:
@@ -65,6 +71,8 @@ class AmesPAHdb:
                     if Version(suite.__version__) < versions[-1]:
                         update = versions[-1].public
                         self.message(f"V{update} UPDATE AVAILABLE")
+                    else:
+                        self.message("NO UPDATE AVAILABLE")
             except HTTPError:
                 self.message("FAILED TO CHECK FOR UPDATE")
 
@@ -93,7 +101,7 @@ class AmesPAHdb:
             # TODO: Turn the sys.exit into exceptions.
             sys.exit(2)
 
-        self.__data = {}
+        self.__data = dict()  # type: dict
 
         self._joined = None
 
@@ -103,7 +111,7 @@ class AmesPAHdb:
             check=keywords.get("check", True),
         )
 
-    def parsefile(self, filename, **keywords):
+    def parsefile(self, filename: str, **keywords) -> None:
         """
         Method to parse or restore the database from cache.
         Called by :meth:`amespahdbpythonsuite.amespahdb.__init__` method.
@@ -188,7 +196,7 @@ class AmesPAHdb:
 
             self.message(info, space=0)
 
-    def __getkeybyuids(self, key, uids):
+    def __getkeybyuids(self, key: str, uids: list) -> dict:
         """
         Get a dictionary of PAHdb properties
         retrieved by keyword for provided UIDs.
@@ -221,7 +229,7 @@ class AmesPAHdb:
                 )
             )
 
-    def gettransitionsbyuid(self, uids):
+    def gettransitionsbyuid(self, uids: list):
         """
         Retrieve and return transitions object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -235,12 +243,13 @@ class AmesPAHdb:
             transitions object
 
         """
-        from amespahdbpythonsuite.transitions import Transitions
 
         if type(uids) == int:
             uids = [uids]
 
-        return Transitions(
+        from amespahdbpythonsuite import transitions
+
+        return transitions.Transitions(
             type=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("transitions", uids),
@@ -256,7 +265,7 @@ class AmesPAHdb:
             },
         )
 
-    def getlaboratorybyuid(self, uids):
+    def getlaboratorybyuid(self, uids: list):
         """
         Retrieve and return laboratory database object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -270,19 +279,18 @@ class AmesPAHdb:
             laboratory database object
 
         """
+
         # Check if the experimental database is loaded.
         if self.__data["database"] != "experimental":
-
             self.message("EXPERIMENTAL DATABASE REQUIRED")
-
             return None
-
-        from amespahdbpythonsuite.laboratory import Laboratory
 
         if type(uids) == int:
             uids = [uids]
 
-        return Laboratory(
+        from amespahdbpythonsuite import laboratory
+
+        return laboratory.Laboratory(
             type=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("laboratory", uids),
@@ -297,12 +305,12 @@ class AmesPAHdb:
                         format={"latex": r"-\log(I/I_{0})"},
                         doc="Absorbance",
                     ),
-                    "label": "absorbance [",
+                    "label": "absorbance",
                 },
             },
         )
 
-    def getspeciesbyuid(self, uids):
+    def getspeciesbyuid(self, uids: list):
         """
         Retrieve and return species object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -316,13 +324,13 @@ class AmesPAHdb:
             species object
 
         """
-        # TODO: handle UIDs without 'references'.
-        from amespahdbpythonsuite.species import Species
 
         if type(uids) == int:
             uids = [uids]
 
-        return Species(
+        from amespahdbpythonsuite import species
+
+        return species.Species(
             type=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("species", uids),
@@ -332,7 +340,7 @@ class AmesPAHdb:
             comments=self.__getkeybyuids("comments", uids),
         )
 
-    def getgeometrybyuid(self, uids):
+    def getgeometrybyuid(self, uids: list):
         """
         Retrieve and return geometry object based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -347,12 +355,13 @@ class AmesPAHdb:
             geometry object
 
         """
-        from amespahdbpythonsuite.geometry import Geometry
 
         if type(uids) == int:
             uids = [uids]
 
-        return Geometry(
+        from amespahdbpythonsuite import geometry
+
+        return geometry.Geometry(
             type=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("geometry", uids),
@@ -360,7 +369,7 @@ class AmesPAHdb:
             uids=uids,
         )
 
-    def search(self, query):
+    def search(self, query: str) -> Optional[list]:
         """
         Search the database based on query input.
 
@@ -378,9 +387,9 @@ class AmesPAHdb:
         """
 
         if not query:
-            return
+            return None
 
-        words = []
+        words = list()
 
         n = len(query)
 
@@ -432,7 +441,7 @@ class AmesPAHdb:
 
             words.append(token)
 
-        tokens = []
+        tokens = list()
 
         for word in words:
             tokens.append(self._tokenize(word))
@@ -449,7 +458,7 @@ class AmesPAHdb:
 
         return found
 
-    def _tokenize(self, word):
+    def _tokenize(self, word: str) -> dict:
         """
         A method called by :sec:`amespahdbpythonsuite.amespahdb.search`
         that creates a dictionary with keys based on the input word/category.
@@ -461,7 +470,7 @@ class AmesPAHdb:
 
         word = word.lower()
 
-        token = {}
+        token = {"type": "", "translation": "", "valid": False}
 
         charge = {
             "anion": 'item[1]["charge"] < 0',
@@ -568,7 +577,7 @@ class AmesPAHdb:
 
         return token
 
-    def _parsetokens(self, tokens):
+    def _parsetokens(self, tokens: list) -> str:
         """
         Parse the dictionary of tokens created by
         :sec:`amespahdbpythonsuite.amespahdb.tokenize`
@@ -586,28 +595,28 @@ class AmesPAHdb:
 
         ntokens = len(tokens)
 
-        prev = None
+        prev = -1
 
         current = 0
 
         if ntokens > 1:
             next = 1
         else:
-            next = None
+            next = -1
 
         parsed = ""
 
-        while current is not None:
+        while current != -1:
 
             if tokens[current]["type"] == "FORMULA":
-                if prev is not None:
+                if prev > -1:
                     if not (
                         tokens[prev]["type"] != "LOGICAL" and tokens[prev]["valid"]
                     ):
                         parsed += " or "
                 parsed += tokens[current]["translation"]
             elif tokens[current]["type"] == "IDENTITY":
-                if prev is not None:
+                if prev > -1:
                     if not (
                         tokens[prev]["type"] == "LOGICAL"
                         or tokens[prev]["type"] == "TRANSFER"
@@ -615,19 +624,19 @@ class AmesPAHdb:
                         and tokens[prev]["valid"]
                     ):
                         parsed += " and "
-                if next is not None:
+                if next > -1:
                     if tokens[next]["type"] == "COMPARISON":
                         parsed += " " + tokens[current]["translation"]
                     else:
                         parsed += " " + tokens[current]["translation"] + " > 0"
             elif tokens[current]["type"] == "NUMERIC":
-                if prev is not None:
+                if prev > -1:
                     if tokens[prev]["type"] == "COMPARISON" and tokens[prev]["valid"]:
                         parsed += " " + tokens[current]["translation"]
                     else:
                         tokens[current].valid = False
             elif tokens[current]["type"] == "LOGICAL":
-                if prev is not None:
+                if prev > -1:
                     if (
                         tokens[prev]["type"] == "IDENTITY"
                         or tokens[prev]["type"] == "NUMERIC"
@@ -635,7 +644,7 @@ class AmesPAHdb:
                         or tokens[prev]["type"] == "CHARGE"
                         and tokens[prev]["valid"]
                     ):
-                        if next is not None:
+                        if next > -1:
                             if tokens[next]["type"] == "TRANSFER":
                                 parsed += tokens[current]["translation"]
                             elif (
@@ -646,9 +655,9 @@ class AmesPAHdb:
                             ):
                                 parsed += " " + tokens[current]["translation"]
                             else:
-                                tokens[current].valid = False
+                                tokens[current]["valid"] = False
             elif tokens[current]["type"] == "COMPARISON":
-                if prev is not None:
+                if prev > -1:
                     if tokens[prev]["type"] == "IDENTITY" and tokens[prev]["valid"]:
                         if next is not None:
                             if tokens[next]["type"] == "NUMERIC":
@@ -656,7 +665,7 @@ class AmesPAHdb:
                             else:
                                 tokens[current]["valid"] = False
             elif tokens[current]["type"] == "CHARGE":
-                if prev is not None:
+                if prev > -1:
                     if not (
                         tokens[prev]["type"] == "LOGICAL" and tokens[prev]["valid"]
                     ):
@@ -665,7 +674,7 @@ class AmesPAHdb:
             elif tokens[current]["type"] == "TRANSFER":
                 parsed += tokens[current]["translation"]
             elif tokens[current]["type"] == "NAME":
-                if prev is not None:
+                if prev > -1:
                     if not (
                         tokens[prev]["type"] == "LOGICAL" and tokens[prev]["valid"]
                     ):
@@ -683,13 +692,13 @@ class AmesPAHdb:
 
             if next:
                 if next == ntokens - 1:
-                    next = None
+                    next = -1
                 else:
                     next += 1
 
         return parsed
 
-    def getversion(self):
+    def getversion(self) -> str:
         """
         Method to retrieve the PAHdb version.
 
@@ -709,7 +718,7 @@ class AmesPAHdb:
         """
         return version == self.__data["version"]
 
-    def gettype(self):
+    def gettype(self) -> str:
         """
         Method to retrieve the PAHdb type.
 
@@ -719,7 +728,7 @@ class AmesPAHdb:
         """
         return self.__data["database"]
 
-    def getdatabaseref(self):
+    def getdatabaseref(self) -> dict:
         """
         Method to retrieve the database.
 
@@ -730,7 +739,7 @@ class AmesPAHdb:
         return self.__data
 
     @staticmethod
-    def message(text, space=55):
+    def message(text, space: int = 55) -> None:
         """
         A method to print terminal message.
 
@@ -743,7 +752,7 @@ class AmesPAHdb:
         """
         line = (space + 2) * "="
         print(line)
-        if type(text) is list:
+        if isinstance(text, list):
             for t in text:
                 print(t.center(space))
         else:

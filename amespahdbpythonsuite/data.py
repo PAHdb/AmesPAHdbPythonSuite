@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import Optional
+
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 message = AmesPAHdb.message
@@ -11,78 +13,61 @@ class Data(object):
 
     """
 
-    def __init__(self, d=None, **keywords):
+    def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Initialize Data class.
 
         """
-        self.type = ""
-        self.version = ""
-        self.data = dict()
-        self.uids = []
-        self.model = dict()
-        self.units = dict()
-        self.pahdb = None
         self.__set(d, **keywords)
 
-    def set(self, d=None, **keywords):
+    def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate data dictionary.
 
         """
         self.__set(d, **keywords)
 
-    def __set(self, d=None, **keywords):
+    def __set(self, d: Optional[dict] = None, **keywords):
         """
         Populate data dictionary helper.
 
         """
-        if d:
+        if isinstance(d, dict):
             # Check if expected keywords are present in provided dictionary,
             # otherwise assign them to instance variables.
             if d.get("type", "") == self.__class__.__name__:
-                if not keywords.get("type"):
+                if "type" not in keywords:
                     self.type = d["database"]
-                if not keywords.get("version"):
+                if "version" not in keywords:
                     self.version = d["version"]
-                if not keywords.get("data"):
+                if "data" not in keywords:
                     self.data = d["data"]
-                if not keywords.get("uids"):
+                if "uids" not in keywords:
                     self.uids = d["uids"]
-                if not keywords.get("model"):
+                if "model" not in keywords:
                     self.model = d["model"]
-                if not keywords.get("units"):
+                if "units" not in keywords:
                     self.units = d["units"]
 
-        # Match keywords of provided dictionary to corresponding instance variables.
-        if keywords.get("type"):
-            self.type = keywords.get("type")
-        if keywords.get("version"):
-            self.version = keywords.get("version")
-        if keywords.get("data"):
-            self.data = keywords.get("data")
-        if keywords.get("pahdb"):
-            self.pahdb = keywords.get("pahdb")
-        if keywords.get("uids"):
-            self.uids = keywords.get("uids")
-        if keywords.get("model"):
-            self.model = keywords.get("model")
-        if keywords.get("units"):
-            self.units = keywords.get("units")
+        self.type = keywords.get("type", "")
+        self.version = keywords.get("version", "")
+        self.data = keywords.get("data", dict())
+        self.pahdb = keywords.get("pahdb", None)
+        self.uids = keywords.get("uids", list())
+        self.model = keywords.get("model", dict())
+        self.units = keywords.get("units", dict())
 
         # Check for database and versioning mismatch between provided dictionary and parsed database.
         if self.pahdb:
             if self.pahdb["database"] != self.type:
-
                 message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
                 return
 
             if self.pahdb["version"] != self.version:
-
                 message(f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
                 return
 
-    def get(self):
+    def get(self) -> dict:
         """
         Return data dictionary with expected keywords.
 
@@ -124,7 +109,7 @@ class Data(object):
 
         message(f"INTERSECTION FOUND: {count}")
 
-        self.uids = keep
+        self.uids = list(keep)
 
         self.data = {key: self.data[key] for key in self.uids}
 
@@ -149,6 +134,6 @@ class Data(object):
 
         message(f"DIFFERENCE FOUND: {keep}")
 
-        self.uids = keep
+        self.uids = list(keep)
 
         self.data = {key: self.data[key] for key in self.uids}

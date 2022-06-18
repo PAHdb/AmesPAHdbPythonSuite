@@ -7,6 +7,7 @@ Test the geometry.py module.
 
 import pytest
 from pkg_resources import resource_filename
+import matplotlib.pyplot as plt
 
 import numpy as np
 
@@ -15,7 +16,7 @@ from amespahdbpythonsuite import geometry
 
 
 @pytest.fixture(scope="module")
-def geometry_test():
+def test_geometry():
     xml = "resources/pahdb-theoretical_cutdown.xml"
     db = AmesPAHdb(
         filename=resource_filename("amespahdbpythonsuite", xml),
@@ -67,29 +68,40 @@ class TestGeometry:
     def test_instance(self):
         assert isinstance(geometry.Geometry(), geometry.Geometry)
 
-    def test_mass(self, geometry_test, test_masses):
-        assert geometry_test.mass() == test_masses
+    def test_plot(self, monkeypatch, test_geometry):
+        monkeypatch.setattr(plt, "show", lambda: None)
+        test_geometry.plot(18, show=True)
 
-    def test_inertia(self, geometry_test, test_tensor):
-        inertia = geometry_test.inertia()[18]
+    def test_structure(self, monkeypatch, test_geometry):
+        monkeypatch.setattr(plt, "show", lambda: None)
+        test_geometry.structure(18, show=True)
+
+    def test_mass(self, test_geometry, test_masses):
+        assert test_geometry.mass() == test_masses
+
+    def test_inertia(self, test_geometry, test_tensor):
+        inertia = test_geometry.inertia()[18]
         np.testing.assert_allclose(inertia, test_tensor)
 
-    def test_diagonalize(self, geometry_test, test_diagonalized):
-        geometry_test.diagonalize()
-        g = geometry_test.get()
+    def test_diagonalize(self, test_geometry, test_diagonalized):
+        test_geometry.diagonalize()
+        g = test_geometry.get()
         x = [d["x"] for d in g["data"][18]]
         np.testing.assert_allclose(x, test_diagonalized)
 
-    def test_rings(self, geometry_test, test_nrings):
-        rings = geometry_test.rings()
+    def test_rings(self, test_geometry, test_nrings):
+        rings = test_geometry.rings()
         assert rings[726] == test_nrings
 
-    def test_area(self, geometry_test, test_areas):
-        areas = geometry_test.area()
+    def test_area(self, test_geometry, test_areas):
+        areas = test_geometry.area()
         assert areas == test_areas
 
-    def test_getset(self, geometry_test):
-        g1 = geometry_test.get()
+    def test_bec(self, test_geometry):
+        assert test_geometry.bec()[18] == "333333"
+
+    def test_getset(self, test_geometry):
+        g1 = test_geometry.get()
         assert g1["type"] == "Geometry"
         geometry2 = geometry.Geometry()
         geometry2.set(g1)

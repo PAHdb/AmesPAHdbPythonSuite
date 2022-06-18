@@ -118,8 +118,9 @@ repository](https://github.com/pahdb/amespahdbpythonsuite/tags).
 ## Authors
 
 * **Christiaan Boersma** - *Initial work* - [PAHdb](https://github.com/pahdb)
-* **Matthew J. Shannon** - *Initial work* - [PAHdb](https://github.com/pahdb)
 * **Alexandros Maragkoudakis** - *Initial work* - [PAHdb](https://github.com/pahdb)
+* **Matthew J. Shannon** - *Initial work* - [PAHdb](https://github.com/pahdb)
+* **Joseph E. Roser** - *Boundary Edge Code* - [Astrophysics &amp; Astrochemistry Laboratory](https://astrochemistry.org/bios/roser.php)
 
 See also the list of [contributors](CONTRIBUTORS.md) who participated
 in this project.

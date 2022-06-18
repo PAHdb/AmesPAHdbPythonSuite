@@ -28,7 +28,6 @@ Submodules
 .. inheritance-diagram:: amespahdbpythonsuite.laboratory 
 .. inheritance-diagram:: amespahdbpythonsuite.species 
 .. inheritance-diagram:: amespahdbpythonsuite.observation
-|
 
 amespahdb class
 ----------------

@@ -77,8 +77,7 @@ class TestFitted:
         assert f.colnames == colnames
 
     def test_breakdown(self, test_fitted):
-        bd = test_fitted.getbreakdown()
-        lkeys = [
+        assert list(test_fitted.getbreakdown().keys()) == [
             "solo",
             "duo",
             "trio",
@@ -92,6 +91,10 @@ class TestFitted:
             "nitrogen",
             "pure",
             "nc",
+        ]
+
+    def test_error(self, test_fitted):
+        assert list(test_fitted.geterror().keys()) == [
             "err",
             "e127",
             "e112",
@@ -99,13 +102,12 @@ class TestFitted:
             "e62",
             "e33",
         ]
-        assert list(bd.keys()) == lkeys
 
     def test_plot(self, test_fitted, test_path):
         test_fitted.plot(
             wavelength=True,
             sigma=test_fitted.observation.uncertainty.array,
-            outputname=test_path,
+            save=test_path,
             ptype="UIDs",
             ftype="pdf",
             units=[
@@ -120,7 +122,7 @@ class TestFitted:
             wavelength=True,
             residual=True,
             sigma=test_fitted.observation.uncertainty.array,
-            outputname=test_path,
+            save=test_path,
             ptype="residual",
             ftype="pdf",
             units=[
@@ -135,7 +137,7 @@ class TestFitted:
             wavelength=True,
             size=True,
             sigma=test_fitted.observation.uncertainty.array,
-            outputname=test_path,
+            save=test_path,
             ptype="size",
             ftype="pdf",
             units=[
@@ -150,7 +152,7 @@ class TestFitted:
             wavelength=True,
             charge=True,
             sigma=test_fitted.observation.uncertainty.array,
-            outputname=test_path,
+            save=test_path,
             ptype="charge",
             ftype="pdf",
             units=[
@@ -166,7 +168,7 @@ class TestFitted:
             wavelength=True,
             composition=True,
             sigma=test_fitted.observation.uncertainty.array,
-            outputname=test_path,
+            save=test_path,
             ptype="composition",
             ftype="pdf",
             units=[

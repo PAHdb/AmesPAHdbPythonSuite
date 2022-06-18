@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import Optional
+
 import numpy as np
 import multiprocessing
 import copy
@@ -7,15 +9,19 @@ import time
 from datetime import timedelta
 from functools import partial
 
-from scipy import integrate
-from scipy import optimize
+from scipy import integrate, optimize  # type: ignore
 
-import astropy.units as u
+import astropy.units as u  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
 
 message = AmesPAHdb.message
+
+energy: float
+frequency: float
+frequencies: np.ndarray
+intensities: np.ndarray
 
 
 class Transitions(Data):
@@ -25,40 +31,38 @@ class Transitions(Data):
 
     """
 
-    def __init__(self, d=None, **keywords):
+    def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Initialize transitions class.
 
         """
         super().__init__(d, **keywords)
-        self._shift = 0.0
         self.__set(d, **keywords)
 
-    def set(self, d=None, **keywords):
+    def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
-        Calls class: :class:`amespahdbpythonsuite.data.Data.set to parse keywords.
+        Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.
         Checks type of database object (e.g., theoretical, experimental)
 
         """
         Data.set(self, d, **keywords)
         self.__set(d, **keywords)
 
-    def __set(self, d=None, **keywords):
+    def __set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate data dictionary helper.
 
         """
-        if d:
+        if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
-                if not keywords.get("shift"):
+                if "shift" not in keywords:
                     self._shift = d["shift"]
 
-        if keywords.get("shift"):
-            self._shift = keywords.get("shift")
+        self._shift = keywords.get("shift", 0.0)
 
-    def get(self):
+    def get(self) -> dict:
         """
-        Calls class: :class:`amespahdbpythonsuite.data.Data.get to get keywords.
+        Calls class: :class:`amespahdbpythonsuite.data.Data.get` to get keywords.
 
         """
         d = Data.get(self)
@@ -66,7 +70,7 @@ class Transitions(Data):
         d["shift"] = self._shift
         return copy.deepcopy(d)
 
-    def shift(self, shift):
+    def shift(self, shift: float) -> None:
         """
         Shifts transitions frequency by provided value.
 
@@ -78,14 +82,12 @@ class Transitions(Data):
                 d["frequency"] += shift
         message(f"TOTAL SHIFT: {self._shift} /cm")
 
-    def fixedtemperature(self, t):
+    def fixedtemperature(self, t: float) -> None:
         """
         Applies the Fixed Temperature emission model.
 
-        Parameters
-        ----------
-        t : float
-            Excitation temperature in Kelvin.
+        :param t: Excitation temperature in Kelvin.
+        :type t: float
 
         """
         if self.model:
@@ -120,14 +122,12 @@ class Transitions(Data):
             for (d, i) in zip(self.data[uid], intensity):
                 d["intensity"] *= i
 
-    def calculatedtemperature(self, e, **keywords):
+    def calculatedtemperature(self, e: float, **keywords) -> None:
         """
         Applies the Calculated Temperature emission model.
 
-        Parameters
-        ----------
-        e : float
-            Excitation energy in erg.
+        :param e: Excitation energy in erg.
+        :type e: float
 
         """
         if self.type != "theoretical":
@@ -201,23 +201,18 @@ class Transitions(Data):
 
         print(57 * "=")
 
-    def _cascade_em_model(self, e, uid):
+    def _cascade_em_model(self, e: float, uid: int) -> tuple:
         """
         A partial method of :meth:`amespahdbpythonsuite.transitions.cascade`
         used when multiprocessing is required.
 
-        Parameters
-        ----------
+        :param uid: single UID value.
+        :type uid: int
 
-        uid : int
-            single UID value.
+        return:  Dictionary of Tmax and temp Dictionary of calculated
+        intensities for the given UID.
+        :rtype: dict
 
-        Returns
-        -------
-        temp : dict
-            Dictionary of Tmax.
-        ud : dict
-            Dictionary of calculated intensities for the given UID.
 
         """
         global energy
@@ -244,14 +239,12 @@ class Transitions(Data):
         ud = {uid: self.data[uid]}
         return ud, temp
 
-    def cascade(self, e, **keywords):
+    def cascade(self, e: float, **keywords) -> None:
         """
         Applies the Cascade emission model.
 
-        Parameters
-        ----------
-        e : float
-            Excitation energy in erg.
+        :param e: Excitation energy in erg.
+        :type: float
 
         """
         if self.type != "theoretical":
@@ -284,17 +277,12 @@ class Transitions(Data):
 
         print(57 * "=")
 
-        if keywords.get("multiprocessing"):
+        if keywords.get("multiprocessing", True):
             cascade_em_model = partial(self._cascade_em_model, e)
-            if keywords.get("ncores"):
-                ncores = keywords.get("ncores")
-                print(f"Using multiprocessing module with {ncores} cores")
-                pool = multiprocessing.Pool(processes=ncores)
-                data, temp = zip(*pool.map(cascade_em_model, self.uids))
-            else:
-                print("Using multiprocessing module with 2 cores")
-                pool = multiprocessing.Pool(processes=2)
-                data, temp = zip(*pool.map(cascade_em_model, self.uids))
+            ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
+            print(f"Using multiprocessing module with {ncores} cores")
+            pool = multiprocessing.Pool(processes=ncores)
+            data, temp = zip(*pool.map(cascade_em_model, self.uids))
             pool.close()
             pool.join()
 
@@ -347,38 +335,43 @@ class Transitions(Data):
         print(f"Elapsed time: {elapsed}\n")
 
     def _get_intensities(
-        self, npoints, xmin, xmax, clip, width, x, gaussian, drude, uid
-    ):
+        self,
+        npoints: int,
+        xmin: float,
+        xmax: float,
+        clip: float,
+        width: float,
+        x: np.ndarray,
+        gaussian: str,
+        drude: str,
+        uid: list,
+    ) -> dict:
         """
         A partial method of :meth:`amespahdbpythonsuite.transitions.convolve`
         used when multiprocessing is required.
 
-        Parameters
-        ----------
+        :param npoints: Number of grid points.
+        :type npoints: int
+        :param xmin: Minimum value of grid.
+        :param xmin: float
+        :param xmax:  Maximum value of grid.
+        :type xmax: float
+        :param clip: Value to clip and define the frequency range of the profile
+            calculation.
+        :type clip: float
+        param width: Width of the line profile.
+        type width: float
+        param x: Grid array
+        param x: numpy.ndarray
+        param gaussian: String to indicate Gaussian profile
+        type gaussian: str
+        param drude: String to indicate Drude profile
+        type drude: str
+        param uid: Single UID value
+        type uid: int
 
-        npoints : int
-            Number of grid points.
-        xmin : float
-            Minimum value of grid.
-        xmax : float
-            Maximum value of grid.
-        clip : float
-            Value to clip and define the frequency range of the profile calculation.
-        width : float
-            Width of the line profile.
-        x : array
-            Grid array.
-        gaussian : str
-            String to indicate Gaussian profile
-        drude : str
-            String to indicate Drude profile
-        uid : int
-            Single UID value
-
-        Returns
-        -------
-        ud : dict
-            Dictionary of convolutged intensities for the given UID.
+        return ud : Dictionary of convolutged intensities for the given UID.
+        rtype: dict
 
         """
         s = np.zeros(npoints)
@@ -407,54 +400,44 @@ class Transitions(Data):
 
         fwhm = keywords.get("fwhm", 15.0)
 
-        if keywords.get("gaussian"):
+        if keywords.get("gaussian", False):
             width = 0.5 * fwhm / np.sqrt(2.0 * np.log(2.0))
             clip = 3.0
             profile = "Gaussian"
             message("USING GAUSSIAN LINE PROFILES")
-
-        elif keywords.get("drude"):
+        elif keywords.get("drude", False):
             width = 1.0 / fwhm
             clip = 11.0
             profile = "Drude"
             message("USING DRUDE LINE PROFILES")
-
         else:
             width = 0.5 * fwhm
             clip = 22.0
             profile = "Lorentzian"
             message("USING LORENTZIAN LINE PROFILES")
 
-        x = keywords.get("grid", [])
-        if not len(x):
-            r = keywords.get("xrange", [])
-            if len(r):
-                xmin = min(r)
-                xmax = max(r)
+        if "grid" in keywords:
+            x = np.asarray(keywords["grid"])
+            xmin = min(x)
+            xmax = max(x)
+            npoints = len(x)
+        else:
+            if "xrange" in keywords:
+                xmin = min(keywords["xrange"])
+                xmax = max(keywords["xrange"])
             else:
                 xmin = 1.0
                 xmax = 4000.0
 
-            npoints = keywords.get("npoints", False)
-            if not npoints:
-                npoints = 400
-
+            npoints = keywords.get("npoints", 400)
             x = np.arange(xmin, xmax, (xmax - xmin) / npoints)
-
-        else:
-            x = np.asarray(x)
-            xmin = min(x)
-            xmax = max(x)
-            npoints = len(x)
 
         message(f"GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS")
         message(f"FWHM: {fwhm} /cm")
 
-        gaussian = keywords.get("gaussian", False)
-        drude = keywords.get("drude", False)
-        d = {}
+        d = dict()
 
-        if keywords.get("multiprocessing"):
+        if keywords.get("multiprocessing", True):
             get_intensities = partial(
                 self._get_intensities,
                 npoints,
@@ -463,18 +446,14 @@ class Transitions(Data):
                 clip,
                 width,
                 x,
-                gaussian,
-                drude,
+                keywords.get("gaussian", False),
+                keywords.get("drude", False),
             )
-            if keywords.get("ncores"):
-                ncores = keywords.get("ncores")
-                print(f"Using multiprocessing module with {ncores} cores")
-                pool = multiprocessing.Pool(processes=ncores)
-                data = pool.map(get_intensities, self.uids)
-            else:
-                print("Using multiprocessing module with 2 cores")
-                pool = multiprocessing.Pool(processes=2)
-                data = pool.map(get_intensities, self.uids)
+            ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
+            print(f"Using multiprocessing module with {ncores} cores")
+            pool = multiprocessing.Pool(processes=ncores)
+            data = pool.map(get_intensities, self.uids)
+
             pool.close()
             pool.join()
 
@@ -541,18 +520,18 @@ class Transitions(Data):
             fwhm=fwhm,
         )
 
-    def __lineprofile(self, x, x0, width, **keywords):
+    def __lineprofile(
+        self, x: np.ndarray, x0: float, width: float, **keywords
+    ) -> np.ndarray:
         """
         Calculate Gaussian, Drude, or Lorentzian line profiles.
 
-        Parameters
-        ----------
-        x : array
-            Grid array.
-        x0 : float
-            Central frequency
-        width : float
-            Width of the line profile.
+        :param x: Grid array.
+        :type x: numpy.ndarray
+        :param x0:  Central frequency
+        :type x0: float
+        :param width: Width of the line profile.
+        :type width: float
 
         """
         if keywords.get("gaussian", False):
@@ -565,60 +544,56 @@ class Transitions(Data):
                 * width**2
                 / ((x / x0 - x0 / x) ** 2 + width**2)
             )
-        elif keywords.get("lorentzian", True):
+        else:
             return (width / np.pi) / ((x - x0) ** 2 + width**2)
 
-    def plot(self, **keywords):
+    def plot(self, **keywords) -> None:
         """
         Plot the transitions absorption spectrum.
 
         """
-        import matplotlib.pyplot as plt
-        import matplotlib.cm as cm
+        import matplotlib.pyplot as plt  # type: ignore
+        import matplotlib.cm as cm  # type: ignore
 
         _, ax = plt.subplots()
         ax.minorticks_on()
-        ax.tick_params(which="major", right="on", top="on", direction="in", length=5)
-        ax.tick_params(which="minor", right="on", top="on", direction="in", length=3)
+        ax.tick_params(which="major", right="on", top="on", direction="in", axis="both")
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
         for uid, col in zip(self.uids, colors):
             f = [v for v in self.data[uid]]
             x = [d["frequency"] for d in f]
             y = [d["intensity"] for d in f]
             ax.bar(x, y, 20, color=col, alpha=0.5)
-            ax.tick_params(axis="both", labelsize=14)
 
         plt.gca().invert_xaxis()
         plt.xlabel(
             self.units["abscissa"]["label"]
             + " ["
             + self.units["abscissa"]["unit"].to_string("latex_inline")
-            + "]",
-            fontsize=14,
+            + "]"
         )
         plt.ylabel(
             self.units["ordinate"]["label"]
             + " ["
             + self.units["ordinate"]["unit"].to_string("latex_inline")
-            + "]",
-            fontsize=14,
+            + "]"
         )
 
-        if keywords.get("show"):
+        basename = keywords.get("save")
+        if basename:
+            if not isinstance(basename, str):
+                basename = "transitions"
+            plt.savefig(f"{basename}.pdf")
+        elif keywords.get("show", False):
             plt.show()
-        elif keywords.get("outfile"):
-            outfile = keywords.get("outfile")
-            plt.savefig(f"{outfile}.pdf", bbox_inches="tight")
 
     @staticmethod
-    def featurestrength(T):
+    def featurestrength(T: float) -> float:
         """
         Calculate a feature's strength covolved with a blackbody.
 
-        Parameters
-        ----------
-        T : float
-            Excitation temperature in Kelvin.
+        :param T: Excitation temperature in Kelvin.
+        :type T: float
 
         """
         global frequency
@@ -641,28 +616,25 @@ class Transitions(Data):
         )
 
     @staticmethod
-    def attainedtemperature(T):
+    def attainedtemperature(T: float) -> float:
         """
         Calculate a PAH's temperature after absorbing a given amount of energy.
 
-        Parameters
-        ----------
-        T : float
-            Excitation temperature in Kelvin.
+        :param T: Excitation temperature in Kelvin.
+        :type T: float
 
         """
         global energy
 
         return integrate.quad(Transitions.heatcapacity, 2.73, T)[0] - energy
 
-    def heatcapacity(T):
+    @staticmethod
+    def heatcapacity(T: float) -> float:
         """
         Calculate heat capacity.
 
-        Parameters
-        ----------
-        T : float
-            Excitation temperature in Kelvin.
+        :param T: Excitation temperature in Kelvin.
+        :type T: float
 
         """
 

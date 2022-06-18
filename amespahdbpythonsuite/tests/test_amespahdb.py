@@ -106,27 +106,29 @@ class TestAmesPAHdb:
         assert sorted(uids) == sorted(list(res.keys()))
 
     def test_gettransitionsbyuid(self, pahdb_theoretical):
-
         assert isinstance(
-            pahdb_theoretical.gettransitionsbyuid([18, 73, 726, 2054, 223]),
+            pahdb_theoretical.gettransitionsbyuid(18),
             amespahdbpythonsuite.transitions.Transitions,
         )
 
     def test_getlaboratorybyuid(self, pahdb_laboratory):
         assert isinstance(
-            pahdb_laboratory.getlaboratorybyuid([273]),
+            pahdb_laboratory.getlaboratorybyuid(273),
             amespahdbpythonsuite.laboratory.Laboratory,
         )
 
+    def test_getlaboratorybyuid_wrong_database(self, pahdb_theoretical):
+        assert not pahdb_theoretical.getlaboratorybyuid([273])
+
     def test_getspeciesbyuid(self, pahdb_theoretical):
         assert isinstance(
-            pahdb_theoretical.getspeciesbyuid([18, 726, 2054]),
+            pahdb_theoretical.getspeciesbyuid(18),
             amespahdbpythonsuite.species.Species,
         )
 
     def test_getgeometrybyuid(self, pahdb_theoretical):
         assert isinstance(
-            pahdb_theoretical.getgeometrybyuid([18, 73, 726, 2054, 223]),
+            pahdb_theoretical.getgeometrybyuid(18),
             amespahdbpythonsuite.geometry.Geometry,
         )
 

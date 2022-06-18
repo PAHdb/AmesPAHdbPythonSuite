@@ -6,12 +6,13 @@ or without schema checking.
 
 """
 
+from typing import Union
 import array
 import base64
 import urllib.request
 from urllib.error import HTTPError, URLError
 
-from lxml import etree
+from lxml import etree  # type: ignore
 
 
 class XMLparser:
@@ -39,24 +40,24 @@ class XMLparser:
 
     """
 
-    def __init__(self, filename=None, validate=False):
+    def __init__(self, filename: str = None, validate: bool = False) -> None:
         """Inits XMLparser with schema checking off, no given filename."""
         self.filename = filename
         self.validate = validate
-        self.library = {}
+        self.library = dict()  # type: dict
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Class representation."""
         return f"{self.__class__.__name__}(" f"filename={self.filename!r}, "
 
-    def __str__(self):
+    def __str__(self) -> str:
         """A description of the object."""
         return (
             f"XML parser from the AmesPAHdbPythonSuite. "
             f"XML file: \n{self.filename!r}."
         )
 
-    def verify_schema(self):
+    def verify_schema(self) -> bool:
         """Validate against linked schema.
 
         Note:
@@ -96,7 +97,7 @@ class XMLparser:
 
         return True
 
-    def to_pahdb_dict(self, validate=False):
+    def to_pahdb_dict(self, validate: bool = False) -> dict:
         """Parses the XML, with or without validation.
 
         Args:
@@ -114,7 +115,6 @@ class XMLparser:
 
         if self.validate or validate:
             self.verify_schema()
-
             self._context = etree.iterwalk(self._tree, events=("start", "end"))
         else:
             self._context = etree.iterparse(self.filename, events=("start", "end"))
@@ -123,7 +123,7 @@ class XMLparser:
 
         return self.library
 
-    def _tree_to_pahdb_dict(self):
+    def _tree_to_pahdb_dict(self) -> dict:
         """Convert the element tree to a a pahdb_dict.
 
         Returns: library: Dictionary, with the UIDs as keys,
@@ -149,9 +149,9 @@ class XMLparser:
                 elem.clear()
         return self.library
 
-    def _species_handler(self, context):
+    def _species_handler(self, context: Union[etree.iterwalk, etree.iterparse]) -> dict:
         """Parse a PAHdb XML <species> tag."""
-        species = {}
+        species = dict()
 
         while True:
             action, elem = next(context)
@@ -170,19 +170,19 @@ class XMLparser:
 
         return species
 
-    def _specie_handler(self, context):
+    def _specie_handler(self, context: Union[etree.iterwalk, etree.iterparse]) -> dict:
         """Parse a PAHdb XML <specie> tag."""
 
         def specie_geometry_handler(context):
             """<specie> tag: Parse its child <geometry> tag."""
-            geometry = []
+            geometry = list()
 
             while True:
                 action, elem = next(context)
                 tag = etree.QName(elem).localname
 
                 if tag == "atom" and action == "start":
-                    atom_dict = {}
+                    atom_dict = dict()
 
                     while True:
                         action, elem = next(context)
@@ -209,16 +209,18 @@ class XMLparser:
 
             return geometry
 
-        def specie_transitions_handler(context):
+        def specie_transitions_handler(
+            context: Union[etree.iterwalk, etree.iterparse]
+        ) -> list:
             """<specie> tag: Parse its child <transitions> tag."""
-            transitions = []
+            transitions = list()
 
             while True:
                 action, elem = next(context)
                 tag = etree.QName(elem).localname
 
                 if tag == "mode":
-                    mode_dict = {}
+                    mode_dict = dict()  # type: dict
 
                     while True:
                         action, elem = next(context)
@@ -251,9 +253,11 @@ class XMLparser:
 
             return transitions
 
-        def specie_laboratory_handler(context):
+        def specie_laboratory_handler(
+            context: Union[etree.iterwalk, etree.iterparse]
+        ) -> dict:
             """<specie> tag: Parse its child <laboratory> tag."""
-            laboratory = {}
+            laboratory = dict()
 
             while True:
                 action, elem = next(context)
@@ -271,12 +275,12 @@ class XMLparser:
             return laboratory
 
         specie_dict = {
-            "comments": (),
-            "references": (),
-            "geometry": (),
-            "transitions": (),
-            "laboratory": (),
-        }
+            "comments": list(),
+            "references": list(),
+            "geometry": list(),
+            "transitions": list(),
+            "laboratory": dict(),
+        }  # type: dict
 
         while True:
             action, elem = next(context)
@@ -284,7 +288,7 @@ class XMLparser:
 
             if action == "start":
                 if tag == "comments":
-                    comments = []
+                    comments = list()
 
                     while True:
                         action, elem = next(context)
@@ -300,7 +304,7 @@ class XMLparser:
 
                     specie_dict["comments"] = comments
                 elif tag == "references":
-                    references = []
+                    references = list()
 
                     while True:
                         action, elem = next(context)

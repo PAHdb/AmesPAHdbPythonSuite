@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-test_observation.py
+test_obsservationervation.py
 
 Test the observation.py module.
 """
 
 import pytest
 import numpy as np
+import matplotlib.pyplot as plt
 
 from pkg_resources import resource_filename
 
@@ -15,7 +16,7 @@ from amespahdbpythonsuite import observation
 
 
 @pytest.fixture(scope="module")
-def test_obs():
+def test_observation():
     file = resource_filename(
         "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
     )
@@ -27,6 +28,13 @@ class TestObservation:
     Test Observation class.
 
     """
+
+    def test_instance(self):
+        assert isinstance(observation.Observation(), observation.Observation)
+
+    def test_plot(self, monkeypatch, test_observation):
+        monkeypatch.setattr(plt, "show", lambda: None)
+        test_observation.plot(show=True)
 
     def test_read_fits(self):
         file = "resources/sample_data_NGC7023.fits"
@@ -50,24 +58,24 @@ class TestObservation:
             observation.Observation(path)
             assert pytest_wrapped_e.type == OSError
 
-    def test_rebin(self, test_obs):
-        g1 = test_obs.getgrid()
+    def test_rebin(self, test_observation):
+        g1 = test_observation.getgrid()
         np.seterr(invalid="ignore")
-        test_obs.rebin(0.25, uniform=True)
+        test_observation.rebin(0.25, uniform=True)
         np.seterr(invalid="warn")
-        g2 = test_obs.getgrid()
+        g2 = test_observation.getgrid()
         assert g2[0] == g1[0] and g2[-1] == g1[-1] and g2[1] - g2[0] == 0.25
-        test_obs.rebin(200, resolution=True)
-        g3 = test_obs.getgrid()
+        test_observation.rebin(200, resolution=True)
+        g3 = test_observation.getgrid()
         assert (
             g3[0] == g2[0]
             and g3[-1] == g2[-1]
             and np.isclose(g3[0] / (g3[1] - g3[0]), 200)
         )
 
-    def test_setgridrange(self, test_obs):
-        test_obs.setgridrange(10.0, 12.0)
-        g = test_obs.getgrid()
+    def test_setgridrange(self, test_observation):
+        test_observation.setgridrange(10.0, 12.0)
+        g = test_observation.getgrid()
         assert g.min() >= 10.0 and g.max() <= 12.0
 
     def test_getset(self):
@@ -81,6 +89,6 @@ class TestObservation:
         o2 = obs2.get()
         assert o2["type"] == "Observation"
 
-    def test_abscissaunitsto(self, test_obs):
-        test_obs.abscissaunitsto("1/cm")
-        assert test_obs.spectrum.spectral_axis.unit == "1/cm"
+    def test_abscissaunitsto(self, test_observation):
+        test_observation.abscissaunitsto("1/cm")
+        assert test_observation.spectrum.spectral_axis.unit == "1/cm"

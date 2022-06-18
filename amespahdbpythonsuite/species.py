@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
+from typing import Optional
+
 from amespahdbpythonsuite import laboratory
 from amespahdbpythonsuite import geometry
 from amespahdbpythonsuite import transitions
 import copy
 import re
-
-from typing import Union
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
@@ -20,40 +20,30 @@ class Species:
 
     """
 
-    def __init__(self, d=None, **keywords):
-        self.type = ""
-        self.version = ""
-        self.data = dict()
-        self.pahdb = None
-        self.uids = []
+    def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         self.set(d, **keywords)
 
-    def set(self, d, **keywords) -> None:
+    def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate properties.
 
         """
-        if d:
+        if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
-                if not keywords.get("type"):
+                if "type" not in keywords:
                     self.type = d["database"]
-                if not keywords.get("version"):
+                if "version" not in keywords:
                     self.version = d["version"]
-                if not keywords.get("data"):
+                if "data" not in keywords:
                     self.data = d["data"]
-                if not keywords.get("uids"):
+                if "uids" not in keywords:
                     self.uids = d["uids"]
 
-        if keywords.get("type"):
-            self.type = keywords.get("type")
-        if keywords.get("version"):
-            self.version = keywords.get("version")
-        if keywords.get("data"):
-            self.data = keywords.get("data")
-        if keywords.get("pahdb"):
-            self.pahdb = keywords.get("pahdb")
-        if keywords.get("uids"):
-            self.uids = keywords.get("uids")
+        self.type = keywords.get("type", "")
+        self.version = keywords.get("version", "")
+        self.data = keywords.get("data", dict())
+        self.pahdb = keywords.get("pahdb", None)
+        self.uids = keywords.get("uids", list())
 
         if self.pahdb:
             if self.pahdb["database"] != self.type:
@@ -106,7 +96,7 @@ class Species:
 
         message(f"INTERSECTION FOUND: {count}")
 
-        self.uids = keep
+        self.uids = list(keep)
 
         self.data = {key: self.data[key] for key in self.uids}
 
@@ -131,7 +121,7 @@ class Species:
 
         message(f"DIFFERENCE FOUND: {keep}")
 
-        self.uids = keep
+        self.uids = list(keep)
 
         self.data = {key: self.data[key] for key in self.uids}
 
@@ -176,7 +166,7 @@ class Species:
             uids=self.uids,
         )
 
-    def laboratory(self) -> Union[laboratory.Laboratory, None]:
+    def laboratory(self) -> Optional[laboratory.Laboratory]:
         """
         Return laboratory object.
         Calls the :class:`amespahdbpythonsuite.laboratory.Laboratory` class.
@@ -186,10 +176,8 @@ class Species:
 
         """
 
-        if self.__data["database"] != "experimental":
-
+        if self.data["database"] != "experimental":
             message("EXPERIMENTAL DATABASE REQUIRED")
-
             return None
 
         return laboratory.Laboratory(
