@@ -114,6 +114,10 @@
   <h1>Source code for amespahdbpythonsuite.coadded</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
 
 
@@ -123,41 +127,37 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Coadded.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+<div class="viewcode-block" id="Coadded.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls class: :class:`amespahdbpythonsuite.Spectrum.spectrum.set to parse keywords.</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.Spectrum.spectrum.set` to parse keywords.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Spectrum</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Populate data dictionary helper.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;weights&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span>
                 <span class="k">if</span> <span class="s2">&quot;averaged&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;averaged&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="p">[])):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;averaged&quot;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;averaged&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;averaged&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Coadded.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Coadded.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get.</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get`.</span>
 <span class="sd">        Assigns class variables from inherited dictionary.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -166,7 +166,49 @@
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;averaged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">averaged</span>
 
-        <span class="k">return</span> <span class="n">d</span></div></div>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Coadded.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the spectrum.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">)</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">rainbow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">y</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">colors</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">scale</span>
+        <span class="n">unit</span> <span class="o">/=</span> <span class="n">scale</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">unit</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+            <span class="n">pre</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\times10^{&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}$ &quot;</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
+            <span class="o">+</span> <span class="n">pre</span>
+            <span class="o">+</span> <span class="n">unit</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
 </pre></div>
 
            </div>

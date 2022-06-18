@@ -114,17 +114,18 @@
   <h1>Source code for amespahdbpythonsuite.observation</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span><span class="p">,</span> <span class="n">ascii</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span><span class="p">,</span> <span class="n">ascii</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">astropy.io.registry</span> <span class="kn">import</span> <span class="n">IORegistryError</span>
-<span class="kn">from</span> <span class="nn">astropy.io.fits.verify</span> <span class="kn">import</span> <span class="n">VerifyWarning</span>
-<span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">StdDevUncertainty</span>
-<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">from</span> <span class="nn">specutils</span> <span class="kn">import</span> <span class="n">Spectrum1D</span><span class="p">,</span> <span class="n">SpectralRegion</span><span class="p">,</span> <span class="n">manipulation</span>
+<span class="kn">from</span> <span class="nn">astropy.io.registry</span> <span class="kn">import</span> <span class="n">IORegistryError</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">astropy.io.fits.verify</span> <span class="kn">import</span> <span class="n">VerifyWarning</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">StdDevUncertainty</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">specutils</span> <span class="kn">import</span> <span class="n">Spectrum1D</span><span class="p">,</span> <span class="n">SpectralRegion</span><span class="p">,</span> <span class="n">manipulation</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
 
@@ -138,9 +139,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum1D</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Observation.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -153,7 +152,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;filepath&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;filepath&quot;</span><span class="p">]</span>
@@ -161,7 +160,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;spectrum&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="s2">&quot;filepath&quot;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filepath&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filepath&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;spectrum&quot;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spectrum&quot;</span><span class="p">)</span></div>
 
@@ -176,6 +175,33 @@
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;spectrum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span>
 
         <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Observation.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the spectrum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+                <span class="n">capsize</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">flux</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">))</span>
+
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">basename</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">basename</span> <span class="o">=</span> <span class="s2">&quot;laboratory&quot;</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">basename</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Observation.read"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -310,6 +336,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">g</span> <span class="o">=</span> <span class="n">x</span>  <span class="c1"># type: Union[np.ndarray, list, float]</span>
         <span class="k">if</span> <span class="n">uniform</span> <span class="ow">or</span> <span class="n">resolution</span><span class="p">:</span>
             <span class="nb">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
             <span class="nb">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
@@ -327,7 +354,6 @@
                 <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">message</span><span class="p">(</span><span class="s2">&quot;REBINNING TO SET GRID&quot;</span><span class="p">)</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">x</span>
 
         <span class="n">resampler</span> <span class="o">=</span> <span class="n">manipulation</span><span class="o">.</span><span class="n">FluxConservingResampler</span><span class="p">(</span>
             <span class="n">extrapolation_treatment</span><span class="o">=</span><span class="s2">&quot;nan_fill&quot;</span>
@@ -335,7 +361,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">resampler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">g</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Observation.setgridrange"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.setgridrange">[docs]</a>    <span class="k">def</span> <span class="nf">setgridrange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Observation.setgridrange"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.setgridrange">[docs]</a>    <span class="k">def</span> <span class="nf">setgridrange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Truncate the data to the given range.</span>
 

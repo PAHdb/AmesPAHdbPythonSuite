@@ -114,12 +114,15 @@
   <h1>Source code for amespahdbpythonsuite.fitted</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span>
+
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">ascii</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">ascii</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">specutils</span> <span class="kn">import</span> <span class="n">Spectrum1D</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
@@ -133,242 +136,227 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize fitted class.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># type: dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Fitted.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plotting method for the fitted spectrum and breakdown components.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gs</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
 
-        <span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;xtick&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-        <span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;ytick&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gs</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sizedistribution&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="p">]</span>
             <span class="n">h</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getsizedistribution</span><span class="p">()</span>
             <span class="n">h</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">h</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
                 <span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
                 <span class="n">h</span><span class="p">,</span>
                 <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
                 <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
                 <span class="n">width</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">edges</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
             <span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;n$_{\mathregular</span><span class="si">{carbon}</span><span class="s2">}$&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;frequency [%]&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="k">return</span>
-
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">figures</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-            <span class="n">spec</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-            <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">axis</span><span class="p">)]</span>
-            <span class="n">figures</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">labelbottom</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="n">figures</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-            <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;n$_{\mathregular</span><span class="si">{carbon}</span><span class="s2">}$&quot;</span><span class="p">)</span>
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;frequency [%]&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">figures</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-            <span class="n">spec</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-            <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-            <span class="n">figures</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
-                <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">labelbottom</span><span class="o">=</span><span class="s2">&quot;off&quot;</span>
-            <span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
-                <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="s2">&quot;off&quot;</span>
-            <span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-            <span class="n">axis</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">axis</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wavelength&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="mf">1e4</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
-            <span class="n">xtitle</span> <span class="o">=</span> <span class="s2">&quot;Wavelength&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
-            <span class="n">xtitle</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-                <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
-                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
-                <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
-            <span class="n">x</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="n">yerr</span><span class="o">=</span><span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span>
-            <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
-            <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
-            <span class="n">ecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
-            <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-            <span class="n">elinewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-            <span class="n">capsize</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;obs&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">])</span>
-
-        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
-        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
-            <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">5</span>
-        <span class="p">)</span>
-        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
-            <span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span>
-        <span class="p">)</span>
-
-        <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">rainbow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)))</span>
-        <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                <span class="n">spec</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">axis</span><span class="p">)]</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">labelbottom</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
             <span class="p">):</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+                <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sizedistribution&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                <span class="n">spec</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+                <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">labelbottom</span><span class="o">=</span><span class="s2">&quot;off&quot;</span>
+                <span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="s2">&quot;off&quot;</span>
+                <span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">axis</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">axis</span><span class="p">))</span>
 
-        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getfit</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:purple&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;fit&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wavelength&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="mf">1e4</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+                <span class="n">xtitle</span> <span class="o">=</span> <span class="s2">&quot;Wavelength&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+                <span class="n">xtitle</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+                <span class="p">)</span>
 
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getclasses</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;anion&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;anion&quot;</span><span class="p">],</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;anion&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;neutral&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;neutral&quot;</span><span class="p">],</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;neutral&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;cation&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;cation&quot;</span><span class="p">],</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cation&quot;</span><span class="p">)</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-
-            <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;small&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;small&quot;</span><span class="p">],</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;large&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;large&quot;</span><span class="p">],</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-
-            <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;pure&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;pure&quot;</span><span class="p">],</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pure&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;nitrogen&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;nitrogen&quot;</span><span class="p">],</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;nitrogen&quot;</span><span class="p">)</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getresidual</span><span class="p">()</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-                <span class="mf">0.05</span><span class="p">,</span>
-                <span class="mf">0.95</span><span class="p">,</span>
-                <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;UID&quot;</span><span class="p">,</span> <span class="s2">&quot;WEIGHT&quot;</span><span class="p">),</span>
-                <span class="n">family</span><span class="o">=</span><span class="s2">&quot;monospace&quot;</span><span class="p">,</span>
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">yerr</span><span class="o">=</span><span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span>
+                <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+                <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">ecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">elinewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                <span class="n">capsize</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;obs&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">ypos</span> <span class="o">=</span> <span class="mf">0.95</span> <span class="o">-</span> <span class="mf">0.05</span>
-            <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">colors</span><span class="p">):</span>
-                <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%.2e</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
-                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;monospace&quot;</span><span class="p">)</span>
-                <span class="n">ypos</span> <span class="o">-=</span> <span class="mf">0.05</span>
-                <span class="k">if</span> <span class="n">ypos</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">:</span>
-                    <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="s2">&quot;more...&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;monospace&quot;</span><span class="p">)</span>
-                    <span class="k">break</span>
 
-        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-            <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
-            <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xtitle</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+            <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">])</span>
+
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
                 <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">5</span>
             <span class="p">)</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
                 <span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span>
             <span class="p">)</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xtitle</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">rainbow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
 
-        <span class="c1"># save plots</span>
-        <span class="n">figures</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;ftype&quot;</span><span class="p">]:</span>
-            <span class="n">figures</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;outputname&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;ptype&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;ftype&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getfit</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:purple&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;fit&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getclasses</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;anion&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;anion&quot;</span><span class="p">],</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;anion&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;neutral&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;neutral&quot;</span><span class="p">],</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;neutral&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;cation&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;cation&quot;</span><span class="p">],</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cation&quot;</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;small&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;small&quot;</span><span class="p">],</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;large&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;large&quot;</span><span class="p">],</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;composition&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;pure&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;pure&quot;</span><span class="p">],</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pure&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="s2">&quot;nitrogen&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">classes</span><span class="p">[</span><span class="s2">&quot;nitrogen&quot;</span><span class="p">],</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;nitrogen&quot;</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getresidual</span><span class="p">()</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                    <span class="mf">0.05</span><span class="p">,</span>
+                    <span class="mf">0.95</span><span class="p">,</span>
+                    <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;UID&quot;</span><span class="p">,</span> <span class="s2">&quot;WEIGHT&quot;</span><span class="p">),</span>
+                    <span class="n">family</span><span class="o">=</span><span class="s2">&quot;monospace&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">ypos</span> <span class="o">=</span> <span class="mf">0.95</span> <span class="o">-</span> <span class="mf">0.05</span>
+                <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">colors</span><span class="p">):</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%.2e</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="n">txt</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;monospace&quot;</span><span class="p">)</span>
+                    <span class="n">ypos</span> <span class="o">-=</span> <span class="mf">0.05</span>
+                    <span class="k">if</span> <span class="n">ypos</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">:</span>
+                        <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="s2">&quot;more...&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;monospace&quot;</span><span class="p">)</span>
+                        <span class="k">break</span>
+
+            <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+                <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">figures</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xtitle</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;residual&quot;</span><span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+                    <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
+                    <span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xtitle</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Fitted.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">basename</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">basename</span> <span class="o">=</span> <span class="s2">&quot;fitted&quot;</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">basename</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;ptype&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;ftype&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Fitted.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.set to parse keywords.</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.set` to parse keywords.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Spectrum</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Populate data dictionary helper.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observation&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;observation&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">observation</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;weights&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;method&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;method&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observation&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">observation</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observation&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Fitted.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get.</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.spectrum.Spectrum.get`.</span>
 <span class="sd">        Assigns class variables from inherited dictionary.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -387,7 +375,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span></div>
 
-<div class="viewcode-block" id="Fitted.getchisquared"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getchisquared">[docs]</a>    <span class="k">def</span> <span class="nf">getchisquared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getchisquared"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getchisquared">[docs]</a>    <span class="k">def</span> <span class="nf">getchisquared</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the chi-squared of the fit.</span>
 
@@ -400,70 +388,72 @@
 
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Fitted.getnorm"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getnorm">[docs]</a>    <span class="k">def</span> <span class="nf">getnorm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getnorm"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getnorm">[docs]</a>    <span class="k">def</span> <span class="nf">getnorm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the Norm of the fit.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">getfit</span><span class="p">())</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Fitted.getobservation"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getobservation">[docs]</a>    <span class="k">def</span> <span class="nf">getobservation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getobservation"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getobservation">[docs]</a>    <span class="k">def</span> <span class="nf">getobservation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum1D</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the ordinate values of the observation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span></div>
 
-<div class="viewcode-block" id="Fitted.getfit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getfit">[docs]</a>    <span class="k">def</span> <span class="nf">getfit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getfit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getfit">[docs]</a>    <span class="k">def</span> <span class="nf">getfit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the sum of fit values.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fitsum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">fitsum</span></div>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="Fitted.getresidual"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getresidual">[docs]</a>    <span class="k">def</span> <span class="nf">getresidual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getresidual"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getresidual">[docs]</a>    <span class="k">def</span> <span class="nf">getresidual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the residual of the fit.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">getfit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Fitted.getweights"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getweights">[docs]</a>    <span class="k">def</span> <span class="nf">getweights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getweights"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getweights">[docs]</a>    <span class="k">def</span> <span class="nf">getweights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the weights of the fitted PAHs.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span></div>
 
-<div class="viewcode-block" id="Fitted.getsizedistribution"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getsizedistribution">[docs]</a>    <span class="k">def</span> <span class="nf">getsizedistribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="Fitted.getsizedistribution"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getsizedistribution">[docs]</a>    <span class="k">def</span> <span class="nf">getsizedistribution</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nbins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nb">min</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="nb">max</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the size distribution of the fitted PAHs.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">()</span>
 
         <span class="n">nc</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;nc&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">min</span><span class="p">:</span>
             <span class="nb">min</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">max</span><span class="p">:</span>
             <span class="nb">max</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nbins</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">nbins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)))</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">nbins</span><span class="p">:</span>
-            <span class="n">nbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">nbins</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">nbins</span><span class="p">),</span> <span class="n">weights</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
-
-<div class="viewcode-block" id="Fitted.write"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.write"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve fitted PAH properties and write to file.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">()</span>
 
         <span class="c1"># Retrieve properties</span>
@@ -517,23 +507,22 @@
 
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WRITTEN: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Fitted.getclasses"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getclasses">[docs]</a>    <span class="k">def</span> <span class="nf">getclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getclasses"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getclasses">[docs]</a>    <span class="k">def</span> <span class="nf">getclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the spectra of the different classes of the fitted PAHs.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">:</span>
             <span class="n">message</span><span class="p">(</span><span class="s2">&quot;VALID DATABASE NEEDED TO GET CLASSES&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
 
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="c1"># Set atom keywords in species dictionary.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">()</span>
 
         <span class="c1"># Set subclasses dictionary.</span>
         <span class="n">subclasses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subclasses</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
-        <span class="n">classes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># type: dict</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">subclasses</span><span class="p">:</span>
             <span class="n">classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__classes</span><span class="p">(</span><span class="n">subclasses</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
@@ -553,7 +542,7 @@
 
         <span class="k">return</span> <span class="n">classes</span></div>
 
-    <span class="k">def</span> <span class="nf">__classes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__classes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the intensities of a given subclass.</span>
 
@@ -574,21 +563,19 @@
                 <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;operator&quot;</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;subclass&quot;</span><span class="p">]],</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;operand&quot;</span><span class="p">])</span>
             <span class="p">]</span>
 
-        <span class="n">intensities</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">uids</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">intensities</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">uids</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-<div class="viewcode-block" id="Fitted.getbreakdown"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getbreakdown">[docs]</a>    <span class="k">def</span> <span class="nf">getbreakdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.getbreakdown"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.getbreakdown">[docs]</a>    <span class="k">def</span> <span class="nf">getbreakdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the breakdown of the fitted PAHs.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">:</span>
             <span class="n">message</span><span class="p">(</span><span class="s2">&quot;VALID DATABASE NEEDED TO GET CLASSES&quot;</span><span class="p">)</span>
-
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="c1"># Set atom dictionary if it doesn&#39;t exist.</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">()</span>
 
         <span class="c1"># Getting fit weights</span>
@@ -611,16 +598,18 @@
         <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;flux&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">:</span>
                 <span class="n">message</span><span class="p">(</span><span class="s2">&quot;GRID IS NOT SET&quot;</span><span class="p">)</span>
-
                 <span class="k">return</span> <span class="kc">None</span>
 
             <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getclasses</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;absolute&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;absolute&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                 <span class="n">total</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="o">-</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getfit</span><span class="p">(),</span> <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
-                <span class="n">breakdown</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span> <span class="o">/</span> <span class="n">total</span>
+            <span class="k">if</span> <span class="n">classes</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
+                    <span class="n">breakdown</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="o">-</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span> <span class="o">/</span> <span class="n">total</span>
+                    <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">breakdown</span>
 
@@ -629,7 +618,7 @@
 
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;absolute&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;absolute&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
             <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fweight</span><span class="p">)</span>
 
         <span class="c1"># Set subclasses dictionary.</span>
@@ -655,14 +644,10 @@
         <span class="c1"># Getting Nc.</span>
         <span class="n">nc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;nc&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">])</span>
         <span class="n">breakdown</span><span class="p">[</span><span class="s2">&quot;nc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">nc</span> <span class="o">*</span> <span class="n">fweight</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fweight</span><span class="p">)</span>
-        <span class="c1"># Getting fit uncertainty.</span>
-        <span class="n">pahdberr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geterror</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pahdberr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">breakdown</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pahdberr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">breakdown</span></div>
 
-    <span class="k">def</span> <span class="nf">__breakdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__breakdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve the sum of the fitting weights for the fitted PAHs.</span>
 
@@ -684,11 +669,10 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">uids</span><span class="p">])</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
 
-    <span class="k">def</span> <span class="nf">_subclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_subclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create subclasses dictionary.</span>
 
@@ -713,7 +697,7 @@
 
         <span class="k">return</span> <span class="n">subclasses</span>
 
-    <span class="k">def</span> <span class="nf">_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create atoms dictionary.</span>
 
@@ -739,7 +723,7 @@
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">dnelem</span>
 
-    <span class="k">def</span> <span class="nf">__geterror</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitted.geterror"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.geterror">[docs]</a>    <span class="k">def</span> <span class="nf">geterror</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the PAHdb fitting uncertainty</span>
 <span class="sd">        as the ratio of the residual over the total spectrum area.</span>
@@ -747,9 +731,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;err&quot;</span><span class="p">,</span> <span class="s2">&quot;e127&quot;</span><span class="p">,</span> <span class="s2">&quot;e112&quot;</span><span class="p">,</span> <span class="s2">&quot;e77&quot;</span><span class="p">,</span> <span class="s2">&quot;e62&quot;</span><span class="p">,</span> <span class="s2">&quot;e33&quot;</span><span class="p">]</span>
 
-        <span class="n">piecewise</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+        <span class="n">piecewise</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="nb">range</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+        <span class="nb">range</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="nb">range</span><span class="p">[</span><span class="s2">&quot;err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)]</span>
         <span class="nb">range</span><span class="p">[</span><span class="s2">&quot;e127&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">754.0</span><span class="p">,</span> <span class="mf">855.0</span><span class="p">]</span>
         <span class="nb">range</span><span class="p">[</span><span class="s2">&quot;e112&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">855.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">]</span>
@@ -769,14 +753,17 @@
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">total_area</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">continue</span>
-                <span class="n">resid_area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">getfit</span><span class="p">()[</span><span class="n">sel</span><span class="p">]),</span>
-                    <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="n">sel</span><span class="p">],</span>
-                <span class="p">)</span>
-                <span class="n">piecewise</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resid_area</span> <span class="o">/</span> <span class="n">total_area</span>
-            <span class="k">return</span> <span class="n">piecewise</span>
+                <span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getfit</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">resid_area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit</span><span class="p">[</span><span class="n">sel</span><span class="p">]),</span>
+                        <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="n">sel</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">piecewise</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resid_area</span> <span class="o">/</span> <span class="n">total_area</span>
 
-<div class="viewcode-block" id="Fitted.sort"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">piecewise</span></div>
+
+<div class="viewcode-block" id="Fitted.sort"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sort UIDs and weights by their contribution to the fit</span>
 
@@ -790,11 +777,7 @@
                 <span class="n">w</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">sorted</span><span class="p">(</span>
-                <span class="n">w</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
-                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-                <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">uids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>

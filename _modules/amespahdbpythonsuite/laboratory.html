@@ -114,6 +114,10 @@
   <h1>Source code for amespahdbpythonsuite.laboratory</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.data</span> <span class="kn">import</span> <span class="n">Data</span>
 
 
@@ -124,18 +128,18 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Laboratory.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+<div class="viewcode-block" id="Laboratory.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.set to parse keywords.</span>
+<span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Data</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Laboratory.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Laboratory.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assigns class variables from inherited dictionary.</span>
 
@@ -143,7 +147,43 @@
         <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
-        <span class="k">return</span> <span class="n">d</span></div></div>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Laboratory.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the spectrum.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">)</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">rainbow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">colors</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;abscissa&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s2">&quot; [&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;ordinate&quot;</span><span class="p">][</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;latex_inline&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">basename</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">basename</span> <span class="o">=</span> <span class="s2">&quot;laboratory&quot;</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">basename</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
