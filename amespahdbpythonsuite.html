@@ -244,7 +244,7 @@ Calls classes:
 <a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory</span></code></a>,
 <a class="reference internal" href="#amespahdbpythonsuite.species.Species" title="amespahdbpythonsuite.species.Species"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code></a>,
 <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry</span></code></a>,
-to retrieve the respective objects.</p>
+to retrieve the respective instances.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.checkversion">
 <span class="sig-name descname"><span class="pre">checkversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.checkversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.checkversion" title="Permalink to this definition">¶</a></dt>
@@ -268,7 +268,7 @@ to retrieve the respective objects.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">
 <span class="sig-name descname"><span class="pre">getgeometrybyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getgeometrybyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve and return geometry object based on UIDs input.
+<dd><p>Retrieve and return geometry instance based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
 Calls the <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry</span></code></a> class
 and <code class="xref py py-meth docutils literal notranslate"><span class="pre">amespahdbpythonsuite.amespahdb.__getkeybyuids()</span></code> method.</p>
@@ -278,7 +278,7 @@ and <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><p>geometry object</p>
+<dt>Returns:</dt><dd><p>geometry instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -286,7 +286,7 @@ and <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid">
 <span class="sig-name descname"><span class="pre">getlaboratorybyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getlaboratorybyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve and return laboratory database object based on UIDs input.
+<dd><p>Retrieve and return laboratory database instance based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
 Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory</span></code></a> class.</p>
 <dl class="simple">
@@ -295,7 +295,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.L
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><p>laboratory database object</p>
+<dt>Returns:</dt><dd><p>laboratory database instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -303,7 +303,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.L
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid">
 <span class="sig-name descname"><span class="pre">getspeciesbyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.getspeciesbyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve and return species object based on UIDs input.
+<dd><p>Retrieve and return species instance based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
 Calls the <a class="reference internal" href="#amespahdbpythonsuite.species.Species" title="amespahdbpythonsuite.species.Species"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.species.Species</span></code></a> class.</p>
 <dl class="simple">
@@ -312,7 +312,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.species.Spec
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><p>species object</p>
+<dt>Returns:</dt><dd><p>species instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -320,7 +320,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.species.Spec
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid">
 <span class="sig-name descname"><span class="pre">gettransitionsbyuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/amespahdb.html#AmesPAHdb.gettransitionsbyuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve and return transitions object based on UIDs input.
+<dd><p>Retrieve and return transitions instance based on UIDs input.
 UIDs should be a list, e.g. the output of search method.
 Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions</span></code></a> class.</p>
 <dl class="simple">
@@ -329,7 +329,7 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><p>transitions object</p>
+<dt>Returns:</dt><dd><p>transitions instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -564,10 +564,11 @@ Contains methods to create and apply an emission model.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.convolve">
-<span class="sig-name descname"><span class="pre">convolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.convolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.convolve" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">convolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#amespahdbpythonsuite.spectrum.Spectrum" title="amespahdbpythonsuite.spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.convolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.convolve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolve transitions with a line profile.
 Calls class:
-<a class="reference internal" href="#amespahdbpythonsuite.spectrum.Spectrum" title="amespahdbpythonsuite.spectrum.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.spectrum.Spectrum</span></code></a> to retrieve the respective object.</p>
+<a class="reference internal" href="#amespahdbpythonsuite.spectrum.Spectrum" title="amespahdbpythonsuite.spectrum.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.spectrum.Spectrum</span></code></a> to retrieve the
+respective instance.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -619,13 +620,19 @@ Calls class:
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.set">
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls class: <a class="reference internal" href="#amespahdbpythonsuite.data.Data.set" title="amespahdbpythonsuite.data.Data.set"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.data.Data.set</span></code></a> to parse keywords.
-Checks type of database object (e.g., theoretical, experimental)</p>
+Checks flavor of the database, i.e., theoretical or experimental</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.shift">
 <span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.shift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.shift" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shifts transitions frequency by provided value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the transitions to file as an IPAC-table.</p>
 </dd></dl>
 
 </dd></dl>
@@ -661,7 +668,7 @@ Checks type of database object (e.g., theoretical, experimental)</p>
 Contains methods to fit and plot the input spectrum.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.coadd">
-<span class="sig-name descname"><span class="pre">coadd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.coadd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.coadd" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">coadd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#amespahdbpythonsuite.coadded.Coadded" title="amespahdbpythonsuite.coadded.Coadded"><span class="pre">Coadded</span></a></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.coadd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.coadd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Co-add PAHdb spectra.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
@@ -676,7 +683,7 @@ Contains methods to fit and plot the input spectrum.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.fit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#amespahdbpythonsuite.fitted.Fitted" title="amespahdbpythonsuite.fitted.Fitted"><span class="pre">Fitted</span></a></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the input spectrum.</p>
 </dd></dl>
 
@@ -707,8 +714,14 @@ Assigns class variables from inherited dictionary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.set">
-<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.set" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls class: <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions.set" title="amespahdbpythonsuite.transitions.Transitions.set"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions.set</span></code></a> to parse keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the spectra to file as an IPAC-table.</p>
 </dd></dl>
 
 </dd></dl>
@@ -738,6 +751,12 @@ Assigns class variables from inherited dictionary.</p>
 <dt class="sig sig-object py" id="amespahdbpythonsuite.coadded.Coadded.set">
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/coadded.html#Coadded.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.coadded.Coadded.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls class: <code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.Spectrum.spectrum.set</span></code> to parse keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.coadded.Coadded.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/coadded.html#Coadded.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.coadded.Coadded.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the coadded spectrum to file as an IPAC-table.</p>
 </dd></dl>
 
 </dd></dl>
@@ -777,10 +796,10 @@ Contains methods to work with PAH species.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.geometry">
 <span class="sig-name descname"><span class="pre">geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><span class="pre">Geometry</span></a></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return geometry object.
+<dd><p>Return geometry instance.
 Calls the <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geometry" title="amespahdbpythonsuite.geometry.Geometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.geometry.Geometry</span></code></a> class.</p>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>geometry object</p>
+<dt>Returns:</dt><dd><p>geometry instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -810,10 +829,10 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.geometry.Geo
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.laboratory">
 <span class="sig-name descname"><span class="pre">laboratory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><span class="pre">Laboratory</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.laboratory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.laboratory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return laboratory object.
+<dd><p>Return laboratory instance.
 Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.Laboratory" title="amespahdbpythonsuite.laboratory.Laboratory"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.laboratory.Laboratory</span></code></a> class.</p>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>laboratory object</p>
+<dt>Returns:</dt><dd><p>laboratory instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -837,10 +856,10 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.laboratory.L
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.transitions">
 <span class="sig-name descname"><span class="pre">transitions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><span class="pre">Transitions</span></a></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/species.html#Species.transitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.species.Species.transitions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return transitions object.
+<dd><p>Return transitions instance.
 Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions" title="amespahdbpythonsuite.transitions.Transitions"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions</span></code></a> class.</p>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>transitions object</p>
+<dt>Returns:</dt><dd><p>transitions instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -923,7 +942,7 @@ with the x-y plane</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.geometry.Geometry.structure">
 <span class="sig-name descname"><span class="pre">structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/geometry.html#Geometry.structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.geometry.Geometry.structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw the 3D structure.</p>
+<dd><p>Render the 3D structure.</p>
 </dd></dl>
 
 </dd></dl>
@@ -953,6 +972,12 @@ Contains methods to work with a laboratory spectrum.</p>
 <dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory.set">
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls class: <a class="reference internal" href="#amespahdbpythonsuite.data.Data.set" title="amespahdbpythonsuite.data.Data.set"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.data.Data.set</span></code></a> to parse keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.laboratory.Laboratory.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/laboratory.html#Laboratory.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.laboratory.Laboratory.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the laboratory spectra to file as an IPAC-table.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1059,8 +1084,8 @@ as the ratio of the residual over the total spectrum area.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve fitted PAH properties and write to file.</p>
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the fitted spectra to file as an IPAC-table.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1127,6 +1152,12 @@ Contains methods to work with astronomical spectra.</p>
 <dt class="sig sig-object py" id="amespahdbpythonsuite.observation.Observation.setgridrange">
 <span class="sig-name descname"><span class="pre">setgridrange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/observation.html#Observation.setgridrange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.observation.Observation.setgridrange" title="Permalink to this definition">¶</a></dt>
 <dd><p>Truncate the data to the given range.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.observation.Observation.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/observation.html#Observation.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.observation.Observation.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the spectrum to file as an IPAC-table.</p>
 </dd></dl>
 
 </dd></dl>

@@ -176,6 +176,68 @@
 
         <span class="k">return</span> <span class="n">d</span></div>
 
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class representation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="si">=}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A description of the instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AmesPAHdbPythonSuite Observation instance.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="si">=}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="Observation.write"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the spectrum to file as an IPAC-table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="kn">import</span> <span class="nn">datetime</span>
+        <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.tbl&quot;</span>
+
+        <span class="n">hdr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">kv</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;DATE&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">astimezone</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="s2">&quot;ORIGIN&quot;</span><span class="p">:</span> <span class="s2">&quot;NASA Ames Research Center&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CREATOR&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Python </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">minor</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">micro</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SOFTWARE&quot;</span><span class="p">:</span> <span class="s2">&quot;AmesPAHdbPythonSuite&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;AUTHOR&quot;</span><span class="p">:</span> <span class="s2">&quot;Dr. C. Boersma&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TYPE&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kv</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+                <span class="n">hdr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">8</span><span class="si">}</span><span class="s2"> = &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hdr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">8</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">tbl</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">spectral_axis</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ABSCISSA&quot;</span><span class="p">,</span> <span class="s2">&quot;ORDINATE&quot;</span><span class="p">],</span>
+            <span class="n">meta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;comments&quot;</span><span class="p">:</span> <span class="n">hdr</span><span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">:</span>
+            <span class="n">tbl</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;UNCERTAINTY&quot;</span><span class="p">)</span>
+
+        <span class="n">ascii</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ipac&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WRITTEN: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Observation.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the spectrum.</span>
@@ -254,13 +316,13 @@
                     <span class="k">if</span> <span class="s2">&quot;PS3_0&quot;</span> <span class="ow">in</span> <span class="n">hdu_keys</span> <span class="ow">and</span> <span class="s2">&quot;PS3_1&quot;</span> <span class="ow">in</span> <span class="n">hdu_keys</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">header</span>
 
-                        <span class="c1"># Create WCS object.</span>
+                        <span class="c1"># Create WCS instance.</span>
                         <span class="c1"># self.wcs = wcs.WCS(hdu[0].header, naxis=2)</span>
 
                         <span class="n">h0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;PS3_0&quot;</span><span class="p">]</span>
                         <span class="n">h1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;PS3_1&quot;</span><span class="p">]</span>
 
-                        <span class="c1"># Create Spectrum1D object.</span>
+                        <span class="c1"># Create Spectrum1D instance.</span>
                         <span class="n">flux</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;BUNIT&quot;</span><span class="p">])</span>
                         <span class="n">wave</span> <span class="o">=</span> <span class="n">hdu</span><span class="p">[</span><span class="n">h0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">h1</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">hdu</span><span class="p">[</span><span class="n">h0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">h1</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum1D</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">spectral_axis</span><span class="o">=</span><span class="n">wave</span><span class="p">)</span>
@@ -273,10 +335,10 @@
 
                         <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">header</span>
 
-                        <span class="c1"># Create WCS object</span>
+                        <span class="c1"># Create WCS instance</span>
                         <span class="c1"># self.wcs = wcs.WCS(hdu[0].header, naxis=2)</span>
 
-                        <span class="c1"># Create Spectrum1D object</span>
+                        <span class="c1"># Create Spectrum1D instance</span>
                         <span class="c1"># u.Unit(self.header[&#39;BUNIT&#39;])</span>
                         <span class="n">flux</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;Jy&quot;</span><span class="p">)</span>
                         <span class="n">wave</span> <span class="o">=</span> <span class="p">(</span>
@@ -301,7 +363,7 @@
             <span class="n">unc</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="s2">&quot;FLUX_UNCERTAINTY&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
                 <span class="n">unc</span> <span class="o">=</span> <span class="n">StdDevUncertainty</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;FLUX_UNCERTAINTY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span>
-            <span class="c1"># Create Spectrum1D object.</span>
+            <span class="c1"># Create Spectrum1D instance.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum1D</span><span class="p">(</span>
                 <span class="n">flux</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;FLUX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
                 <span class="n">spectral_axis</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;WAVELENGTH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
