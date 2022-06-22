@@ -7,7 +7,6 @@ import operator
 import numpy as np
 
 from scipy import integrate  # type: ignore
-from astropy.io import ascii  # type: ignore
 from specutils import Spectrum1D  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -254,6 +253,73 @@ class Fitted(Spectrum):
 
         return d
 
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.uids=},{self.method=})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return f"AmesPAHdbPythonSuite Fitted instance.\n" f"{self.uids=}"
+
+    def write(self, filename: str = "") -> None:
+        """
+        Write the fitted spectra to file as an IPAC-table.
+
+        """
+        import sys
+        import datetime
+        from astropy.io import ascii  # type: ignore
+        from astropy.table import Table  # type: ignore
+
+        if filename == "":
+            filename = self.__class__.__name__ + ".tbl"
+
+        hdr = list()
+
+        kv = {
+            "DATE": datetime.datetime.now()
+            .astimezone()
+            .replace(microsecond=0)
+            .isoformat(),
+            "ORIGIN": "NASA Ames Research Center",
+            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "SOFTWARE": "AmesPAHdbPythonSuite",
+            "AUTHOR": "Dr. C. Boersma",
+            "TYPE": self.__class__.__name__.upper(),
+            "SPECIES": str(len(self.data)),
+        }
+
+        for key, value in kv.items():
+            if not value.isnumeric():
+                hdr.append(f"{key:8} = '{value}'")
+            else:
+                hdr.append(f"{key:8} = {value}")
+
+        tbl = Table(
+            [
+                [uid for uid, v in self.data.items() for _ in v],
+                np.array([f for _ in self.data.values() for f in self.grid])
+                * self.units["abscissa"]["unit"],
+                np.array([t for v in self.data.values() for t in v])
+                * self.units["ordinate"]["unit"],
+                np.array(
+                    [self.weights[uid] for uid, v in self.data.items() for _ in v]
+                ),
+            ],
+            names=["UID", "FREQUENCY", "INTENSITY", "WEIGHT"],
+            meta={"comments": hdr},
+        )
+
+        ascii.write(tbl, filename, format="ipac", overwrite=True)
+
+        message(f"WRITTEN: {filename}")
+
     def getmethod(self) -> str:
         """
         Retrieves the method used for the fit.
@@ -332,66 +398,6 @@ class Fitted(Spectrum):
             nbins = int(np.ceil(2.0 * len(self.uids) ** (1.0 / 3.0)))
 
         return np.histogram(nc, bins=nbins, weights=list(self.weights.values()))
-
-    def write(self, prefix: str = "") -> None:
-        """
-        Retrieve fitted PAH properties and write to file.
-
-        """
-
-        if not len(self.atoms):
-            self._atoms()
-
-        # Retrieve properties
-        fweight = list(self.weights.values())
-        uids = self.uids
-        formula = [self.pahdb["species"][uid]["formula"] for uid in self.uids]
-        nc = [self.atoms[uid]["nc"] for uid in self.uids]
-        charge = [self.pahdb["species"][uid]["charge"] for uid in self.uids]
-        mweight = [self.pahdb["species"][uid]["weight"] for uid in self.uids]
-        nsolo = [self.pahdb["species"][uid]["n_solo"] for uid in self.uids]
-        nduo = [self.pahdb["species"][uid]["n_duo"] for uid in self.uids]
-        ntrio = [self.pahdb["species"][uid]["n_trio"] for uid in self.uids]
-        nquartet = [self.pahdb["species"][uid]["n_quartet"] for uid in self.uids]
-        nquintet = [self.pahdb["species"][uid]["n_quintet"] for uid in self.uids]
-
-        if prefix == "":
-            prefix = self.__class__.__name__
-
-        # Write to file.
-        filename = f"{prefix}_results.txt"
-        ascii.write(
-            [
-                uids,
-                formula,
-                nc,
-                charge,
-                mweight,
-                nsolo,
-                nduo,
-                ntrio,
-                nquartet,
-                nquintet,
-                fweight,
-            ],
-            filename,
-            names=[
-                "#UID",
-                "formula",
-                "Nc",
-                "charge",
-                "mweight",
-                "n_solo",
-                "n_duo",
-                "n_trio",
-                "n_quartet",
-                "n_quintet",
-                "fweight",
-            ],
-            overwrite=True,
-        )
-
-        message(f"WRITTEN: {filename}")
 
     def getclasses(self, **keywords) -> dict:
         """

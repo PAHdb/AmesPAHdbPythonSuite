@@ -11,8 +11,6 @@ from pkg_resources import resource_filename
 
 import matplotlib.pyplot as plt
 
-from astropy.io import ascii
-
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import observation, fitted
 
@@ -58,23 +56,9 @@ class TestFitted:
     def test_method(self, test_fitted):
         assert test_fitted.getmethod() == "NNLC"
 
-    def test_write(self, test_fitted, test_path):
-        test_fitted.write(test_path)
-        colnames = [
-            "UID",
-            "formula",
-            "Nc",
-            "charge",
-            "mweight",
-            "n_solo",
-            "n_duo",
-            "n_trio",
-            "n_quartet",
-            "n_quintet",
-            "fweight",
-        ]
-        f = ascii.read(f"{test_path}_results.txt")
-        assert f.colnames == colnames
+    def test_write_fitted(self, test_fitted, test_path):
+        test_fitted.write(f"{test_path}.tbl")
+        assert exists(f"{test_path}.tbl")
 
     def test_breakdown(self, test_fitted):
         assert list(test_fitted.getbreakdown().keys()) == [

@@ -6,6 +6,7 @@ Test the spectrum.py module.
 """
 
 import pytest
+from os.path import exists
 import numpy as np
 import matplotlib.pyplot as plt
 from pkg_resources import resource_filename
@@ -34,6 +35,12 @@ def test_transitions():
 @pytest.fixture(scope="module")
 def test_spectrum(test_transitions):
     return test_transitions.convolve(fwhm=15.0)
+
+
+@pytest.fixture(scope="module")
+def test_path(tmp_path_factory):
+    d = tmp_path_factory.mktemp("test_spectrum")
+    return f"{d}/result"
 
 
 class TestSpectrum:
@@ -117,3 +124,7 @@ class TestSpectrum:
         spec2.set(s1)
         s2 = spec2.get()
         assert s2["type"] == "Spectrum"
+
+    def test_write_spectrum(self, test_spectrum, test_path):
+        test_spectrum.write(f"{test_path}.tbl")
+        assert exists(f"{test_path}.tbl")

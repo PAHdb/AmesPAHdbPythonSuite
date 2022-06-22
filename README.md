@@ -18,6 +18,7 @@ This software requires:
 ``scipy``
 ``packaging``
 ``specutils``
+``vtk``
 
 ## Installation
 

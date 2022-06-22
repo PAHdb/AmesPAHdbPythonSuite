@@ -156,6 +156,20 @@ class Geometry(Data):
 
         return d
 
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.uids=})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return f"AmesPAHdbPythonSuite Geometry instance.\n" f"{self.uids=}"
+
     def plot(self, uid: list, **keywords) -> None:
         """
         Plot the structure
@@ -236,39 +250,173 @@ class Geometry(Data):
 
     def structure(self, uid: list, **keywords) -> None:
         """
-        Draw the 3D structure.
+        Render the 3D structure.
+
         """
 
-        import matplotlib.pyplot as plt  # type: ignore
-
-        # from mpl_toolkits.mplot3d import Axes3D
-
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection="3d")
-        ax.scatter3D(
-            [d["x"] for d in self.data[uid] if d["type"] == 1],
-            [d["y"] for d in self.data[uid] if d["type"] == 1],
-            [d["z"] for d in self.data[uid] if d["type"] == 1],
-            s=20,
-            c="#ffffff",
+        import vtkmodules.vtkInteractionStyle  # type:  ignore
+        import vtkmodules.vtkRenderingOpenGL2  # type:  ignore # noqa:  F401
+        from vtk import vtkTransform  # type:  ignore
+        from vtkmodules.vtkFiltersSources import (  # type:  ignore
+            vtkCylinderSource,
+            vtkSphereSource,
         )
-        ax.scatter3D(
-            [d["x"] for d in self.data[uid] if d["type"] == 6],
-            [d["y"] for d in self.data[uid] if d["type"] == 6],
-            [d["z"] for d in self.data[uid] if d["type"] == 6],
-            s=60,
-            c="#000000",
-        )
+        from vtkmodules.vtkRenderingCore import (  # type:  ignore
+            vtkRenderWindow,
+            vtkActor,
+            vtkPolyDataMapper,
+            vtkRenderer,
+            vtkRenderWindowInteractor,
+            vtkWindowToImageFilter,
+        )  # type:  ignore
+        from vtkmodules.vtkIOImage import vtkPNGWriter  # type:  ignore
 
-        plt.axis("off")
+        atom_colors = {
+            1: [0.78, 0.78, 0.78],
+            6: [0.11, 0.11, 0.11],
+            7: [1.0, 0.0, 0.0],
+            8: [0.0, 0.0, 1.0],
+            12: [0.0, 1.0, 1.0],
+            14: [1.0, 0.0, 0.0],
+            26: [0.0, 1.0, 0.0],
+        }
+
+        atom_radii = {1: 0.25, 6: 0.5, 7: 0.75, 8: 0.75, 12: 0.875, 14: 1, 26: 1}
+
+        scale = keywords.get("scale", 1.0)
+        for number in atom_radii:
+            atom_radii[number] *= scale
+
+        g = self.data[uid]
+        ng = len(g)
+
+        numn = np.zeros(ng, dtype=int)
+        nlist = np.full((ng, 6), -1, dtype=int)
+
+        px = np.array([g["x"] for g in self.data[uid]])
+        py = np.array([g["y"] for g in self.data[uid]])
+        pz = np.array([g["z"] for g in self.data[uid]])
+        pt = np.array([g["type"] for g in self.data[uid]])
+
+        for x, y, z, i in zip(px, py, pz, range(ng)):
+            dd = np.sqrt((px - x) ** 2 + (py - y) ** 2 + (pz - z) ** 2)
+            sel = np.where((dd < 1.6))
+            nsel = len(sel[0])
+            numn[i] = nsel
+            if nsel == 0:
+                continue
+            if nsel > 6:
+                ii = np.argsort(dd[sel])
+                sel = tuple([sel[0][ii[0:5]]])
+                nsel = 6
+
+            nlist[i, 0:nsel] = sel[0]
+
+        actors = list()
+
+        for x, y, z, t, i in zip(px, py, pz, pt, range(ng)):
+            for j in range(numn[i]):
+                numn[nlist[i, j]] -= 1
+                if numn[nlist[i, j]] > 0:
+                    nlist[nlist[i, j], np.where(nlist[nlist[i, j], :] == i)[0]] = -1
+                    nlist[nlist[i, j], :] = nlist[
+                        nlist[i, j], np.argsort(nlist[nlist[i, j], :])[::-1]
+                    ]
+
+                if nlist[i, j] < 0:
+                    continue
+
+                vec = np.array(
+                    (x - px[nlist[i, j]], y - py[nlist[i, j]], z - pz[nlist[i, j]])
+                )
+
+                norm = np.linalg.norm(vec)
+
+                cylinder = vtkCylinderSource()
+                cylinder.SetResolution(32)
+                cylinder.SetRadius(0.1)
+                cylinder.SetHeight(norm)
+                cylinderMapper = vtkPolyDataMapper()
+                cylinderMapper.SetInputConnection(cylinder.GetOutputPort())
+                cylinderActor = vtkActor()
+                cylinderActor.SetMapper(cylinderMapper)
+                if t == 1 or pt[nlist[i, j]] == 1:
+                    cylinderActor.GetProperty().SetColor(0.78, 0.78, 0.78)
+                else:
+                    cylinderActor.GetProperty().SetColor(0.11, 0.11, 0.11)
+                cylinderTransform = vtkTransform()
+                cylinderTransform.Identity()
+                cylinderTransform.PostMultiply()
+                cylinderTransform.Translate(0.0, norm / 2.0, 0.0)
+                cylinderTransform.RotateX(90.0)
+                angle = 0.0
+                if norm != 0.0:
+                    angle = 180.0 * np.arccos(-vec[2] / norm) / np.pi
+                    if angle == 180.0:
+                        cylinderTransform.Translate(0.0, 0.0, -norm)
+                cylinderTransform.RotateWXYZ(angle, vec[1], -vec[0], 0.0)
+                cylinderTransform.Translate(x, y, z)
+                cylinderActor.SetUserTransform(cylinderTransform)
+                actors.append(cylinderActor)
+
+        if not keywords.get("frame", False):
+            for x, y, z, t in zip(px, py, pz, pt):
+                sphere = vtkSphereSource()
+                sphere.SetThetaResolution(32)
+                sphere.SetPhiResolution(32)
+                sphere.SetCenter(x, y, z)
+                sphere.SetRadius(atom_radii[t])
+                sphereMapper = vtkPolyDataMapper()
+                sphereMapper.SetInputConnection(sphere.GetOutputPort())
+                sphereActor = vtkActor()
+                sphereActor.SetMapper(sphereMapper)
+                sphereActor.GetProperty().SetColor(atom_colors[t])
+
+                sphereActor.GetProperty().SetSpecular(0.25)
+
+                actors.append(sphereActor)
+
+        renderer = vtkRenderer()
+        renderer.SetBackground(0.24, 0.24, 0.24)
+
+        for actor in actors:
+            renderer.AddActor(actor)
+
+        renderWindow = vtkRenderWindow()
+        if not keywords.get("show", False):
+            renderWindow.SetOffScreenRendering(True)
+            if keywords.get("transparent", False):
+                renderWindow.AlphaBitPlanesOn()
+        else:
+            renderWindow.SetWindowName(self.__class__.__name__)
+            interactor = vtkRenderWindowInteractor()
+            interactor.SetRenderWindow(renderWindow)
+
+        renderWindow.AddRenderer(renderer)
+        renderWindow.SetSize(1024, 1024)
+
+        renderWindow.Render()
+        if renderWindow.GetAlphaBitPlanes() == 0 and keywords.get("transparent", False):
+            message("TRANSPARENCY NOT SUPPORTED")
 
         basename = keywords.get("save")
         if basename:
             if not isinstance(basename, str):
-                basename = "laboratory"
-            plt.savefig(f"{basename}.pdf")
-        elif keywords.get("show", False):
-            plt.show()
+                basename = "structure"
+            windowToImageFilter = vtkWindowToImageFilter()
+            windowToImageFilter.SetInput(renderWindow)
+            if keywords.get("transparent", False):
+                windowToImageFilter.SetInputBufferTypeToRGBA()
+            windowToImageFilter.SetScale(1)
+            windowToImageFilter.Update()
+            writer = vtkPNGWriter()
+            writer.SetInputConnection(windowToImageFilter.GetOutputPort())
+            writer.SetFileName(f"{basename}.png")
+            writer.Write()
+
+        if keywords.get("show", False):
+            interactor.Initialize()
+            interactor.Start()
 
     def inertia(self) -> dict:
         """
@@ -761,7 +909,7 @@ class Geometry(Data):
         boundary_carbons.append(boundary_carbons[0])
         return (boundary_carbons, becode)
 
-    def __indicator(self, v1, v2, normal):
+    def __indicator(self, v1, v2, normal) -> float:
         """Returns the sign of normal dot (v1 cross v2) assuming that these
         are 3-element sequences of some kind. By Dr. Joseph E. Roser
         <Joseph.E.Roser@nasa.gov
@@ -773,7 +921,7 @@ class Geometry(Data):
         value += normal[2] * (v1[0] * v2[1] - v1[1] * v2[0])
         return np.sign(value)
 
-    def __pcone_to_be(self, pcone_code):
+    def __pcone_to_be(self, pcone_code) -> str:
         """Converts the PC-1 code of a PAH to its boundary-edge code.  By
         Dr. Joseph E. Roser <Joseph.E.Roser@nasa.gov
 

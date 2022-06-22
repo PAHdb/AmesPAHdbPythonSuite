@@ -7,6 +7,7 @@ Test the transitions.py module.
 
 import numpy as np
 import pytest
+from os.path import exists
 from pkg_resources import resource_filename
 import matplotlib.pyplot as plt
 
@@ -48,6 +49,12 @@ def test_spec():
     return spec1, spec2, spec3
 
 
+@pytest.fixture(scope="module")
+def test_path(tmp_path_factory):
+    d = tmp_path_factory.mktemp("test_transitions")
+    return f"{d}/result"
+
+
 class TestTransitions:
     """
     Test Transitions class.
@@ -67,7 +74,7 @@ class TestTransitions:
 
     def test_set_database_mismatch(self, capsys, pahdb_theoretical):
         transitions.Transitions(
-            type="invalid",
+            database="invalid",
             version=pahdb_theoretical.getversion(),
             pahdb=pahdb_theoretical.getdatabaseref(),
         )
@@ -76,7 +83,7 @@ class TestTransitions:
 
     def test_set_version_mismatch(self, capsys, pahdb_theoretical):
         transitions.Transitions(
-            type="theoretical",
+            database="theoretical",
             version="9999",
             pahdb=pahdb_theoretical.getdatabaseref(),
         )
@@ -178,7 +185,10 @@ class TestTransitions:
         )
         np.testing.assert_allclose(test_spec[0], spec[18])
 
-    def test_plot_transitions(self, monkeypatch, pahdb_theoretical):
-        trans = pahdb_theoretical.gettransitionsbyuid([18])
+    def test_plot_transitions(self, monkeypatch, test_transitions):
         monkeypatch.setattr(plt, "show", lambda: None)
-        trans.plot(Show=True)
+        test_transitions.plot(Show=True)
+
+    def test_write_transitions(self, test_transitions, test_path):
+        test_transitions.write(f"{test_path}.tbl")
+        assert exists(f"{test_path}.tbl")

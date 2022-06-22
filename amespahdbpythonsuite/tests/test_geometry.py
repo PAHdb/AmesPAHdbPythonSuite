@@ -7,8 +7,8 @@ Test the geometry.py module.
 
 import pytest
 from pkg_resources import resource_filename
+from os.path import exists
 import matplotlib.pyplot as plt
-
 import numpy as np
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -26,6 +26,12 @@ def test_geometry():
     )
     g = db.getgeometrybyuid([18, 73, 726, 2054, 223])
     return g
+
+
+@pytest.fixture(scope="module")
+def test_path(tmp_path_factory):
+    d = tmp_path_factory.mktemp("test_geometry")
+    return f"{d}/result"
 
 
 @pytest.fixture(scope="module")
@@ -72,9 +78,12 @@ class TestGeometry:
         monkeypatch.setattr(plt, "show", lambda: None)
         test_geometry.plot(18, show=True)
 
-    def test_structure(self, monkeypatch, test_geometry):
-        monkeypatch.setattr(plt, "show", lambda: None)
-        test_geometry.structure(18, show=True)
+    def test_structure(self, test_geometry):
+        test_geometry.structure(18, show=False)
+
+    def test_structure_save(self, test_path, test_geometry):
+        test_geometry.structure(18, transparent=True, save=test_path)
+        assert exists(f"{test_path}.png")
 
     def test_mass(self, test_geometry, test_masses):
         assert test_geometry.mass() == test_masses

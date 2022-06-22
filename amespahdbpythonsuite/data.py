@@ -7,7 +7,7 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 message = AmesPAHdb.message
 
 
-class Data(object):
+class Data():
     """
     AmesPAHdbPythonSuite data class
 
@@ -36,8 +36,8 @@ class Data(object):
             # Check if expected keywords are present in provided dictionary,
             # otherwise assign them to instance variables.
             if d.get("type", "") == self.__class__.__name__:
-                if "type" not in keywords:
-                    self.type = d["database"]
+                if "database" not in keywords:
+                    self.database = d["database"]
                 if "version" not in keywords:
                     self.version = d["version"]
                 if "data" not in keywords:
@@ -49,7 +49,7 @@ class Data(object):
                 if "units" not in keywords:
                     self.units = d["units"]
 
-        self.type = keywords.get("type", "")
+        self.database = keywords.get("database", "")
         self.version = keywords.get("version", "")
         self.data = keywords.get("data", dict())
         self.pahdb = keywords.get("pahdb", None)
@@ -59,8 +59,8 @@ class Data(object):
 
         # Check for database and versioning mismatch between provided dictionary and parsed database.
         if self.pahdb:
-            if self.pahdb["database"] != self.type:
-                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
+            if self.pahdb["database"] != self.database:
+                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
                 return
 
             if self.pahdb["version"] != self.version:
@@ -74,13 +74,30 @@ class Data(object):
         """
         return {
             "type": self.__class__.__name__,
-            "database": self.type,
+            "database": self.database,
             "version": self.version,
             "data": self.data,
             "uids": self.uids,
             "model": self.model,
             "units": self.units,
         }
+
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.uids=},{self.database=},{self.version=},{self.model=})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return (
+            f"AmesPAHdbPythonSuite Data instance.\n"
+            f"UIDS: {self.uids=}"
+        )
 
     def getuids(self) -> list:
         """

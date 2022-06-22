@@ -6,6 +6,7 @@ Test the observation.py module.
 """
 
 import pytest
+from os.path import exists
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -21,6 +22,12 @@ def test_observation():
         "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
     )
     return observation.Observation(file)
+
+
+@pytest.fixture(scope="module")
+def test_path(tmp_path_factory):
+    d = tmp_path_factory.mktemp("test_observation")
+    return f"{d}/result"
 
 
 class TestObservation:
@@ -92,3 +99,7 @@ class TestObservation:
     def test_abscissaunitsto(self, test_observation):
         test_observation.abscissaunitsto("1/cm")
         assert test_observation.spectrum.spectral_axis.unit == "1/cm"
+
+    def test_write_transitions(self, test_observation, test_path):
+        test_observation.write(f"{test_path}.tbl")
+        assert exists(f"{test_path}.tbl")

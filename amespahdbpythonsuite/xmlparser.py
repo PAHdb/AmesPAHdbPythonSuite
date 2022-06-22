@@ -16,7 +16,8 @@ from lxml import etree  # type: ignore
 
 
 class XMLparser:
-    """Parse a NASA Ames PAH IR Spectroscopic library XML-file.
+    """
+    Parse a NASA Ames PAH IR Spectroscopic library XML-file.
 
     Optional behavior includes validating against a schema.
 
@@ -41,24 +42,31 @@ class XMLparser:
     """
 
     def __init__(self, filename: str = None, validate: bool = False) -> None:
-        """Inits XMLparser with schema checking off, no given filename."""
+        """
+        Inits XMLparser with schema checking off, no given filename.
+
+        """
         self.filename = filename
         self.validate = validate
         self.library = dict()  # type: dict
 
     def __repr__(self) -> str:
-        """Class representation."""
-        return f"{self.__class__.__name__}(" f"filename={self.filename!r}, "
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.filename=})"
 
     def __str__(self) -> str:
-        """A description of the object."""
-        return (
-            f"XML parser from the AmesPAHdbPythonSuite. "
-            f"XML file: \n{self.filename!r}."
-        )
+        """
+        A description of the instance.
+
+        """
+        return f"AmesPAHdbPythonSuite XML parser.\n" f"XML filename: {self.filename=}."
 
     def verify_schema(self) -> bool:
-        """Validate against linked schema.
+        """
+        Validate against linked schema.
 
         Note:
             Requires that self.filename is set.
@@ -98,7 +106,8 @@ class XMLparser:
         return True
 
     def to_pahdb_dict(self, validate: bool = False) -> dict:
-        """Parses the XML, with or without validation.
+        """
+        Parses the XML, with or without validation.
 
         Args:
             validate (bool). Defaults to self.valdiate value, but can be
@@ -124,7 +133,8 @@ class XMLparser:
         return self.library
 
     def _tree_to_pahdb_dict(self) -> dict:
-        """Convert the element tree to a a pahdb_dict.
+        """
+        Convert the element tree to a a pahdb_dict.
 
         Returns: library: Dictionary, with the UIDs as keys,
             containing the transitions, geometry data, as well as UID
@@ -150,7 +160,10 @@ class XMLparser:
         return self.library
 
     def _species_handler(self, context: Union[etree.iterwalk, etree.iterparse]) -> dict:
-        """Parse a PAHdb XML <species> tag."""
+        """
+        Parse a PAHdb XML <species> tag.
+
+        """
         species = dict()
 
         while True:
@@ -171,9 +184,14 @@ class XMLparser:
         return species
 
     def _specie_handler(self, context: Union[etree.iterwalk, etree.iterparse]) -> dict:
-        """Parse a PAHdb XML <specie> tag."""
+        """
+        Parse a PAHdb XML <specie> tag.
 
-        def specie_geometry_handler(context):
+        """
+
+        def specie_geometry_handler(
+            context: Union[etree.iterwalk, etree.iterparse]
+        ) -> list:
             """<specie> tag: Parse its child <geometry> tag."""
             geometry = list()
 
@@ -182,7 +200,7 @@ class XMLparser:
                 tag = etree.QName(elem).localname
 
                 if tag == "atom" and action == "start":
-                    atom_dict = dict()
+                    atom_dict = dict()  # type:  dict
 
                     while True:
                         action, elem = next(context)
@@ -212,7 +230,10 @@ class XMLparser:
         def specie_transitions_handler(
             context: Union[etree.iterwalk, etree.iterparse]
         ) -> list:
-            """<specie> tag: Parse its child <transitions> tag."""
+            """
+            <specie> tag: Parse its child <transitions> tag.
+
+            """
             transitions = list()
 
             while True:
@@ -256,7 +277,10 @@ class XMLparser:
         def specie_laboratory_handler(
             context: Union[etree.iterwalk, etree.iterparse]
         ) -> dict:
-            """<specie> tag: Parse its child <laboratory> tag."""
+            """
+            <specie> tag: Parse its child <laboratory> tag.
+
+            """
             laboratory = dict()
 
             while True:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from typing import Optional
+from __future__ import annotations
+from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 import multiprocessing
@@ -15,6 +16,10 @@ import astropy.units as u  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
+
+if TYPE_CHECKING:
+    from amespahdbpythonsuite.spectrum import Spectrum
+
 
 message = AmesPAHdb.message
 
@@ -42,7 +47,7 @@ class Transitions(Data):
     def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.
-        Checks type of database object (e.g., theoretical, experimental)
+        Checks flavor of the database, i.e., theoretical or experimental
 
         """
         Data.set(self, d, **keywords)
@@ -69,6 +74,71 @@ class Transitions(Data):
         d["type"] = self.__class__.__name__
         d["shift"] = self._shift
         return copy.deepcopy(d)
+
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.uids=},shift={self._shift})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+
+        """
+
+        return f"AmesPAHdbPythonSuite Transitions instance.\n" f"{self.uids=}"
+
+    def write(self, filename: str = "") -> None:
+        """
+        Write the transitions to file as an IPAC-table.
+
+        """
+        import sys
+        import datetime
+        from astropy.io import ascii  # type: ignore
+        from astropy.table import Table  # type: ignore
+
+        if filename == "":
+            filename = self.__class__.__name__ + ".tbl"
+
+        hdr = list()
+
+        kv = {
+            "DATE": datetime.datetime.now()
+            .astimezone()
+            .replace(microsecond=0)
+            .isoformat(),
+            "ORIGIN": "NASA Ames Research Center",
+            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "SOFTWARE": "AmesPAHdbPythonSuite",
+            "AUTHOR": "Dr. C. Boersma",
+            "TYPE": self.__class__.__name__.upper(),
+            "SPECIES": str(len(self.data)),
+        }
+
+        for key, value in kv.items():
+            if not value.isnumeric():
+                hdr.append(f"{key:8} = '{value}'")
+            else:
+                hdr.append(f"{key:8} = {value}")
+
+        tbl = Table(
+            [
+                [uid for uid, v in self.data.items() for _ in v],
+                np.array([t["frequency"] for v in self.data.values() for t in v])
+                * self.units["abscissa"]["unit"],
+                np.array([t["intensity"] for v in self.data.values() for t in v])
+                * self.units["ordinate"]["unit"],
+            ],
+            names=["UID", "FREQUENCY", "INTENSITY"],
+            meta={"comments": hdr},
+        )
+
+        ascii.write(tbl, filename, format="ipac", overwrite=True)
+
+        message(f"WRITTEN: {filename}")
 
     def shift(self, shift: float) -> None:
         """
@@ -130,7 +200,7 @@ class Transitions(Data):
         :type e: float
 
         """
-        if self.type != "theoretical":
+        if self.database != "theoretical":
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
 
@@ -247,7 +317,7 @@ class Transitions(Data):
         :type: float
 
         """
-        if self.type != "theoretical":
+        if self.database != "theoretical":
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
 
@@ -280,7 +350,7 @@ class Transitions(Data):
         if keywords.get("multiprocessing", True):
             cascade_em_model = partial(self._cascade_em_model, e)
             ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
-            print(f"Using multiprocessing module with {ncores} cores")
+            message(f"USING MULTIPROCESSING WITH {ncores} CORES")
             pool = multiprocessing.Pool(processes=ncores)
             data, temp = zip(*pool.map(cascade_em_model, self.uids))
             pool.close()
@@ -370,7 +440,7 @@ class Transitions(Data):
         param uid: Single UID value
         type uid: int
 
-        return ud : Dictionary of convolutged intensities for the given UID.
+        return ud : Dictionary of convoluted intensities for the given UID.
         rtype: dict
 
         """
@@ -390,11 +460,12 @@ class Transitions(Data):
         ud = {uid: s}
         return ud
 
-    def convolve(self, **keywords):
+    def convolve(self, **keywords) -> Spectrum:
         """
         Convolve transitions with a line profile.
         Calls class:
-        :class:`amespahdbpythonsuite.spectrum.Spectrum` to retrieve the respective object.
+        :class:`amespahdbpythonsuite.spectrum.Spectrum` to retrieve the
+        respective instance.
 
         """
 
@@ -437,7 +508,9 @@ class Transitions(Data):
 
         d = dict()
 
-        if keywords.get("multiprocessing", True):
+        if keywords.get("multiprocessing", True) and len(self.data) > (
+            multiprocessing.cpu_count() - 1
+        ):
             get_intensities = partial(
                 self._get_intensities,
                 npoints,
@@ -450,7 +523,7 @@ class Transitions(Data):
                 keywords.get("drude", False),
             )
             ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
-            print(f"Using multiprocessing module with {ncores} cores")
+            message(f"USING MULTIPROCESSING WITH {ncores} CORES")
             pool = multiprocessing.Pool(processes=ncores)
             data = pool.map(get_intensities, self.uids)
 
@@ -504,7 +577,7 @@ class Transitions(Data):
         from amespahdbpythonsuite.spectrum import Spectrum
 
         return Spectrum(
-            type=self.type,
+            database=self.database,
             version=self.version,
             data=d,
             pahdb=self.pahdb,

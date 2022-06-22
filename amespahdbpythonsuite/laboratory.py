@@ -5,6 +5,9 @@ from typing import Optional
 import numpy as np
 
 from amespahdbpythonsuite.data import Data
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
+
+message = AmesPAHdb.message
 
 
 class Laboratory(Data):
@@ -34,6 +37,70 @@ class Laboratory(Data):
         d["type"] = self.__class__.__name__
 
         return d
+
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.uids=})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return f"AmesPAHdbPythonSuite Laboratory instance.\n" f"{self.uids=}"
+
+    def write(self, filename: str = "") -> None:
+        """
+        Write the laboratory spectra to file as an IPAC-table.
+
+        """
+        import sys
+        import datetime
+        from astropy.io import ascii  # type: ignore
+        from astropy.table import Table  # type: ignore
+
+        if filename == "":
+            filename = self.__class__.__name__ + ".tbl"
+
+        hdr = list()
+
+        kv = {
+            "DATE": datetime.datetime.now()
+            .astimezone()
+            .replace(microsecond=0)
+            .isoformat(),
+            "ORIGIN": "NASA Ames Research Center",
+            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "SOFTWARE": "AmesPAHdbPythonSuite",
+            "AUTHOR": "Dr. C. Boersma",
+            "TYPE": self.__class__.__name__.upper(),
+            "SPECIES": str(len(self.data)),
+        }
+
+        for key, value in kv.items():
+            if not value.isnumeric():
+                hdr.append(f"{key:8} = '{value}'")
+            else:
+                hdr.append(f"{key:8} = {value}")
+
+        tbl = Table(
+            [
+                [uid for uid, v in self.data.items() for _ in v["frequency"]],
+                np.array([f for v in self.data.values() for f in v["frequency"]])
+                * self.units["abscissa"]["unit"],
+                np.array([t for v in self.data.values() for t in v["intensity"]])
+                * self.units["ordinate"]["unit"],
+            ],
+            names=["UID", "FREQUENCY", "INTENSITY"],
+            meta={"comments": hdr},
+        )
+
+        ascii.write(tbl, filename, format="ipac", overwrite=True)
+
+        message(f"WRITTEN: {filename}")
 
     def plot(self, **keywords) -> None:
         """

@@ -6,6 +6,7 @@ Test the coadded.py module.
 """
 
 import pytest
+from os.path import exists
 import numpy as np
 import matplotlib.pyplot as plt
 from pkg_resources import resource_filename
@@ -36,6 +37,12 @@ def test_coadded():
     return spec.coadd(weights={18: 1.0, 73: 2.0}, average=True)
 
 
+@pytest.fixture(scope="module")
+def test_path(tmp_path_factory):
+    d = tmp_path_factory.mktemp("test_coadded")
+    return f"{d}/result"
+
+
 class TestCoadded:
     """
     Test Coadded class.
@@ -56,3 +63,7 @@ class TestCoadded:
         coadded2.set(c1)
         c2 = coadded2.get()
         assert c2["type"] == "Coadded"
+
+    def test_write_coadded(self, test_coadded, test_path):
+        test_coadded.write(f"{test_path}.tbl")
+        assert exists(f"{test_path}.tbl")

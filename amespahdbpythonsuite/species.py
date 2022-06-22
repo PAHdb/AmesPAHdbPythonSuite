@@ -30,8 +30,8 @@ class Species:
         """
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
-                if "type" not in keywords:
-                    self.type = d["database"]
+                if "database" not in keywords:
+                    self.database = d["database"]
                 if "version" not in keywords:
                     self.version = d["version"]
                 if "data" not in keywords:
@@ -39,16 +39,16 @@ class Species:
                 if "uids" not in keywords:
                     self.uids = d["uids"]
 
-        self.type = keywords.get("type", "")
+        self.database = keywords.get("database", "")
         self.version = keywords.get("version", "")
         self.data = keywords.get("data", dict())
         self.pahdb = keywords.get("pahdb", None)
         self.uids = keywords.get("uids", list())
 
         if self.pahdb:
-            if self.pahdb["database"] != self.type:
+            if self.pahdb["database"] != self.database:
 
-                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.type}')
+                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
                 return
 
             if self.pahdb["version"] != self.version:
@@ -63,11 +63,28 @@ class Species:
         """
         return {
             "type": self.__class__.__name__,
-            "database": self.type,
+            "database": self.database,
             "version": self.version,
             "data": self.data,
             "uids": self.uids,
         }
+
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return (
+            f"{self.__class__.__name__}("
+            f"{self.uids=},{self.database=},{self.version=})"
+        )
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return f"AmesPAHdbPythonSuite Species instance.\n" f"{self.uids=}"
 
     def getuids(self) -> list:
         """
@@ -127,16 +144,16 @@ class Species:
 
     def transitions(self) -> transitions.Transitions:
         """
-        Return transitions object.
+        Return transitions instance.
         Calls the :class:`amespahdbpythonsuite.transitions.Transitions` class.
 
         Returns:
-            transitions object
+            transitions instance
 
         """
 
         return transitions.Transitions(
-            type=self.type,
+            database=self.database,
             version=self.version,
             data=self.__getkey("transitions"),
             pahdb=self.pahdb,
@@ -150,16 +167,16 @@ class Species:
 
     def geometry(self) -> geometry.Geometry:
         """
-        Return geometry object.
+        Return geometry instance.
         Calls the :class:`amespahdbpythonsuite.geometry.Geometry` class.
 
         Returns:
-            geometry object
+            geometry instance
 
         """
 
         return geometry.Geometry(
-            type=self.type,
+            database=self.database,
             version=self.version,
             data=self.__getkey("geometry"),
             pahdb=self.pahdb,
@@ -168,11 +185,11 @@ class Species:
 
     def laboratory(self) -> Optional[laboratory.Laboratory]:
         """
-        Return laboratory object.
+        Return laboratory instance.
         Calls the :class:`amespahdbpythonsuite.laboratory.Laboratory` class.
 
         Returns:
-            laboratory object
+            laboratory instance
 
         """
 
@@ -181,7 +198,7 @@ class Species:
             return None
 
         return laboratory.Laboratory(
-            type=self.type,
+            database=self.database,
             version=self.version,
             data=self.__getkey("laboratory"),
             pahdb=self.pahdb,

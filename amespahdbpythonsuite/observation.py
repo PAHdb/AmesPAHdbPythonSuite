@@ -62,6 +62,68 @@ class Observation:
 
         return d
 
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.filepath=})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return f"AmesPAHdbPythonSuite Observation instance.\n" f"{self.filepath=}"
+
+    def write(self, filename: str = "") -> None:
+        """
+        Write the spectrum to file as an IPAC-table.
+
+        """
+        import sys
+        import datetime
+        from astropy.table import Table  # type: ignore
+
+        if filename == "":
+            filename = self.__class__.__name__ + ".tbl"
+
+        hdr = list()
+
+        kv = {
+            "DATE": datetime.datetime.now()
+            .astimezone()
+            .replace(microsecond=0)
+            .isoformat(),
+            "ORIGIN": "NASA Ames Research Center",
+            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "SOFTWARE": "AmesPAHdbPythonSuite",
+            "AUTHOR": "Dr. C. Boersma",
+            "TYPE": self.__class__.__name__.upper(),
+        }
+
+        for key, value in kv.items():
+            if not value.isnumeric():
+                hdr.append(f"{key:8} = '{value}'")
+            else:
+                hdr.append(f"{key:8} = {value}")
+
+        tbl = Table(
+            [
+                self.spectrum.spectral_axis.quantity,
+                self.spectrum.flux,
+            ],
+            names=["ABSCISSA", "ORDINATE"],
+            meta={"comments": hdr},
+        )
+
+        if self.spectrum.uncertainty:
+            tbl.add_column(self.spectrum.uncertainty.quantity, name="UNCERTAINTY")
+
+        ascii.write(tbl, filename, format="ipac", overwrite=True)
+
+        message(f"WRITTEN: {filename}")
+
     def plot(self, **keywords) -> None:
         """
         Plot the spectrum.
@@ -140,13 +202,13 @@ class Observation:
                     if "PS3_0" in hdu_keys and "PS3_1" in hdu_keys:
                         self.header = h.header
 
-                        # Create WCS object.
+                        # Create WCS instance.
                         # self.wcs = wcs.WCS(hdu[0].header, naxis=2)
 
                         h0 = self.header["PS3_0"]
                         h1 = self.header["PS3_1"]
 
-                        # Create Spectrum1D object.
+                        # Create Spectrum1D instance.
                         flux = h.data.T * u.Unit(h.header["BUNIT"])
                         wave = hdu[h0].data[h1] * u.Unit(hdu[h0].columns[h1].unit)
                         self.spectrum = Spectrum1D(flux, spectral_axis=wave)
@@ -159,10 +221,10 @@ class Observation:
 
                         self.header = h.header
 
-                        # Create WCS object
+                        # Create WCS instance
                         # self.wcs = wcs.WCS(hdu[0].header, naxis=2)
 
-                        # Create Spectrum1D object
+                        # Create Spectrum1D instance
                         # u.Unit(self.header['BUNIT'])
                         flux = h.data.T * u.Unit("Jy")
                         wave = (
@@ -187,7 +249,7 @@ class Observation:
             unc = None
             if "FLUX_UNCERTAINTY" in data.colnames:
                 unc = StdDevUncertainty(data["FLUX_UNCERTAINTY"].quantity)
-            # Create Spectrum1D object.
+            # Create Spectrum1D instance.
             self.spectrum = Spectrum1D(
                 flux=data["FLUX"].quantity,
                 spectral_axis=data["WAVELENGTH"].quantity,

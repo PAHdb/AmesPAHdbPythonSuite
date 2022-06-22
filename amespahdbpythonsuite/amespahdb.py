@@ -33,7 +33,7 @@ class AmesPAHdb:
     :class:`amespahdbpythonsuite.laboratory.Laboratory`,
     :class:`amespahdbpythonsuite.species.Species`,
     :class:`amespahdbpythonsuite.geometry.Geometry`,
-    to retrieve the respective objects.
+    to retrieve the respective instances.
 
     """
 
@@ -188,13 +188,27 @@ class AmesPAHdb:
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
 
             info = [
-                f"FILENAME                    : {filename}",
+                f'FILENAME                    : {self.__data["filename"]}',
                 f"PARSE TIME                  : {elapsed}",
                 f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
                 f'COMMENT                     : {self.__data["comment"]}',
             ]
 
             self.message(info, space=0)
+
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"filename={self.__data['filename']})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return "AmesPAHdbPythonSuite AmesPAHdb instance."
 
     def __getkeybyuids(self, key: str, uids: list) -> dict:
         """
@@ -231,7 +245,7 @@ class AmesPAHdb:
 
     def gettransitionsbyuid(self, uids: list):
         """
-        Retrieve and return transitions object based on UIDs input.
+        Retrieve and return transitions instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
         Calls the :class:`amespahdbpythonsuite.transitions.Transitions` class.
 
@@ -240,7 +254,7 @@ class AmesPAHdb:
                 List of UIDs.
 
         Returns:
-            transitions object
+            transitions instance
 
         """
 
@@ -250,7 +264,7 @@ class AmesPAHdb:
         from amespahdbpythonsuite import transitions
 
         return transitions.Transitions(
-            type=self.__data["database"],
+            database=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("transitions", uids),
             pahdb=self.__data,
@@ -267,7 +281,7 @@ class AmesPAHdb:
 
     def getlaboratorybyuid(self, uids: list):
         """
-        Retrieve and return laboratory database object based on UIDs input.
+        Retrieve and return laboratory database instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
         Calls the :class:`amespahdbpythonsuite.laboratory.Laboratory` class.
 
@@ -276,7 +290,7 @@ class AmesPAHdb:
                 List of UIDs.
 
         Returns:
-            laboratory database object
+            laboratory database instance
 
         """
 
@@ -291,7 +305,7 @@ class AmesPAHdb:
         from amespahdbpythonsuite import laboratory
 
         return laboratory.Laboratory(
-            type=self.__data["database"],
+            database=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("laboratory", uids),
             pahdb=self.__data,
@@ -312,7 +326,7 @@ class AmesPAHdb:
 
     def getspeciesbyuid(self, uids: list):
         """
-        Retrieve and return species object based on UIDs input.
+        Retrieve and return species instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
         Calls the :class:`amespahdbpythonsuite.species.Species` class.
 
@@ -321,7 +335,7 @@ class AmesPAHdb:
                 List of UIDs.
 
         Returns:
-            species object
+            species instance
 
         """
 
@@ -331,7 +345,7 @@ class AmesPAHdb:
         from amespahdbpythonsuite import species
 
         return species.Species(
-            type=self.__data["database"],
+            database=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("species", uids),
             pahdb=self.__data,
@@ -342,7 +356,7 @@ class AmesPAHdb:
 
     def getgeometrybyuid(self, uids: list):
         """
-        Retrieve and return geometry object based on UIDs input.
+        Retrieve and return geometry instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
         Calls the :class:`amespahdbpythonsuite.geometry.Geometry` class
         and :meth:`amespahdbpythonsuite.amespahdb.__getkeybyuids` method.
@@ -352,7 +366,7 @@ class AmesPAHdb:
                 List of UIDs.
 
         Returns:
-            geometry object
+            geometry instance
 
         """
 
@@ -362,7 +376,7 @@ class AmesPAHdb:
         from amespahdbpythonsuite import geometry
 
         return geometry.Geometry(
-            type=self.__data["database"],
+            database=self.__data["database"],
             version=self.__data["version"],
             data=self.__getkeybyuids("geometry", uids),
             pahdb=self.__data,

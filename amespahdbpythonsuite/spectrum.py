@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from typing import Optional, Union
+from __future__ import annotations
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 
@@ -11,6 +12,11 @@ from scipy import optimize  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.transitions import Transitions
+
+if TYPE_CHECKING:
+    from amespahdbpythonsuite.coadded import Coadded
+    from amespahdbpythonsuite.fitted import Fitted
+
 
 message = AmesPAHdb.message
 
@@ -26,7 +32,7 @@ class Spectrum(Transitions):
         super().__init__(d, **keywords)
         self.__set(d, **keywords)
 
-    def set(self, d, **keywords):
+    def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.set` to parse keywords.
 
@@ -66,7 +72,74 @@ class Spectrum(Transitions):
 
         return d
 
-    def fit(self, y: list, yerr: list = [], notice: bool = True, **keywords):
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return (
+            f"{self.__class__.__name__}("
+            f"{self.uids=},{self.grid=},{self.profile=},{self.fwhm=})"
+        )
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return f"AmesPAHdbPythonSuite Spectrum instance.\n" f"{self.uids=}"
+
+    def write(self, filename: str = "") -> None:
+        """
+        Write the spectra to file as an IPAC-table.
+
+        """
+        import sys
+        import datetime
+        from astropy.io import ascii  # type: ignore
+        from astropy.table import Table  # type: ignore
+
+        if filename == "":
+            filename = self.__class__.__name__ + ".tbl"
+
+        hdr = list()
+
+        kv = {
+            "DATE": datetime.datetime.now()
+            .astimezone()
+            .replace(microsecond=0)
+            .isoformat(),
+            "ORIGIN": "NASA Ames Research Center",
+            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "SOFTWARE": "AmesPAHdbPythonSuite",
+            "AUTHOR": "Dr. C. Boersma",
+            "TYPE": self.__class__.__name__.upper(),
+            "SPECIES": str(len(self.data)),
+        }
+
+        for key, value in kv.items():
+            if not value.isnumeric():
+                hdr.append(f"{key:8} = '{value}'")
+            else:
+                hdr.append(f"{key:8} = {value}")
+
+        tbl = Table(
+            [
+                [uid for uid, v in self.data.items() for _ in v],
+                np.array([f for _ in self.data.values() for f in self.grid])
+                * self.units["abscissa"]["unit"],
+                np.array([t for v in self.data.values() for t in v])
+                * self.units["ordinate"]["unit"],
+            ],
+            names=["UID", "FREQUENCY", "INTENSITY"],
+            meta={"comments": hdr},
+        )
+
+        ascii.write(tbl, filename, format="ipac", overwrite=True)
+
+        message(f"WRITTEN: {filename}")
+
+    def fit(self, y: list, yerr: list = [], notice: bool = True, **keywords) -> Fitted:
         """
         Fits the input spectrum.
 
@@ -138,7 +211,7 @@ class Spectrum(Transitions):
         from amespahdbpythonsuite.fitted import Fitted
 
         return Fitted(
-            type=self.type,
+            database=self.database,
             version=self.version,
             data=data,
             pahdb=self.pahdb,
@@ -204,7 +277,7 @@ class Spectrum(Transitions):
         elif keywords.get("show", False):
             plt.show()
 
-    def coadd(self, weights: list = [], average: bool = False):
+    def coadd(self, weights: list = [], average: bool = False) -> Coadded:
         """
         Co-add PAHdb spectra.
 
@@ -231,7 +304,7 @@ class Spectrum(Transitions):
         from amespahdbpythonsuite.coadded import Coadded
 
         return Coadded(
-            type=self.type,
+            database=self.database,
             version=self.version,
             data={0: data},
             pahdb=self.pahdb,

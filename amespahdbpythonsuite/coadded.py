@@ -4,7 +4,10 @@ from typing import Optional
 
 import numpy as np
 
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.spectrum import Spectrum
+
+message = AmesPAHdb.message
 
 
 class Coadded(Spectrum):
@@ -53,6 +56,68 @@ class Coadded(Spectrum):
         d["averaged"] = self.averaged
 
         return d
+
+    def __repr__(self) -> str:
+        """
+        Class representation.
+
+        """
+        return f"{self.__class__.__name__}(" f"{self.uids=})"
+
+    def __str__(self) -> str:
+        """
+        A description of the instance.
+        """
+
+        return f"AmesPAHdbPythonSuite Coadded instance.\n" f"{self.uids=}"
+
+    def write(self, filename: str = "") -> None:
+        """
+        Write the coadded spectrum to file as an IPAC-table.
+
+        """
+        import sys
+        import datetime
+        from astropy.io import ascii  # type: ignore
+        from astropy.table import Table  # type: ignore
+
+        if filename == "":
+            filename = self.__class__.__name__ + ".tbl"
+
+        hdr = list()
+
+        kv = {
+            "DATE": datetime.datetime.now()
+            .astimezone()
+            .replace(microsecond=0)
+            .isoformat(),
+            "ORIGIN": "NASA Ames Research Center",
+            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "SOFTWARE": "AmesPAHdbPythonSuite",
+            "AUTHOR": "Dr. C. Boersma",
+            "TYPE": self.__class__.__name__.upper(),
+        }
+
+        for key, value in kv.items():
+            if not value.isnumeric():
+                hdr.append(f"{key:8} = '{value}'")
+            else:
+                hdr.append(f"{key:8} = {value}")
+
+        tbl = Table(
+            [
+                np.array([f for _ in self.data.values() for f in self.grid])
+                * self.units["abscissa"]["unit"],
+                np.array([t for v in self.data.values() for t in v])
+                * self.units["ordinate"]["unit"],
+            ],
+            names=["FREQUENCY", "INTENSITY"],
+            meta={"comments": hdr},
+        )
+
+        ascii.write(tbl, filename, format="ipac", overwrite=True)
+
+        message(f"WRITTEN: {filename}")
 
     def plot(self, **keywords):
         """
