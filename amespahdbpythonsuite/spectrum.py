@@ -366,3 +366,68 @@ class Spectrum(Transitions):
             self.data[uid] = s.flux.value
 
         self.grid = grid
+
+    def mcfit(self, obs, nsamples, **keywords):
+        """
+        Perform Monte Carlo sampling and fit the spectrum.
+
+        Properties
+        ----------
+        obs : observations object
+
+        nsamples : Number of samples.
+            int
+
+        """
+        # Initialize lists and dictionaries.
+        import mcfitted
+
+        fits = []
+        classes = []
+        weights = []
+        results = {'solo': [],
+                   'duo': [],
+                   'trio': [],
+                   'quartet': [],
+                   'quintet': [],
+                   'avg_solo': [],
+                   'avg_duo': [],
+                   'avg_trio': [],
+                   'avg_quartet': [],
+                   'avg_quintet': [],
+                   'anion': [],
+                   'neutral': [],
+                   'cation': [],
+                   'small': [],
+                   'large': [],
+                   'nitrogen': [],
+                   'pure': [],
+                   'nc': [],
+                   'error': [],
+                   }
+        keys = list(results.keys())
+
+        # Start the MC sampling and fitting.
+        for i in range(len(nsamples)):
+            print(f'MC sampling {i+1}/{nsamples}')
+
+            # Calculate new flux based on random uniform distribution sampling
+            flux = np.random.normal(obs.spectrum.flux.value, obs.spectrum.uncertainty)
+
+            # Fit the spectrum
+            fit = self.fit(flux, obs.spectrum.uncertainty)
+
+            # Obtain the fit and weights.
+            fits.append(fit.getfit())
+            weights.append(fit.weights())
+
+            # Obtain fit breakdown
+            bd = fit.getbreakdown()
+            for key in keys[:-2]:
+                results[key].append(bd[key])
+
+            # Obtain classes
+            classes.append(fit.getclasses())
+
+        if keywords.get("stats", False):
+            mcfitted.stats(results)
