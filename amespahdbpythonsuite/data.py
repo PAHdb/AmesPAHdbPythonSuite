@@ -27,7 +27,7 @@ class Data():
         """
         self.__set(d, **keywords)
 
-    def __set(self, d: Optional[dict] = None, **keywords):
+    def __set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate data dictionary helper.
 
@@ -106,7 +106,7 @@ class Data():
         """
         return self.uids
 
-    def intersect(self, uids: list) -> None:
+    def intersect(self, uids: list[int]) -> None:
         """
         Updates data to the intersection with provided UIDs.
 
@@ -130,7 +130,7 @@ class Data():
 
         self.data = {key: self.data[key] for key in self.uids}
 
-    def difference(self, uids: list) -> None:
+    def difference(self, uids: list[int]) -> None:
         """
         Updates data to the difference with provided UIDs.
 

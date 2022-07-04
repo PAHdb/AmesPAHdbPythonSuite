@@ -139,7 +139,9 @@ class Spectrum(Transitions):
 
         message(f"WRITTEN: {filename}")
 
-    def fit(self, y: list, yerr: list = [], notice: bool = True, **keywords) -> Fitted:
+    def fit(
+        self, y: list, yerr: list = list(), notice: bool = True, **keywords
+    ) -> Fitted:
         """
         Fits the input spectrum.
 
@@ -197,16 +199,17 @@ class Spectrum(Transitions):
                 data[uid] = np.array(intensities)
                 weights[uid] = s
 
-        message(
-            [
-                " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
-                " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
-                " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
-                " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
-                " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
-                " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
-            ]
-        )
+        if notice:
+            message(
+                [
+                    " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
+                    " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
+                    " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
+                    " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
+                    " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
+                    " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
+                ]
+            )
 
         from amespahdbpythonsuite.fitted import Fitted
 
@@ -277,7 +280,7 @@ class Spectrum(Transitions):
         elif keywords.get("show", False):
             plt.show()
 
-    def coadd(self, weights: list = [], average: bool = False) -> Coadded:
+    def coadd(self, weights: dict = dict(), average: bool = False) -> Coadded:
         """
         Co-add PAHdb spectra.
 
@@ -289,14 +292,14 @@ class Spectrum(Transitions):
 
         """
 
-        data = np.zeros(len(self.grid))
+        data: Union[np.ndarray, float]
 
         if weights:
-            for key in self.data.keys():
-                data += self.data[key] * weights[key]
+            data = np.zeros(len(self.grid))
+            for uid, weight in weights.items():
+                data += self.data[uid] * weight
         else:
-            for key in self.data.keys():
-                data += self.data[key]
+            data = sum(self.data.values())
 
         if average:
             data /= len(self.data.keys())
@@ -325,7 +328,7 @@ class Spectrum(Transitions):
 
         """
 
-        max = 0.0  # type: Union[float, dict]
+        max: Union[float, dict] = 0.0
         if all:
             for intensities in self.data.values():
                 m = intensities.max()

@@ -170,7 +170,7 @@ class Geometry(Data):
 
         return f"AmesPAHdbPythonSuite Geometry instance.\n" f"{self.uids=}"
 
-    def plot(self, uid: list, **keywords) -> None:
+    def plot(self, uid: int, **keywords) -> None:
         """
         Plot the structure
 
@@ -248,7 +248,7 @@ class Geometry(Data):
         elif keywords.get("show", False):
             plt.show()
 
-    def structure(self, uid: list, **keywords) -> None:
+    def structure(self, uid: int, **keywords) -> None:
         """
         Render the 3D structure.
 
@@ -771,7 +771,11 @@ class Geometry(Data):
 
         return becodes
 
-    def __becode(self, allcarbons: list, allhydrogens: list) -> tuple:
+    def __becode(
+        self,
+        allcarbons: list[tuple[float, float, float]],
+        allhydrogens: list[tuple[float, float, float]],
+    ) -> tuple:
         """The star of the show here is the function PAHbecode, which answers
         the challenge of converting a list of PAH carbon atom and
         hydrogen atom positions into a boundary-edge code of a PAH
@@ -909,7 +913,12 @@ class Geometry(Data):
         boundary_carbons.append(boundary_carbons[0])
         return (boundary_carbons, becode)
 
-    def __indicator(self, v1, v2, normal) -> float:
+    def __indicator(
+        self,
+        v1: np.ndarray,
+        v2: np.ndarray,
+        normal: np.ndarray,
+    ) -> float:
         """Returns the sign of normal dot (v1 cross v2) assuming that these
         are 3-element sequences of some kind. By Dr. Joseph E. Roser
         <Joseph.E.Roser@nasa.gov
@@ -921,7 +930,7 @@ class Geometry(Data):
         value += normal[2] * (v1[0] * v2[1] - v1[1] * v2[0])
         return np.sign(value)
 
-    def __pcone_to_be(self, pcone_code) -> str:
+    def __pcone_to_be(self, pcone_code: list[str]) -> str:
         """Converts the PC-1 code of a PAH to its boundary-edge code.  By
         Dr. Joseph E. Roser <Joseph.E.Roser@nasa.gov
 

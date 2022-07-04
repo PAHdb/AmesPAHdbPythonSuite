@@ -136,6 +136,15 @@ class Transitions(Data):
             meta={"comments": hdr},
         )
 
+        if self.database == "theoretical":
+            tbl.add_columns(
+                [
+                    np.array([t["scale"] for v in self.data.values() for t in v]),
+                    [t["symmetry"] for v in self.data.values() for t in v],
+                ],
+                names=["SCALE", "SYMMETRY"],
+            )
+
         ascii.write(tbl, filename, format="ipac", overwrite=True)
 
         message(f"WRITTEN: {filename}")
@@ -347,7 +356,7 @@ class Transitions(Data):
 
         print(57 * "=")
 
-        if keywords.get("multiprocessing", True):
+        if keywords.get("multiprocessing", False):
             cascade_em_model = partial(self._cascade_em_model, e)
             ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
             message(f"USING MULTIPROCESSING WITH {ncores} CORES")
@@ -508,7 +517,7 @@ class Transitions(Data):
 
         d = dict()
 
-        if keywords.get("multiprocessing", True) and len(self.data) > (
+        if keywords.get("multiprocessing", False) and len(self.data) > (
             multiprocessing.cpu_count() - 1
         ):
             get_intensities = partial(

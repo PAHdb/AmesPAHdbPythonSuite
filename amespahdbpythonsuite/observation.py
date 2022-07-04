@@ -284,7 +284,7 @@ class Observation:
 
         """
 
-        g = x  # type: Union[np.ndarray, list, float]
+        g: Union[np.ndarray, list, float] = x
         if uniform or resolution:
             min = self.spectrum.spectral_axis.value.min()
             max = self.spectrum.spectral_axis.value.max()

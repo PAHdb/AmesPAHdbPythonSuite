@@ -27,7 +27,7 @@ class Fitted(Spectrum):
 
         """
         super().__init__(d, **keywords)
-        self.atoms = dict()  # type: dict
+        self.atoms: dict = dict()
         self.__set(d, **keywords)
 
     def plot(self, **keywords) -> None:
@@ -414,7 +414,7 @@ class Fitted(Spectrum):
         # Set subclasses dictionary.
         subclasses = self._subclasses(**keywords)
 
-        classes = dict()  # type: dict
+        classes: dict = dict()
 
         for key in subclasses:
             classes[key] = self.__classes(subclasses[key])

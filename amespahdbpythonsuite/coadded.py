@@ -21,7 +21,7 @@ class Coadded(Spectrum):
         self.__set(d, **keywords)
         return None
 
-    def set(self, d: Optional[dict] = None, **keywords):
+    def set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Calls class: :class:`amespahdbpythonsuite.Spectrum.spectrum.set` to parse keywords.
 
@@ -119,7 +119,7 @@ class Coadded(Spectrum):
 
         message(f"WRITTEN: {filename}")
 
-    def plot(self, **keywords):
+    def plot(self, **keywords) -> None:
         """
         Plot the spectrum.
 
