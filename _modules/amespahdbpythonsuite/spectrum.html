@@ -253,7 +253,9 @@
 
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WRITTEN: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Spectrum.fit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Fitted</span><span class="p">:</span>
+<div class="viewcode-block" id="Spectrum.fit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Fitted</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fits the input spectrum.</span>
 
@@ -311,16 +313,17 @@
                 <span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
                 <span class="n">weights</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
 
-        <span class="n">message</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="s2">&quot; NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING &quot;</span><span class="p">,</span>
-                <span class="s2">&quot; THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       &quot;</span><span class="p">,</span>
-                <span class="s2">&quot; CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN&quot;</span><span class="p">,</span>
-                <span class="s2">&quot; INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       &quot;</span><span class="p">,</span>
-                <span class="s2">&quot; HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    &quot;</span><span class="p">,</span>
-                <span class="s2">&quot; MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      &quot;</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">notice</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot; NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING &quot;</span><span class="p">,</span>
+                    <span class="s2">&quot; THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       &quot;</span><span class="p">,</span>
+                    <span class="s2">&quot; CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot; INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       &quot;</span><span class="p">,</span>
+                    <span class="s2">&quot; HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    &quot;</span><span class="p">,</span>
+                    <span class="s2">&quot; MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      &quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
 
         <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.fitted</span> <span class="kn">import</span> <span class="n">Fitted</span>
 
@@ -391,7 +394,7 @@
         <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Spectrum.coadd"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.coadd">[docs]</a>    <span class="k">def</span> <span class="nf">coadd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coadded</span><span class="p">:</span>
+<div class="viewcode-block" id="Spectrum.coadd"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.coadd">[docs]</a>    <span class="k">def</span> <span class="nf">coadd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span> <span class="n">average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coadded</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Co-add PAHdb spectra.</span>
 
@@ -403,14 +406,14 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">))</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">weights</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">data</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">data</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">*</span> <span class="n">weight</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">data</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">average</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -439,7 +442,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">max</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># type: Union[float, dict]</span>
+        <span class="nb">max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">intensities</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="n">m</span> <span class="o">=</span> <span class="n">intensities</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>

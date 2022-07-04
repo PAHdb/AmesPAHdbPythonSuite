@@ -250,6 +250,15 @@
             <span class="n">meta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;comments&quot;</span><span class="p">:</span> <span class="n">hdr</span><span class="p">},</span>
         <span class="p">)</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">==</span> <span class="s2">&quot;theoretical&quot;</span><span class="p">:</span>
+            <span class="n">tbl</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;scale&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]),</span>
+                    <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;symmetry&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">v</span><span class="p">],</span>
+                <span class="p">],</span>
+                <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SCALE&quot;</span><span class="p">,</span> <span class="s2">&quot;SYMMETRY&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+
         <span class="n">ascii</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ipac&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WRITTEN: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
@@ -461,7 +470,7 @@
 
         <span class="nb">print</span><span class="p">(</span><span class="mi">57</span> <span class="o">*</span> <span class="s2">&quot;=&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiprocessing&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiprocessing&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">cascade_em_model</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cascade_em_model</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
             <span class="n">ncores</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ncores&quot;</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;USING MULTIPROCESSING WITH </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> CORES&quot;</span><span class="p">)</span>
@@ -622,7 +631,7 @@
 
         <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiprocessing&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiprocessing&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span>
             <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">):</span>
             <span class="n">get_intensities</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>

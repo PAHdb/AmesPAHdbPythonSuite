@@ -162,7 +162,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="n">validate</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># type: dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -314,7 +314,7 @@
                 <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
                 <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;atom&quot;</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
-                    <span class="n">atom_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># type:  dict</span>
+                    <span class="n">atom_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
@@ -355,7 +355,7 @@
                 <span class="n">tag</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">localname</span>
 
                 <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span>
-                    <span class="n">mode_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># type: dict</span>
+                    <span class="n">mode_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
@@ -369,7 +369,12 @@
                             <span class="k">break</span>
 
                         <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
-                            <span class="n">mode_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                                <span class="k">try</span><span class="p">:</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">text</span>
+                                <span class="n">mode_dict</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
@@ -412,13 +417,13 @@
 
             <span class="k">return</span> <span class="n">laboratory</span>
 
-        <span class="n">specie_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">specie_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;comments&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
             <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
             <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
             <span class="s2">&quot;transitions&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
             <span class="s2">&quot;laboratory&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
-        <span class="p">}</span>  <span class="c1"># type: dict</span>
+        <span class="p">}</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
