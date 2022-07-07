@@ -169,15 +169,15 @@ class Spectrum(Transitions):
         matrix = np.array(list(self.data.values()))
 
         if obs.uncertainty is None:
-            method = "NNLS"
+            self.method = "NNLS"
             b = list(obs.flux.value)
             m = matrix
         else:
-            method = "NNLC"
+            self.method = "NNLC"
             b = list(np.divide(obs.flux.value, obs.uncertainty.array))
             m = np.divide(matrix, obs.uncertainty.array)
 
-        message(f"DOING {method}")
+        message(f"DOING {self.method}")
 
         solution, norm = optimize.nnls(m.T, b)
 
@@ -228,7 +228,7 @@ class Spectrum(Transitions):
             fwhm=self.fwhm,
             observation=obs,
             weights=weights,
-            method=method,
+            method=self.method,
         )
 
     def plot(self, **keywords) -> None:
@@ -369,7 +369,7 @@ class Spectrum(Transitions):
 
     def mcfit(self, obs, nsamples, **keywords):
         """
-        Perform Monte Carlo sampling and fit the spectrum.
+        Monte Carlo sampling and fitting to the input spectrum.
 
         Properties
         ----------
@@ -380,7 +380,7 @@ class Spectrum(Transitions):
 
         """
         # Initialize lists and dictionaries.
-        import mcfitted
+        from amespahdbpythonsuite.mcfitted import Mcfitted
 
         fits = []
         classes = []
@@ -390,11 +390,6 @@ class Spectrum(Transitions):
                    'trio': [],
                    'quartet': [],
                    'quintet': [],
-                   'avg_solo': [],
-                   'avg_duo': [],
-                   'avg_trio': [],
-                   'avg_quartet': [],
-                   'avg_quintet': [],
                    'anion': [],
                    'neutral': [],
                    'cation': [],
@@ -403,31 +398,59 @@ class Spectrum(Transitions):
                    'nitrogen': [],
                    'pure': [],
                    'nc': [],
-                   'error': [],
+                   'error': []
                    }
         keys = list(results.keys())
 
+        if 'predict' in keywords:
+            predicted = []
+        else:
+            predicted = False
+
         # Start the MC sampling and fitting.
-        for i in range(len(nsamples)):
+        for i in range(nsamples):
             print(f'MC sampling {i+1}/{nsamples}')
 
-            # Calculate new flux based on random uniform distribution sampling
-            flux = np.random.normal(obs.spectrum.flux.value, obs.spectrum.uncertainty)
+            # Calculate new flux based on random uniform distribution sampling.
+            flux = np.random.normal(obs.spectrum.flux.value, obs.spectrum.uncertainty.array)\
+                * obs.spectrum.flux.unit
 
-            # Fit the spectrum
+            # Fit the spectrum.
             fit = self.fit(flux, obs.spectrum.uncertainty)
 
             # Obtain the fit and weights.
             fits.append(fit.getfit())
-            weights.append(fit.weights())
+            weights.append(fit.getweights())
 
-            # Obtain fit breakdown
+            # Obtain fit breakdown.
             bd = fit.getbreakdown()
-            for key in keys[:-2]:
+            error = fit.geterror()['err']
+            for key in keys[:-1]:
                 results[key].append(bd[key])
+            results['error'].append(error)
 
-            # Obtain classes
+            # Obtain classes.
             classes.append(fit.getclasses())
 
-        if keywords.get("stats", False):
-            mcfitted.stats(results)
+            if 'predict' in keywords:
+                predicted.append(self.coadd(weights=fit.getweights()))
+
+        return Mcfitted(
+            database=self.database,
+            version=self.version,
+            mcresults=results,
+            mcfits=fits,
+            mcweights=weights,
+            mcclasses=classes,
+            mcpredicted=predicted,
+            pahdb=self.pahdb,
+            uids=[0],
+            model=self.model,
+            units=self.units,
+            shift=self._shift,
+            grid=self.grid,
+            profile=self.profile,
+            fwhm=self.fwhm,
+            observation=obs,
+            method=self.method,
+        )
