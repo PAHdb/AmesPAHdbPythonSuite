@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.coadded import Coadded
     from amespahdbpythonsuite.fitted import Fitted
     from amespahdbpythonsuite.observation import Observation
+    from amespahdbpythonsuite.mcfitted import Mcfitted
 
 
 message = AmesPAHdb.message
@@ -367,7 +368,7 @@ class Spectrum(Transitions):
 
         self.grid = grid
 
-    def mcfit(self, obs, nsamples, **keywords):
+    def mcfit(self, obs, nsamples, **keywords) -> Mcfitted:
         """
         Monte Carlo sampling and fitting to the input spectrum.
 
@@ -379,9 +380,9 @@ class Spectrum(Transitions):
             int
 
         """
-        # Initialize lists and dictionaries.
         from amespahdbpythonsuite.mcfitted import Mcfitted
 
+        # Initialize lists and dictionaries.
         fits = []
         classes = []
         weights = []
@@ -400,6 +401,7 @@ class Spectrum(Transitions):
                    'nc': [],
                    'error': []
                    }
+
         keys = list(results.keys())
 
         if 'predict' in keywords:
@@ -424,9 +426,11 @@ class Spectrum(Transitions):
 
             # Obtain fit breakdown.
             bd = fit.getbreakdown()
-            error = fit.geterror()['err']
             for key in keys[:-1]:
                 results[key].append(bd[key])
+
+            # Obtain fit uncertainty.
+            error = fit.geterror()['err']
             results['error'].append(error)
 
             # Obtain classes.

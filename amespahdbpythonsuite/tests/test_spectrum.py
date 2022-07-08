@@ -128,3 +128,16 @@ class TestSpectrum:
     def test_write_spectrum(self, test_spectrum, test_path):
         test_spectrum.write(f"{test_path}.tbl")
         assert exists(f"{test_path}.tbl")
+
+    def test_mcfit(self, test_transitions):
+        file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+        obs = observation.Observation(file)
+        spectrum = test_transitions.convolve(
+            grid=1e4 / obs.spectrum.spectral_axis.value,
+            fwhm=15.0,
+            gaussian=True,
+            multiprocessing=False,
+        )
+        mcfit = spectrum.mcfit(obs, nsamples=10)
+        assert mcfit.method == 'NNLC'
+        assert len(mcfit.mcfits) == 10

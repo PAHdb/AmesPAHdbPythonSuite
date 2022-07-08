@@ -50,6 +50,8 @@ class Mcfitted(Spectrum):
                     self.mcresults = d["mcresults"]
                 if "mcpredicted" not in keywords:
                     self.mcpredicted = d["mcpredicted"]
+                if "method" not in keywords:
+                    self.method = d["method"]
 
         self.observation = keywords.get("observation", None)
         self.mcfits = keywords.get("mcfits", list())
@@ -57,6 +59,7 @@ class Mcfitted(Spectrum):
         self.mcclasses = keywords.get("mcclasses", list())
         self.mcresults = keywords.get("mcresults", list())
         self.mcpredicted = keywords.get("mcpredicted", False)
+        self.method = keywords.get("method", "")
 
     def get(self) -> dict:
         """
@@ -72,6 +75,7 @@ class Mcfitted(Spectrum):
         d["mcclasses"] = self.mcclasses
         d["mcresults"] = self.mcresults
         d["mcpredicted"] = self.mcpredicted
+        d["method"] = self.method
 
         return d
 
