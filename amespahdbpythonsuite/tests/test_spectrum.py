@@ -138,6 +138,6 @@ class TestSpectrum:
             gaussian=True,
             multiprocessing=False,
         )
-        mcfit = spectrum.mcfit(obs, nsamples=10)
+        mcfit = spectrum.mcfit(obs, samples=10)
         assert mcfit.method == 'NNLC'
         assert len(mcfit.mcfits) == 10
