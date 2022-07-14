@@ -139,5 +139,5 @@ class TestSpectrum:
             multiprocessing=False,
         )
         mcfit = spectrum.mcfit(obs, samples=10)
-        assert mcfit.method == 'NNLC'
+        assert mcfit.mcfits[0].method == 'NNLC'
         assert len(mcfit.mcfits) == 10
