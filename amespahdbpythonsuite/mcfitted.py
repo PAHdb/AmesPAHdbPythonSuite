@@ -4,10 +4,9 @@ from __future__ import annotations
 from typing import Optional
 
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite.spectrum import Spectrum
 
 message = AmesPAHdb.message
 
@@ -27,7 +26,6 @@ class MCfitted:
         Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.set` to parse keywords.
 
         """
-        Spectrum.set(self, d, **keywords)
         self.__set(d, **keywords)
 
     def __set(self, d: Optional[dict] = None, **keywords) -> None:
@@ -54,7 +52,7 @@ class MCfitted:
         Assigns class variables from inherited dictionary.
 
         """
-        d = Spectrum.get(self)
+        d = {}
         d["type"] = self.__class__.__name__
         d["mcfits"] = self.mcfits
         d["mcpredicted"] = self.mcpredicted
