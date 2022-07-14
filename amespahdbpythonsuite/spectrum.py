@@ -16,7 +16,7 @@ from amespahdbpythonsuite.transitions import Transitions
 if TYPE_CHECKING:
     from amespahdbpythonsuite.coadded import Coadded
     from amespahdbpythonsuite.fitted import Fitted
-    from amespahdbpythonsuite.mcfitted import Mcfitted
+    from amespahdbpythonsuite.mcfitted import MCfitted
 
 
 message = AmesPAHdb.message
@@ -167,15 +167,16 @@ class Spectrum(Transitions):
         matrix = np.array(list(self.data.values()))
 
         if obs.uncertainty is None:
-            self.method = "NNLS"
+            method = "NNLS"
             b = list(obs.flux.value)
             m = matrix
         else:
-            self.method = "NNLC"
+            method = "NNLC"
             b = list(np.divide(obs.flux.value, obs.uncertainty.array))
             m = np.divide(matrix, obs.uncertainty.array)
 
-        message(f"DOING {self.method}")
+        if notice:
+            message(f"DOING {method}")
 
         solution, norm = optimize.nnls(m.T, b)
 
@@ -198,16 +199,17 @@ class Spectrum(Transitions):
                 data[uid] = np.array(intensities)
                 weights[uid] = s
 
-        message(
-            [
-                " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
-                " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
-                " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
-                " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
-                " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
-                " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
-            ]
-        )
+        if notice:
+            message(
+                [
+                    " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
+                    " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
+                    " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
+                    " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
+                    " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
+                    " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
+                ]
+            )
 
         from amespahdbpythonsuite.fitted import Fitted
 
@@ -225,7 +227,7 @@ class Spectrum(Transitions):
             fwhm=self.fwhm,
             observation=obs,
             weights=weights,
-            method=self.method,
+            method=method,
         )
 
     def plot(self, **keywords) -> None:
@@ -364,7 +366,8 @@ class Spectrum(Transitions):
 
         self.grid = grid
 
-    def mcfit(self, obs, nsamples, **keywords) -> Mcfitted:
+    def mcfit(self, y: list = list(), yerr: list = list(), samples: int = 1024, uniform: bool = False,
+              notice: bool = True, **keywords) -> MCfitted:
         """
         Monte Carlo sampling and fitting to the input spectrum.
 
@@ -372,85 +375,50 @@ class Spectrum(Transitions):
         ----------
         obs : observations object
 
-        nsamples : Number of samples.
+        samples : Number of samples.
             int
 
         """
-        from amespahdbpythonsuite.mcfitted import Mcfitted
+        from amespahdbpythonsuite.mcfitted import MCfitted
+        from amespahdbpythonsuite import observation
+
+        if isinstance(y, Spectrum1D):
+            obs = y
+        elif isinstance(y, observation.Observation):
+            obs = y.spectrum
+        else:
+            unc = None
+            if np.any(yerr):
+                unc = StdDevUncertainty(yerr)
+            obs = Spectrum1D(
+                flux=y * u.Unit(),
+                spectral_axis=self.grid * self.units["abscissa"]["unit"],
+                uncertainty=unc,
+            )
 
         # Initialize lists and dictionaries.
         fits = []
-        classes = []
-        weights = []
-        results = {'solo': [],
-                   'duo': [],
-                   'trio': [],
-                   'quartet': [],
-                   'quintet': [],
-                   'anion': [],
-                   'neutral': [],
-                   'cation': [],
-                   'small': [],
-                   'large': [],
-                   'nitrogen': [],
-                   'pure': [],
-                   'nc': [],
-                   'error': []
-                   }
-
-        keys = list(results.keys())
-
-        if 'predict' in keywords:
-            predicted = []
-        else:
-            predicted = False
 
         # Start the MC sampling and fitting.
-        for i in range(nsamples):
-            print(f'MC sampling {i+1}/{nsamples}')
+        for i in range(samples):
+            print(f'MC sampling {i+1}/{samples}')
 
             # Calculate new flux based on random uniform distribution sampling.
-            flux = np.random.normal(obs.spectrum.flux.value, obs.spectrum.uncertainty.array)\
-                * obs.spectrum.flux.unit
+            if uniform:
+                flux = np.random.uniform(obs.flux.value, obs.uncertainty.array)\
+                    * obs.flux.unit
+            else:
+                flux = np.random.normal(obs.flux.value, obs.uncertainty.array)\
+                    * obs.flux.unit
 
             # Fit the spectrum.
-            fit = self.fit(flux, obs.spectrum.uncertainty)
+            fit = self.fit(flux, obs.uncertainty, notice=notice)
 
             # Obtain the fit and weights.
-            fits.append(fit.getfit())
-            weights.append(fit.getweights())
+            # fits.append(fit.getfit())
+            fits.append(fit)
 
-            # Obtain fit breakdown.
-            bd = fit.getbreakdown()
-            for key in keys[:-1]:
-                results[key].append(bd[key])
-
-            # Obtain fit uncertainty.
-            error = fit.geterror()['err']
-            results['error'].append(error)
-
-            # Obtain classes.
-            classes.append(fit.getclasses())
-
-            if 'predict' in keywords:
-                predicted.append(self.coadd(weights=fit.getweights()))
-
-        return Mcfitted(
-            database=self.database,
-            version=self.version,
-            mcresults=results,
+        return MCfitted(
             mcfits=fits,
-            mcweights=weights,
-            mcclasses=classes,
-            mcpredicted=predicted,
-            pahdb=self.pahdb,
-            uids=[0],
-            model=self.model,
-            units=self.units,
-            shift=self._shift,
-            grid=self.grid,
-            profile=self.profile,
-            fwhm=self.fwhm,
-            observation=obs,
-            method=self.method,
+            distribution='uniform' if uniform else 'normal'
         )
