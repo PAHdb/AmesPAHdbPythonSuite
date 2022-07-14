@@ -58,12 +58,12 @@ class Transitions(Data):
         Populate data dictionary helper.
 
         """
+        self._shift = keywords.get("shift", 0.0)
+
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "shift" not in keywords:
                     self._shift = d["shift"]
-
-        self._shift = keywords.get("shift", 0.0)
 
     def get(self) -> dict:
         """
@@ -127,9 +127,11 @@ class Transitions(Data):
         tbl = Table(
             [
                 [uid for uid, v in self.data.items() for _ in v],
-                np.array([t["frequency"] for v in self.data.values() for t in v])
+                np.array([t["frequency"]
+                         for v in self.data.values() for t in v])
                 * self.units["abscissa"]["unit"],
-                np.array([t["intensity"] for v in self.data.values() for t in v])
+                np.array([t["intensity"]
+                         for v in self.data.values() for t in v])
                 * self.units["ordinate"]["unit"],
             ],
             names=["UID", "FREQUENCY", "INTENSITY"],
@@ -139,7 +141,8 @@ class Transitions(Data):
         if self.database == "theoretical":
             tbl.add_columns(
                 [
-                    np.array([t["scale"] for v in self.data.values() for t in v]),
+                    np.array([t["scale"] for v in self.data.values()
+                             for t in v]),
                     [t["symmetry"] for v in self.data.values() for t in v],
                 ],
                 names=["SCALE", "SYMMETRY"],
@@ -262,7 +265,8 @@ class Transitions(Data):
 
             print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-            self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
+            self.model["temperatures"].append(
+                {"uid": uid, "temperature": Tmax})
 
             for d in self.data[uid]:
                 if d["intensity"] > 0:
@@ -352,7 +356,8 @@ class Transitions(Data):
             "description": "",
         }
 
-        self.units["ordinate"] = {"unit": u.erg, "label": "integrated radiant energy"}
+        self.units["ordinate"] = {"unit": u.erg,
+                                  "label": "integrated radiant energy"}
 
         print(57 * "=")
 
@@ -378,7 +383,8 @@ class Transitions(Data):
             nuids = len(self.uids)
             for uid in self.uids:
 
-                print("SPECIES                          : %d/%d" % (i + 1, nuids))
+                print("SPECIES                          : %d/%d" %
+                      (i + 1, nuids))
                 print("UID                              : %d" % uid)
                 print(
                     "MEAN ABSORBED ENERGY             : %f +/- %f eV"
@@ -386,16 +392,19 @@ class Transitions(Data):
                 )
 
                 global frequencies
-                frequencies = np.array([d["frequency"] for d in self.data[uid]])
+                frequencies = np.array([d["frequency"]
+                                       for d in self.data[uid]])
 
                 global intensities
-                intensities = np.array([d["intensity"] for d in self.data[uid]])
+                intensities = np.array([d["intensity"]
+                                       for d in self.data[uid]])
 
                 Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
                 print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-                self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
+                self.model["temperatures"].append(
+                    {"uid": uid, "temperature": Tmax})
 
                 for d in self.data[uid]:
                     if d["intensity"] > 0:
@@ -512,7 +521,8 @@ class Transitions(Data):
             npoints = keywords.get("npoints", 400)
             x = np.arange(xmin, xmax, (xmax - xmin) / npoints)
 
-        message(f"GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS")
+        message(
+            f"GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS")
         message(f"FWHM: {fwhm} /cm")
 
         d = dict()
@@ -639,7 +649,8 @@ class Transitions(Data):
 
         _, ax = plt.subplots()
         ax.minorticks_on()
-        ax.tick_params(which="major", right="on", top="on", direction="in", axis="both")
+        ax.tick_params(which="major", right="on", top="on",
+                       direction="in", axis="both")
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
         for uid, col in zip(self.uids, colors):
             f = [v for v in self.data[uid]]
@@ -693,7 +704,8 @@ class Transitions(Data):
         return (Transitions.heatcapacity(T) / np.expm1(val1)) * (
             1.0
             / np.sum(
-                intensities[valid] * (frequencies[valid]) ** 3 / np.expm1(val2[valid])
+                intensities[valid] * (frequencies[valid]
+                                      ) ** 3 / np.expm1(val2[valid])
             )
         )
 

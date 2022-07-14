@@ -38,17 +38,15 @@ class Observation:
             self.read(d)
             return
 
+        self.filepath = keywords.get("filepath", "")
+        self.spectrum = keywords.get("spectrum", Spectrum1D)
+
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "filepath" not in keywords:
                     self.filepath = d["filepath"]
                 if "spectrum" not in keywords:
                     self.spectrum = d["spectrum"]
-
-        if "filepath" in keywords:
-            self.filepath = keywords.get("filepath", "")
-        if "spectrum" in keywords:
-            self.spectrum = keywords.get("spectrum")
 
     def get(self) -> dict:
         """
@@ -118,7 +116,8 @@ class Observation:
         )
 
         if self.spectrum.uncertainty:
-            tbl.add_column(self.spectrum.uncertainty.quantity, name="UNCERTAINTY")
+            tbl.add_column(self.spectrum.uncertainty.quantity,
+                           name="UNCERTAINTY")
 
         ascii.write(tbl, filename, format="ipac", overwrite=True)
 
@@ -210,7 +209,8 @@ class Observation:
 
                         # Create Spectrum1D instance.
                         flux = h.data.T * u.Unit(h.header["BUNIT"])
-                        wave = hdu[h0].data[h1] * u.Unit(hdu[h0].columns[h1].unit)
+                        wave = hdu[h0].data[h1] * \
+                            u.Unit(hdu[h0].columns[h1].unit)
                         self.spectrum = Spectrum1D(flux, spectral_axis=wave)
 
                         return None
@@ -229,7 +229,8 @@ class Observation:
                         flux = h.data.T * u.Unit("Jy")
                         wave = (
                             h.header["CRVAL3"]
-                            + h.header["CDELT3"] * np.arange(0, h.header["NAXIS3"])
+                            + h.header["CDELT3"] *
+                            np.arange(0, h.header["NAXIS3"])
                         ) * u.Unit(h.header["CUNIT3"])
                         self.spectrum = Spectrum1D(flux, spectral_axis=wave)
 
@@ -307,7 +308,8 @@ class Observation:
             extrapolation_treatment="nan_fill"
         )
 
-        self.spectrum = resampler(self.spectrum, g * self.spectrum.spectral_axis.unit)
+        self.spectrum = resampler(
+            self.spectrum, g * self.spectrum.spectral_axis.unit)
 
     def setgridrange(self, min: float, max: float = None) -> None:
         """

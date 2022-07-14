@@ -28,6 +28,12 @@ class Species:
         Populate properties.
 
         """
+        self.database = keywords.get("database", "")
+        self.version = keywords.get("version", "")
+        self.data = keywords.get("data", dict())
+        self.pahdb = keywords.get("pahdb", None)
+        self.uids = keywords.get("uids", list())
+
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "database" not in keywords:
@@ -39,21 +45,17 @@ class Species:
                 if "uids" not in keywords:
                     self.uids = d["uids"]
 
-        self.database = keywords.get("database", "")
-        self.version = keywords.get("version", "")
-        self.data = keywords.get("data", dict())
-        self.pahdb = keywords.get("pahdb", None)
-        self.uids = keywords.get("uids", list())
-
         if self.pahdb:
             if self.pahdb["database"] != self.database:
 
-                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
+                message(
+                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
                 return
 
             if self.pahdb["version"] != self.version:
 
-                message(f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
+                message(
+                    f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
                 return
 
     def get(self) -> dict:
@@ -158,7 +160,8 @@ class Species:
             data=self.__getkey("transitions"),
             pahdb=self.pahdb,
             uids=self.uids,
-            model={"type": "zerokelvin_m", "temperature": 0.0, "description": ""},
+            model={"type": "zerokelvin_m",
+                   "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
                 "ordinate": {"unit": 2, "str": "integrated cross-section" + "[km/mol]"},
@@ -203,7 +206,8 @@ class Species:
             data=self.__getkey("laboratory"),
             pahdb=self.pahdb,
             uids=self.uids,
-            model={"type": "laboratory_m", "temperature": 0.0, "description": ""},
+            model={"type": "laboratory_m",
+                   "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
                 "ordinate": {"unit": 2, "str": "absorbance" + "[-log(I/I$_{0})$"},
@@ -260,7 +264,8 @@ def formatformula(formula: str) -> str:
     Make the formulae look pretty by embedding LaTeX formatting commands.
     """
 
-    formatted = re.sub(r"([A-Z][a-z]?)([0-9]+)", r"\1$_{\\mathregular{\2}}", formula)
+    formatted = re.sub(r"([A-Z][a-z]?)([0-9]+)",
+                       r"\1$_{\\mathregular{\2}}", formula)
 
     return re.sub(
         r"((\+)+|(\+[0-9])|(-)+|(-[0-9]))", r"$^{\\mathregular{\1}}", formatted

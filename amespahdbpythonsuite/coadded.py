@@ -34,15 +34,15 @@ class Coadded(Spectrum):
         Populate data dictionary helper.
 
         """
+        self.weights = keywords.get("weights", dict())
+        self.averaged = keywords.get("averaged", False)
+
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "weights" not in keywords:
                     self.weights = d["weights"]
                 if "averaged" not in keywords:
                     self.averaged = d["averaged"]
-
-        self.weights = keywords.get("weights", dict())
-        self.averaged = keywords.get("averaged", False)
 
     def get(self) -> dict:
         """
