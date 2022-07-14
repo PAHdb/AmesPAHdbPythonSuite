@@ -43,4 +43,4 @@ class TestMcfitted:
     """
 
     def test_instance(self):
-        assert isinstance(mcfitted.Mcfitted(), mcfitted.Mcfitted)
+        assert isinstance(mcfitted.MCfitted(), mcfitted.MCfitted)
