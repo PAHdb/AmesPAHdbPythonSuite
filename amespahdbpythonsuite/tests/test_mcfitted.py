@@ -6,9 +6,6 @@ Test the mcfitted.py module.
 """
 
 import pytest
-from os.path import exists
-import numpy as np
-import matplotlib.pyplot as plt
 
 from pkg_resources import resource_filename
 
