@@ -45,20 +45,12 @@ if __name__ == '__main__':
     spectrum = transitions.convolve(grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False)
 
     # Fit the spectrum using Monte Carlo approach.
-    mcfit = spectrum.mcfit(obs, nsamples=10)
+    mcfit = spectrum.mcfit(obs, samples=1024, notice=False)
 
     # Get average/min/max/std statistics for the breakdown components and uncertainty, and save to file.
-    mcfit.stats(mcfit.mcresults)
-
-    # Get average and std spectra and dump them into pickle.
-    mccomponents = mcfit.averagespec(mcfit.mcfits, mcfit.mcclasses, dump=True)
+    mcfit.getstats(save=True)
 
     # Create plots.
-    mcfit.plot(mccomponents, wavelength=True, sigma=obs.spectrum.uncertainty.array,
-               ptype='charge', ftype='pdf')
-
-    mcfit.plot(mccomponents, wavelength=True, sigma=obs.spectrum.uncertainty.array,
-               ptype='size', ftype='pdf')
-
-    mcfit.plot(mccomponents, wavelength=True, sigma=obs.spectrum.uncertainty.array,
-               ptype='composition', ftype='pdf')
+    mcfit.plot(wavelength=True, charge=True, save=True)
+    mcfit.plot(wavelength=True, size=True, save=True)
+    mcfit.plot(wavelength=True, composition=True, save=True)
