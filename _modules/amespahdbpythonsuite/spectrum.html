@@ -130,6 +130,7 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.coadded</span> <span class="kn">import</span> <span class="n">Coadded</span>
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.fitted</span> <span class="kn">import</span> <span class="n">Fitted</span>
+    <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.observation</span> <span class="kn">import</span> <span class="n">Observation</span>
 
 
 <span class="n">message</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="o">.</span><span class="n">message</span>
@@ -159,6 +160,10 @@
 <span class="sd">        Populate data dictionary helper.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;profile&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fwhm&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;grid&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
@@ -167,10 +172,6 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;profile&quot;</span><span class="p">]</span>
                 <span class="k">if</span> <span class="s2">&quot;fwhm&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;fwhm&quot;</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;profile&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fwhm&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Spectrum.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -254,7 +255,7 @@
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WRITTEN: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Spectrum.fit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Observation</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Fitted</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fits the input spectrum.</span>
