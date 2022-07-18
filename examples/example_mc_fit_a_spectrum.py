@@ -9,6 +9,7 @@ https://pahdb.github.io/cookbook/
 
 """
 
+import os
 from pkg_resources import resource_filename
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -48,9 +49,9 @@ if __name__ == '__main__':
     mcfit = spectrum.mcfit(obs, samples=1024, notice=False)
 
     # Get average/min/max/std statistics for the breakdown components and uncertainty, and save to file.
-    mcfit.getstats(save=True)
+    mcfit.getstats(save=False)
 
     # Create plots.
-    mcfit.plot(wavelength=True, charge=True, save=True)
-    mcfit.plot(wavelength=True, size=True, save=True)
-    mcfit.plot(wavelength=True, composition=True, save=True)
+    mcfit.plot(wavelength=True, charge=True, save=os.getcwd())
+    mcfit.plot(wavelength=True, size=True, save=os.getcwd())
+    mcfit.plot(wavelength=True, composition=True, save=os.getcwd())

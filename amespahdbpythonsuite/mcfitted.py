@@ -21,13 +21,6 @@ class MCfitted:
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         self.__set(d, **keywords)
 
-    def set(self, d: Optional[dict] = None, **keywords) -> None:
-        """
-        Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.set` to parse keywords.
-
-        """
-        self.__set(d, **keywords)
-
     def __set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate data dictionary helper.
@@ -37,13 +30,10 @@ class MCfitted:
             if d.get("type", "") == self.__class__.__name__:
                 if "mcfits" not in keywords:
                     self.mcfits = d["mcfits"]
-                if "mcpredicted" not in keywords:
-                    self.mcpredicted = d["mcpredicted"]
                 if "distribution" not in keywords:
                     self.distribuion = d["distribuion"]
 
         self.mcfits = keywords.get("mcfits", list())
-        self.mcpredicted = keywords.get("mcpredicted", False)
         self.distribution = keywords.get("distribution", "")
 
     def get(self) -> dict:
@@ -55,7 +45,6 @@ class MCfitted:
         d = {}
         d["type"] = self.__class__.__name__
         d["mcfits"] = self.mcfits
-        d["mcpredicted"] = self.mcpredicted
         d["distribution"] = self.distribution
 
         return d
@@ -130,11 +119,6 @@ class MCfitted:
             std_classes[key] = np.std(lst_classes[key], axis=0)
             components[key] = {'mean_spec': avg_classes[key], 'std_spec': std_classes[key]}
 
-        if 'predicted' in keywords:
-            avg_pred = np.mean(self.mcpredicted, axis=0)
-            std_pred = np.std(self.mcpredicted, axis=0)
-            components['predicted'] = {'mean_spec': avg_pred, 'std_spec': std_pred}
-
         return components
 
     def getfit(self, **keywords) -> list:
@@ -153,6 +137,7 @@ class MCfitted:
         Retrieves the breakdown of the MC fitted PAHs.
 
         """
+        results = dict()  # type: dict
         results = {'solo': [],
                    'duo': [],
                    'trio': [],
@@ -314,7 +299,7 @@ class MCfitted:
         if keywords.get('save'):
             if not isinstance(ptype, str):
                 ptype = 'fitted'
-            fig.savefig(f"mc_{ptype}_breakdown.pdf")
+            fig.savefig(f"{keywords['save']}mc_{ptype}_breakdown.pdf")
         else:
             plt.show()
 

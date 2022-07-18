@@ -6,11 +6,13 @@ Test the mcfitted.py module.
 """
 
 import pytest
+from os.path import exists
+import matplotlib.pyplot as plt
 
 from pkg_resources import resource_filename
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import mcfitted, observation
+from amespahdbpythonsuite import observation, mcfitted
 
 
 @pytest.fixture(scope="module")
@@ -36,6 +38,13 @@ def test_mcfitted():
     return spectrum.mcfit(obs, nsamples=10)
 
 
+@pytest.fixture(scope="module")
+def test_path(tmp_path_factory):
+    d = tmp_path_factory.mktemp("test_mcfitted")
+    print(d)
+    return f"{d}/"
+
+
 class TestMcfitted:
     """
     Test Spectrum class.
@@ -44,3 +53,35 @@ class TestMcfitted:
 
     def test_instance(self):
         assert isinstance(mcfitted.MCfitted(), mcfitted.MCfitted)
+
+    def test_plot(self, monkeypatch, test_mcfitted):
+        monkeypatch.setattr(plt, "show", lambda: None)
+        test_mcfitted.plot(show=True)
+
+    def test_stats(self, test_mcfitted, test_path):
+        test_mcfitted.getstats(save=True)
+        assert exists('mcfitted_statistics.txt')
+
+    def test_plot_charge(self, test_mcfitted, test_path):
+        test_mcfitted.plot(
+            wavelength=True,
+            charge=True,
+            save=test_path,
+        )
+        assert exists(f"{test_path}mc_charge_breakdown.pdf")
+
+    def test_plot_size(self, test_mcfitted, test_path):
+        test_mcfitted.plot(
+            wavelength=True,
+            size=True,
+            save=test_path,
+        )
+        assert exists(f"{test_path}mc_size_breakdown.pdf")
+
+    def test_plot_composition(self, test_mcfitted, test_path):
+        test_mcfitted.plot(
+            wavelength=True,
+            composition=True,
+            save=test_path,
+        )
+        assert exists(f"{test_path}mc_composition_breakdown.pdf")

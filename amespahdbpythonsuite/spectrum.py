@@ -374,10 +374,8 @@ class Spectrum(Transitions):
         """
         Monte Carlo sampling and fitting to the input spectrum.
 
-        Properties
+        Parameters
         ----------
-        obs : observations object
-
         samples : Number of samples.
             int
 
