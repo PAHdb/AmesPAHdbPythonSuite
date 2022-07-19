@@ -416,7 +416,6 @@ class Spectrum(Transitions):
             fit = self.fit(flux, obs.uncertainty, notice=notice)
 
             # Obtain the fit and weights.
-            # fits.append(fit.getfit())
             fits.append(fit)
 
         return MCfitted(

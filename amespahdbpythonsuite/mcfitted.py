@@ -26,15 +26,15 @@ class MCfitted:
         Populate data dictionary helper.
 
         """
+        self.mcfits = keywords.get("mcfits", list())
+        self.distribution = keywords.get("distribution", "")
+
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "mcfits" not in keywords:
                     self.mcfits = d["mcfits"]
                 if "distribution" not in keywords:
                     self.distribuion = d["distribuion"]
-
-        self.mcfits = keywords.get("mcfits", list())
-        self.distribution = keywords.get("distribution", "")
 
     def get(self) -> dict:
         """
