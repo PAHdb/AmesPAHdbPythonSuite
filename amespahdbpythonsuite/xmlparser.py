@@ -48,7 +48,7 @@ class XMLparser:
         """
         self.filename = filename
         self.validate = validate
-        self.library = dict()  # type: dict
+        self.library: dict = dict()
 
     def __repr__(self) -> str:
         """
@@ -200,7 +200,7 @@ class XMLparser:
                 tag = etree.QName(elem).localname
 
                 if tag == "atom" and action == "start":
-                    atom_dict = dict()  # type:  dict
+                    atom_dict: dict = dict()
 
                     while True:
                         action, elem = next(context)
@@ -241,7 +241,7 @@ class XMLparser:
                 tag = etree.QName(elem).localname
 
                 if tag == "mode":
-                    mode_dict = dict()  # type: dict
+                    mode_dict: dict = dict()
 
                     while True:
                         action, elem = next(context)
@@ -255,7 +255,12 @@ class XMLparser:
                             break
 
                         if elem.attrib:
-                            mode_dict.update(elem.attrib)
+                            for attr, text in elem.attrib.items():
+                                try:
+                                    value = float(text)
+                                except ValueError:
+                                    value = text
+                                mode_dict[attr] = value
 
                         try:
                             value = float(elem.text)
@@ -298,13 +303,13 @@ class XMLparser:
 
             return laboratory
 
-        specie_dict = {
+        specie_dict: dict = {
             "comments": list(),
             "references": list(),
             "geometry": list(),
             "transitions": list(),
             "laboratory": dict(),
-        }  # type: dict
+        }
 
         while True:
             action, elem = next(context)

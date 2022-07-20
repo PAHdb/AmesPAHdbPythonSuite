@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.coadded import Coadded
     from amespahdbpythonsuite.fitted import Fitted
     from amespahdbpythonsuite.mcfitted import MCfitted
+    from amespahdbpythonsuite.observation import Observation
 
 
 message = AmesPAHdb.message
@@ -46,6 +47,10 @@ class Spectrum(Transitions):
         Populate data dictionary helper.
 
         """
+        self.grid = keywords.get("grid", list())
+        self.profile = keywords.get("profile", "")
+        self.fwhm = keywords.get("fwhm", 0.0)
+
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "grid" not in keywords:
@@ -54,10 +59,6 @@ class Spectrum(Transitions):
                     self.profile = d["profile"]
                 if "fwhm" not in keywords:
                     self.fwhm = d["fwhm"]
-
-        self.grid = keywords.get("grid", list())
-        self.profile = keywords.get("profile", "")
-        self.fwhm = keywords.get("fwhm", 0.0)
 
     def get(self) -> dict:
         """
@@ -140,7 +141,9 @@ class Spectrum(Transitions):
 
         message(f"WRITTEN: {filename}")
 
-    def fit(self, y: list, yerr: list = [], notice: bool = True, **keywords) -> Fitted:
+    def fit(
+        self, y: Union[Observation, list], yerr: list = list(), notice: bool = True, **keywords
+    ) -> Fitted:
         """
         Fits the input spectrum.
 
@@ -328,7 +331,7 @@ class Spectrum(Transitions):
 
         """
 
-        max = 0.0  # type: Union[float, dict]
+        max: Union[float, dict] = 0.0
         if all:
             for intensities in self.data.values():
                 m = intensities.max()

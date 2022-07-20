@@ -27,7 +27,7 @@ class Fitted(Spectrum):
 
         """
         super().__init__(d, **keywords)
-        self.atoms = dict()  # type: dict
+        self.atoms: dict = dict()
         self.__set(d, **keywords)
 
     def plot(self, **keywords) -> None:
@@ -145,9 +145,11 @@ class Fitted(Spectrum):
                     if not isinstance(classes["anion"], int):
                         axis[0].plot(x, classes["anion"], "r-", label="anion")
                     if not isinstance(classes["neutral"], int):
-                        axis[0].plot(x, classes["neutral"], "g-", label="neutral")
+                        axis[0].plot(x, classes["neutral"],
+                                     "g-", label="neutral")
                     if not isinstance(classes["cation"], int):
-                        axis[0].plot(x, classes["cation"], "b-", label="cation")
+                        axis[0].plot(x, classes["cation"],
+                                     "b-", label="cation")
                     axis[0].axhline(0, linestyle="--", color="gray")
                     axis[0].legend()
                 elif keywords.get("size", False):
@@ -161,7 +163,8 @@ class Fitted(Spectrum):
                     if not isinstance(classes["pure"], int):
                         axis[0].plot(x, classes["pure"], "r-", label="pure")
                     if not isinstance(classes["nitrogen"], int):
-                        axis[0].plot(x, classes["nitrogen"], "g-", label="nitrogen")
+                        axis[0].plot(x, classes["nitrogen"],
+                                     "g-", label="nitrogen")
                     axis[0].axhline(0, linestyle="--", color="gray")
                     axis[0].legend()
             elif keywords.get("residual", False):
@@ -179,7 +182,8 @@ class Fitted(Spectrum):
                 ypos = 0.95 - 0.05
                 for uid, w, col in zip(self.uids, self.weights.values(), colors):
                     txt = ("%d" + (5 * " ") + "%.2e") % (uid, w)
-                    axis[1].text(0.05, ypos, txt, color=col, family="monospace")
+                    axis[1].text(0.05, ypos, txt, color=col,
+                                 family="monospace")
                     ypos -= 0.05
                     if ypos <= 0.05:
                         axis[1].text(0.05, ypos, "more...", family="monospace")
@@ -226,6 +230,10 @@ class Fitted(Spectrum):
         Populate data dictionary helper.
 
         """
+        self.observation = keywords.get("observation", None)
+        self.weights = keywords.get("weights", dict())
+        self.method = keywords.get("method", "")
+
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "observation" not in keywords:
@@ -234,10 +242,6 @@ class Fitted(Spectrum):
                     self.weights = d["weights"]
                 if "method" not in keywords:
                     self.method = d["method"]
-
-        self.observation = keywords.get("observation", None)
-        self.weights = keywords.get("weights", dict())
-        self.method = keywords.get("method", "")
 
     def get(self) -> dict:
         """
@@ -309,7 +313,8 @@ class Fitted(Spectrum):
                 np.array([t for v in self.data.values() for t in v])
                 * self.units["ordinate"]["unit"],
                 np.array(
-                    [self.weights[uid] for uid, v in self.data.items() for _ in v]
+                    [self.weights[uid] for uid, v in self.data.items()
+                     for _ in v]
                 ),
             ],
             names=["UID", "FREQUENCY", "INTENSITY", "WEIGHT"],
@@ -414,7 +419,7 @@ class Fitted(Spectrum):
         # Set subclasses dictionary.
         subclasses = self._subclasses(**keywords)
 
-        classes = dict()  # type: dict
+        classes: dict = dict()
 
         for key in subclasses:
             classes[key] = self.__classes(subclasses[key])
@@ -531,7 +536,8 @@ class Fitted(Spectrum):
         ]
 
         if len(uids) > 0:
-            breakdown["pure"] = np.sum([self.weights[uid] for uid in uids]) / total
+            breakdown["pure"] = np.sum([self.weights[uid]
+                                       for uid in uids]) / total
 
         # Getting Nc.
         nc = np.array([self.atoms[uid]["nc"] for uid in self.uids])
@@ -596,7 +602,8 @@ class Fitted(Spectrum):
         """
 
         # Create reference dictionary with atomic numbers for c, h, n, o, mg, si, and fe.
-        nelem = {"nc": 6, "nh": 1, "nn": 7, "no": 8, "nmg": 12, "nsi": 14, "nfe": 26}
+        nelem = {"nc": 6, "nh": 1, "nn": 7, "no": 8,
+                 "nmg": 12, "nsi": 14, "nfe": 26}
 
         # Initialize atoms dictionary.
         self.atoms = {key: {} for key in self.uids}
@@ -669,7 +676,8 @@ class Fitted(Spectrum):
                 w[uid] = -integrate.trapezoid(flux, x=self.grid)
 
         self.weights = dict(
-            sorted(w.items(), key=lambda item: (item[1], item[0]), reverse=True)
+            sorted(w.items(), key=lambda item: (
+                item[1], item[0]), reverse=True)
         )
 
         self.uids = list(self.weights.keys())

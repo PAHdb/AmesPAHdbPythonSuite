@@ -27,11 +27,19 @@ class Data():
         """
         self.__set(d, **keywords)
 
-    def __set(self, d: Optional[dict] = None, **keywords):
+    def __set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate data dictionary helper.
 
         """
+        self.database = keywords.get("database", "")
+        self.version = keywords.get("version", "")
+        self.data = keywords.get("data", dict())
+        self.pahdb = keywords.get("pahdb", None)
+        self.uids = keywords.get("uids", list())
+        self.model = keywords.get("model", dict())
+        self.units = keywords.get("units", dict())
+
         if isinstance(d, dict):
             # Check if expected keywords are present in provided dictionary,
             # otherwise assign them to instance variables.
@@ -49,22 +57,16 @@ class Data():
                 if "units" not in keywords:
                     self.units = d["units"]
 
-        self.database = keywords.get("database", "")
-        self.version = keywords.get("version", "")
-        self.data = keywords.get("data", dict())
-        self.pahdb = keywords.get("pahdb", None)
-        self.uids = keywords.get("uids", list())
-        self.model = keywords.get("model", dict())
-        self.units = keywords.get("units", dict())
-
         # Check for database and versioning mismatch between provided dictionary and parsed database.
         if self.pahdb:
             if self.pahdb["database"] != self.database:
-                message(f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
+                message(
+                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
                 return
 
             if self.pahdb["version"] != self.version:
-                message(f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
+                message(
+                    f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
                 return
 
     def get(self) -> dict:
@@ -106,7 +108,7 @@ class Data():
         """
         return self.uids
 
-    def intersect(self, uids: list) -> None:
+    def intersect(self, uids: list[int]) -> None:
         """
         Updates data to the intersection with provided UIDs.
 
@@ -130,7 +132,7 @@ class Data():
 
         self.data = {key: self.data[key] for key in self.uids}
 
-    def difference(self, uids: list) -> None:
+    def difference(self, uids: list[int]) -> None:
         """
         Updates data to the difference with provided UIDs.
 

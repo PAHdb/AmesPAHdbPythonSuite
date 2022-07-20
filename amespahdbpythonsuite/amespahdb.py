@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from typing import Optional
+from __future__ import annotations
+from typing import TYPE_CHECKING, Optional, Union
 
 import os
 import sys
@@ -21,6 +22,12 @@ import pickle
 
 from amespahdbpythonsuite.xmlparser import XMLparser
 import amespahdbpythonsuite as suite
+
+if TYPE_CHECKING:
+    from amespahdbpythonsuite.species import Species
+    from amespahdbpythonsuite.geometry import Geometry
+    from amespahdbpythonsuite.transitions import Transitions
+    from amespahdbpythonsuite.laboratory import Laboratory
 
 
 class AmesPAHdb:
@@ -101,7 +108,7 @@ class AmesPAHdb:
             # TODO: Turn the sys.exit into exceptions.
             sys.exit(2)
 
-        self.__data = dict()  # type: dict
+        self.__data: dict = dict()
 
         self._joined = None
 
@@ -210,7 +217,7 @@ class AmesPAHdb:
 
         return "AmesPAHdbPythonSuite AmesPAHdb instance."
 
-    def __getkeybyuids(self, key: str, uids: list) -> dict:
+    def __getkeybyuids(self, key: str, uids: list[int]) -> dict:
         """
         Get a dictionary of PAHdb properties
         retrieved by keyword for provided UIDs.
@@ -243,7 +250,7 @@ class AmesPAHdb:
                 )
             )
 
-    def gettransitionsbyuid(self, uids: list):
+    def gettransitionsbyuid(self, uids: Union[list[int], int]) -> Transitions:
         """
         Retrieve and return transitions instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -258,17 +265,20 @@ class AmesPAHdb:
 
         """
 
-        if type(uids) == int:
-            uids = [uids]
+        uids_list = list()
+        if isinstance(uids, int):
+            uids_list.append(uids)
+        else:
+            uids_list = uids
 
         from amespahdbpythonsuite import transitions
 
         return transitions.Transitions(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("transitions", uids),
+            data=self.__getkeybyuids("transitions", uids_list),
             pahdb=self.__data,
-            uids=uids,
+            uids=uids_list,
             model={"type": "zerokelvin_m", "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {
@@ -279,7 +289,7 @@ class AmesPAHdb:
             },
         )
 
-    def getlaboratorybyuid(self, uids: list):
+    def getlaboratorybyuid(self, uids: Union[list[int], int]) -> Optional[Laboratory]:
         """
         Retrieve and return laboratory database instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -299,17 +309,20 @@ class AmesPAHdb:
             self.message("EXPERIMENTAL DATABASE REQUIRED")
             return None
 
-        if type(uids) == int:
-            uids = [uids]
+        uids_list = list()
+        if isinstance(uids, int):
+            uids_list.append(uids)
+        else:
+            uids_list = uids
 
         from amespahdbpythonsuite import laboratory
 
         return laboratory.Laboratory(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("laboratory", uids),
+            data=self.__getkeybyuids("laboratory", uids_list),
             pahdb=self.__data,
-            uids=uids,
+            uids=uids_list,
             model={"type": "laboratory_m", "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {"unit": u.cm**-1, "label": "frequency"},
@@ -324,7 +337,7 @@ class AmesPAHdb:
             },
         )
 
-    def getspeciesbyuid(self, uids: list):
+    def getspeciesbyuid(self, uids: Union[list[int], int]) -> Species:
         """
         Retrieve and return species instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -339,22 +352,25 @@ class AmesPAHdb:
 
         """
 
-        if type(uids) == int:
-            uids = [uids]
+        uids_list = list()
+        if isinstance(uids, int):
+            uids_list.append(uids)
+        else:
+            uids_list = uids
 
         from amespahdbpythonsuite import species
 
         return species.Species(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("species", uids),
+            data=self.__getkeybyuids("species", uids_list),
             pahdb=self.__data,
             uids=uids,
-            references=self.__getkeybyuids("references", uids),
-            comments=self.__getkeybyuids("comments", uids),
+            references=self.__getkeybyuids("references", uids_list),
+            comments=self.__getkeybyuids("comments", uids_list),
         )
 
-    def getgeometrybyuid(self, uids: list):
+    def getgeometrybyuid(self, uids: Union[list[int], int]) -> Geometry:
         """
         Retrieve and return geometry instance based on UIDs input.
         UIDs should be a list, e.g. the output of search method.
@@ -370,17 +386,20 @@ class AmesPAHdb:
 
         """
 
-        if type(uids) == int:
-            uids = [uids]
+        uids_list = list()
+        if isinstance(uids, int):
+            uids_list.append(uids)
+        else:
+            uids_list = uids
 
         from amespahdbpythonsuite import geometry
 
         return geometry.Geometry(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("geometry", uids),
+            data=self.__getkeybyuids("geometry", uids_list),
             pahdb=self.__data,
-            uids=uids,
+            uids=uids_list,
         )
 
     def search(self, query: str) -> Optional[list]:
@@ -648,7 +667,7 @@ class AmesPAHdb:
                     if tokens[prev]["type"] == "COMPARISON" and tokens[prev]["valid"]:
                         parsed += " " + tokens[current]["translation"]
                     else:
-                        tokens[current].valid = False
+                        tokens[current]["valid"] = False
             elif tokens[current]["type"] == "LOGICAL":
                 if prev > -1:
                     if (
