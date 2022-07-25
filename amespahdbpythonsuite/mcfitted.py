@@ -93,7 +93,7 @@ class MCfitted:
         for mcfit in self.mcfits:
             mcfits.append(mcfit.getfit())
 
-        return {'mean' : np.mean(mcfits, axis=0), 'var': np.var(mcfits, axis=0)}
+        return {'mean': np.mean(mcfits, axis=0), 'var': np.var(mcfits, axis=0)}
 
     def getbreakdown(self, **keywords) -> dict:
         """
@@ -125,7 +125,7 @@ class MCfitted:
 
         for key, value in stat.items():
             print(key, value)
-        
+
         if keywords.get('write'):
             self.write(stat, keywords.get('write'))
 
