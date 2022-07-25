@@ -108,7 +108,7 @@ class Data():
         """
         return self.uids
 
-    def intersect(self, uids: list[int]) -> None:
+    def intersect(self, uids: 'list[int]') -> None:
         """
         Updates data to the intersection with provided UIDs.
 
@@ -132,7 +132,7 @@ class Data():
 
         self.data = {key: self.data[key] for key in self.uids}
 
-    def difference(self, uids: list[int]) -> None:
+    def difference(self, uids: 'list[int]') -> None:
         """
         Updates data to the difference with provided UIDs.
 

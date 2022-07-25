@@ -773,8 +773,8 @@ class Geometry(Data):
 
     def __becode(
         self,
-        allcarbons: list[tuple[float, float, float]],
-        allhydrogens: list[tuple[float, float, float]],
+        allcarbons: 'list[tuple[float, float, float]]',
+        allhydrogens: 'list[tuple[float, float, float]]',
     ) -> tuple:
         """The star of the show here is the function PAHbecode, which answers
         the challenge of converting a list of PAH carbon atom and
@@ -930,7 +930,7 @@ class Geometry(Data):
         value += normal[2] * (v1[0] * v2[1] - v1[1] * v2[0])
         return np.sign(value)
 
-    def __pcone_to_be(self, pcone_code: list[str]) -> str:
+    def __pcone_to_be(self, pcone_code: 'list[str]') -> str:
         """Converts the PC-1 code of a PAH to its boundary-edge code.  By
         Dr. Joseph E. Roser <Joseph.E.Roser@nasa.gov
 

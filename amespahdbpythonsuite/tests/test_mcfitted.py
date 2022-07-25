@@ -35,13 +35,12 @@ def test_mcfitted():
         grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
     )
 
-    return spectrum.mcfit(obs, nsamples=10)
+    return spectrum.mcfit(obs, samples=10)
 
 
 @pytest.fixture(scope="module")
 def test_path(tmp_path_factory):
     d = tmp_path_factory.mktemp("test_mcfitted")
-    print(d)
     return f"{d}/"
 
 
@@ -54,13 +53,14 @@ class TestMcfitted:
     def test_instance(self):
         assert isinstance(mcfitted.MCfitted(), mcfitted.MCfitted)
 
+    def test_getbreakdown(self, test_path, test_mcfitted):
+        breakdown = test_mcfitted.getbreakdown(write=f'{test_path}mc_breakdown.tbl')
+        assert len(breakdown.keys()) == 14
+        assert exists(f"{test_path}mc_breakdown.tbl")
+
     def test_plot(self, monkeypatch, test_mcfitted):
         monkeypatch.setattr(plt, "show", lambda: None)
         test_mcfitted.plot(show=True)
-
-    def test_stats(self, test_mcfitted, test_path):
-        test_mcfitted.getstats(save=True)
-        assert exists('mcfitted_statistics.txt')
 
     def test_plot_charge(self, test_mcfitted, test_path):
         test_mcfitted.plot(

@@ -369,7 +369,7 @@ class Spectrum(Transitions):
 
         self.grid = grid
 
-    def mcfit(self, y: list = list(), yerr: list = list(), samples: int = 1024, uniform: bool = False,
+    def mcfit(self, y: Union[Observation, list], yerr: list = list(), samples: int = 1024, uniform: bool = False,
               notice: bool = True, **keywords) -> MCfitted:
         """
         Monte Carlo sampling and fitting to the input spectrum.
@@ -398,7 +398,7 @@ class Spectrum(Transitions):
             )
 
         # Initialize lists and dictionaries.
-        fits = []
+        fits = list()
 
         # Start the MC sampling and fitting.
         for i in range(samples):
@@ -406,8 +406,7 @@ class Spectrum(Transitions):
 
             # Calculate new flux based on random uniform distribution sampling.
             if uniform:
-                flux = np.random.uniform(obs.flux.value, obs.uncertainty.array)\
-                    * obs.flux.unit
+                flux = obs.uncertainty.array * np.random.uniform(-1, 1, obs.flux.shape) * obs.flux.unit + obs.flux
             else:
                 flux = np.random.normal(obs.flux.value, obs.uncertainty.array)\
                     * obs.flux.unit

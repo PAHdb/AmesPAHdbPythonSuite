@@ -6,6 +6,8 @@ from typing import Optional
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
 
+from scipy import stats
+
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 message = AmesPAHdb.message
@@ -49,61 +51,22 @@ class MCfitted:
 
         return d
 
-    def getstats(self, save=False, **keywords):
-        """
-        Obtain statistics (min, max, median, mean, std) for the MC fitted parameters,
-        and save to file.
-
-        """
-
-        if 'results' not in keywords:
-            results = self.getbreakdown()
-
-        rkeys = list(results.keys())
-
-        if save:
-            # Save MC breakdown stats to file.
-            o = open('mcfitted_statistics.txt', 'w')
-            o.write('# param min max median mean std\n')
-
-            for i, key in enumerate(rkeys):
-                o.write(f'{key} {np.min(results[key]):.5f} '
-                        f'{np.max(results[key]):.5f} '
-                        f'{np.median(results[key]):.5f} '
-                        f'{np.mean(results[key]):.5f} '
-                        f'{np.std(results[key]):.5f}\n')
-            o.close()
-        else:
-            print('# param min max median mean std')
-            for i, key in enumerate(rkeys):
-                print(f'{key} {np.min(results[key]):.5f} '
-                      f'{np.max(results[key]):.5f} '
-                      f'{np.median(results[key]):.5f} '
-                      f'{np.mean(results[key]):.5f} '
-                      f'{np.std(results[key]):.5f}')
-
     def averagespec(self, **keywords):
         """
         Calculate average and std spectra.
 
         """
         #  Getting the average spectra
-        components = {}
-        lst_classes = {}
-        avg_classes = {}
-        std_classes = {}
+        components = dict()
+        lst_classes = dict()
+        avg_classes = dict()
+        std_classes = dict()
 
         # Get average and std spectrum.
-        if 'fits' not in keywords:
-            fits = self.getfit()
-        avg_fit = np.mean(fits, axis=0)
-        std_fit = np.std(fits, axis=0)
-
-        components['fit'] = {'mean_spec': avg_fit, 'std_spec': std_fit}
+        components['fit'] = self.getfit()
 
         # Get average and std spectrum of classes.
-        if 'classes' not in keywords:
-            classes = self.getclasses()
+        classes = self.getclasses()
         classkeys = list(classes[0].keys())
 
         for key in classkeys:
@@ -116,45 +79,34 @@ class MCfitted:
                     lst_classes[key].append(c[key])
         for key in classkeys:
             avg_classes[key] = np.mean(lst_classes[key], axis=0)
-            std_classes[key] = np.std(lst_classes[key], axis=0)
-            components[key] = {'mean_spec': avg_classes[key], 'std_spec': std_classes[key]}
+            std_classes[key] = np.var(lst_classes[key], axis=0)
+            components[key] = {'mean': avg_classes[key], 'var': std_classes[key]}
 
         return components
 
-    def getfit(self, **keywords) -> list:
+    def getfit(self, **keywords) -> dict:
         """
         Retrieves the sum of fit values.
 
         """
-        fits = []
-        for fit in self.mcfits:
-            fits.append(fit.getfit())
+        mcfits = list()
+        for mcfit in self.mcfits:
+            mcfits.append(mcfit.getfit())
 
-        return fits
+        return {'mean' : np.mean(mcfits, axis=0), 'var': np.var(mcfits, axis=0)}
 
     def getbreakdown(self, **keywords) -> dict:
         """
         Retrieves the breakdown of the MC fitted PAHs.
 
         """
-        results = dict()  # type: dict
-        results = {'solo': [],
-                   'duo': [],
-                   'trio': [],
-                   'quartet': [],
-                   'quintet': [],
-                   'anion': [],
-                   'neutral': [],
-                   'cation': [],
-                   'small': [],
-                   'large': [],
-                   'nitrogen': [],
-                   'pure': [],
-                   'nc': [],
-                   'error': []
-                   }
+        keys = ['solo', 'duo', 'trio', 'quartet', 'quintet',
+                'neutral', 'cation', 'anion',
+                'small', 'large',
+                'pure', 'nitrogen',
+                'nc', 'error']
 
-        keys = list(results.keys())
+        results = {key: [] for key in keys}
 
         # Obtain fit breakdown.
         for fit in self.mcfits:
@@ -164,19 +116,31 @@ class MCfitted:
             # Obtain fit uncertainty.
             error = fit.geterror()['err']
             results['error'].append(error)
+        
+        ret = dict()
+        stat = dict()
+        for k in keys:
+            ret[k] = {'mean': np.mean(results[k]), 'var': np.var(results[k])}
+            stat[k] = stats.describe(results[k])
+        
+        for key, value in stat.items():
+            print(key, value)
+        
+        if keywords.get('write'):
+            self.write(stat, keywords.get('write'))
 
-        return results
+        return ret
 
     def getclasses(self, **keywords) -> list:
         """
         Retrieves the spectra of the different classes of the MC fitted PAHs.
 
         """
-        self.mcclasses = []
-        for fit in self.mcfits:
-            self.mcclasses.append(fit.getclasses())
+        mcclasses = list()
+        for mcfit in self.mcfits:
+            mcclasses.append(mcfit.getclasses())
 
-        return self.mcclasses
+        return mcclasses
 
     def plot(self, **keywords):
         """
@@ -240,57 +204,57 @@ class MCfitted:
                        label='obs'
                        )
 
-        ax.plot(x, components['fit']['mean_spec'], color='tab:purple', linewidth=1.2, label='fit')
-        ax.fill_between(x, components['fit']['mean_spec'] - components['fit']['std_spec'],
-                        components['fit']['mean_spec'] + components['fit']['std_spec'],
+        ax.plot(x, components['fit']['mean'], color='tab:purple', linewidth=1.2, label='fit')
+        ax.fill_between(x, components['fit']['mean'] - components['fit']['var'],
+                        components['fit']['mean'] + components['fit']['var'],
                         color='tab:purple', alpha=0.3)
 
         if keywords.get('charge'):
             ptype = 'charge'
-            if isinstance(components['anion']['mean_spec'], np.ndarray):
+            if isinstance(components['anion']['mean'], np.ndarray):
                 ax.plot(x, components['anion'], color='tab:red', linewidth=1.2, label='anion')
-                ax.fill_between(x, components['anion']['mean_spec'] - components['anion']['std_spec'],
-                                components['anion']['mean_spec'] + components['anion']['std_spec'],
+                ax.fill_between(x, components['anion']['mean'] - components['anion']['var'],
+                                components['anion']['mean'] + components['anion']['var'],
                                 color='tab:red', alpha=0.3)
 
-            if isinstance(components['neutral']['mean_spec'], np.ndarray):
-                ax.plot(x, components['neutral']['mean_spec'], color='tab:green', linewidth=1.2, label='neutral')
-                ax.fill_between(x, components['neutral']['mean_spec'] - components['neutral']['std_spec'],
-                                components['neutral']['mean_spec'] + components['neutral']['std_spec'],
+            if isinstance(components['neutral']['mean'], np.ndarray):
+                ax.plot(x, components['neutral']['mean'], color='tab:green', linewidth=1.2, label='neutral')
+                ax.fill_between(x, components['neutral']['mean'] - components['neutral']['var'],
+                                components['neutral']['mean'] + components['neutral']['var'],
                                 color='tab:green', alpha=0.3)
 
-            if isinstance(components['cation']['mean_spec'], np.ndarray):
+            if isinstance(components['cation']['mean'], np.ndarray):
                 ax.plot(x, components['cation'], color='tab:blue', linewidth=1.2, label='cation')
-                ax.fill_between(x, components['cation']['mean_spec'] - components['cation']['std_spec'],
-                                components['cation']['mean_spec'] + components['cation']['std_spec'],
+                ax.fill_between(x, components['cation']['mean'] - components['cation']['var'],
+                                components['cation']['mean'] + components['cation']['var'],
                                 color='tab:blue', alpha=0.3)
 
         if keywords.get('size'):
             ptype = 'size'
-            if isinstance(components['small']['mean_spec'], np.ndarray):
-                ax.plot(x, components['small']['mean_spec'], color='tab:red', label='small')
-                ax.fill_between(x, components['small']['mean_spec'] - components['small']['std_spec'],
-                                components['small']['mean_spec'] + components['small']['std_spec'],
+            if isinstance(components['small']['mean'], np.ndarray):
+                ax.plot(x, components['small']['mean'], color='tab:red', label='small')
+                ax.fill_between(x, components['small']['mean'] - components['small']['var'],
+                                components['small']['mean'] + components['small']['var'],
                                 color='tab:red', alpha=0.3)
 
-            if isinstance(components['large']['mean_spec'], np.ndarray):
-                ax.plot(x, components['large']['mean_spec'], color='tab:green', label='large')
-                ax.fill_between(x, components['large']['mean_spec'] - components['large']['std_spec'],
-                                components['large']['mean_spec'] + components['large']['std_spec'],
+            if isinstance(components['large']['mean'], np.ndarray):
+                ax.plot(x, components['large']['mean'], color='tab:green', label='large')
+                ax.fill_between(x, components['large']['mean'] - components['large']['var'],
+                                components['large']['mean'] + components['large']['var'],
                                 color='tab:green', alpha=0.3)
 
         if keywords.get('composition'):
             ptype = 'composition'
-            if isinstance(components['pure']['mean_spec'], np.ndarray):
-                ax.plot(x, components['pure']['mean_spec'], color='tab:red', label='pure')
-                ax.fill_between(x, components['pure']['mean_spec'] - components['pure']['std_spec'],
-                                components['pure']['mean_spec'] + components['pure']['std_spec'],
+            if isinstance(components['pure']['mean'], np.ndarray):
+                ax.plot(x, components['pure']['mean'], color='tab:red', label='pure')
+                ax.fill_between(x, components['pure']['mean'] - components['pure']['var'],
+                                components['pure']['mean'] + components['pure']['var'],
                                 color='tab:red', alpha=0.3)
 
-            if isinstance(components['nitrogen']['mean_spec'], np.ndarray):
-                ax.plot(x, components['nitrogen']['mean_spec'], color='tab:green', label='nitrogen')
-                ax.fill_between(x, components['nitrogen']['mean_spec'] - components['nitrogen']['std_spec'],
-                                components['nitrogen']['mean_spec'] + components['nitrogen']['std_spec'],
+            if isinstance(components['nitrogen']['mean'], np.ndarray):
+                ax.plot(x, components['nitrogen']['mean'], color='tab:green', label='nitrogen')
+                ax.fill_between(x, components['nitrogen']['mean'] - components['nitrogen']['var'],
+                                components['nitrogen']['mean'] + components['nitrogen']['var'],
                                 color='tab:green', alpha=0.3)
 
         ax.axhline(0, linestyle='--', color='gray')
@@ -304,3 +268,48 @@ class MCfitted:
             plt.show()
 
         plt.close(fig)
+
+    def write(self, stat = dict, filename: str = "") -> None:
+        """
+        Write the spectra to file as an IPAC-table.
+
+        """
+        import sys
+        import datetime
+        from astropy.table import Table  # type: ignore
+
+        if filename == "":
+            filename = self.__class__.__name__ + ".tbl"
+
+        hdr = list()
+
+        kv = {
+            "DATE": datetime.datetime.now()
+            .astimezone()
+            .replace(microsecond=0)
+            .isoformat(),
+            "ORIGIN": "NASA Ames Research Center",
+            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "SOFTWARE": "AmesPAHdbPythonSuite",
+            "AUTHOR": "Dr. C. Boersma",
+            "TYPE": self.__class__.__name__.upper(),
+        }
+
+        for key, value in kv.items():
+            if not value.isnumeric():
+                hdr.append(f"{key:8} = '{value}'")
+            else:
+                hdr.append(f"{key:8} = {value}")
+        
+        tbl = Table(
+            names=('attribute', 'min', 'max', 'mean', 'var', 'skew', 'kurt'),
+            dtype=('U25', 'float64', 'float64', 'float64', 'float64', 'float64', 'float64',),
+            meta={"comments": hdr}
+                   )
+
+        for key, vals in stat.items():
+            tbl.add_row([key, vals[1][0], vals[1][1], vals[2], vals[3], vals[4], vals[5]])
+        
+        tbl.write(filename, format='ipac', overwrite=True)
+
+        message(f"WRITTEN: {filename}")

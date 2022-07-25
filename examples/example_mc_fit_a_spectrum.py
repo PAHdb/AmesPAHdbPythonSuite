@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # after absorbing a 6 eV (CGS units) photon.
     transitions.cascade(6 * 1.603e-12, multiprocessing=False)
 
-    # Shift data 15 wavenumber to the red
+    # Shift data 15 wavenumber to the red to mimic some effects of anharmonicity.
     transitions.shift(-15.0)
 
     # Convolve the bands with a Gaussian with FWHM of 15 /cm.
@@ -47,9 +47,6 @@ if __name__ == '__main__':
 
     # Fit the spectrum using Monte Carlo approach.
     mcfit = spectrum.mcfit(obs, samples=1024, notice=False)
-
-    # Get average/min/max/std statistics for the breakdown components and uncertainty, and save to file.
-    mcfit.getstats(save=False)
 
     # Create plots.
     mcfit.plot(wavelength=True, charge=True, save=os.getcwd())

@@ -14,7 +14,7 @@ from pkg_resources import resource_filename
 from astropy.io import ascii
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import spectrum, observation
+from amespahdbpythonsuite import spectrum, observation, mcfitted
 
 
 @pytest.fixture(scope="module")
@@ -139,5 +139,5 @@ class TestSpectrum:
             multiprocessing=False,
         )
         mcfit = spectrum.mcfit(obs, samples=10)
-        assert mcfit.mcfits[0].method == 'NNLC'
+        assert isinstance(mcfit, mcfitted.MCfitted)
         assert len(mcfit.mcfits) == 10
