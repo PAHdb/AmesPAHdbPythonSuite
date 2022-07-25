@@ -116,13 +116,13 @@ class MCfitted:
             # Obtain fit uncertainty.
             error = fit.geterror()['err']
             results['error'].append(error)
-        
+
         ret = dict()
         stat = dict()
         for k in keys:
             ret[k] = {'mean': np.mean(results[k]), 'var': np.var(results[k])}
             stat[k] = stats.describe(results[k])
-        
+
         for key, value in stat.items():
             print(key, value)
         
@@ -269,7 +269,7 @@ class MCfitted:
 
         plt.close(fig)
 
-    def write(self, stat = dict, filename: str = "") -> None:
+    def write(self, stat=dict, filename: str = "") -> None:
         """
         Write the spectra to file as an IPAC-table.
 
@@ -300,16 +300,14 @@ class MCfitted:
                 hdr.append(f"{key:8} = '{value}'")
             else:
                 hdr.append(f"{key:8} = {value}")
-        
-        tbl = Table(
-            names=('attribute', 'min', 'max', 'mean', 'var', 'skew', 'kurt'),
-            dtype=('U25', 'float64', 'float64', 'float64', 'float64', 'float64', 'float64',),
-            meta={"comments": hdr}
-                   )
+
+        tbl = Table(names=('attribute', 'min', 'max', 'mean', 'var', 'skew', 'kurt'),
+                    dtype=('U25', 'float64', 'float64', 'float64', 'float64', 'float64', 'float64',),
+                    meta={"comments": hdr})
 
         for key, vals in stat.items():
             tbl.add_row([key, vals[1][0], vals[1][1], vals[2], vals[3], vals[4], vals[5]])
-        
+
         tbl.write(filename, format='ipac', overwrite=True)
 
         message(f"WRITTEN: {filename}")
