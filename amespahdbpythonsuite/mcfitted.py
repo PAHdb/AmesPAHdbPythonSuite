@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python4
 
 from __future__ import annotations
 from typing import Optional
@@ -6,14 +6,15 @@ from typing import Optional
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
 
-from scipy import stats
+from scipy import stats  # type: ignore
+from specutils import Spectrum1D  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 message = AmesPAHdb.message
 
 
-class MCfitted:
+class MCFitted:
     """
     AmesPAHdbPythonSuite mcfitted class.
     Contains methods to fit and plot the input spectrum using a Monte Carlo approach.
@@ -51,49 +52,29 @@ class MCfitted:
 
         return d
 
-    def averagespec(self, **keywords):
+    def getstats(self, d=dict()) -> dict:
         """
-        Calculate average and std spectra.
+        Get statistics for the mcfitted spectra.
+
+        Returns:
+            stat : dictionary
 
         """
-        #  Getting the average spectra
-        components = dict()
-        lst_classes = dict()
-        avg_classes = dict()
-        std_classes = dict()
+        stat = {'mean': stats.describe(d).mean, 'std': np.sqrt(stats.describe(d).variance),
+                'skew': stats.describe(d).skewness, 'kurt': stats.describe(d).kurtosis}
 
-        # Get average and std spectrum.
-        components['fit'] = self.getfit()
-
-        # Get average and std spectrum of classes.
-        classes = self.getclasses()
-        classkeys = list(classes[0].keys())
-
-        for key in classkeys:
-            lst_classes[key] = []
-            avg_classes[key] = []
-            std_classes[key] = []
-        for c in classes:
-            for key in classkeys:
-                if key in c.keys():
-                    lst_classes[key].append(c[key])
-        for key in classkeys:
-            avg_classes[key] = np.mean(lst_classes[key], axis=0)
-            std_classes[key] = np.var(lst_classes[key], axis=0)
-            components[key] = {'mean': avg_classes[key], 'var': std_classes[key]}
-
-        return components
+        return stat
 
     def getfit(self, **keywords) -> dict:
         """
-        Retrieves the sum of fit values.
+        Retrieves the mean, std, skewness, and curtosis spectra.
 
         """
         mcfits = list()
         for mcfit in self.mcfits:
             mcfits.append(mcfit.getfit())
 
-        return {'mean': np.mean(mcfits, axis=0), 'var': np.var(mcfits, axis=0)}
+        return self.getstats(mcfits)
 
     def getbreakdown(self, **keywords) -> dict:
         """
@@ -106,7 +87,7 @@ class MCfitted:
                 'pure', 'nitrogen',
                 'nc', 'error']
 
-        results = {key: [] for key in keys}
+        results: dict = {key: [] for key in keys}
 
         # Obtain fit breakdown.
         for fit in self.mcfits:
@@ -118,20 +99,12 @@ class MCfitted:
             results['error'].append(error)
 
         ret = dict()
-        stat = dict()
-        for k in keys:
-            ret[k] = {'mean': np.mean(results[k]), 'var': np.var(results[k])}
-            stat[k] = stats.describe(results[k])
-
-        for key, value in stat.items():
-            print(key, value)
-
-        if keywords.get('write'):
-            self.write(stat, keywords.get('write'))
+        for key in keys:
+            ret[key] = self.getstats(results[key])
 
         return ret
 
-    def getclasses(self, **keywords) -> list:
+    def getclasses(self, **keywords) -> dict:
         """
         Retrieves the spectra of the different classes of the MC fitted PAHs.
 
@@ -140,7 +113,22 @@ class MCfitted:
         for mcfit in self.mcfits:
             mcclasses.append(mcfit.getclasses())
 
-        return mcclasses
+        classkeys = list(mcclasses[0].keys())
+        _lst_classes: dict = {key: [] for key in classkeys}
+
+        # Create dictionary of lists for each breakdown class.
+        for mc in mcclasses:
+            for key in classkeys:
+                if key in mc.keys():
+                    _lst_classes[key].append(mc[key])
+
+        # Create the classes dictionary of dictionaries
+        classes = dict()
+
+        for key in classkeys:
+            classes[key] = self.getstats(_lst_classes[key])
+
+        return classes
 
     def plot(self, **keywords):
         """
@@ -149,13 +137,14 @@ class MCfitted:
         """
         from astropy.nddata import StdDevUncertainty  # type: ignore
 
-        obs = self.mcfits[0].observation
-        units = self.mcfits[0].units
+        obs = self.getobservations()
+        units = self.getobservationunits()
 
-        if 'components' not in keywords:
-            components = self.averagespec()
+        # Get MC average fit and breakdown spectra.
+        fit = self.getfit()
+        components = self.getclasses()
 
-        # Charge
+        # Plot.
         fig, ax = plt.subplots()
 
         if keywords.get('wavelength', False):
@@ -204,58 +193,61 @@ class MCfitted:
                        label='obs'
                        )
 
-        ax.plot(x, components['fit']['mean'], color='tab:purple', linewidth=1.2, label='fit')
-        ax.fill_between(x, components['fit']['mean'] - components['fit']['var'],
-                        components['fit']['mean'] + components['fit']['var'],
+        ax.plot(x, fit['mean'], color='tab:purple', linewidth=1.2, label='fit')
+        ax.fill_between(x, fit['mean'] - fit['std'],
+                        fit['mean'] + fit['std'],
                         color='tab:purple', alpha=0.3)
 
         if keywords.get('charge'):
             ptype = 'charge'
             if isinstance(components['anion']['mean'], np.ndarray):
                 ax.plot(x, components['anion'], color='tab:red', linewidth=1.2, label='anion')
-                ax.fill_between(x, components['anion']['mean'] - components['anion']['var'],
-                                components['anion']['mean'] + components['anion']['var'],
+                ax.fill_between(x, components['anion']['mean'] - components['anion']['std'],
+                                components['anion']['mean'] + components['anion']['std'],
                                 color='tab:red', alpha=0.3)
 
             if isinstance(components['neutral']['mean'], np.ndarray):
                 ax.plot(x, components['neutral']['mean'], color='tab:green', linewidth=1.2, label='neutral')
-                ax.fill_between(x, components['neutral']['mean'] - components['neutral']['var'],
-                                components['neutral']['mean'] + components['neutral']['var'],
+                ax.fill_between(x, components['neutral']['mean'] - components['neutral']['std'],
+                                components['neutral']['mean'] + components['neutral']['std'],
                                 color='tab:green', alpha=0.3)
 
             if isinstance(components['cation']['mean'], np.ndarray):
                 ax.plot(x, components['cation'], color='tab:blue', linewidth=1.2, label='cation')
-                ax.fill_between(x, components['cation']['mean'] - components['cation']['var'],
-                                components['cation']['mean'] + components['cation']['var'],
+                ax.fill_between(x, components['cation']['mean'] - components['cation']['std'],
+                                components['cation']['mean'] + components['cation']['std'],
                                 color='tab:blue', alpha=0.3)
 
-        if keywords.get('size'):
+        elif keywords.get('size'):
             ptype = 'size'
             if isinstance(components['small']['mean'], np.ndarray):
                 ax.plot(x, components['small']['mean'], color='tab:red', label='small')
-                ax.fill_between(x, components['small']['mean'] - components['small']['var'],
-                                components['small']['mean'] + components['small']['var'],
+                ax.fill_between(x, components['small']['mean'] - components['small']['std'],
+                                components['small']['mean'] + components['small']['std'],
                                 color='tab:red', alpha=0.3)
 
             if isinstance(components['large']['mean'], np.ndarray):
                 ax.plot(x, components['large']['mean'], color='tab:green', label='large')
-                ax.fill_between(x, components['large']['mean'] - components['large']['var'],
-                                components['large']['mean'] + components['large']['var'],
+                ax.fill_between(x, components['large']['mean'] - components['large']['std'],
+                                components['large']['mean'] + components['large']['std'],
                                 color='tab:green', alpha=0.3)
 
-        if keywords.get('composition'):
+        elif keywords.get('composition'):
             ptype = 'composition'
             if isinstance(components['pure']['mean'], np.ndarray):
                 ax.plot(x, components['pure']['mean'], color='tab:red', label='pure')
-                ax.fill_between(x, components['pure']['mean'] - components['pure']['var'],
-                                components['pure']['mean'] + components['pure']['var'],
+                ax.fill_between(x, components['pure']['mean'] - components['pure']['std'],
+                                components['pure']['mean'] + components['pure']['std'],
                                 color='tab:red', alpha=0.3)
 
             if isinstance(components['nitrogen']['mean'], np.ndarray):
                 ax.plot(x, components['nitrogen']['mean'], color='tab:green', label='nitrogen')
-                ax.fill_between(x, components['nitrogen']['mean'] - components['nitrogen']['var'],
-                                components['nitrogen']['mean'] + components['nitrogen']['var'],
+                ax.fill_between(x, components['nitrogen']['mean'] - components['nitrogen']['std'],
+                                components['nitrogen']['mean'] + components['nitrogen']['std'],
                                 color='tab:green', alpha=0.3)
+
+        else:
+            ptype = None
 
         ax.axhline(0, linestyle='--', color='gray')
         ax.legend(fontsize=10)
@@ -269,7 +261,7 @@ class MCfitted:
 
         plt.close(fig)
 
-    def write(self, stat=dict, filename: str = "") -> None:
+    def write(self, filename: str = "") -> None:
         """
         Write the spectra to file as an IPAC-table.
 
@@ -278,7 +270,7 @@ class MCfitted:
         import datetime
         from astropy.table import Table  # type: ignore
 
-        if filename == "":
+        if not filename:
             filename = self.__class__.__name__ + ".tbl"
 
         hdr = list()
@@ -293,6 +285,7 @@ class MCfitted:
             "SOFTWARE": "AmesPAHdbPythonSuite",
             "AUTHOR": "Dr. C. Boersma",
             "TYPE": self.__class__.__name__.upper(),
+            "SAMPLES": f'{len(self.mcfits)}'
         }
 
         for key, value in kv.items():
@@ -301,13 +294,37 @@ class MCfitted:
             else:
                 hdr.append(f"{key:8} = {value}")
 
-        tbl = Table(names=('attribute', 'min', 'max', 'mean', 'var', 'skew', 'kurt'),
-                    dtype=('U25', 'float64', 'float64', 'float64', 'float64', 'float64', 'float64',),
+        tbl = Table(names=('attribute', 'mean', 'std', 'skew', 'kurt'),
+                    dtype=('U25', 'float64', 'float64', 'float64', 'float64',),
                     meta={"comments": hdr})
 
-        for key, vals in stat.items():
-            tbl.add_row([key, vals[1][0], vals[1][1], vals[2], vals[3], vals[4], vals[5]])
+        for key, vals in self.getbreakdown().items():
+            tbl.add_row([key, vals['mean'], vals['std'], vals['skew'], vals['kurt']])
 
         tbl.write(filename, format='ipac', overwrite=True)
 
         message(f"WRITTEN: {filename}")
+
+    def getobservations(self) -> Spectrum1D:
+        """
+        Retrieves the ordinate values of the observation.
+
+        """
+        return self.mcfits[0].observation
+
+    def getobservationunits(self) -> Spectrum1D:
+        """
+        Retrieves the observations units.
+
+        """
+        return self.mcfits[0].units
+
+    def getresidual(self) -> dict:
+        """
+        Retrieves the statistics spectra for the residuals of the MC fits.
+        """
+        mcres = list()
+        for mcfit in self.mcfits:
+            mcres.append(mcfit.getresidual())
+
+        return self.getstats(mcres)

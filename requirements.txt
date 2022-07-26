@@ -6,3 +6,4 @@ scipy
 packaging
 specutils
 vtk
+tqdm

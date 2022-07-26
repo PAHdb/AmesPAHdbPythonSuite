@@ -26,8 +26,6 @@ def test_mcfitted():
     )
     uids = [18, 73, 726, 2054, 223]
     transitions = db.gettransitionsbyuid(uids)
-    transitions.cascade(6 * 1.603e-12, multiprocessing=False)
-    transitions.shift(-15.0)
     obs = observation.Observation(
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
@@ -44,19 +42,26 @@ def test_path(tmp_path_factory):
     return f"{d}/"
 
 
-class TestMcfitted:
+class TestMCFitted:
     """
     Test Spectrum class.
 
     """
 
     def test_instance(self):
-        assert isinstance(mcfitted.MCfitted(), mcfitted.MCfitted)
+        assert isinstance(mcfitted.MCFitted(), mcfitted.MCFitted)
 
-    def test_getbreakdown(self, test_path, test_mcfitted):
-        breakdown = test_mcfitted.getbreakdown(write=f'{test_path}mc_breakdown.tbl')
+    def test_getfit(self, test_mcfitted):
+        fit = test_mcfitted.getfit()
+        assert len(fit.keys()) == 4
+
+    def test_getclasses(self, test_mcfitted):
+        classes = test_mcfitted.getclasses()
+        assert len(classes.keys()) == 7
+
+    def test_getbreakdown(self, test_mcfitted):
+        breakdown = test_mcfitted.getbreakdown()
         assert len(breakdown.keys()) == 14
-        assert exists(f"{test_path}mc_breakdown.tbl")
 
     def test_plot(self, monkeypatch, test_mcfitted):
         monkeypatch.setattr(plt, "show", lambda: None)
@@ -85,3 +90,7 @@ class TestMcfitted:
             save=test_path,
         )
         assert exists(f"{test_path}mc_composition_breakdown.pdf")
+
+    def test_write(self, test_path, test_mcfitted):
+        test_mcfitted.write(filename=f'{test_path}mc_breakdown.tbl')
+        assert exists(f'{test_path}mc_breakdown.tbl')

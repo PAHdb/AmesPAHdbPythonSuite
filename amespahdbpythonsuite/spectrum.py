@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.coadded import Coadded
     from amespahdbpythonsuite.fitted import Fitted
     from amespahdbpythonsuite.observation import Observation
-    from amespahdbpythonsuite.mcfitted import MCfitted
+    from amespahdbpythonsuite.mcfitted import MCFitted
 
 
 message = AmesPAHdb.message
@@ -370,7 +370,7 @@ class Spectrum(Transitions):
         self.grid = grid
 
     def mcfit(self, y: Union[Observation, list], yerr: list = list(), samples: int = 1024, uniform: bool = False,
-              notice: bool = True, **keywords) -> MCfitted:
+              notice: bool = True, **keywords) -> MCFitted:
         """
         Monte Carlo sampling and fitting to the input spectrum.
 
@@ -380,7 +380,8 @@ class Spectrum(Transitions):
             int
 
         """
-        from amespahdbpythonsuite.mcfitted import MCfitted
+        from tqdm import tqdm  # type: ignore
+        from amespahdbpythonsuite.mcfitted import MCFitted
         from amespahdbpythonsuite import observation
 
         if isinstance(y, Spectrum1D):
@@ -401,8 +402,7 @@ class Spectrum(Transitions):
         fits = list()
 
         # Start the MC sampling and fitting.
-        for i in range(samples):
-            print(f'MC sampling {i+1}/{samples}')
+        for _ in tqdm(range(samples), desc="sample", leave=True, unit="sample", colour='blue'):
 
             # Calculate new flux based on random uniform distribution sampling.
             if uniform:
@@ -417,7 +417,7 @@ class Spectrum(Transitions):
             # Obtain the fit and weights.
             fits.append(fit)
 
-        return MCfitted(
+        return MCFitted(
             mcfits=fits,
             distribution='uniform' if uniform else 'normal'
         )
