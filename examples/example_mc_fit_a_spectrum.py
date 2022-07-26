@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""example2.py
+"""examplemc_fit_a_specttum.py
 
 Example of using the AmesPAHdbPythonSuite to display the ('stick')
 absorption spectrum of coronene (UID=18).
