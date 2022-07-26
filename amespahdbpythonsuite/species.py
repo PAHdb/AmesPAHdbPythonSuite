@@ -88,14 +88,14 @@ class Species:
 
         return f"AmesPAHdbPythonSuite Species instance.\n" f"{self.uids=}"
 
-    def getuids(self) -> 'list[int]':
+    def getuids(self) -> list[int]:
         """
         Return uid list.
 
         """
         return self.uids
 
-    def intersect(self, uids: 'list[int]') -> None:
+    def intersect(self, uids: list[int]) -> None:
         """
         Updates data to the intersection with provided UIDs.
 
@@ -119,7 +119,7 @@ class Species:
 
         self.data = {key: self.data[key] for key in self.uids}
 
-    def difference(self, uids: 'list[int]') -> None:
+    def difference(self, uids: list[int]) -> None:
         """
         Updates data to the difference with provided UIDs.
 
