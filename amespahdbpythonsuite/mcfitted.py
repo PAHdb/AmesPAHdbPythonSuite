@@ -75,7 +75,6 @@ class MCFitted:
         for mcfit in self.mcfits:
             mcfits.append(mcfit.getfit())
 
-        breakpoint()
         return self._getstats(mcfits)
 
     def getbreakdown(self, **keywords) -> dict:
