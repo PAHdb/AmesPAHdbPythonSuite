@@ -66,7 +66,7 @@ class MCFitted:
 
         return stat
 
-    def getfit(self, **keywords) -> dict:
+    def getfit(self) -> dict:
         """
         Retrieves the mean, std, skewness, and curtosis spectra.
 
@@ -77,7 +77,7 @@ class MCFitted:
 
         return self._getstats(mcfits)
 
-    def getbreakdown(self, **keywords) -> dict:
+    def getbreakdown(self) -> dict:
         """
         Retrieves the breakdown of the MC fitted PAHs.
 
@@ -102,7 +102,7 @@ class MCFitted:
 
         return ret
 
-    def getclasses(self, **keywords) -> dict:
+    def getclasses(self) -> dict:
         """
         Retrieves the spectra of the different classes of the MC fitted PAHs.
 
@@ -303,7 +303,7 @@ class MCFitted:
 
         message(f"WRITTEN: {filename}")
 
-    def geterror(self) -> Optional[dict]:
+    def geterror(self) -> dict:
         """
         Obtains the PAHdb fitting uncertainty from the fitted geterror method,
         as the ratio of the residual over the total spectrum area.
@@ -323,7 +323,7 @@ class MCFitted:
                     _lst_classes[key].append(mc[key])
 
         # Create the errors dictionary of dictionaries
-        errors = dict()
+        errors: dict = dict()
 
         for key in errkeys:
             if None in _lst_classes[key]:
