@@ -6,6 +6,7 @@ from typing import Optional
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
 
+from astropy import units as u  # type: ignore
 from scipy import stats  # type: ignore
 from specutils import Spectrum1D  # type: ignore
 
@@ -52,7 +53,7 @@ class MCFitted:
 
         return d
 
-    def getstats(self, d=dict()) -> dict:
+    def _getstats(self, d=dict()) -> dict:
         """
         Get statistics for the mcfitted spectra.
 
@@ -74,7 +75,8 @@ class MCFitted:
         for mcfit in self.mcfits:
             mcfits.append(mcfit.getfit())
 
-        return self.getstats(mcfits)
+        breakpoint()
+        return self._getstats(mcfits)
 
     def getbreakdown(self, **keywords) -> dict:
         """
@@ -84,23 +86,20 @@ class MCFitted:
         keys = ['solo', 'duo', 'trio', 'quartet', 'quintet',
                 'neutral', 'cation', 'anion',
                 'small', 'large',
-                'pure', 'nitrogen',
-                'nc', 'error']
+                'pure', 'nitrogen', 'nc'
+                ]
 
         results: dict = {key: [] for key in keys}
 
         # Obtain fit breakdown.
         for fit in self.mcfits:
             bd = fit.getbreakdown()
-            for key in keys[:-1]:
+            for key in keys:
                 results[key].append(bd[key])
-            # Obtain fit uncertainty.
-            error = fit.geterror()['err']
-            results['error'].append(error)
 
         ret = dict()
         for key in keys:
-            ret[key] = self.getstats(results[key])
+            ret[key] = self._getstats(results[key])
 
         return ret
 
@@ -126,7 +125,7 @@ class MCFitted:
         classes = dict()
 
         for key in classkeys:
-            classes[key] = self.getstats(_lst_classes[key])
+            classes[key] = self._getstats(_lst_classes[key])
 
         return classes
 
@@ -305,18 +304,50 @@ class MCFitted:
 
         message(f"WRITTEN: {filename}")
 
+    def geterror(self) -> Optional[dict]:
+        """
+        Obtains the PAHdb fitting uncertainty from the fitted geterror method,
+        as the ratio of the residual over the total spectrum area.
+
+        """
+        mcerr = list()
+        for mcfit in self.mcfits:
+            mcerr.append(mcfit.geterror())
+
+        errkeys = list(mcerr[0].keys())
+        _lst_classes: dict = {key: [] for key in errkeys}
+
+        # Create dictionary of lists for each error.
+        for mc in mcerr:
+            for key in errkeys:
+                if key in mc.keys():
+                    _lst_classes[key].append(mc[key])
+
+        # Create the errors dictionary of dictionaries
+        errors = dict()
+
+        for key in errkeys:
+            if None in _lst_classes[key]:
+                errors[key] = None
+            else:
+                errors[key] = self._getstats(_lst_classes[key])
+
+        return errors
+
     def getobservations(self) -> Spectrum1D:
         """
         Retrieves the ordinate values of the observation.
 
         """
+
         return self.mcfits[0].observation
 
-    def getobservationunits(self) -> Spectrum1D:
+    def getobservationunits(self) -> u.Unit:
         """
         Retrieves the observations units.
 
         """
+
         return self.mcfits[0].units
 
     def getresidual(self) -> dict:
@@ -327,4 +358,4 @@ class MCFitted:
         for mcfit in self.mcfits:
             mcres.append(mcfit.getresidual())
 
-        return self.getstats(mcres)
+        return self._getstats(mcres)

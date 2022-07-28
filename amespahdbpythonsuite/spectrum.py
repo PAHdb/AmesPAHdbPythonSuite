@@ -399,15 +399,16 @@ class Spectrum(Transitions):
             )
 
         # Initialize lists and dictionaries.
-        fits = list()
+        mcfits = list()
 
         # Start the MC sampling and fitting.
         for _ in tqdm(range(samples), desc="sample", leave=True, unit="sample", colour='blue'):
 
-            # Calculate new flux based on random uniform distribution sampling.
             if uniform:
+                # Calculate new flux based on random uniform distribution sampling.
                 flux = obs.uncertainty.array * np.random.uniform(-1, 1, obs.flux.shape) * obs.flux.unit + obs.flux
             else:
+                # Calculate new flux based on random normal distribution sampling.
                 flux = np.random.normal(obs.flux.value, obs.uncertainty.array)\
                     * obs.flux.unit
 
@@ -415,9 +416,9 @@ class Spectrum(Transitions):
             fit = self.fit(flux, obs.uncertainty, notice=notice)
 
             # Obtain the fit and weights.
-            fits.append(fit)
+            mcfits.append(fit)
 
         return MCFitted(
-            mcfits=fits,
+            mcfits=mcfits,
             distribution='uniform' if uniform else 'normal'
         )
