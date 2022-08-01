@@ -61,6 +61,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#monte-carlo"><span class="sectnum">3.9.3</span> Monte Carlo</a></li>
 </ul>
 </li>
 </ul>
@@ -224,6 +225,18 @@ small cutoff size in number of carbon atoms.</p>
 </div>
 <p>The ‘getbreakdown’-method also accepts the ‘flux’-keyword, which controls whether the relative breakdown should be reported based on fitted weight or integrated flux.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">breakdown</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">getbreakdown</span><span class="p">(</span><span class="n">flux</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="monte-carlo">
+<h2><span class="sectnum">3.9.3</span> Monte Carlo<a class="headerlink" href="#monte-carlo" title="Permalink to this heading">¶</a></h2>
+<p>Neither non-negative least-chi-square and non-negative least-square fits provide uncertainties on their own. However, in combination with a Monte Carlo approach that varies the observed spectrum within its uncertainties they can.</p>
+<p>Monte Carlo fitting is handled by the ‘AmesPAHdbPythonSuite_Spectrum’-object and it either accepts an ‘AmesPAHdbPythonSuite_Observation’-object, or a simple array of ordinates with a required array of ordinate uncertainties, and the number of samples. The ‘AmesPAHdbPythonSuite_Spectrum’-object’s ‘mcfit’-method will perform a non-negative least-chi-square fit and return an ‘AmesPAHdbPythonSuite_MCFitted_Spectrum’-object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mcfit</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">mcfit</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The ‘AmesPAHdbPythonSuite_MCFitted_Spectrum’-object offers mostly the same set of methods as the regular ‘AmesPAHdbPythonSuite_Fitted_Spectrum’-object does, but transparently handles the necessary Monte Carlo statistics. For example, the ‘AmesPAHdbPythonSuite_MCFitted_Spectrum’-object’s ‘getclasses’ returns spectra of the fit broken down by charge, size, and composition. The returned statistics are four elements containing the mean, variance, skewness, and kurtosis.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mcclasses</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">getclasses</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

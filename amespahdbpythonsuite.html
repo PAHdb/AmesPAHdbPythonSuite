@@ -60,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sec_03i.html"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sec_03i.html#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03i.html#monte-carlo"><span class="sectnum">3.9.3</span> Monte Carlo</a></li>
 </ul>
 </li>
 </ul>
@@ -692,6 +693,16 @@ Contains methods to fit and plot the input spectrum.</p>
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls class: <a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions.get" title="amespahdbpythonsuite.transitions.Transitions.get"><code class="xref py py-class docutils literal notranslate"><span class="pre">amespahdbpythonsuite.transitions.Transitions.get</span></code></a>.
 Assigns class variables from inherited dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.mcfit">
+<span class="sig-name descname"><span class="pre">mcfit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#amespahdbpythonsuite.observation.Observation" title="amespahdbpythonsuite.observation.Observation"><span class="pre">Observation</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MCFitted</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.mcfit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.mcfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monte Carlo sampling and fitting to the input spectrum.</p>
+<dl class="simple">
+<dt>samples<span class="classifier">Number of samples.</span></dt><dd><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
