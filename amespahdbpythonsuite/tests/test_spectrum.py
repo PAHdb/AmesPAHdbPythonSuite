@@ -14,7 +14,7 @@ from pkg_resources import resource_filename
 from astropy.io import ascii
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import spectrum, observation
+from amespahdbpythonsuite import spectrum, observation, mcfitted
 
 
 @pytest.fixture(scope="module")
@@ -35,6 +35,13 @@ def test_transitions():
 @pytest.fixture(scope="module")
 def test_spectrum(test_transitions):
     return test_transitions.convolve(fwhm=15.0)
+
+
+@pytest.fixture(scope="module")
+def test_observations():
+    file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+    obs = observation.Observation(file)
+    return obs
 
 
 @pytest.fixture(scope="module")
@@ -86,16 +93,14 @@ class TestSpectrum:
         fit = spectrum.fit(f["FLUX"])
         assert fit.getmethod() == "NNLS"
 
-    def test_fit_with_obs_with_errors(self, test_transitions):
-        file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
-        obs = observation.Observation(file)
+    def test_fit_with_obs_with_errors(self, test_observations, test_transitions):
         spectrum = test_transitions.convolve(
-            grid=1e4 / obs.spectrum.spectral_axis.value,
+            grid=1e4 / test_observations.spectrum.spectral_axis.value,
             fwhm=15.0,
             gaussian=True,
             multiprocessing=False,
         )
-        fit = spectrum.fit(obs)
+        fit = spectrum.fit(test_observations)
         assert fit.getmethod() == "NNLC"
 
     def test_fit_with_obs_without_errors(self, test_transitions):
@@ -128,3 +133,14 @@ class TestSpectrum:
     def test_write_spectrum(self, test_spectrum, test_path):
         test_spectrum.write(f"{test_path}.tbl")
         assert exists(f"{test_path}.tbl")
+
+    def test_mcfit(self, test_observations, test_transitions):
+        spectrum = test_transitions.convolve(
+            grid=1e4 / test_observations.spectrum.spectral_axis.value,
+            fwhm=15.0,
+            gaussian=True,
+            multiprocessing=False,
+        )
+        mcfit = spectrum.mcfit(test_observations, samples=10)
+        assert isinstance(mcfit, mcfitted.MCFitted)
+        assert len(mcfit.mcfits) == 10

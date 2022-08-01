@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.coadded import Coadded
     from amespahdbpythonsuite.fitted import Fitted
     from amespahdbpythonsuite.observation import Observation
+    from amespahdbpythonsuite.mcfitted import MCFitted
 
 
 message = AmesPAHdb.message
@@ -177,7 +178,8 @@ class Spectrum(Transitions):
             b = list(np.divide(obs.flux.value, obs.uncertainty.array))
             m = np.divide(matrix, obs.uncertainty.array)
 
-        message(f"DOING {method}")
+        if notice:
+            message(f"DOING {method}")
 
         solution, norm = optimize.nnls(m.T, b)
 
@@ -366,3 +368,56 @@ class Spectrum(Transitions):
             self.data[uid] = s.flux.value
 
         self.grid = grid
+
+    def mcfit(self, y: Union[Observation, list], yerr: list = list(), samples: int = 1024, uniform: bool = False,
+              notice: bool = True, **keywords) -> MCFitted:
+        """
+        Monte Carlo sampling and fitting to the input spectrum.
+
+        Parameters
+        ----------
+        samples : Number of samples.
+            int
+
+        """
+        from tqdm import tqdm  # type: ignore
+        from amespahdbpythonsuite.mcfitted import MCFitted
+        from amespahdbpythonsuite import observation
+
+        if isinstance(y, Spectrum1D):
+            obs = y
+        elif isinstance(y, observation.Observation):
+            obs = y.spectrum
+        else:
+            unc = None
+            if np.any(yerr):
+                unc = StdDevUncertainty(yerr)
+            obs = Spectrum1D(
+                flux=y * u.Unit(),
+                spectral_axis=self.grid * self.units["abscissa"]["unit"],
+                uncertainty=unc,
+            )
+
+        mcfits = list()
+
+        # Start the MC sampling and fitting.
+        for _ in tqdm(range(samples), desc="sample", leave=True, unit="sample", colour='blue'):
+
+            if uniform:
+                # Calculate new flux based on random uniform distribution sampling.
+                flux = obs.uncertainty.array * np.random.uniform(-1, 1, obs.flux.shape) * obs.flux.unit + obs.flux
+            else:
+                # Calculate new flux based on random normal distribution sampling.
+                flux = np.random.normal(obs.flux.value, obs.uncertainty.array)\
+                    * obs.flux.unit
+
+            # Fit the spectrum.
+            fit = self.fit(flux, obs.uncertainty, notice=notice)
+
+            # Obtain the fit and weights.
+            mcfits.append(fit)
+
+        return MCFitted(
+            mcfits=mcfits,
+            distribution='uniform' if uniform else 'normal'
+        )

@@ -281,7 +281,7 @@ class Fitted(Spectrum):
         from astropy.io import ascii  # type: ignore
         from astropy.table import Table  # type: ignore
 
-        if filename == "":
+        if not filename:
             filename = self.__class__.__name__ + ".tbl"
 
         hdr = list()

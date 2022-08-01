@@ -122,3 +122,21 @@ The 'getbreakdown'-method also accepts the 'flux'-keyword, which controls whethe
 .. code:: python
 
    breakdown = fit.getbreakdown(flux=True)
+
+-----------
+Monte Carlo
+-----------
+Neither non-negative least-chi-square and non-negative least-square fits provide uncertainties on their own. However, in combination with a Monte Carlo approach that varies the observed spectrum within its uncertainties they can.
+
+Monte Carlo fitting is handled by the 'AmesPAHdbPythonSuite_Spectrum'-object and it either accepts an 'AmesPAHdbPythonSuite_Observation'-object, or a simple array of ordinates with a required array of ordinate uncertainties, and the number of samples. The 'AmesPAHdbPythonSuite_Spectrum'-object's 'mcfit'-method will perform a non-negative least-chi-square fit and return an 'AmesPAHdbPythonSuite_MCFitted_Spectrum'-object.
+
+.. code:: python
+
+   mcfit = spectrum.mcfit(observation, samples=1024)
+
+The 'AmesPAHdbPythonSuite_MCFitted_Spectrum'-object offers mostly the same set of methods as the regular 'AmesPAHdbPythonSuite_Fitted_Spectrum'-object does, but transparently handles the necessary Monte Carlo statistics. For example, the 'AmesPAHdbPythonSuite_MCFitted_Spectrum'-object's 'getclasses' returns spectra of the fit broken down by charge, size, and composition. The returned statistics are four elements containing the mean, variance, skewness, and kurtosis.
+
+.. code:: python
+
+   mcclasses = mcfit.getclasses()
+
