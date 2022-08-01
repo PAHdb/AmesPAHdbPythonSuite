@@ -398,7 +398,6 @@ class Spectrum(Transitions):
                 uncertainty=unc,
             )
 
-        # Initialize lists and dictionaries.
         mcfits = list()
 
         # Start the MC sampling and fitting.

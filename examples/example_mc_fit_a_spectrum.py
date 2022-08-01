@@ -19,6 +19,7 @@ if __name__ == '__main__':
     obs = observation.Observation(
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
+
     # Read the database.
     xml = 'resources/pahdb-theoretical_cutdown.xml'
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
