@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
-
+import copy
 from typing import Optional
 
-import copy
 import numpy as np
-
 from scipy.spatial import KDTree  # type: ignore
 from scipy.spatial.distance import euclidean as edist  # type: ignore
 
-from amespahdbpythonsuite.data import Data
-
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+from amespahdbpythonsuite.data import Data
 
 message = AmesPAHdb.message
 
@@ -274,11 +271,11 @@ class Geometry(Data):
         atom_colors = {
             1: [0.78, 0.78, 0.78],
             6: [0.11, 0.11, 0.11],
-            7: [1.0, 0.0, 0.0],
-            8: [0.0, 0.0, 1.0],
-            12: [0.0, 1.0, 1.0],
-            14: [1.0, 0.0, 0.0],
-            26: [0.0, 1.0, 0.0],
+            7: [0.19, 0.31, 0.97],
+            8: [1.0, 0.05, 0.05],
+            12: [0.54, 1.0, 0.0],
+            14: [0.94, 0.78, 0.63],
+            26: [0.89, 0.40, 0.20],
         }
 
         atom_radii = {1: 0.25, 6: 0.5, 7: 0.75, 8: 0.75, 12: 0.875, 14: 1, 26: 1}
