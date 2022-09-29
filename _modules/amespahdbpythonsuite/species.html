@@ -19,6 +19,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -72,17 +73,55 @@
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html"><span class="sectnum">5</span> FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../amespahdbpythonsuite.html">src</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.data">data class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.spectrum">spectrum class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.coadded">coadd class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.species">species class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.fitted">fitted class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.observation">observation class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb"><code class="docutils literal notranslate"><span class="pre">AmesPAHdb</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.data">data class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.data.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.xmlparser">xmlparser class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser"><code class="docutils literal notranslate"><span class="pre">XMLparser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.transitions">transitions class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions"><code class="docutils literal notranslate"><span class="pre">Transitions</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.energy"><code class="docutils literal notranslate"><span class="pre">energy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.frequencies"><code class="docutils literal notranslate"><span class="pre">frequencies</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.frequency"><code class="docutils literal notranslate"><span class="pre">frequency</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.intensities"><code class="docutils literal notranslate"><span class="pre">intensities</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.spectrum">spectrum class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum"><code class="docutils literal notranslate"><span class="pre">Spectrum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.coadded">coadd class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.coadded.Coadded"><code class="docutils literal notranslate"><span class="pre">Coadded</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.species">species class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.Species"><code class="docutils literal notranslate"><span class="pre">Species</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.species.formatformula"><code class="docutils literal notranslate"><span class="pre">formatformula()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.geometry">geometry class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry"><code class="docutils literal notranslate"><span class="pre">Geometry</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.laboratory">laboratory class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.laboratory.Laboratory"><code class="docutils literal notranslate"><span class="pre">Laboratory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.fitted">fitted class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted"><code class="docutils literal notranslate"><span class="pre">Fitted</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite.observation">observation class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation"><code class="docutils literal notranslate"><span class="pre">Observation</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../amespahdbpythonsuite.html#module-amespahdbpythonsuite">Module contents</a></li>
 </ul>
 </li>
@@ -122,6 +161,7 @@
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">transitions</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
 
@@ -278,8 +318,11 @@
             <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;zerokelvin_m&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
             <span class="n">units</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;abscissa&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span> <span class="s2">&quot;frequency [wavenumber]&quot;</span><span class="p">},</span>
-                <span class="s2">&quot;ordinate&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span> <span class="s2">&quot;integrated cross-section&quot;</span> <span class="o">+</span> <span class="s2">&quot;[km/mol]&quot;</span><span class="p">},</span>
+                <span class="s2">&quot;abscissa&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;frequency&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;ordinate&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">mol</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;integrated cross-section&quot;</span><span class="p">},</span>
             <span class="p">},</span>
         <span class="p">)</span></div>
 
