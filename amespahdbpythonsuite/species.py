@@ -7,6 +7,7 @@ from amespahdbpythonsuite import geometry
 from amespahdbpythonsuite import transitions
 import copy
 import re
+import astropy.units as u  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
@@ -163,8 +164,11 @@ class Species:
             model={"type": "zerokelvin_m",
                    "temperature": 0.0, "description": ""},
             units={
-                "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
-                "ordinate": {"unit": 2, "str": "integrated cross-section" + "[km/mol]"},
+                "abscissa": {
+                    "unit": u.cm**-1,
+                    "label": "frequency",
+                },
+                "ordinate": {"unit": u.km / u.mol, "label": "integrated cross-section"},
             },
         )
 

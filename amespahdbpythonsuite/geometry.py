@@ -193,7 +193,7 @@ class Geometry(Data):
         py = np.array([g["y"] for g in self.data[uid]])
         pz = np.array([g["z"] for g in self.data[uid]])
 
-        m = np.max([np.max(px), np.max(py)])
+        m = np.max([np.max(px), np.max(py)]) * 1.1
 
         for x, y, z, i in zip(px, py, pz, range(ng)):
             dd = np.sqrt((px - x) ** 2 + (py - y) ** 2 + (pz - z) ** 2)
