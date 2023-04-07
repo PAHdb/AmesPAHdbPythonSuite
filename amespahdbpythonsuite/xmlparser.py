@@ -6,7 +6,7 @@ or without schema checking.
 
 """
 
-from typing import Union
+from typing import Optional, Union
 import array
 import base64
 import urllib.request
@@ -41,7 +41,7 @@ class XMLparser:
 
     """
 
-    def __init__(self, filename: str = None, validate: bool = False) -> None:
+    def __init__(self, filename: Optional[str] = None, validate: bool = False) -> None:
         """
         Inits XMLparser with schema checking off, no given filename.
 

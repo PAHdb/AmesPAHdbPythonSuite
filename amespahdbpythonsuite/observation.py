@@ -311,7 +311,7 @@ class Observation:
         self.spectrum = resampler(
             self.spectrum, g * self.spectrum.spectral_axis.unit)
 
-    def setgridrange(self, min: float, max: float = None) -> None:
+    def setgridrange(self, min: float, max: Optional[float] = None) -> None:
         """
         Truncate the data to the given range.
 

@@ -109,6 +109,13 @@ fitted class
     :undoc-members:
     :show-inheritance:
 
+mcfitted class
+-----------------
+
+.. automodule:: amespahdbpythonsuite.mcfitted
+    :members:
+    :undoc-members:
+
 observation class
 -----------------
 
