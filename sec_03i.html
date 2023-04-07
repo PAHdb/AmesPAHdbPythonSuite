@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3.9 Spectroscopic Database Fitting &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,9 +16,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -33,46 +31,50 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> AmesPAHdbPythonSuite
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AmesPAHdbPythonSuite
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html"><span class="sectnum">1</span> Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html"><span class="sectnum">2</span> Usage</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="api.html"><span class="sectnum">3</span> API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="sec_03a.html"><span class="sectnum">3.1</span> Main Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03b.html"><span class="sectnum">3.2</span> Accessing the molecular PAH data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03c.html"><span class="sectnum">3.3</span> Working with Molecular PAH Properties</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4</span> Working with fundamental vibrational transitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03e.html"><span class="sectnum">3.5</span> Working with Molecular Geometric Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03f.html"><span class="sectnum">3.6</span> Working with Raw Laboratory Spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7</span> Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03h.html"><span class="sectnum">3.8</span> Creating PAH Spectra</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#emission-models"><span class="sectnum">3.8.1</span> Emission models</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#line-profiles"><span class="sectnum">3.8.2</span> Line profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><span class="sectnum">1 </span>Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html"><span class="sectnum">2 </span>Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html"><span class="sectnum">3 </span>API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sec_03a.html"><span class="sectnum">3.1 </span>Main Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03b.html"><span class="sectnum">3.2 </span>Accessing the molecular PAH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03c.html"><span class="sectnum">3.3 </span>Working with Molecular PAH Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4 </span>Working with fundamental vibrational transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03e.html"><span class="sectnum">3.5 </span>Working with Molecular Geometric Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03f.html"><span class="sectnum">3.6 </span>Working with Raw Laboratory Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7 </span>Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03h.html"><span class="sectnum">3.8 </span>Creating PAH Spectra</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#emission-models"><span class="sectnum">3.8.1 </span>Emission models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sec_03h.html#line-profiles"><span class="sectnum">3.8.2 </span>Line profiles</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.9</span> Spectroscopic Database Fitting</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#dealing-with-astronomical-observations"><span class="sectnum">3.9.1</span> Dealing with astronomical observations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#database-fitting"><span class="sectnum">3.9.2</span> Database fitting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#monte-carlo"><span class="sectnum">3.9.3</span> Monte Carlo</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.9 </span>Spectroscopic Database Fitting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dealing-with-astronomical-observations"><span class="sectnum">3.9.1 </span>Dealing with astronomical observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#database-fitting"><span class="sectnum">3.9.2 </span>Database fitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#monte-carlo"><span class="sectnum">3.9.3 </span>Monte Carlo</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4</span> Release History</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-5-0-2022-03-28"><span class="sectnum">4.1</span> v0.5.0 (2022-03-28)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.2</span> v0.1.0 (2019-08-20)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html"><span class="sectnum">4 </span>Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-5-0-2022-03-28"><span class="sectnum">4.1 </span>v0.5.0 (2022-03-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release-history.html#v0-1-0-2019-08-20"><span class="sectnum">4.2 </span>v0.1.0 (2019-08-20)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5</span> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html"><span class="sectnum">5 </span>FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amespahdbpythonsuite.html">src</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.amespahdb">amespahdb class</a><ul>
@@ -120,6 +122,10 @@
 <li class="toctree-l3"><a class="reference internal" href="amespahdbpythonsuite.html#amespahdbpythonsuite.fitted.Fitted"><code class="docutils literal notranslate"><span class="pre">Fitted</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.mcfitted">mcfitted class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted"><code class="docutils literal notranslate"><span class="pre">MCFitted</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="amespahdbpythonsuite.html#module-amespahdbpythonsuite.observation">observation class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="amespahdbpythonsuite.html#amespahdbpythonsuite.observation.Observation"><code class="docutils literal notranslate"><span class="pre">Observation</span></code></a></li>
 </ul>
@@ -142,9 +148,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="api.html"><span class="sectnum">3</span> API</a> &raquo;</li>
-      <li><span class="sectnum">3.9</span> Spectroscopic Database Fitting</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api.html"><span class="sectnum">3 </span>API</a></li>
+      <li class="breadcrumb-item active"><span class="sectnum">3.9 </span>Spectroscopic Database Fitting</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
@@ -156,34 +162,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<div class="section" id="spectroscopic-database-fitting">
-<h1><span class="sectnum">3.9</span> Spectroscopic Database Fitting<a class="headerlink" href="#spectroscopic-database-fitting" title="Permalink to this heading">¶</a></h1>
-<div class="section" id="dealing-with-astronomical-observations">
-<h2><span class="sectnum">3.9.1</span> Dealing with astronomical observations<a class="headerlink" href="#dealing-with-astronomical-observations" title="Permalink to this heading">¶</a></h2>
+  <section id="spectroscopic-database-fitting">
+<h1><span class="sectnum">3.9 </span>Spectroscopic Database Fitting<a class="headerlink" href="#spectroscopic-database-fitting" title="Permalink to this heading">¶</a></h1>
+<section id="dealing-with-astronomical-observations">
+<h2><span class="sectnum">3.9.1 </span>Dealing with astronomical observations<a class="headerlink" href="#dealing-with-astronomical-observations" title="Permalink to this heading">¶</a></h2>
 <p>Astronomical observations can be handled by the ‘observation’-instance, which is able to read text, ISO-SWS, and Spitzer-IRS-files (<em>work-in-progress</em>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span> <span class="o">=</span> <span class="n">observation</span><span class="p">(</span><span class="s1">&#39;myObservationFile&#39;</span><span class="p">)</span>
 </pre></div>
@@ -194,9 +176,9 @@
 <p>Column 3: continuum</p>
 <p>Column 4: uncertainty in ordinate</p>
 <p>Column 5: uncertainty in abscissa</p>
-<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="w"> </span><span class="o">=</span><span class="w"> </span>observation(x<span class="o">=</span>frequency,<span class="w"> </span>\<span class="w"></span>
-<span class="w">                          </span>y<span class="o">=</span>intensity,<span class="w"> </span>\<span class="w"></span>
-<span class="w">                          </span>yerr<span class="o">=</span>ystdev)<span class="w"></span>
+<div class="highlight-idl notranslate"><div class="highlight"><pre><span></span>observation<span class="w"> </span><span class="o">=</span><span class="w"> </span>observation(x<span class="o">=</span>frequency,<span class="w"> </span>\
+<span class="w">                          </span>y<span class="o">=</span>intensity,<span class="w"> </span>\
+<span class="w">                          </span>yerr<span class="o">=</span>ystdev)
 </pre></div>
 </div>
 <p>The ‘observation’-instance exposes the observation and provides the ‘plot’, and ‘write’-methods for output. The ‘plot’- method will display the observation and accepts the ‘oplot’, and ‘color’-keywords to control overplotting and color, respectively.</p>
@@ -222,9 +204,9 @@ respectively.</p>
 <span class="n">observation</span><span class="o">.</span><span class="n">setgridrange</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="database-fitting">
-<h2><span class="sectnum">3.9.2</span> Database fitting<a class="headerlink" href="#database-fitting" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="database-fitting">
+<h2><span class="sectnum">3.9.2 </span>Database fitting<a class="headerlink" href="#database-fitting" title="Permalink to this heading">¶</a></h2>
 <p>Spectroscopic database fitting is handled by the ‘spectrum’-instance and it either accepts an ‘observation’-instance, or simply an array of ordinates with an optional array of ordinate uncertainties. Whether ordinate uncertainties are provided or not, the ‘spectrum’- instance’s ‘fit’-method will perform a non-negative least-chi-square or non-negative least-square fit and return an ‘fit’-instance.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using an &#39;observation&#39;-instance</span>
 <span class="n">fit</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
@@ -266,9 +248,9 @@ small cutoff size in number of carbon atoms.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">breakdown</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">getbreakdown</span><span class="p">(</span><span class="n">flux</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="monte-carlo">
-<h2><span class="sectnum">3.9.3</span> Monte Carlo<a class="headerlink" href="#monte-carlo" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="monte-carlo">
+<h2><span class="sectnum">3.9.3 </span>Monte Carlo<a class="headerlink" href="#monte-carlo" title="Permalink to this heading">¶</a></h2>
 <p>Neither non-negative least-chi-square and non-negative least-square fits provide uncertainties on their own. However, in combination with a Monte Carlo approach that varies the observed spectrum within its uncertainties they can.</p>
 <p>Monte Carlo fitting is handled by the ‘AmesPAHdbPythonSuite_Spectrum’-object and it either accepts an ‘AmesPAHdbPythonSuite_Observation’-object, or a simple array of ordinates with a required array of ordinate uncertainties, and the number of samples. The ‘AmesPAHdbPythonSuite_Spectrum’-object’s ‘mcfit’-method will perform a non-negative least-chi-square fit and return an ‘AmesPAHdbPythonSuite_MCFitted_Spectrum’-object.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mcfit</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">mcfit</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
@@ -278,8 +260,8 @@ small cutoff size in number of carbon atoms.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mcclasses</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">getclasses</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
