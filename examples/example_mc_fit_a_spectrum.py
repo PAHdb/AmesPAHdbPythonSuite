@@ -25,19 +25,14 @@ if __name__ == '__main__':
     pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
                       check=False, cache=False)
 
-    uids = pahdb.search("magnesium=0 oxygen=0 iron=0 silicium=0 chx=0 ch2=0 c>20 h>0")
-
-    # Put back fullerenes, which have h=0
-    fullerenes = [717, 720, 723, 735, 736, 737]
-
-    uids = uids + fullerenes
+    uids = pahdb.search("c>0")
 
     # Retrieve the transitions from the database for the subset of PAHs.
-    transitions = pahdb.gettransitionsbyuid([uids])
+    transitions = pahdb.gettransitionsbyuid(uids)
 
     # Calculate the emission spectrum at the temperature reached
     # after absorbing a 6 eV (CGS units) photon.
-    transitions.cascade(6 * 1.603e-12, multiprocessing=False)
+    #transitions.cascade(6 * 1.603e-12, multiprocessing=False)
 
     # Shift data 15 wavenumber to the red to mimic some effects of anharmonicity.
     transitions.shift(-15.0)
@@ -46,7 +41,7 @@ if __name__ == '__main__':
     spectrum = transitions.convolve(grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False)
 
     # Fit the spectrum using Monte Carlo approach.
-    mcfit = spectrum.mcfit(obs, samples=1024, notice=False)
+    mcfit = spectrum.mcfit(obs, samples=10, notice=False, multiprocessing=True)
 
     # Create plots.
     mcfit.plot(wavelength=True, charge=True)
