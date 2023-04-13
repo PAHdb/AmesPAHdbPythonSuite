@@ -14,16 +14,18 @@ from pkg_resources import resource_filename
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import observation
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     obs = observation.Observation(
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
 
     # Read the database.
-    xml = 'resources/pahdb-theoretical_cutdown.xml'
-    pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                      check=False, cache=False)
+    xml = "resources/pahdb-theoretical_cutdown.xml"
+    pahdb = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+    )
 
     uids = pahdb.search("c>0")
 
@@ -32,13 +34,15 @@ if __name__ == '__main__':
 
     # Calculate the emission spectrum at the temperature reached
     # after absorbing a 6 eV (CGS units) photon.
-    #transitions.cascade(6 * 1.603e-12, multiprocessing=False)
+    # transitions.cascade(6 * 1.603e-12, multiprocessing=False)
 
     # Shift data 15 wavenumber to the red to mimic some effects of anharmonicity.
     transitions.shift(-15.0)
 
     # Convolve the bands with a Gaussian with FWHM of 15 /cm.
-    spectrum = transitions.convolve(grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False)
+    spectrum = transitions.convolve(
+        grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
+    )
 
     # Fit the spectrum using Monte Carlo approach.
     mcfit = spectrum.mcfit(obs, samples=10, notice=False, multiprocessing=True)
