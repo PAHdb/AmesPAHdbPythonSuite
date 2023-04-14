@@ -160,14 +160,14 @@
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="kn">from</span> <span class="nn">specutils</span> <span class="kn">import</span> <span class="n">Spectrum1D</span><span class="p">,</span> <span class="n">manipulation</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">StdDevUncertainty</span>  <span class="c1"># type: ignore</span>
 <span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">StdDevUncertainty</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">specutils</span> <span class="kn">import</span> <span class="n">Spectrum1D</span><span class="p">,</span> <span class="n">manipulation</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.transitions</span> <span class="kn">import</span> <span class="n">Transitions</span>
@@ -178,6 +178,8 @@
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.observation</span> <span class="kn">import</span> <span class="n">Observation</span>
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.mcfitted</span> <span class="kn">import</span> <span class="n">MCFitted</span>
 
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="n">message</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="o">.</span><span class="n">message</span>
 
@@ -255,8 +257,9 @@
 <span class="sd">        Write the spectra to file as an IPAC-table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">sys</span>
         <span class="kn">import</span> <span class="nn">datetime</span>
+        <span class="kn">import</span> <span class="nn">sys</span>
+
         <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">ascii</span>  <span class="c1"># type: ignore</span>
         <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># type: ignore</span>
 
@@ -301,7 +304,11 @@
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WRITTEN: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Spectrum.fit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Observation</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Observation</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">keywords</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Fitted</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fits the input spectrum.</span>
@@ -397,8 +404,8 @@
 <span class="sd">        Plot the spectrum.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
         <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
@@ -528,8 +535,37 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span></div>
 
-<div class="viewcode-block" id="Spectrum.mcfit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.mcfit">[docs]</a>    <span class="k">def</span> <span class="nf">mcfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Observation</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">uniform</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-              <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MCFitted</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_mcfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">Spectrum1D</span><span class="p">,</span> <span class="n">uniform</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Fitted</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">uniform</span><span class="p">:</span>
+            <span class="c1"># Calculate new flux based on random uniform distribution sampling.</span>
+            <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span>
+                <span class="o">+</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Calculate new flux based on random normal distribution sampling.</span>
+            <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Fit the spectrum.</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">notice</span><span class="o">=</span><span class="n">notice</span><span class="p">)</span>
+
+        <span class="c1"># Obtain the fit and weights.</span>
+        <span class="k">return</span> <span class="n">fit</span>
+
+<div class="viewcode-block" id="Spectrum.mcfit"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.spectrum.Spectrum.mcfit">[docs]</a>    <span class="k">def</span> <span class="nf">mcfit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Observation</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">yerr</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="n">samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+        <span class="n">uniform</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">multiprocessing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">notice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">keywords</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MCFitted</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Monte Carlo sampling and fitting to the input spectrum.</span>
 
@@ -540,8 +576,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>  <span class="c1"># type: ignore</span>
-        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.mcfitted</span> <span class="kn">import</span> <span class="n">MCFitted</span>
+
         <span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">observation</span>
+        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.mcfitted</span> <span class="kn">import</span> <span class="n">MCFitted</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Spectrum1D</span><span class="p">):</span>
             <span class="n">obs</span> <span class="o">=</span> <span class="n">y</span>
@@ -560,26 +597,49 @@
         <span class="n">mcfits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
         <span class="c1"># Start the MC sampling and fitting.</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">samples</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">multiprocessing</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">fit</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span>
+                    <span class="n">partial</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_mcfit</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span> <span class="n">uniform</span><span class="o">=</span><span class="n">uniform</span><span class="p">,</span> <span class="n">notice</span><span class="o">=</span><span class="n">notice</span>
+                    <span class="p">),</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">samples</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+                <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+                <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                <span class="n">total</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="n">mcfits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">samples</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="n">uniform</span><span class="p">:</span>
+                    <span class="c1"># Calculate new flux based on random uniform distribution sampling.</span>
+                    <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span>
+                        <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span>
+                        <span class="o">+</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Calculate new flux based on random normal distribution sampling.</span>
+                    <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span>
+                    <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">uniform</span><span class="p">:</span>
-                <span class="c1"># Calculate new flux based on random uniform distribution sampling.</span>
-                <span class="n">flux</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span> <span class="o">+</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Calculate new flux based on random normal distribution sampling.</span>
-                <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>\
-                    <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span>
+                <span class="c1"># Fit the spectrum.</span>
+                <span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">notice</span><span class="o">=</span><span class="n">notice</span><span class="p">)</span>
 
-            <span class="c1"># Fit the spectrum.</span>
-            <span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">notice</span><span class="o">=</span><span class="n">notice</span><span class="p">)</span>
+                <span class="c1"># Obtain the fit and weights.</span>
+                <span class="n">mcfits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span>
 
-            <span class="c1"># Obtain the fit and weights.</span>
-            <span class="n">mcfits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">MCFitted</span><span class="p">(</span>
-            <span class="n">mcfits</span><span class="o">=</span><span class="n">mcfits</span><span class="p">,</span>
-            <span class="n">distribution</span><span class="o">=</span><span class="s1">&#39;uniform&#39;</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="s1">&#39;normal&#39;</span>
-        <span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">MCFitted</span><span class="p">(</span><span class="n">mcfits</span><span class="o">=</span><span class="n">mcfits</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="s2">&quot;normal&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
