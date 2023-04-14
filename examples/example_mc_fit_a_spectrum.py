@@ -45,7 +45,7 @@ if __name__ == "__main__":
     )
 
     # Fit the spectrum using Monte Carlo approach.
-    mcfit = spectrum.mcfit(obs, samples=10, notice=False, multiprocessing=True)
+    mcfit = spectrum.mcfit(obs, samples=1024, notice=False, multiprocessing=False)
 
     # Create plots.
     mcfit.plot(wavelength=True, charge=True)

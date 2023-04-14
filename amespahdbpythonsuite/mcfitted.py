@@ -61,8 +61,13 @@ class MCFitted:
             stat : dictionary
 
         """
-        stat = {'mean': stats.describe(d).mean, 'std': np.sqrt(stats.describe(d).variance),
-                'skew': stats.describe(d).skewness, 'kurt': stats.describe(d).kurtosis}
+        s = stats.describe(d)
+        stat = {
+            "mean": s.mean,
+            "std": np.sqrt(s.variance),
+            "skew": s.skewness,
+            "kurt": s.kurtosis,
+        }
 
         return stat
 
@@ -82,11 +87,21 @@ class MCFitted:
         Retrieves the breakdown of the MC fitted PAHs.
 
         """
-        keys = ['solo', 'duo', 'trio', 'quartet', 'quintet',
-                'neutral', 'cation', 'anion',
-                'small', 'large',
-                'pure', 'nitrogen', 'nc'
-                ]
+        keys = [
+            "solo",
+            "duo",
+            "trio",
+            "quartet",
+            "quintet",
+            "neutral",
+            "cation",
+            "anion",
+            "small",
+            "large",
+            "pure",
+            "nitrogen",
+            "nc",
+        ]
 
         results: dict = {key: [] for key in keys}
 
@@ -145,7 +160,7 @@ class MCFitted:
         # Plot.
         fig, ax = plt.subplots()
 
-        if keywords.get('wavelength', False):
+        if keywords.get("wavelength", False):
             x = 1e4 / obs.spectral_axis.value
             xtitle = "Wavelength [micron]"
         else:
@@ -158,8 +173,8 @@ class MCFitted:
             )
 
         ax.minorticks_on()
-        ax.tick_params(which='major', right='on', top='on', direction='in', length=5)
-        ax.tick_params(which='minor', right='on', top='on', direction='in', length=3)
+        ax.tick_params(which="major", right="on", top="on", direction="in", length=5)
+        ax.tick_params(which="minor", right="on", top="on", direction="in", length=3)
         ax.set_xlim((min(x), max(x)))
         ax.set_xlabel(f"{xtitle}")
         ax.set_ylabel(
@@ -170,89 +185,142 @@ class MCFitted:
         )
 
         if isinstance(obs.uncertainty, StdDevUncertainty):
-            ax.errorbar(x,
-                        obs.flux.value,
-                        yerr=obs.uncertainty.array,
-                        fmt="o",
-                        mfc="white",
-                        color="k",
-                        ecolor="k",
-                        markersize=3,
-                        elinewidth=0.2,
-                        capsize=0.8,
-                        label="obs"
-                        )
+            ax.errorbar(
+                x,
+                obs.flux.value,
+                yerr=obs.uncertainty.array,
+                fmt="o",
+                mfc="white",
+                color="k",
+                ecolor="k",
+                markersize=3,
+                elinewidth=0.2,
+                capsize=0.8,
+                label="obs",
+            )
 
         else:
-            ax.scatter(x,
-                       obs.flux.value,
-                       color='k',
-                       s=10,
-                       label='obs'
-                       )
+            ax.scatter(x, obs.flux.value, color="k", s=10, label="obs")
 
-        ax.plot(x, fit['mean'], color='tab:purple', linewidth=1.2, label='fit')
-        ax.fill_between(x, fit['mean'] - fit['std'],
-                        fit['mean'] + fit['std'],
-                        color='tab:purple', alpha=0.3)
+        ax.plot(x, fit["mean"], color="tab:purple", linewidth=1.2, label="fit")
+        ax.fill_between(
+            x,
+            fit["mean"] - fit["std"],
+            fit["mean"] + fit["std"],
+            color="tab:purple",
+            alpha=0.3,
+        )
 
-        if keywords.get('charge'):
-            ptype = 'charge'
-            if isinstance(components['anion']['mean'], np.ndarray):
-                ax.plot(x, components['anion'], color='tab:red', linewidth=1.2, label='anion')
-                ax.fill_between(x, components['anion']['mean'] - components['anion']['std'],
-                                components['anion']['mean'] + components['anion']['std'],
-                                color='tab:red', alpha=0.3)
+        if keywords.get("charge"):
+            ptype = "charge"
+            if isinstance(components["anion"]["mean"], np.ndarray):
+                ax.plot(
+                    x,
+                    components["anion"]['mean'],
+                    color="tab:red",
+                    linewidth=1.2,
+                    label="anion",
+                )
+                ax.fill_between(
+                    x,
+                    components["anion"]["mean"] - components["anion"]["std"],
+                    components["anion"]["mean"] + components["anion"]["std"],
+                    color="tab:red",
+                    alpha=0.3,
+                )
 
-            if isinstance(components['neutral']['mean'], np.ndarray):
-                ax.plot(x, components['neutral']['mean'], color='tab:green', linewidth=1.2, label='neutral')
-                ax.fill_between(x, components['neutral']['mean'] - components['neutral']['std'],
-                                components['neutral']['mean'] + components['neutral']['std'],
-                                color='tab:green', alpha=0.3)
+            if isinstance(components["neutral"]["mean"], np.ndarray):
+                ax.plot(
+                    x,
+                    components["neutral"]["mean"],
+                    color="tab:green",
+                    linewidth=1.2,
+                    label="neutral",
+                )
+                ax.fill_between(
+                    x,
+                    components["neutral"]["mean"] - components["neutral"]["std"],
+                    components["neutral"]["mean"] + components["neutral"]["std"],
+                    color="tab:green",
+                    alpha=0.3,
+                )
 
-            if isinstance(components['cation']['mean'], np.ndarray):
-                ax.plot(x, components['cation'], color='tab:blue', linewidth=1.2, label='cation')
-                ax.fill_between(x, components['cation']['mean'] - components['cation']['std'],
-                                components['cation']['mean'] + components['cation']['std'],
-                                color='tab:blue', alpha=0.3)
+            if isinstance(components["cation"]["mean"], np.ndarray):
+                ax.plot(
+                    x,
+                    components["cation"]['mean'],
+                    color="tab:blue",
+                    linewidth=1.2,
+                    label="cation",
+                )
+                ax.fill_between(
+                    x,
+                    components["cation"]["mean"] - components["cation"]["std"],
+                    components["cation"]["mean"] + components["cation"]["std"],
+                    color="tab:blue",
+                    alpha=0.3,
+                )
 
-        elif keywords.get('size'):
-            ptype = 'size'
-            if isinstance(components['small']['mean'], np.ndarray):
-                ax.plot(x, components['small']['mean'], color='tab:red', label='small')
-                ax.fill_between(x, components['small']['mean'] - components['small']['std'],
-                                components['small']['mean'] + components['small']['std'],
-                                color='tab:red', alpha=0.3)
+        elif keywords.get("size"):
+            ptype = "size"
+            if isinstance(components["small"]["mean"], np.ndarray):
+                ax.plot(x, components["small"]["mean"], color="tab:red", label="small")
+                ax.fill_between(
+                    x,
+                    components["small"]["mean"] - components["small"]["std"],
+                    components["small"]["mean"] + components["small"]["std"],
+                    color="tab:red",
+                    alpha=0.3,
+                )
 
-            if isinstance(components['large']['mean'], np.ndarray):
-                ax.plot(x, components['large']['mean'], color='tab:green', label='large')
-                ax.fill_between(x, components['large']['mean'] - components['large']['std'],
-                                components['large']['mean'] + components['large']['std'],
-                                color='tab:green', alpha=0.3)
+            if isinstance(components["large"]["mean"], np.ndarray):
+                ax.plot(
+                    x, components["large"]["mean"], color="tab:green", label="large"
+                )
+                ax.fill_between(
+                    x,
+                    components["large"]["mean"] - components["large"]["std"],
+                    components["large"]["mean"] + components["large"]["std"],
+                    color="tab:green",
+                    alpha=0.3,
+                )
 
-        elif keywords.get('composition'):
-            ptype = 'composition'
-            if isinstance(components['pure']['mean'], np.ndarray):
-                ax.plot(x, components['pure']['mean'], color='tab:red', label='pure')
-                ax.fill_between(x, components['pure']['mean'] - components['pure']['std'],
-                                components['pure']['mean'] + components['pure']['std'],
-                                color='tab:red', alpha=0.3)
+        elif keywords.get("composition"):
+            ptype = "composition"
+            if isinstance(components["pure"]["mean"], np.ndarray):
+                ax.plot(x, components["pure"]["mean"], color="tab:red", label="pure")
+                ax.fill_between(
+                    x,
+                    components["pure"]["mean"] - components["pure"]["std"],
+                    components["pure"]["mean"] + components["pure"]["std"],
+                    color="tab:red",
+                    alpha=0.3,
+                )
 
-            if isinstance(components['nitrogen']['mean'], np.ndarray):
-                ax.plot(x, components['nitrogen']['mean'], color='tab:green', label='nitrogen')
-                ax.fill_between(x, components['nitrogen']['mean'] - components['nitrogen']['std'],
-                                components['nitrogen']['mean'] + components['nitrogen']['std'],
-                                color='tab:green', alpha=0.3)
+            if isinstance(components["nitrogen"]["mean"], np.ndarray):
+                ax.plot(
+                    x,
+                    components["nitrogen"]["mean"],
+                    color="tab:green",
+                    label="nitrogen",
+                )
+                ax.fill_between(
+                    x,
+                    components["nitrogen"]["mean"] - components["nitrogen"]["std"],
+                    components["nitrogen"]["mean"] + components["nitrogen"]["std"],
+                    color="tab:green",
+                    alpha=0.3,
+                )
 
         else:
             ptype = None
 
-        ax.axhline(0, linestyle='--', color='gray')
+        ax.axhline(0, linestyle="--", color="gray")
         ax.legend(fontsize=10)
 
-        if keywords.get('save'):
+        if keywords.get("save"):
             if not isinstance(ptype, str):
-                ptype = 'fitted'
+                ptype = "fitted"
             fig.savefig(f"{keywords['save']}mc_{ptype}_breakdown.pdf")
         else:
             plt.show()
@@ -283,7 +351,7 @@ class MCFitted:
             "SOFTWARE": "AmesPAHdbPythonSuite",
             "AUTHOR": "Dr. C. Boersma",
             "TYPE": self.__class__.__name__.upper(),
-            "SAMPLES": f'{len(self.mcfits)}'
+            "SAMPLES": f"{len(self.mcfits)}",
         }
 
         for key, value in kv.items():
@@ -292,14 +360,22 @@ class MCFitted:
             else:
                 hdr.append(f"{key:8} = {value}")
 
-        tbl = Table(names=('attribute', 'mean', 'std', 'skew', 'kurt'),
-                    dtype=('U25', 'float64', 'float64', 'float64', 'float64',),
-                    meta={"comments": hdr})
+        tbl = Table(
+            names=("attribute", "mean", "std", "skew", "kurt"),
+            dtype=(
+                "U25",
+                "float64",
+                "float64",
+                "float64",
+                "float64",
+            ),
+            meta={"comments": hdr},
+        )
 
         for key, vals in self.getbreakdown().items():
-            tbl.add_row([key, vals['mean'], vals['std'], vals['skew'], vals['kurt']])
+            tbl.add_row([key, vals["mean"], vals["std"], vals["skew"], vals["kurt"]])
 
-        tbl.write(filename, format='ipac', overwrite=True)
+        tbl.write(filename, format="ipac", overwrite=True)
 
         message(f"WRITTEN: {filename}")
 

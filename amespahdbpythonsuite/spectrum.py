@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional, Union
 
-import numpy as np
-
-from specutils import Spectrum1D, manipulation  # type: ignore
-from astropy.nddata import StdDevUncertainty  # type: ignore
 import astropy.units as u  # type: ignore
+import numpy as np
+from astropy.nddata import StdDevUncertainty  # type: ignore
 from scipy import optimize  # type: ignore
+from specutils import Spectrum1D, manipulation  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.transitions import Transitions
@@ -19,6 +19,8 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.observation import Observation
     from amespahdbpythonsuite.mcfitted import MCFitted
 
+import multiprocessing as mp
+from functools import partial
 
 message = AmesPAHdb.message
 
@@ -96,8 +98,9 @@ class Spectrum(Transitions):
         Write the spectra to file as an IPAC-table.
 
         """
-        import sys
         import datetime
+        import sys
+
         from astropy.io import ascii  # type: ignore
         from astropy.table import Table  # type: ignore
 
@@ -142,7 +145,11 @@ class Spectrum(Transitions):
         message(f"WRITTEN: {filename}")
 
     def fit(
-        self, y: Union[Observation, list], yerr: list = list(), notice: bool = True, **keywords
+        self,
+        y: Union[Observation, list],
+        yerr: list = list(),
+        notice: bool = True,
+        **keywords,
     ) -> Fitted:
         """
         Fits the input spectrum.
@@ -238,8 +245,8 @@ class Spectrum(Transitions):
         Plot the spectrum.
 
         """
-        import matplotlib.pyplot as plt  # type: ignore
         import matplotlib.cm as cm  # type: ignore
+        import matplotlib.pyplot as plt  # type: ignore
 
         _, ax = plt.subplots()
         ax.minorticks_on()
@@ -369,8 +376,37 @@ class Spectrum(Transitions):
 
         self.grid = grid
 
-    def mcfit(self, y: Union[Observation, list], yerr: list = list(), samples: int = 1024, uniform: bool = False,
-              notice: bool = True, **keywords) -> MCFitted:
+    def _mcfit(self, _, obs: Spectrum1D, uniform: bool, notice: bool) -> Fitted:
+        if uniform:
+            # Calculate new flux based on random uniform distribution sampling.
+            flux = (
+                obs.uncertainty.array
+                * np.random.uniform(-1, 1, obs.flux.shape)
+                * obs.flux.unit
+                + obs.flux
+            )
+        else:
+            # Calculate new flux based on random normal distribution sampling.
+            flux = (
+                np.random.normal(obs.flux.value, obs.uncertainty.array) * obs.flux.unit
+            )
+
+        # Fit the spectrum.
+        fit = self.fit(flux, obs.uncertainty, notice=notice)
+
+        # Obtain the fit and weights.
+        return fit
+
+    def mcfit(
+        self,
+        y: Union[Observation, list],
+        yerr: list = list(),
+        samples: int = 1024,
+        uniform: bool = False,
+        multiprocessing: bool = False,
+        notice: bool = True,
+        **keywords,
+    ) -> MCFitted:
         """
         Monte Carlo sampling and fitting to the input spectrum.
 
@@ -381,8 +417,9 @@ class Spectrum(Transitions):
 
         """
         from tqdm import tqdm  # type: ignore
-        from amespahdbpythonsuite.mcfitted import MCFitted
+
         from amespahdbpythonsuite import observation
+        from amespahdbpythonsuite.mcfitted import MCFitted
 
         if isinstance(y, Spectrum1D):
             obs = y
@@ -401,23 +438,46 @@ class Spectrum(Transitions):
         mcfits = list()
 
         # Start the MC sampling and fitting.
-        for _ in tqdm(range(samples), desc="sample", leave=True, unit="sample", colour='blue'):
+        if multiprocessing:
+            mp.set_start_method("fork", force=True)
+            pool = mp.Pool(mp.cpu_count() - 1)
+            for fit in tqdm(
+                pool.imap_unordered(
+                    partial(
+                        self._mcfit, observation=obs, uniform=uniform, notice=notice
+                    ),
+                    range(samples),
+                ),
+                desc="sample",
+                leave=True,
+                unit="sample",
+                colour="blue",
+                total=samples,
+            ):
+                mcfits.append(fit)
+        else:
+            for _ in tqdm(
+                range(samples), desc="sample", leave=True, unit="sample", colour="blue"
+            ):
+                if uniform:
+                    # Calculate new flux based on random uniform distribution sampling.
+                    flux = (
+                        obs.uncertainty.array
+                        * np.random.uniform(-1, 1, obs.flux.shape)
+                        * obs.flux.unit
+                        + obs.flux
+                    )
+                else:
+                    # Calculate new flux based on random normal distribution sampling.
+                    flux = (
+                        np.random.normal(obs.flux.value, obs.uncertainty.array)
+                        * obs.flux.unit
+                    )
 
-            if uniform:
-                # Calculate new flux based on random uniform distribution sampling.
-                flux = obs.uncertainty.array * np.random.uniform(-1, 1, obs.flux.shape) * obs.flux.unit + obs.flux
-            else:
-                # Calculate new flux based on random normal distribution sampling.
-                flux = np.random.normal(obs.flux.value, obs.uncertainty.array)\
-                    * obs.flux.unit
+                # Fit the spectrum.
+                fit = self.fit(flux, obs.uncertainty, notice=notice)
 
-            # Fit the spectrum.
-            fit = self.fit(flux, obs.uncertainty, notice=notice)
+                # Obtain the fit and weights.
+                mcfits.append(fit)
 
-            # Obtain the fit and weights.
-            mcfits.append(fit)
-
-        return MCFitted(
-            mcfits=mcfits,
-            distribution='uniform' if uniform else 'normal'
-        )
+        return MCFitted(mcfits=mcfits, distribution="uniform" if uniform else "normal")
