@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.observation import Observation
     from amespahdbpythonsuite.mcfitted import MCFitted
 
+import copy
 import multiprocessing as mp
 from functools import partial
 
@@ -146,11 +147,11 @@ class Spectrum(Transitions):
 
     def fit(
         self,
-        y: Union[Observation, list],
+        y: Union[Observation, Spectrum1D, list],
         yerr: list = list(),
         notice: bool = True,
         **keywords,
-    ) -> Fitted:
+    ) -> Optional[Fitted]:
         """
         Fits the input spectrum.
 
@@ -172,7 +173,11 @@ class Spectrum(Transitions):
                 uncertainty=unc,
             )
 
-        obs.spectral_axis.to("1/cm")
+        if obs.spectral_axis.unit != u.Unit() and obs.spectral_axis.unit != u.Unit(
+            "1/cm"
+        ):
+            message("EXPECTING SPECTRAL UNITS OF 1 / CM")
+            return None
 
         matrix = np.array(list(self.data.values()))
 
@@ -188,7 +193,7 @@ class Spectrum(Transitions):
         if notice:
             message(f"DOING {method}")
 
-        solution, norm = optimize.nnls(m.T, b)
+        solution, _ = optimize.nnls(m.T, b)
 
         # Initialize lists and dictionaries.
         uids = list()
@@ -376,37 +381,16 @@ class Spectrum(Transitions):
 
         self.grid = grid
 
-    def _mcfit(self, _, obs: Spectrum1D, uniform: bool, notice: bool) -> Fitted:
-        if uniform:
-            # Calculate new flux based on random uniform distribution sampling.
-            flux = (
-                obs.uncertainty.array
-                * np.random.uniform(-1, 1, obs.flux.shape)
-                * obs.flux.unit
-                + obs.flux
-            )
-        else:
-            # Calculate new flux based on random normal distribution sampling.
-            flux = (
-                np.random.normal(obs.flux.value, obs.uncertainty.array) * obs.flux.unit
-            )
-
-        # Fit the spectrum.
-        fit = self.fit(flux, obs.uncertainty, notice=notice)
-
-        # Obtain the fit and weights.
-        return fit
-
     def mcfit(
         self,
-        y: Union[Observation, list],
+        y: Union[Observation, Spectrum1D, list],
         yerr: list = list(),
         samples: int = 1024,
         uniform: bool = False,
         multiprocessing: bool = False,
         notice: bool = True,
         **keywords,
-    ) -> MCFitted:
+    ) -> Optional[MCFitted]:
         """
         Monte Carlo sampling and fitting to the input spectrum.
 
@@ -435,49 +419,138 @@ class Spectrum(Transitions):
                 uncertainty=unc,
             )
 
+        if obs.spectral_axis.unit != u.Unit() and obs.spectral_axis.unit != u.Unit(
+            "1/cm"
+        ):
+            message("EXPECTING SPECTRAL UNITS OF 1 / CM")
+            return None
+
+        if obs.uncertainty is None:
+            message("UNCERTAINTIES REQUIRED FOR MCFIT")
+            return None
+
+        if notice:
+            message(
+                [
+                    " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
+                    " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
+                    " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
+                    " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
+                    " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
+                    " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
+                ]
+            )
+
         mcfits = list()
 
         # Start the MC sampling and fitting.
         if multiprocessing:
-            mp.set_start_method("fork", force=True)
+            from amespahdbpythonsuite.fitted import Fitted
+
+            matrix = np.array(list(self.data.values()))
+
+            m = np.divide(matrix, obs.uncertainty.array)
+
             pool = mp.Pool(mp.cpu_count() - 1)
-            for fit in tqdm(
+            for solution, b in tqdm(
                 pool.imap_unordered(
                     partial(
-                        self._mcfit, observation=obs, uniform=uniform, notice=notice
+                        _mcfit,
+                        m=m,
+                        x=obs.flux.value,
+                        u=obs.uncertainty.array,
+                        uniform=uniform,
                     ),
                     range(samples),
                 ),
-                desc="sample",
+                desc="samples",
                 leave=True,
-                unit="sample",
+                unit="samples",
                 colour="blue",
                 total=samples,
             ):
-                mcfits.append(fit)
+                # Initialize lists and dictionaries.
+                uids = list()
+                data = dict()
+                weights = dict()
+
+                # Retrieve uids, data, and fit weights dictionaries.
+                for (
+                    uid,
+                    s,
+                    m,
+                ) in zip(self.uids, solution, matrix):
+                    if s > 0:
+                        intensities = []
+                        uids.append(uid)
+                        for d in m:
+                            intensities.append(s * d)
+                        data[uid] = np.array(intensities) * obs.flux.unit
+                        weights[uid] = s
+
+                obs_fit = copy.deepcopy(obs)
+                obs_fit.flux.flux = b * obs.flux.unit
+
+                mcfits.append(
+                    Fitted(
+                        database=self.database,
+                        version=self.version,
+                        data=data,
+                        pahdb=self.pahdb,
+                        uids=uids,
+                        model=self.model,
+                        units=self.units,
+                        shift=self._shift,
+                        grid=self.grid,
+                        profile=self.profile,
+                        fwhm=self.fwhm,
+                        observation=obs_fit,
+                        weights=weights,
+                        method="NNLC",
+                    )
+                )
         else:
             for _ in tqdm(
-                range(samples), desc="sample", leave=True, unit="sample", colour="blue"
+                range(samples),
+                desc="samples",
+                leave=True,
+                unit="samples",
+                colour="blue",
             ):
                 if uniform:
                     # Calculate new flux based on random uniform distribution sampling.
                     flux = (
-                        obs.uncertainty.array
-                        * np.random.uniform(-1, 1, obs.flux.shape)
-                        * obs.flux.unit
+                        obs.uncertainty.array * np.random.uniform(-1, 1, obs.flux.shape)
                         + obs.flux
                     )
                 else:
                     # Calculate new flux based on random normal distribution sampling.
-                    flux = (
-                        np.random.normal(obs.flux.value, obs.uncertainty.array)
-                        * obs.flux.unit
-                    )
+                    flux = np.random.normal(obs.flux.value, obs.uncertainty.array)
 
                 # Fit the spectrum.
-                fit = self.fit(flux, obs.uncertainty, notice=notice)
+                fit = self.fit(flux * obs.flux.unit, obs.uncertainty, notice=False)
 
                 # Obtain the fit and weights.
-                mcfits.append(fit)
+                if fit:
+                    mcfits.append(fit)
 
-        return MCFitted(mcfits=mcfits, distribution="uniform" if uniform else "normal")
+        return MCFitted(
+            mcfits=mcfits,
+            distribution="uniform" if uniform else "normal",
+            observation=obs,
+        )
+
+
+def _mcfit(_, m, x, u, uniform) -> tuple:
+    if uniform:
+        # Calculate new flux based on random uniform distribution sampling.
+        b = u * np.random.uniform(-1, 1, x.shape) + x
+    else:
+        # Calculate new flux based on random normal distribution sampling.
+        b = np.random.normal(x, u)
+    b = list(np.divide(b, u))
+
+    # Fit the spectrum.
+    solution, _ = optimize.nnls(m.T, b)
+
+    return solution, b

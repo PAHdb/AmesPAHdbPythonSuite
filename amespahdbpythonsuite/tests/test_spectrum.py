@@ -5,16 +5,17 @@ test_spectrum.py
 Test the spectrum.py module.
 """
 
-import pytest
 from os.path import exists
-import numpy as np
+
+import astropy.units as u
 import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from astropy.io import ascii
 from pkg_resources import resource_filename
 
-from astropy.io import ascii
-
+from amespahdbpythonsuite import mcfitted, observation, spectrum
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import spectrum, observation, mcfitted
 
 
 @pytest.fixture(scope="module")
@@ -41,6 +42,7 @@ def test_spectrum(test_transitions):
 def test_observations():
     file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     obs = observation.Observation(file)
+    obs.abscissaunitsto("1/cm")
     return obs
 
 
@@ -69,33 +71,33 @@ class TestSpectrum:
 
     def test_fit_with_errors(self, test_transitions):
         file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
-        f = ascii.read(file)
+        tbl = ascii.read(file)
         spectrum = test_transitions.convolve(
-            grid=[1e4 / x for x in f["wavelength"]],
+            grid=1e4 / tbl["wavelength"],
             fwhm=15.0,
             gaussian=True,
             multiprocessing=False,
         )
-        fit = spectrum.fit(f["flux"], f["flux_uncertainty"])
+        fit = spectrum.fit(tbl["flux"], tbl["flux_uncertainty"])
         assert fit.getmethod() == "NNLC"
 
     def test_fit_without_errors(self, test_transitions):
         file = resource_filename(
             "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
         )
-        f = ascii.read(file)
+        tbl = ascii.read(file)
         spectrum = test_transitions.convolve(
-            grid=[1e4 / x for x in f["WAVELENGTH"]],
+            grid=tbl["WAVELENGTH"].to("1/cm", equivalencies=u.spectral()),
             fwhm=15.0,
             gaussian=True,
             multiprocessing=False,
         )
-        fit = spectrum.fit(f["FLUX"])
+        fit = spectrum.fit(tbl["FLUX"])
         assert fit.getmethod() == "NNLS"
 
     def test_fit_with_obs_with_errors(self, test_observations, test_transitions):
         spectrum = test_transitions.convolve(
-            grid=1e4 / test_observations.spectrum.spectral_axis.value,
+            grid=test_observations.spectrum.spectral_axis.value,
             fwhm=15.0,
             gaussian=True,
             multiprocessing=False,
@@ -108,8 +110,9 @@ class TestSpectrum:
             "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
         )
         obs = observation.Observation(file)
+        obs.abscissaunitsto("1/cm")
         spectrum = test_transitions.convolve(
-            grid=1e4 / obs.spectrum.spectral_axis.value,
+            grid=obs.spectrum.spectral_axis.value,
             fwhm=15.0,
             gaussian=True,
             multiprocessing=False,

@@ -6,7 +6,6 @@ from typing import Optional
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
 
-from astropy import units as u  # type: ignore
 from scipy import stats  # type: ignore
 from specutils import Spectrum1D  # type: ignore
 
@@ -32,13 +31,16 @@ class MCFitted:
         """
         self.mcfits = keywords.get("mcfits", list())
         self.distribution = keywords.get("distribution", "")
+        self.observation = keywords.get("observation", "")
 
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "mcfits" not in keywords:
                     self.mcfits = d["mcfits"]
                 if "distribution" not in keywords:
-                    self.distribuion = d["distribuion"]
+                    self.distribution = d["distribution"]
+                if "observation" not in keywords:
+                    self.observation = d["observation"]
 
     def get(self) -> dict:
         """
@@ -50,6 +52,7 @@ class MCFitted:
         d["type"] = self.__class__.__name__
         d["mcfits"] = self.mcfits
         d["distribution"] = self.distribution
+        d["observation"] = self.observation
 
         return d
 
@@ -73,7 +76,7 @@ class MCFitted:
 
     def getfit(self) -> dict:
         """
-        Retrieves the mean, std, skewness, and curtosis spectra.
+        Retrieves the mean, std, skewness, and kurtosis spectra.
 
         """
         mcfits = list()
@@ -150,8 +153,7 @@ class MCFitted:
         """
         from astropy.nddata import StdDevUncertainty  # type: ignore
 
-        obs = self.getobservations()
-        units = self.getobservationunits()
+        obs = self.getobservation()
 
         # Get MC average fit and breakdown spectra.
         fit = self.getfit()
@@ -166,9 +168,9 @@ class MCFitted:
         else:
             x = obs.spectral_axis.value
             xtitle = (
-                units["abscissa"]["label"]
+                self.mcfits[0].units["abscissa"]["label"]
                 + " ["
-                + units["abscissa"]["unit"].to_string("latex_inline")
+                + self.mcfits[0].units["abscissa"]["unit"].to_string("latex_inline")
                 + "]"
             )
 
@@ -178,9 +180,9 @@ class MCFitted:
         ax.set_xlim((min(x), max(x)))
         ax.set_xlabel(f"{xtitle}")
         ax.set_ylabel(
-            units["ordinate"]["label"]
+            self.mcfits[0].units["ordinate"]["label"]
             + " ["
-            + units["ordinate"]["unit"].to_string("latex_inline")
+            + self.mcfits[0].units["ordinate"]["unit"].to_string("latex_inline")
             + "]",
         )
 
@@ -216,7 +218,7 @@ class MCFitted:
             if isinstance(components["anion"]["mean"], np.ndarray):
                 ax.plot(
                     x,
-                    components["anion"]['mean'],
+                    components["anion"]["mean"],
                     color="tab:red",
                     linewidth=1.2,
                     label="anion",
@@ -248,7 +250,7 @@ class MCFitted:
             if isinstance(components["cation"]["mean"], np.ndarray):
                 ax.plot(
                     x,
-                    components["cation"]['mean'],
+                    components["cation"]["mean"],
                     color="tab:blue",
                     linewidth=1.2,
                     label="cation",
@@ -409,21 +411,12 @@ class MCFitted:
 
         return errors
 
-    def getobservations(self) -> Spectrum1D:
+    def getobservation(self) -> Spectrum1D:
         """
-        Retrieves the ordinate values of the observation.
-
-        """
-
-        return self.mcfits[0].observation
-
-    def getobservationunits(self) -> u.Unit:
-        """
-        Retrieves the observations units.
+        Retrieves the observation.
 
         """
-
-        return self.mcfits[0].units
+        return self.observation
 
     def getresidual(self) -> dict:
         """

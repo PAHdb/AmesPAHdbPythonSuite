@@ -29,8 +29,9 @@ def test_mcfitted():
     obs = observation.Observation(
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
+    obs.abscissaunitsto("1/cm")
     spectrum = transitions.convolve(
-        grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
+        grid=obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
     )
 
     return spectrum.mcfit(obs, samples=10)
@@ -92,5 +93,5 @@ class TestMCFitted:
         assert exists(f"{test_path}mc_composition_breakdown.pdf")
 
     def test_write(self, test_path, test_mcfitted):
-        test_mcfitted.write(filename=f'{test_path}mc_breakdown.tbl')
-        assert exists(f'{test_path}mc_breakdown.tbl')
+        test_mcfitted.write(filename=f"{test_path}mc_breakdown.tbl")
+        assert exists(f"{test_path}mc_breakdown.tbl")

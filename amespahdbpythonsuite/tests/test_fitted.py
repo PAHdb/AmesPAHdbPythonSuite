@@ -31,8 +31,9 @@ def test_fitted():
     obs = observation.Observation(
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
+    obs.abscissaunitsto("1/cm")
     spectrum = transitions.convolve(
-        grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
+        grid=obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
     )
 
     return spectrum.fit(obs)
@@ -147,7 +148,6 @@ class TestFitted:
         assert exists(f"{test_path}_charge.pdf")
 
     def test_plot_composition(self, test_fitted, test_path):
-
         test_fitted.plot(
             wavelength=True,
             composition=True,

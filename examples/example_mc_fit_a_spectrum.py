@@ -19,6 +19,9 @@ if __name__ == "__main__":
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
 
+    # Convert spectral unit to wavenumber
+    obs.abscissaunitsto("1/cm")
+
     # Read the database.
     xml = "resources/pahdb-theoretical_cutdown.xml"
     pahdb = AmesPAHdb(
@@ -41,11 +44,11 @@ if __name__ == "__main__":
 
     # Convolve the bands with a Gaussian with FWHM of 15 /cm.
     spectrum = transitions.convolve(
-        grid=1e4 / obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
+        grid=obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
     )
 
     # Fit the spectrum using Monte Carlo approach.
-    mcfit = spectrum.mcfit(obs, samples=1024, notice=False, multiprocessing=False)
+    mcfit = spectrum.mcfit(obs, samples=1024, multiprocessing=False)
 
     # Create plots.
     mcfit.plot(wavelength=True, charge=True)
