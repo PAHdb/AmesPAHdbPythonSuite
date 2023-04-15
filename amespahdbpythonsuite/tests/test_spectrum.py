@@ -147,3 +147,14 @@ class TestSpectrum:
         mcfit = spectrum.mcfit(test_observations, samples=10)
         assert isinstance(mcfit, mcfitted.MCFitted)
         assert len(mcfit.mcfits) == 10
+
+    def test_mcfit_multiprocessing(self, test_observations, test_transitions):
+        spectrum = test_transitions.convolve(
+            grid=1e4 / test_observations.spectrum.spectral_axis.value,
+            fwhm=15.0,
+            gaussian=True,
+            multiprocessing=False,
+        )
+        mcfit = spectrum.mcfit(test_observations, samples=10, multiprocessing=True)
+        assert isinstance(mcfit, mcfitted.MCFitted)
+        assert len(mcfit.mcfits) == 10
