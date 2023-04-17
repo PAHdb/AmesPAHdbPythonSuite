@@ -178,7 +178,6 @@
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.observation</span> <span class="kn">import</span> <span class="n">Observation</span>
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.mcfitted</span> <span class="kn">import</span> <span class="n">MCFitted</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
@@ -647,8 +646,11 @@
                         <span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span> <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span>
                         <span class="n">weights</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
 
-                <span class="n">obs_fit</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-                <span class="n">obs_fit</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">flux</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span>
+                <span class="n">obs_fit</span> <span class="o">=</span> <span class="n">Spectrum1D</span><span class="p">(</span>
+                    <span class="n">flux</span><span class="o">=</span><span class="n">b</span> <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+                    <span class="n">spectral_axis</span><span class="o">=</span><span class="n">obs</span><span class="o">.</span><span class="n">spectral_axis</span><span class="p">,</span>
+                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">obs</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="n">mcfits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">Fitted</span><span class="p">(</span>
