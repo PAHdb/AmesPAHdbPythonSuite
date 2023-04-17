@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.observation import Observation
     from amespahdbpythonsuite.mcfitted import MCFitted
 
-import copy
 import multiprocessing as mp
 from functools import partial
 
@@ -488,8 +487,11 @@ class Spectrum(Transitions):
                         data[uid] = np.array(intensities) * obs.flux.unit
                         weights[uid] = s
 
-                obs_fit = copy.deepcopy(obs)
-                obs_fit.flux.flux = b * obs.flux.unit
+                obs_fit = Spectrum1D(
+                    flux=b * obs.flux.unit,
+                    spectral_axis=obs.spectral_axis,
+                    uncertainty=obs.uncertainty,
+                )
 
                 mcfits.append(
                     Fitted(
