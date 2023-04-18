@@ -161,6 +161,86 @@ class Transitions(Data):
                 d["frequency"] += shift
         message(f"TOTAL SHIFT: {self._shift} /cm")
 
+    def meanenergyfunc(**keywords):
+        # if keywords.get('StellarModel'): 
+            # mean_en = 1.9864456023253396e-16 *\
+                # integrate.quad(StarModel.frequency, AbsorptionCrossSection__AmesPAHdbIDLSuite(StarModel.frequency) *\
+                                    #    StarModel.intensity) /\
+                                        # INT_TABULATED(StarModel.frequency, AbsorptionCrosssection__AmesPAHdbIDLSuite(StarModel.frequency) *\
+                                                                    # StarModel.intensity / StarModel.frequency)
+
+        # if ketwords.get(ISRF): RETURN,1.9864456023253396D-16 * QROMB('ISRFFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6) / QROMB('ISRFNumberOfPhotonsFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6)
+
+        # RETURN,1.9864456023253396D-16 * QROMB('PlanckFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6) / QROMB('PlanckNumberOfPhotonsFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6)
+
+        return
+
+    def isrf(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to calculate the absorption cross-section times
+        the interstellar radiation field per Mathis et al. 1983, A&A, 128:212.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+        """
+        # IF f GT 1.1D5 THEN RETURN,0D
+
+        # IF f GT 1D4 / 0.110D THEN RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * 1.202D+23 / f^5.4172D
+
+        # IF f GE 1D4 / 0.134D THEN RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * 1.366D6 / f^2D
+
+        # IF f GE 1D4 / 0.246D THEN RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * 1.019D-2 / f^0.3322D
+
+        # T = [7500D, 4000D, 3000D, 2.73D] & W = [1D-14, 1.65D-13, 4D-13, 1D]
+
+        # RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * f^3 * TOTAL(W / (EXP(1.4387751297850830401D * f / T) - 1D))
+
+        return
+
+    def absorptioncrosssection(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to Calculate the absorption cross-section
+        multiplied by Planck's function.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+        """
+        # ! Need callback for nc, charge, etc. !
+        nc = 50
+        charge = 1
+        # ! Need callback for nc, charge, etc. !
+
+        wave = 1e4 / f
+
+        A_c = [7.97e-17, 1.23e-17, 20e-21, 14e-21, 80e-24, 84e-24, 46e-24, -322e-24]
+        W_c = [0.195, 0.217, 0.0805, 0.20, 0.0370, 0.0450, 0.0150, 0.135]
+        C_c = [0.0722, 0.2175, 1.05, 1.23, 1.66, 1.745, 1.885, 1.90]
+
+        A = np.transpose(np.resize(A_c, (len(f), len(A_c))))
+        W = np.transpose(np.resize(W_c, (len(f), len(W_c))))
+        C = np.transpose(np.resize(C_c, (len(f), len(C_c))))
+
+        # Cutoff wavelength from Salama et al. (1996), over wavelength
+        # (Eq. (4) in Mattioda et al. (2005))
+        y = 1.0 / (0.889 + (2.282 / np.sqrt(0.4 * nc))) / wave
+
+        wave_r2 = np.resize(wave, (2, (len(f))))
+
+        crosssection = ((1.0 / np.pi) * np.arctan((1e3 * (y - 1.0)**3) / y) + 0.5) *\
+            (3458e-20 * 10.0**(-3.431 * wave) + (2.0 / np.pi) *\
+             np.sum(W[:2] * C[:2] * A[:2] / (((wave_r2 / C[:2]) - (C[:2] / wave_r2))**2 + W[:2]**2), axis=0))
+
+        if charge != 0:
+
+            wave_r6 = np.resize(wave, (6, len(f)))
+
+            crosssection = crosssection + np.exp(-1e-1 / wave**2) * 1.5e-19 * 10**(-wave) + np.sqrt(2.0 / np.pi) *\
+                np.sum(A[2:] * np.exp(-2.0 * (wave_r6 - C[2:])**2 / W[2:]**2) / W[2:], axis=0)
+
+        return crosssection
+
     def fixedtemperature(self, t: float) -> None:
         """
         Applies the Fixed Temperature emission model.
@@ -301,11 +381,42 @@ class Transitions(Data):
 
         message("APPLYING CASCADE EMISSION MODEL")
 
-        tstart = time.perf_counter()
-
         global energy
 
         energy = e
+
+        tstart = time.perf_counter()
+
+        TStar = 0.
+
+        if keywords.get('Star') and keywords.get('StellarModel'):
+
+            message('STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL')
+
+            TStar = (4 * np.pi * integrate.simpson(e.frequency, e.intensity) / 5.67040e-5)**(0.25)
+
+            select = np.where((e.frequency >= 2.5e3) & (e.frequency <= 1.1e5))
+            nselect = e.frequency[select]
+
+            if len(nselect) == 0:
+                message('STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm')
+                self.state = 0
+
+            message('REBINNING STELLAR MODEL: 100 POINTS')
+            StarModel = [{'frequency': 0., 'intensity': 0}] * 100
+            sm_frequency = energy['frequency'][select]
+            sm_intensity = energy['intensity'][select]
+            message(f'CALCULATED EFFECTIVE TEMPERATURE: {TStar} Kelvin')
+
+        elif keywords.get('Star'):
+            Tstar = energy
+            message(f'BLACKBODY TEMPERATURE: {TStar} Kelvin')
+
+        if keywords.get('ISRF') and not keywords.get('Convolved'):
+            message('ISRF SELECTED: IGNORING FIRST PARAMETER')
+
+        if keywords.get('ISRF') or keywords.get('Star') and keywords.get('Convolved'):
+            message('CONVOLVING WITH ENTIRE RADIATION FIELD')
 
         self.model = {
             "type": "cascade_m",
