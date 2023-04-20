@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
 
-import numpy as np
-import multiprocessing
 import copy
+import multiprocessing
 import time
 from datetime import timedelta
 from functools import partial
-
-from scipy import integrate, optimize  # type: ignore
+from typing import TYPE_CHECKING, Optional
 
 import astropy.units as u  # type: ignore
+import numpy as np
+from scipy import integrate, optimize  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
@@ -95,8 +94,9 @@ class Transitions(Data):
         Write the transitions to file as an IPAC-table.
 
         """
-        import sys
         import datetime
+        import sys
+
         from astropy.io import ascii  # type: ignore
         from astropy.table import Table  # type: ignore
 
@@ -127,11 +127,9 @@ class Transitions(Data):
         tbl = Table(
             [
                 [uid for uid, v in self.data.items() for _ in v],
-                np.array([t["frequency"]
-                         for v in self.data.values() for t in v])
+                np.array([t["frequency"] for v in self.data.values() for t in v])
                 * self.units["abscissa"]["unit"],
-                np.array([t["intensity"]
-                         for v in self.data.values() for t in v])
+                np.array([t["intensity"] for v in self.data.values() for t in v])
                 * self.units["ordinate"]["unit"],
             ],
             names=["UID", "FREQUENCY", "INTENSITY"],
@@ -141,8 +139,7 @@ class Transitions(Data):
         if self.database == "theoretical":
             tbl.add_columns(
                 [
-                    np.array([t["scale"] for v in self.data.values()
-                             for t in v]),
+                    np.array([t["scale"] for v in self.data.values() for t in v]),
                     [t["symmetry"] for v in self.data.values() for t in v],
                 ],
                 names=["SCALE", "SYMMETRY"],
@@ -201,7 +198,7 @@ class Transitions(Data):
                 * f**3
                 / (np.exp(1.4387751297850830401 * f / t) - 1.0)
             )
-            for (d, i) in zip(self.data[uid], intensity):
+            for d, i in zip(self.data[uid], intensity):
                 d["intensity"] *= i
 
     def calculatedtemperature(self, e: float, **keywords) -> None:
@@ -265,8 +262,7 @@ class Transitions(Data):
 
             print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-            self.model["temperatures"].append(
-                {"uid": uid, "temperature": Tmax})
+            self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
 
             for d in self.data[uid]:
                 if d["intensity"] > 0:
@@ -283,44 +279,6 @@ class Transitions(Data):
             i += 1
 
         print(57 * "=")
-
-    def _cascade_em_model(self, e: float, uid: int) -> tuple:
-        """
-        A partial method of :meth:`amespahdbpythonsuite.transitions.cascade`
-        used when multiprocessing is required.
-
-        :param uid: single UID value.
-        :type uid: int
-
-        return:  Dictionary of Tmax and temp Dictionary of calculated
-        intensities for the given UID.
-        :rtype: dict
-
-
-        """
-        global energy
-        energy = e
-
-        global frequencies
-        frequencies = np.array([d["frequency"] for d in self.data[uid]])
-
-        global intensities
-        intensities = np.array([d["intensity"] for d in self.data[uid]])
-
-        Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
-
-        for d in self.data[uid]:
-            if d["intensity"] > 0:
-                global frequency
-                frequency = d["frequency"]
-                d["intensity"] *= (
-                    d["frequency"] ** 3
-                    * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
-                )
-
-        temp = {"uid": uid, "temperature": Tmax}
-        ud = {uid: self.data[uid]}
-        return ud, temp
 
     def cascade(self, e: float, **keywords) -> None:
         """
@@ -356,35 +314,30 @@ class Transitions(Data):
             "description": "",
         }
 
-        self.units["ordinate"] = {"unit": u.erg,
-                                  "label": "integrated radiant energy"}
+        self.units["ordinate"] = {"unit": u.erg, "label": "integrated radiant energy"}
 
         print(57 * "=")
 
         if keywords.get("multiprocessing", False):
-            cascade_em_model = partial(self._cascade_em_model, e)
+            cascade_em_model = partial(Transitions._cascade_em_model, e)
             ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
             message(f"USING MULTIPROCESSING WITH {ncores} CORES")
             pool = multiprocessing.Pool(processes=ncores)
-            data, temp = zip(*pool.map(cascade_em_model, self.uids))
+            data, Tmax = zip(*pool.map(cascade_em_model, self.data.values()))
             pool.close()
             pool.join()
 
             # Re-assign self.data.
-            self.data = {}
-            for d in list(data):
-                for k, v in d.items():
-                    self.data[k] = v
+            for uid, d in zip(self.data, data):
+                self.data[uid] = d
 
-            self.model["temperatures"] = temp
+            self.model["temperatures"] = Tmax
 
         else:
             i = 0
             nuids = len(self.uids)
             for uid in self.uids:
-
-                print("SPECIES                          : %d/%d" %
-                      (i + 1, nuids))
+                print("SPECIES                          : %d/%d" % (i + 1, nuids))
                 print("UID                              : %d" % uid)
                 print(
                     "MEAN ABSORBED ENERGY             : %f +/- %f eV"
@@ -392,19 +345,16 @@ class Transitions(Data):
                 )
 
                 global frequencies
-                frequencies = np.array([d["frequency"]
-                                       for d in self.data[uid]])
+                frequencies = np.array([d["frequency"] for d in self.data[uid]])
 
                 global intensities
-                intensities = np.array([d["intensity"]
-                                       for d in self.data[uid]])
+                intensities = np.array([d["intensity"] for d in self.data[uid]])
 
                 Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
 
                 print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-                self.model["temperatures"].append(
-                    {"uid": uid, "temperature": Tmax})
+                self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
 
                 for d in self.data[uid]:
                     if d["intensity"] > 0:
@@ -421,62 +371,6 @@ class Transitions(Data):
 
         elapsed = timedelta(seconds=(time.perf_counter() - tstart))
         print(f"Elapsed time: {elapsed}\n")
-
-    def _get_intensities(
-        self,
-        npoints: int,
-        xmin: float,
-        xmax: float,
-        clip: float,
-        width: float,
-        x: np.ndarray,
-        gaussian: str,
-        drude: str,
-        uid: list,
-    ) -> dict:
-        """
-        A partial method of :meth:`amespahdbpythonsuite.transitions.convolve`
-        used when multiprocessing is required.
-
-        :param npoints: Number of grid points.
-        :type npoints: int
-        :param xmin: Minimum value of grid.
-        :param xmin: float
-        :param xmax:  Maximum value of grid.
-        :type xmax: float
-        :param clip: Value to clip and define the frequency range of the profile
-            calculation.
-        :type clip: float
-        param width: Width of the line profile.
-        type width: float
-        param x: Grid array
-        param x: numpy.ndarray
-        param gaussian: String to indicate Gaussian profile
-        type gaussian: str
-        param drude: String to indicate Drude profile
-        type drude: str
-        param uid: Single UID value
-        type uid: int
-
-        return ud : Dictionary of convoluted intensities for the given UID.
-        rtype: dict
-
-        """
-        s = np.zeros(npoints)
-        f = [
-            v
-            for v in self.data[uid]
-            if v["frequency"] >= xmin - clip * width
-            and v["frequency"] <= xmax + clip * width
-        ]
-        for t in f:
-            if t["intensity"] > 0:
-                s += t["intensity"] * self.__lineprofile(
-                    x, t["frequency"], width, gaussian=gaussian, drude=drude
-                )
-
-        ud = {uid: s}
-        return ud
 
     def convolve(self, **keywords) -> Spectrum:
         """
@@ -521,8 +415,7 @@ class Transitions(Data):
             npoints = keywords.get("npoints", 400)
             x = np.arange(xmin, xmax, (xmax - xmin) / npoints)
 
-        message(
-            f"GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS")
+        message(f"GRID: (XMIN,XMAX)=({xmin:.3f}, {xmax:.3f}); {npoints} POINTS")
         message(f"FWHM: {fwhm} /cm")
 
         d = dict()
@@ -531,7 +424,7 @@ class Transitions(Data):
             multiprocessing.cpu_count() - 1
         ):
             get_intensities = partial(
-                self._get_intensities,
+                Transitions._get_intensities,
                 npoints,
                 xmin,
                 xmax,
@@ -544,16 +437,13 @@ class Transitions(Data):
             ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
             message(f"USING MULTIPROCESSING WITH {ncores} CORES")
             pool = multiprocessing.Pool(processes=ncores)
-            data = pool.map(get_intensities, self.uids)
+            intensities = pool.map(get_intensities, self.data.values())
 
             pool.close()
             pool.join()
 
-            # Re-assign self.data.
-            for ud in list(data):
-                for k, v in ud.items():
-                    d[k] = v
-
+            for uid, i in zip(self.data, intensities):
+                d[uid] = i
         else:
             for uid in self.uids:
                 s = np.zeros(npoints)
@@ -565,7 +455,7 @@ class Transitions(Data):
                 ]
                 for t in f:
                     if t["intensity"] > 0:
-                        s += t["intensity"] * self.__lineprofile(
+                        s += t["intensity"] * Transitions._lineprofile(
                             x,
                             t["frequency"],
                             width,
@@ -612,45 +502,17 @@ class Transitions(Data):
             fwhm=fwhm,
         )
 
-    def __lineprofile(
-        self, x: np.ndarray, x0: float, width: float, **keywords
-    ) -> np.ndarray:
-        """
-        Calculate Gaussian, Drude, or Lorentzian line profiles.
-
-        :param x: Grid array.
-        :type x: numpy.ndarray
-        :param x0:  Central frequency
-        :type x0: float
-        :param width: Width of the line profile.
-        :type width: float
-
-        """
-        if keywords.get("gaussian", False):
-            return (1.0 / (width * np.sqrt(2.0 * np.pi))) * np.exp(
-                -((x - x0) ** 2) / (2.0 * width**2)
-            )
-        elif keywords.get("drude", False):
-            return (
-                (2.0 / (np.pi * x0 * width))
-                * width**2
-                / ((x / x0 - x0 / x) ** 2 + width**2)
-            )
-        else:
-            return (width / np.pi) / ((x - x0) ** 2 + width**2)
-
     def plot(self, **keywords) -> None:
         """
         Plot the transitions absorption spectrum.
 
         """
-        import matplotlib.pyplot as plt  # type: ignore
         import matplotlib.cm as cm  # type: ignore
+        import matplotlib.pyplot as plt  # type: ignore
 
         _, ax = plt.subplots()
         ax.minorticks_on()
-        ax.tick_params(which="major", right="on", top="on",
-                       direction="in", axis="both")
+        ax.tick_params(which="major", right="on", top="on", direction="in", axis="both")
         colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
         for uid, col in zip(self.uids, colors):
             f = [v for v in self.data[uid]]
@@ -704,8 +566,7 @@ class Transitions(Data):
         return (Transitions.heatcapacity(T) / np.expm1(val1)) * (
             1.0
             / np.sum(
-                intensities[valid] * (frequencies[valid]
-                                      ) ** 3 / np.expm1(val2[valid])
+                intensities[valid] * (frequencies[valid]) ** 3 / np.expm1(val2[valid])
             )
         )
 
@@ -737,3 +598,123 @@ class Transitions(Data):
         val = 1.4387751297850830401 * frequencies / T
 
         return 1.3806505e-16 * np.sum(np.exp(-val) * (val / (1.0 - np.exp(-val))) ** 2)
+
+    @staticmethod
+    def _lineprofile(x: np.ndarray, x0: float, width: float, **keywords) -> np.ndarray:
+        """
+        Calculate Gaussian, Drude, or Lorentzian line profiles.
+
+        :param x: Grid array.
+        :type x: numpy.ndarray
+        :param x0:  Central frequency
+        :type x0: float
+        :param width: Width of the line profile.
+        :type width: float
+
+        """
+        if keywords.get("gaussian", False):
+            return (1.0 / (width * np.sqrt(2.0 * np.pi))) * np.exp(
+                -((x - x0) ** 2) / (2.0 * width**2)
+            )
+        elif keywords.get("drude", False):
+            return (
+                (2.0 / (np.pi * x0 * width))
+                * width**2
+                / ((x / x0 - x0 / x) ** 2 + width**2)
+            )
+        else:
+            return (width / np.pi) / ((x - x0) ** 2 + width**2)
+
+    @staticmethod
+    def _get_intensities(
+        npoints: int,
+        xmin: float,
+        xmax: float,
+        clip: float,
+        width: float,
+        x: np.ndarray,
+        gaussian: str,
+        drude: str,
+        data: list,
+    ) -> np.ndarray:
+        """
+        A partial method of :meth:`amespahdbpythonsuite.transitions.convolve`
+        used when multiprocessing is required.
+
+        :param npoints: Number of grid points.
+        :type npoints: int
+        :param xmin: Minimum value of grid.
+        :type xmin: float
+        :param xmax:  Maximum value of grid.
+        :type xmax: float
+        :param clip: Value to clip and define the frequency range of the profile
+            calculation.
+        :type clip: float
+        :param width: Width of the line profile.
+        :type width: float
+        :param x: Grid array
+        :type x: numpy.ndarray
+        :param gaussian: String to indicate Gaussian profile
+        :type gaussian: str
+        param drude: String to indicate Drude profile
+        type drude: str
+        :param data: transitions
+        :type data: list
+
+        return s : Transitions
+        rtype: numpy.ndarray
+
+        """
+        s = np.zeros(npoints)
+        f = [
+            v
+            for v in data
+            if v["frequency"] >= xmin - clip * width
+            and v["frequency"] <= xmax + clip * width
+        ]
+        for t in f:
+            if t["intensity"] > 0:
+                s += t["intensity"] * Transitions._lineprofile(
+                    x, t["frequency"], width, gaussian=gaussian, drude=drude
+                )
+
+        return s
+
+    @staticmethod
+    def _cascade_em_model(e: float, data: list) -> tuple:
+        """
+        A partial method of :meth:`amespahdbpythonsuite.transitions.cascade`
+        used when multiprocessing is required.
+
+        :param e: energy.
+        :type e: int
+
+        :param data: transitions.
+        :type data: list
+
+        return:  Tupple of transitions and Tmax.
+        :rtype: tupple
+
+
+        """
+        global energy
+        energy = e
+
+        global frequencies
+        frequencies = np.array([d["frequency"] for d in data])
+
+        global intensities
+        intensities = np.array([d["intensity"] for d in data])
+
+        Tmax = optimize.brentq(Transitions.attainedtemperature, 2.73, 5000.0)
+
+        for d in data:
+            if d["intensity"] > 0:
+                global frequency
+                frequency = d["frequency"]
+                d["intensity"] *= (
+                    d["frequency"] ** 3
+                    * integrate.quad(Transitions.featurestrength, 2.73, Tmax)[0]
+                )
+
+        return data, Tmax

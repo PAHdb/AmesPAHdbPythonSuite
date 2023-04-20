@@ -5,14 +5,15 @@ test_transitions.py
 Test the transitions.py module.
 """
 
+from os.path import exists
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from os.path import exists
 from pkg_resources import resource_filename
-import matplotlib.pyplot as plt
 
-from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import transitions
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 
 @pytest.fixture(scope="module")
@@ -37,7 +38,6 @@ def test_transitions(pahdb_theoretical):
 
 @pytest.fixture(scope="module")
 def test_spec():
-
     file1 = "resources/uid_18_gaussian_6eV_cascade_convolved_test_spec.npy"
     file2 = "resources/uid_18_drude_6eV_cascade_convolved_test_spec.npy"
     file3 = "resources/uid_18_lorentzian_6eV_cascade_convolved_test_spec.npy"
@@ -136,9 +136,10 @@ class TestTransitions:
 
     def test_partial_cascade(self, pahdb_theoretical):
         trans_multi = pahdb_theoretical.gettransitionsbyuid([18])
-        intf, tmax = trans_multi._cascade_em_model(6 * 1.603e-12, 18)
-        test_i = [x for x in intf[18] if x["frequency"] == 3068.821][0]
-        assert tmax["temperature"] == 1279.7835033561428
+        data = trans_multi.get()
+        intf, tmax = transitions.Transitions._cascade_em_model(6 * 1.603e-12, data['data'][18])
+        test_i = [x for x in intf if x["frequency"] == 3068.821][0]
+        assert tmax == 1279.7835033561428
         np.testing.assert_allclose(test_i["intensity"], 1.6710637100014386e-12)
 
     def test_convolve_gaussian(self, test_transitions, test_spec):
@@ -170,9 +171,10 @@ class TestTransitions:
     def test_partial_convolve(self, pahdb_theoretical, test_spec):
         trans_multi = pahdb_theoretical.gettransitionsbyuid([18])
         k = [1e4 / x for x in np.arange(5, 20, 0.4)]
-        trans_multi.cascade(6.0 * 1.603e-12, multiprocessing=True)
+        trans_multi.cascade(6.0 * 1.603e-12, multiprocessing=False)
         trans_multi.shift(-15.0)
-        spec = trans_multi._get_intensities(
+        data = trans_multi.get()
+        spec = transitions.Transitions._get_intensities(
             npoints=len(k),
             xmin=np.min(k),
             xmax=np.max(k),
@@ -181,9 +183,9 @@ class TestTransitions:
             x=np.asarray(k),
             gaussian=True,
             drude=False,
-            uid=18,
+            data=data["data"][18],
         )
-        np.testing.assert_allclose(test_spec[0], spec[18])
+        np.testing.assert_allclose(test_spec[0], spec)
 
     def test_plot_transitions(self, monkeypatch, test_transitions):
         monkeypatch.setattr(plt, "show", lambda: None)
