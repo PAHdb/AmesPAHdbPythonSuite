@@ -9,9 +9,10 @@ from datetime import timedelta
 from functools import partial
 from typing import TYPE_CHECKING, Optional
 
+from scipy import integrate, optimize, ndimage  # type: ignore
+
 import astropy.units as u  # type: ignore
 import numpy as np
-from scipy import integrate, optimize  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
@@ -389,7 +390,9 @@ class Transitions(Data):
 
         TStar = 0.
 
-        if keywords.get('Star') and keywords.get('StellarModel'):
+        # Check keywords to determine model and call appropriate methods.
+
+        if keywords.get('star') and keywords.get('stellarmodel'):
 
             message('STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL')
 
@@ -403,31 +406,89 @@ class Transitions(Data):
                 self.state = 0
 
             message('REBINNING STELLAR MODEL: 100 POINTS')
+            # ^ Consider giving a user warning when providing large dimension data.
             StarModel = [{'frequency': 0., 'intensity': 0}] * 100
-            sm_frequency = energy['frequency'][select]
-            sm_intensity = energy['intensity'][select]
+            # * Using interpolation through ndimage.zoom to get equivalent
+            # * of the IDL congrid function.
+            sm_frequency = ndimage.zoom(energy['frequency'][select],
+                                        100 / len(energy['frequency'][select]))
+            sm_intensity = ndimage.zoom(energy['intensity'][select],
+                                        100 / len(energy['intensity'][select]))
             message(f'CALCULATED EFFECTIVE TEMPERATURE: {TStar} Kelvin')
 
-        elif keywords.get('Star'):
+        elif keywords.get('star'):
             Tstar = energy
             message(f'BLACKBODY TEMPERATURE: {TStar} Kelvin')
 
-        if keywords.get('ISRF') and not keywords.get('Convolved'):
+        if keywords.get('isrf') and not keywords.get('convolved'):
             message('ISRF SELECTED: IGNORING FIRST PARAMETER')
 
-        if keywords.get('ISRF') or keywords.get('Star') and keywords.get('Convolved'):
+        if keywords.get('isrf') or keywords.get('star') and keywords.get('convolved'):
             message('CONVOLVING WITH ENTIRE RADIATION FIELD')
 
         self.model = {
             "type": "cascade_m",
-            "energy": e,
-            "temperatures": [],
+            "energy": {},
+            "temperatures": {},
+            "approximate": keywords.get('approximate'),
+            "star": keywords.get('star'),
+            "isrf": keywords.get('isrf'),
+            "convolved": keywords.get('convolved'),
+            "stellarmodel": keywords.get('stellarmodel'),
             "description": "",
         }
 
         self.units["ordinate"] = {"unit": u.erg, "label": "integrated radiant energy"}
 
+        description = f'model: cascade, approximated: {keywords.get("approximate", False)}'
+
+        if self.model['isrf']:
+            description += ', isrf: yes'
+            description += f', convolved: {keywords.get("convlolved", False)}'
+
+        if self.model['star']:
+            description += ', star: yes'
+            description += f', Tstar: {Tstar} Kelvin'
+            description += f', modelled: {keywords.get("stellarmodel", False)}'
+            description += f', convolved: {keywords.get("convolved", False)}'
+
+        else:
+            description += f'<E>: {e / 1.6021765e-12} eV'
+
+        self.model['description'] = description
+
         print(57 * "=")
+
+        if keywords.get('approxiamte', False):
+            message('USING APPROXIMATION')
+
+            func1 = 'ApproximateAttainedTemperature'
+            func2 = 'ApproximateFeatureStrength'
+
+            if keywords.get('convolved', False):
+
+                if keywords.get('isrf', False):
+                    func3 = 'ISRFApproximateFeatureStrengthConvolved'
+
+                elif keywords.get('stellarmodel', False):
+                    func3 = 'StellarModelApproximateFeatureStrengthConvolved'
+
+                else:
+                    func3 = 'PlanckApproximateFeatureStrengthConvolved'
+        else:
+            func1 = 'AttainedTemperature'
+            func2 = 'FeatureStrength'
+
+            if keywords.get('convolved', False):
+
+                if keywords.get('isrf', False):
+                    func3 = 'ISRFFeatureStrengthConvolved'
+
+                elif keywords.get('stellarmodel', False):
+                    func3 = 'StellarModelFeatureStrengthConvolved'
+
+                else:
+                    func3 = 'PlanckFeatureStrengthConvolved'
 
         if keywords.get("multiprocessing", False):
             cascade_em_model = partial(Transitions._cascade_em_model, e)
@@ -465,7 +526,7 @@ class Transitions(Data):
 
                 print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-                self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
+                self.model["temperatures"][uid] = Tmax
 
                 for d in self.data[uid]:
                     if d["intensity"] > 0:
