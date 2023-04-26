@@ -114,12 +114,9 @@ class Fitted(Spectrum):
                     label="obs",
                 )
             else:
-                axis[0].scatter(x,
-                                self.observation.flux.value,
-                                color="k",
-                                s=5,
-                                label="obs"
-                               )
+                axis[0].scatter(
+                    x, self.observation.flux.value, color="k", s=5, label="obs"
+                )
 
             if "title" in keywords:
                 axis[0].set_title(keywords["title"])
@@ -214,7 +211,7 @@ class Fitted(Spectrum):
                 axis[0].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
 
         if keywords.get("save", False):
-            if not keywords.get('ptype'):
+            if not keywords.get("ptype"):
                 ptype = "fitted"
             else:
                 ptype = f"{keywords['ptype']}"
