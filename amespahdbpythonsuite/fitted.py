@@ -99,7 +99,7 @@ class Fitted(Spectrum):
                     + "]"
                 )
 
-            if isinstance(keywords["sigma"], (list, tuple, np.ndarray)):
+            if "sigma" in keywords:
                 axis[0].errorbar(
                     x,
                     self.observation.flux.value,
@@ -132,11 +132,7 @@ class Fitted(Spectrum):
             colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
             for uid, col in zip(self.uids, colors):
                 y = self.data[uid]
-                if (
-                    keywords.get("charge", True)
-                    and keywords.get("size", True)
-                    and keywords.get("composition", False)
-                ):
+                if keywords.get("residual", False):
                     axis[0].plot(x, y, color=col)
 
             axis[0].plot(x, self.getfit(), color="tab:purple", label="fit")
