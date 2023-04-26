@@ -2,6 +2,7 @@
 
 from typing import Optional, Union, Literal
 
+import os
 import builtins
 import operator
 import numpy as np
@@ -98,19 +99,27 @@ class Fitted(Spectrum):
                     + "]"
                 )
 
-            axis[0].errorbar(
-                x,
-                self.observation.flux.value,
-                yerr=keywords["sigma"],
-                fmt="o",
-                mfc="white",
-                color="k",
-                ecolor="k",
-                markersize=3,
-                elinewidth=0.2,
-                capsize=0.8,
-                label="obs",
-            )
+            if isinstance(keywords["sigma"], (list, tuple, np.ndarray)):
+                axis[0].errorbar(
+                    x,
+                    self.observation.flux.value,
+                    yerr=keywords["sigma"],
+                    fmt="o",
+                    mfc="white",
+                    color="k",
+                    ecolor="k",
+                    markersize=3,
+                    elinewidth=0.2,
+                    capsize=0.8,
+                    label="obs",
+                )
+            else:
+                axis[0].scatter(x,
+                                self.observation.flux.value,
+                                color="k",
+                                s=5,
+                                label="obs"
+                               )
 
             if "title" in keywords:
                 axis[0].set_title(keywords["title"])
@@ -204,12 +213,20 @@ class Fitted(Spectrum):
             else:
                 axis[0].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
 
-        basename = keywords.get("save")
-        if basename:
-            if not isinstance(basename, str):
-                basename = "fitted"
-            fig.savefig(f"{basename}_{keywords['ptype']}.{keywords['ftype']}")
-        elif keywords.get("show", False):
+        if keywords.get("save", False):
+            if not keywords.get('ptype'):
+                ptype = "fitted"
+            else:
+                ptype = f"{keywords['ptype']}"
+
+            if keywords["output"]:
+                if os.path.isdir(keywords["output"]):
+                    fig.savefig(f"{keywords['output']}/{ptype}.{keywords['ftype']}")
+                else:
+                    fig.savefig(f"{keywords['output']}_{ptype}.{keywords['ftype']}")
+            else:
+                fig.savefig(f"{ptype}.{keywords['ftype']}")
+        else:
             plt.show()
         plt.close(fig)
 

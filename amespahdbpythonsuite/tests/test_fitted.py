@@ -92,7 +92,8 @@ class TestFitted:
         test_fitted.plot(
             wavelength=True,
             sigma=test_fitted.observation.uncertainty.array,
-            save=test_path,
+            save=True,
+            output=test_path,
             ptype="UIDs",
             ftype="pdf",
             units=[
@@ -107,7 +108,8 @@ class TestFitted:
             wavelength=True,
             residual=True,
             sigma=test_fitted.observation.uncertainty.array,
-            save=test_path,
+            save=True,
+            output=test_path,
             ptype="residual",
             ftype="pdf",
             units=[
@@ -122,7 +124,8 @@ class TestFitted:
             wavelength=True,
             size=True,
             sigma=test_fitted.observation.uncertainty.array,
-            save=test_path,
+            save=True,
+            output=test_path,
             ptype="size",
             ftype="pdf",
             units=[
@@ -137,7 +140,8 @@ class TestFitted:
             wavelength=True,
             charge=True,
             sigma=test_fitted.observation.uncertainty.array,
-            save=test_path,
+            save=True,
+            output=test_path,
             ptype="charge",
             ftype="pdf",
             units=[
@@ -152,7 +156,8 @@ class TestFitted:
             wavelength=True,
             composition=True,
             sigma=test_fitted.observation.uncertainty.array,
-            save=test_path,
+            save=True,
+            output=test_path,
             ptype="composition",
             ftype="pdf",
             units=[
