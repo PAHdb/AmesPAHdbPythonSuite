@@ -41,6 +41,11 @@ class Fitted(Spectrum):
         import matplotlib.gridspec as gs  # type: ignore
         import matplotlib.cm as cm  # type: ignore
 
+        if keywords.get("datalabel", False):
+            datalabel = keywords["datalabel"]
+        else:
+            datalabel = "obs"
+
         if keywords.get("sizedistribution", False):
             fig, axis = plt.subplots()
             axis = [axis]
@@ -111,11 +116,11 @@ class Fitted(Spectrum):
                     markersize=3,
                     elinewidth=0.2,
                     capsize=0.8,
-                    label="obs",
+                    label=datalabel,
                 )
             else:
                 axis[0].scatter(
-                    x, self.observation.flux.value, color="k", s=5, label="obs"
+                    x, self.observation.flux.value, color="k", s=5, label=datalabel
                 )
 
             if "title" in keywords:
@@ -169,6 +174,8 @@ class Fitted(Spectrum):
             elif keywords.get("residual", False):
                 y = self.getresidual()
                 axis[1].plot(x, y)
+                axis[1].axhline(0, linestyle="--", color="gray")
+                axis[0].legend()
             else:
                 axis[1].text(
                     0.05,
