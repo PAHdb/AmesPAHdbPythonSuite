@@ -2,6 +2,7 @@
 
 from typing import Optional, Union, Literal
 
+import os
 import builtins
 import operator
 import numpy as np
@@ -39,6 +40,11 @@ class Fitted(Spectrum):
         import matplotlib.pyplot as plt  # type: ignore
         import matplotlib.gridspec as gs  # type: ignore
         import matplotlib.cm as cm  # type: ignore
+
+        if keywords.get("datalabel", False):
+            datalabel = keywords["datalabel"]
+        else:
+            datalabel = "obs"
 
         if keywords.get("sizedistribution", False):
             fig, axis = plt.subplots()
@@ -87,7 +93,7 @@ class Fitted(Spectrum):
             if keywords.get("wavelength", False):
                 x = 1e4 / self.grid
                 axis[0].set_xlim((min(x), max(x)))
-                xtitle = "Wavelength"
+                xtitle = "Wavelength [$\\mu$m]"
             else:
                 x = self.grid
                 axis[0].set_xlim((max(x), min(x)))
@@ -98,19 +104,24 @@ class Fitted(Spectrum):
                     + "]"
                 )
 
-            axis[0].errorbar(
-                x,
-                self.observation.flux.value,
-                yerr=keywords["sigma"],
-                fmt="o",
-                mfc="white",
-                color="k",
-                ecolor="k",
-                markersize=3,
-                elinewidth=0.2,
-                capsize=0.8,
-                label="obs",
-            )
+            if "sigma" in keywords:
+                axis[0].errorbar(
+                    x,
+                    self.observation.flux.value,
+                    yerr=keywords["sigma"],
+                    fmt="o",
+                    mfc="white",
+                    color="k",
+                    ecolor="k",
+                    markersize=3,
+                    elinewidth=0.2,
+                    capsize=0.8,
+                    label=datalabel,
+                )
+            else:
+                axis[0].scatter(
+                    x, self.observation.flux.value, color="k", s=5, label=datalabel
+                )
 
             if "title" in keywords:
                 axis[0].set_title(keywords["title"])
@@ -126,11 +137,7 @@ class Fitted(Spectrum):
             colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
             for uid, col in zip(self.uids, colors):
                 y = self.data[uid]
-                if (
-                    keywords.get("charge", True)
-                    and keywords.get("size", True)
-                    and keywords.get("composition", False)
-                ):
+                if keywords.get("residual", False):
                     axis[0].plot(x, y, color=col)
 
             axis[0].plot(x, self.getfit(), color="tab:purple", label="fit")
@@ -167,6 +174,8 @@ class Fitted(Spectrum):
             elif keywords.get("residual", False):
                 y = self.getresidual()
                 axis[1].plot(x, y)
+                axis[1].axhline(0, linestyle="--", color="gray")
+                axis[0].legend()
             else:
                 axis[1].text(
                     0.05,
@@ -192,7 +201,7 @@ class Fitted(Spectrum):
                 + "]",
             )
             if keywords.get("residual", False):
-                axis[1].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
+                axis[1].set_xlabel(f"{xtitle}")
                 axis[1].set_ylabel("residual")
                 axis[1].minorticks_on()
                 axis[1].tick_params(
@@ -202,14 +211,28 @@ class Fitted(Spectrum):
                     which="minor", right="on", top="on", direction="in", length=3
                 )
             else:
-                axis[0].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
+                axis[0].set_xlabel(f"{xtitle}")
 
-        basename = keywords.get("save")
-        if basename:
-            if not isinstance(basename, str):
-                basename = "fitted"
-            fig.savefig(f"{basename}_{keywords['ptype']}.{keywords['ftype']}")
-        elif keywords.get("show", False):
+        if keywords.get("save", False):
+            if keywords.get("charge"):
+                ptype = "charge"
+            elif keywords.get("size"):
+                ptype = "size"
+            elif keywords.get("composition"):
+                ptype = "composition"
+            elif keywords.get("residual"):
+                ptype = "residual"
+            else:
+                ptype = "fitted"
+
+            if keywords["output"]:
+                if os.path.isdir(keywords["output"]):
+                    fig.savefig(f"{keywords['output']}/{ptype}.{keywords['ftype']}")
+                else:
+                    fig.savefig(f"{keywords['output']}_{ptype}.{keywords['ftype']}")
+            else:
+                fig.savefig(f"{ptype}.{keywords['ftype']}")
+        else:
             plt.show()
         plt.close(fig)
 

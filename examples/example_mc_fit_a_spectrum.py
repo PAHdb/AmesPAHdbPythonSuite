@@ -19,7 +19,7 @@ if __name__ == "__main__":
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
 
-    # Convert spectral unit to wavenumber
+    # Convert spectral unit to wavenumber required by AmesPAHdbPythonSuite.
     obs.abscissaunitsto("1/cm")
 
     # Read the database.
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # Calculate the emission spectrum at the temperature reached
     # after absorbing a 6 eV (CGS units) photon.
-    # transitions.cascade(6 * 1.603e-12, multiprocessing=False)
+    transitions.cascade(6 * 1.603e-12, multiprocessing=False)
 
     # Shift data 15 wavenumber to the red to mimic some effects of anharmonicity.
     transitions.shift(-15.0)
@@ -54,3 +54,4 @@ if __name__ == "__main__":
     mcfit.plot(wavelength=True, charge=True)
     mcfit.plot(wavelength=True, size=True)
     mcfit.plot(wavelength=True, composition=True)
+    mcfit.plot(wavelength=True, save=True, ftype='pdf')
