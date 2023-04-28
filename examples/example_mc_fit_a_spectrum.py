@@ -19,11 +19,7 @@ if __name__ == "__main__":
         resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
     )
 
-    # Store units for plotting.
-    units = [obs.spectrum.spectral_axis.unit.to_string(),
-             obs.spectrum.flux.unit.to_string()]
-
-    # Convert spectral unit to wavenumber.
+    # Convert spectral unit to wavenumber required by AmesPAHdbPythonSuite.
     obs.abscissaunitsto("1/cm")
 
     # Read the database.
@@ -55,7 +51,7 @@ if __name__ == "__main__":
     mcfit = spectrum.mcfit(obs, samples=1024, multiprocessing=False)
 
     # Create plots.
-    mcfit.plot(wavelength=True, charge=True, ptype='charge', units=units)
-    mcfit.plot(wavelength=True, size=True, ptype='size', units=units)
-    mcfit.plot(wavelength=True, composition=True, ptype='composition', units=units)
-    mcfit.plot(wavelength=True, units=units, save=True, ftype='pdf')
+    mcfit.plot(wavelength=True, charge=True)
+    mcfit.plot(wavelength=True, size=True)
+    mcfit.plot(wavelength=True, composition=True)
+    mcfit.plot(wavelength=True, save=True, ftype='pdf')

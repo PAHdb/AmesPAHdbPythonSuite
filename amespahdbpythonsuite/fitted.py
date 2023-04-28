@@ -93,7 +93,7 @@ class Fitted(Spectrum):
             if keywords.get("wavelength", False):
                 x = 1e4 / self.grid
                 axis[0].set_xlim((min(x), max(x)))
-                xtitle = "Wavelength"
+                xtitle = "Wavelength [$\\mu$m]"
             else:
                 x = self.grid
                 axis[0].set_xlim((max(x), min(x)))
@@ -201,7 +201,7 @@ class Fitted(Spectrum):
                 + "]",
             )
             if keywords.get("residual", False):
-                axis[1].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
+                axis[1].set_xlabel(f"{xtitle}")
                 axis[1].set_ylabel("residual")
                 axis[1].minorticks_on()
                 axis[1].tick_params(
@@ -211,13 +211,19 @@ class Fitted(Spectrum):
                     which="minor", right="on", top="on", direction="in", length=3
                 )
             else:
-                axis[0].set_xlabel(f"{xtitle} ({keywords['units'][0]})")
+                axis[0].set_xlabel(f"{xtitle}")
 
         if keywords.get("save", False):
-            if not keywords.get("ptype"):
-                ptype = "fitted"
+            if keywords.get("charge"):
+                ptype = "charge"
+            elif keywords.get("size"):
+                ptype = "size"
+            elif keywords.get("composition"):
+                ptype = "composition"
+            elif keywords.get("residual"):
+                ptype = "residual"
             else:
-                ptype = f"{keywords['ptype']}"
+                ptype = "fitted"
 
             if keywords["output"]:
                 if os.path.isdir(keywords["output"]):

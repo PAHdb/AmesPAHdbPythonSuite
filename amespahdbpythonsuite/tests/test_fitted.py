@@ -94,14 +94,13 @@ class TestFitted:
             sigma=test_fitted.observation.uncertainty.array,
             save=True,
             output=test_path,
-            ptype="UIDs",
             ftype="pdf",
             units=[
                 test_fitted.observation.spectral_axis.unit.to_string(),
                 test_fitted.observation.flux.unit.to_string(),
             ],
         )
-        assert exists(f"{test_path}_UIDs.pdf")
+        assert exists(f"{test_path}_fitted.pdf")
 
     def test_plot_residual(self, test_fitted, test_path):
         test_fitted.plot(
@@ -110,7 +109,6 @@ class TestFitted:
             sigma=test_fitted.observation.uncertainty.array,
             save=True,
             output=test_path,
-            ptype="residual",
             ftype="pdf",
             units=[
                 test_fitted.observation.spectral_axis.unit.to_string(),
@@ -126,7 +124,6 @@ class TestFitted:
             sigma=test_fitted.observation.uncertainty.array,
             save=True,
             output=test_path,
-            ptype="size",
             ftype="pdf",
             units=[
                 test_fitted.observation.spectral_axis.unit.to_string(),
@@ -142,7 +139,6 @@ class TestFitted:
             sigma=test_fitted.observation.uncertainty.array,
             save=True,
             output=test_path,
-            ptype="charge",
             ftype="pdf",
             units=[
                 test_fitted.observation.spectral_axis.unit.to_string(),
@@ -158,7 +154,6 @@ class TestFitted:
             sigma=test_fitted.observation.uncertainty.array,
             save=True,
             output=test_path,
-            ptype="composition",
             ftype="pdf",
             units=[
                 test_fitted.observation.spectral_axis.unit.to_string(),
