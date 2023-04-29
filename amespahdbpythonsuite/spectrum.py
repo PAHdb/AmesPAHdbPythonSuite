@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.observation import Observation
     from amespahdbpythonsuite.mcfitted import MCFitted
 
+import copy
 import multiprocessing as mp
 from functools import partial
 
@@ -159,9 +160,9 @@ class Spectrum(Transitions):
         from amespahdbpythonsuite import observation
 
         if isinstance(y, Spectrum1D):
-            obs = y
+            obs = copy.deepcopy(y)
         elif isinstance(y, observation.Observation):
-            obs = y.spectrum
+            obs = copy.deepcopy(y.spectrum)
         else:
             unc = None
             if np.any(yerr):
@@ -182,11 +183,11 @@ class Spectrum(Transitions):
 
         if obs.uncertainty is None:
             method = "NNLS"
-            b = list(obs.flux.value)
+            b = obs.flux.value
             m = matrix
         else:
             method = "NNLC"
-            b = list(np.divide(obs.flux.value, obs.uncertainty.array))
+            b = np.divide(obs.flux.value, obs.uncertainty.array)
             m = np.divide(matrix, obs.uncertainty.array)
 
         if notice:
@@ -405,9 +406,9 @@ class Spectrum(Transitions):
         from amespahdbpythonsuite.mcfitted import MCFitted
 
         if isinstance(y, Spectrum1D):
-            obs = y
+            obs = copy.deepcopy(y)
         elif isinstance(y, observation.Observation):
-            obs = y.spectrum
+            obs = copy.deepcopy(y.spectrum)
         else:
             unc = None
             if np.any(yerr):
@@ -489,8 +490,8 @@ class Spectrum(Transitions):
 
                 obs_fit = Spectrum1D(
                     flux=b * obs.flux.unit,
-                    spectral_axis=obs.spectral_axis,
-                    uncertainty=obs.uncertainty,
+                    spectral_axis=copy.deepcopy(obs.spectral_axis),
+                    uncertainty=copy.deepcopy(obs.uncertainty),
                 )
 
                 mcfits.append(
@@ -550,7 +551,7 @@ def _mcfit(_, m, x, u, uniform) -> tuple:
     else:
         # Calculate new flux based on random normal distribution sampling.
         b = np.random.normal(x, u)
-    b = list(np.divide(b, u))
+    b = np.divide(b, u)
 
     # Fit the spectrum.
     solution, _ = optimize.nnls(m.T, b)
