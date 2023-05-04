@@ -9,7 +9,7 @@ from datetime import timedelta
 from functools import partial
 from typing import TYPE_CHECKING, Optional
 
-from scipy import integrate, optimize, ndimage  # type: ignore
+from scipy import integrate, optimize, ndimage, special  # type: ignore
 
 import astropy.units as u  # type: ignore
 import numpy as np
@@ -162,87 +162,7 @@ class Transitions(Data):
                 d["frequency"] += shift
         message(f"TOTAL SHIFT: {self._shift} /cm")
 
-    def meanenergyfunc(**keywords):
-        # if keywords.get('StellarModel'): 
-            # mean_en = 1.9864456023253396e-16 *\
-                # integrate.quad(StarModel.frequency, AbsorptionCrossSection__AmesPAHdbIDLSuite(StarModel.frequency) *\
-                                    #    StarModel.intensity) /\
-                                        # INT_TABULATED(StarModel.frequency, AbsorptionCrosssection__AmesPAHdbIDLSuite(StarModel.frequency) *\
-                                                                    # StarModel.intensity / StarModel.frequency)
-
-        # if ketwords.get(ISRF): RETURN,1.9864456023253396D-16 * QROMB('ISRFFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6) / QROMB('ISRFNumberOfPhotonsFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6)
-
-        # RETURN,1.9864456023253396D-16 * QROMB('PlanckFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6) / QROMB('PlanckNumberOfPhotonsFunc__AmesPAHdbIDLSuite', 2.5D3, 1.1D5, K=7, EPS=1D-6)
-
-        return
-
-    def isrf(f: np.ndarray) -> np.ndarray:
-        """
-        Callback function to calculate the absorption cross-section times
-        the interstellar radiation field per Mathis et al. 1983, A&A, 128:212.
-
-        :Params f: frequencies in wavenumber
-
-        :Returns: float array
-        """
-        # IF f GT 1.1D5 THEN RETURN,0D
-
-        # IF f GT 1D4 / 0.110D THEN RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * 1.202D+23 / f^5.4172D
-
-        # IF f GE 1D4 / 0.134D THEN RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * 1.366D6 / f^2D
-
-        # IF f GE 1D4 / 0.246D THEN RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * 1.019D-2 / f^0.3322D
-
-        # T = [7500D, 4000D, 3000D, 2.73D] & W = [1D-14, 1.65D-13, 4D-13, 1D]
-
-        # RETURN,AbsorptionCrosssection__AmesPAHdbIDLSuite(f) * f^3 * TOTAL(W / (EXP(1.4387751297850830401D * f / T) - 1D))
-
-        return
-
-    def absorptioncrosssection(f: np.ndarray) -> np.ndarray:
-        """
-        Callback function to Calculate the absorption cross-section
-        multiplied by Planck's function.
-
-        :Params f: frequencies in wavenumber
-
-        :Returns: float array
-        """
-        # ! Need callback for nc, charge, etc. !
-        nc = 50
-        charge = 1
-        # ! Need callback for nc, charge, etc. !
-
-        wave = 1e4 / f
-
-        A_c = [7.97e-17, 1.23e-17, 20e-21, 14e-21, 80e-24, 84e-24, 46e-24, -322e-24]
-        W_c = [0.195, 0.217, 0.0805, 0.20, 0.0370, 0.0450, 0.0150, 0.135]
-        C_c = [0.0722, 0.2175, 1.05, 1.23, 1.66, 1.745, 1.885, 1.90]
-
-        A = np.transpose(np.resize(A_c, (len(f), len(A_c))))
-        W = np.transpose(np.resize(W_c, (len(f), len(W_c))))
-        C = np.transpose(np.resize(C_c, (len(f), len(C_c))))
-
-        # Cutoff wavelength from Salama et al. (1996), over wavelength
-        # (Eq. (4) in Mattioda et al. (2005))
-        y = 1.0 / (0.889 + (2.282 / np.sqrt(0.4 * nc))) / wave
-
-        wave_r2 = np.resize(wave, (2, (len(f))))
-
-        crosssection = ((1.0 / np.pi) * np.arctan((1e3 * (y - 1.0)**3) / y) + 0.5) *\
-            (3458e-20 * 10.0**(-3.431 * wave) + (2.0 / np.pi) *\
-             np.sum(W[:2] * C[:2] * A[:2] / (((wave_r2 / C[:2]) - (C[:2] / wave_r2))**2 + W[:2]**2), axis=0))
-
-        if charge != 0:
-
-            wave_r6 = np.resize(wave, (6, len(f)))
-
-            crosssection = crosssection + np.exp(-1e-1 / wave**2) * 1.5e-19 * 10**(-wave) + np.sqrt(2.0 / np.pi) *\
-                np.sum(A[2:] * np.exp(-2.0 * (wave_r6 - C[2:])**2 / W[2:]**2) / W[2:], axis=0)
-
-        return crosssection
-
-    def fixedtemperature(self, t: float) -> None:
+    def fixed_temperature(self, t: float) -> None:
         """
         Applies the Fixed Temperature emission model.
 
@@ -282,7 +202,7 @@ class Transitions(Data):
             for d, i in zip(self.data[uid], intensity):
                 d["intensity"] *= i
 
-    def calculatedtemperature(self, e: float, **keywords) -> None:
+    def calculated_temperature(self, e: float, **keywords) -> None:
         """
         Applies the Calculated Temperature emission model.
 
@@ -339,7 +259,7 @@ class Transitions(Data):
             global frequencies
             frequencies = np.array([d["frequency"] for d in self.data[uid]])
 
-            Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
+            Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
             print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
@@ -388,15 +308,15 @@ class Transitions(Data):
 
         tstart = time.perf_counter()
 
-        TStar = 0.
+        TStar = 0.0
 
         # Check keywords to determine model and call appropriate methods.
-
         if keywords.get('star') and keywords.get('stellarmodel'):
-
             message('STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL')
 
-            TStar = (4 * np.pi * integrate.simpson(e.frequency, e.intensity) / 5.67040e-5)**(0.25)
+            TStar = (
+                4 * np.pi * integrate.simpson(e.frequency, e.intensity) / 5.67040e-5
+            ) ** (0.25)
 
             select = np.where((e.frequency >= 2.5e3) & (e.frequency <= 1.1e5))
             nselect = e.frequency[select]
@@ -407,16 +327,21 @@ class Transitions(Data):
 
             message('REBINNING STELLAR MODEL: 100 POINTS')
             # ^ Consider giving a user warning when providing large dimension data.
-            StarModel = [{'frequency': 0., 'intensity': 0}] * 100
+
+            global star_model
+            star_model = [{'frequency': 0.0, 'intensity': 0}] * 100
             # * Using interpolation through ndimage.zoom to get equivalent
             # * of the IDL congrid function.
-            sm_frequency = ndimage.zoom(energy['frequency'][select],
-                                        100 / len(energy['frequency'][select]))
-            sm_intensity = ndimage.zoom(energy['intensity'][select],
-                                        100 / len(energy['intensity'][select]))
+            star_model['frequency'] = ndimage.zoom(
+                energy['frequency'][select], 100 / len(energy['frequency'][select])
+            )
+            star_model['intensity'] = ndimage.zoom(
+                energy['intensity'][select], 100 / len(energy['intensity'][select])
+            )
             message(f'CALCULATED EFFECTIVE TEMPERATURE: {TStar} Kelvin')
 
         elif keywords.get('star'):
+            global Tstar
             Tstar = energy
             message(f'BLACKBODY TEMPERATURE: {TStar} Kelvin')
 
@@ -440,7 +365,9 @@ class Transitions(Data):
 
         self.units["ordinate"] = {"unit": u.erg, "label": "integrated radiant energy"}
 
-        description = f'model: cascade, approximated: {keywords.get("approximate", False)}'
+        description = (
+            f'model: cascade, approximated: {keywords.get("approximate", False)}'
+        )
 
         if self.model['isrf']:
             description += ', isrf: yes'
@@ -462,33 +389,45 @@ class Transitions(Data):
         if keywords.get('approxiamte', False):
             message('USING APPROXIMATION')
 
-            func1 = 'ApproximateAttainedTemperature'
-            func2 = 'ApproximateFeatureStrength'
+            func1 = 'approximate_attained_temperature'
+            func2 = 'approximate_feature_strength'
 
             if keywords.get('convolved', False):
-
                 if keywords.get('isrf', False):
-                    func3 = 'ISRFApproximateFeatureStrengthConvolved'
+                    func3 = 'isrf_approximate_feature_strength_convolved'
 
                 elif keywords.get('stellarmodel', False):
-                    func3 = 'StellarModelApproximateFeatureStrengthConvolved'
+                    func3 = 'stellar_model_approximate_feature_strength_convolved'
 
                 else:
-                    func3 = 'PlanckApproximateFeatureStrengthConvolved'
+                    func3 = 'planck_approximate_feature_strength_convolved'
         else:
-            func1 = 'AttainedTemperature'
-            func2 = 'FeatureStrength'
+            func1 = 'attained_temperature'
+            func2 = 'feature_strength'
 
             if keywords.get('convolved', False):
-
                 if keywords.get('isrf', False):
-                    func3 = 'ISRFFeatureStrengthConvolved'
+                    func3 = 'isrf_feature_strength_convolved'
 
                 elif keywords.get('stellarmodel', False):
-                    func3 = 'StellarModelFeatureStrengthConvolved'
+                    func3 = 'stellar_model_feature_strength_convolved'
 
                 else:
-                    func3 = 'PlanckFeatureStrengthConvolved'
+                    func3 = 'planck_feature_strength_convolved'
+
+        # ! Need to iterate over uids ! #
+
+        if keywords.get('approximate') or keywords.get('star') or keywords.get('isrf'):
+            global charge
+            global nc
+
+            self._atoms()
+            charge = [self.pahdb["species"][uid]["charge"] for uid in self.uids]
+            nc = np.array([self.atoms[uid]["nc"] for uid in self.uids])
+
+        if keywords.get('star') or keywords.get('isrf'):
+            Ein = Transitions.mean_energy(**keywords)
+            breakpoint()
 
         if keywords.get("multiprocessing", False):
             cascade_em_model = partial(Transitions._cascade_em_model, e)
@@ -522,7 +461,7 @@ class Transitions(Data):
                 global intensities
                 intensities = np.array([d["intensity"] for d in self.data[uid]])
 
-                Tmax = optimize.brentq(self.attainedtemperature, 2.73, 5000.0)
+                Tmax = optimize.brentq(self.attained_temperature, 2.73, 5000.0)
 
                 print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
@@ -534,7 +473,9 @@ class Transitions(Data):
                         frequency = d["frequency"]
                         d["intensity"] *= (
                             d["frequency"] ** 3
-                            * integrate.quad(self.featurestrength, 2.73, Tmax)[0]
+                            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[
+                                0
+                            ]
                         )
 
                 i += 1
@@ -715,7 +656,457 @@ class Transitions(Data):
             plt.show()
 
     @staticmethod
-    def featurestrength(T: float) -> float:
+    def absorption_cross_section(f: np.ndarray) -> np.ndarray:
+        """
+        Calculates the PAH absorption cross-section per Li & Draine 2007,
+        ApJ, 657:810-837.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+        """
+
+        wave = 1e4 / f
+
+        A_c = [7.97e-17, 1.23e-17, 20e-21, 14e-21, 80e-24, 84e-24, 46e-24, -322e-24]
+        W_c = [0.195, 0.217, 0.0805, 0.20, 0.0370, 0.0450, 0.0150, 0.135]
+        C_c = [0.0722, 0.2175, 1.05, 1.23, 1.66, 1.745, 1.885, 1.90]
+
+        A = np.transpose(np.resize(A_c, (np.size(f), np.size(A_c))))
+        W = np.transpose(np.resize(W_c, (np.size(f), np.size(W_c))))
+        C = np.transpose(np.resize(C_c, (np.size(f), np.size(C_c))))
+
+        # Cutoff wavelength from Salama et al. (1996), over wavelength
+        # (Eq. (4) in Mattioda et al. (2005))
+        y = 1.0 / (0.889 + (2.282 / np.sqrt(0.4 * nc))) / wave
+
+        wave_r2 = np.resize(wave, (2, (np.size(f))))
+
+        crosssection = ((1.0 / np.pi) * np.arctan((1e3 * (y - 1.0) ** 3) / y) + 0.5) * (
+            3458e-20 * 10.0 ** (-3.431 * wave)
+            + (2.0 / np.pi)
+            * np.sum(
+                W[:2]
+                * C[:2]
+                * A[:2]
+                / (((wave_r2 / C[:2]) - (C[:2] / wave_r2)) ** 2 + W[:2] ** 2),
+                axis=0,
+            )
+        )
+
+        if charge != 0:
+            wave_r6 = np.resize(wave, (6, np.size(f)))
+
+            crosssection = (
+                crosssection
+                + np.exp(-1e-1 / wave**2) * 1.5e-19 * 10 ** (-wave)
+                + np.sqrt(2.0 / np.pi)
+                * np.sum(
+                    A[2:] * np.exp(-2.0 * (wave_r6 - C[2:]) ** 2 / W[2:] ** 2) / W[2:],
+                    axis=0,
+                )
+            )
+
+        return crosssection
+
+    @staticmethod
+    def planck(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to Calculate the absorption cross-section
+        multiplied by Planck's function.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+
+        """
+        breakpoint()
+        return (
+            Transitions.absorption_cross_section(f)
+            * f**3
+            / (np.exp(1.4387751297850830401 * f / Tstar) - 1.0)
+        )
+
+    @staticmethod
+    def planck_squared(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to Calculate the absorption cross-section
+        multiplied by Planck's function squared.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+
+        """
+        return (
+            Transitions.absorption_cross_section(f)
+            * f**4
+            / (np.exp(1.4387751297850830401 * f / Tstar) - 1.0)
+        )
+
+    @staticmethod
+    def planck_number_of_photons(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to Calculate the number of photons
+        using Planck's function.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+
+        """
+        return (
+            Transitions.absorption_cross_section(f)
+            * f**2
+            / (np.exp(1.4387751297850830401 * f / Tstar) - 1.0)
+        )
+
+    @staticmethod
+    def isrf(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to calculate the absorption cross-section times
+        the interstellar radiation field per Mathis et al. 1983, A&A, 128:212.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+        """
+        if f > 1.1e5:
+            return 0.0
+        if f > 1e4 / 0.110:
+            return Transitions.absorption_cross_section(f) * 1.20e23 / f**5.4172
+        if f > 1e4 / 0.134:
+            return Transitions.absorption_cross_section(f) * 1.366e6 / f**2.0
+        if f > 1e4 / 0.246:
+            return Transitions.absorption_cross_section(f) * 1.019e-2 / f**0.3322
+
+        T = [7500, 4000, 3000, 2.73]
+        W = [1e-14, 1.65e-13, 4e-13, 1]
+
+        return (
+            Transitions.absorption_cross_section(f)
+            * f**3
+            * np.sum(W / np.exp(1.4387751297850830401 * f / T) - 1.0)
+        )
+
+    @staticmethod
+    def isrf_squared(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to calculate the absorption cross-section times
+        the interstellar radiation field per Mathis et al. 1983, A&A, 128:212.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+        """
+        if f > 1.1e5:
+            return 0.0
+        if f > 1e4 / 0.110:
+            return Transitions.absorption_cross_section(f) * 1.20e23 / f**4.4172
+        if f > 1e4 / 0.134:
+            return Transitions.absorption_cross_section(f) * 1.366e6 / f
+        if f > 1e4 / 0.246:
+            return Transitions.absorption_cross_section(f) * 1.019e-2 / f**0.6678
+
+        T = [7500, 4000, 3000, 2.73]
+        W = [1e-14, 1.65e-13, 4e-13, 1]
+
+        return (
+            Transitions.absorption_cross_section(f)
+            * f**4
+            * np.sum(W / np.exp(1.4387751297850830401 * f / T) - 1.0)
+        )
+
+    @staticmethod
+    def isrf_number_of_photons(f: np.ndarray) -> np.ndarray:
+        """
+        Callback function to calculate the number of photons per Mathis et al. 1983, A&A, 128:212.
+
+        :Params f: frequencies in wavenumber
+
+        :Returns: float array
+
+        """
+        if f > 1.1e5:
+            return 0.0
+        if f > 1e4 / 0.110:
+            return Transitions.absorption_cross_section(f) * 1.20e23 / f**6.4172
+        if f > 1e4 / 0.134:
+            return Transitions.absorption_cross_section(f) * 1.366e6 / f**3
+        if f > 1e4 / 0.246:
+            return Transitions.absorption_cross_section(f) * 1.019e-2 / f**1.3322
+
+        T = [7500, 4000, 3000, 2.73]
+        W = [1e-14, 1.65e-13, 4e-13, 1]
+
+        return (
+            Transitions.absorption_cross_section(f)
+            * f**2
+            * np.sum(W / np.exp(1.4387751297850830401 * f / T) - 1.0)
+        )
+
+    @staticmethod
+    def mean_energy(**keywords):
+        """
+        Callback function to calculate the mean energy in erg for a given
+        blackbody temperatyre.
+
+        :Returns: float array
+
+        """
+        # ! Using simpson's integration, as there is no Python (scipy)
+        # ! implementation of the 5-point Newton-Cotes integration of
+        # ! IDL's INT_TABULATED.
+
+        if keywords.get('stellar_model'):
+            me = (
+                1.9864456023253396e-16
+                * integrate.simpson(
+                    star_model['frequency'],
+                    Transitions.absorption_cross_section(star_model['frequency'])
+                    * star_model['intensity'],
+                )
+                / integrate.simpson(
+                    star_model['frequency'],
+                    Transitions.absorption_cross_section(star_model['frequency'])
+                    * star_model['intensity']
+                    / star_model['frequency'],
+                )
+            )
+        elif keywords.get('isrf'):
+            me = (
+                1.9864456023253396e-16
+                * integrate.quad(Transitions.isrf, 2.5e3, 1.1e5)
+                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)
+            )
+        else:
+            breakpoint()
+            me = (
+                1.9864456023253396e-16
+                * integrate.quad(Transitions.planck, 2.5e3, 1.1e5)
+                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)
+            )
+
+        return me
+
+    @staticmethod
+    def mean_energy_squared(**keywords):
+        """
+        Callback function to calculate the mean energy in erg^2 for a given
+        blackbody temperatyre.
+
+        :Returns: float array
+
+        """
+        # ! Using simpson's integration, as there is no Python (scipy)
+        # ! implementation of the 5-point Newton-Cotes integration of
+        # ! IDL's INT_TABULATED.
+
+        if keywords.get('stellarmodel'):
+            me = (
+                3.945966130997681e-32
+                * integrate.simpson(
+                    star_model['frequency'],
+                    star_model['frequency']
+                    * Transitions.absorption_cross_section(star_model['frequency'])
+                    * star_model['intensity'],
+                )
+                / integrate.simpson(
+                    star_model['frequency'],
+                    Transitions.absorption_cross_section(star_model['frequency'])
+                    * star_model['intensity']
+                    / star_model['frequency'],
+                )
+            )
+        elif keywords.get('isrf'):
+            me = (
+                3.945966130997681e-32
+                * integrate.quad(Transitions.isrf_squared, 2.5e3, 1.1e5)
+                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)
+            )
+        else:
+            me = (
+                3.945966130997681e-32
+                * integrate.quad(Transitions.planck_squared, 2.5e3, 1.1e5)
+                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)
+            )
+
+        return me
+
+    @staticmethod
+    def attained_temperature(T: float) -> float:
+        """
+        Calculate a PAH's temperature after absorbing a given amount of energy.
+
+        :param T: Excitation temperature in Kelvin.
+        :type T: float
+
+        """
+        global energy
+
+        return integrate.quad(Transitions.heat_capacity, 2.73, T)[0] - energy
+
+    @staticmethod
+    def approximate_attained_temperature(T: float) -> float:
+        """
+        Calculate a PAH's temperature after absorbing a given amount of energy
+        using an approximation.
+
+        :param T: Excitation temperature in Kelvin.
+        :type T: float
+
+        """
+        global energy
+
+        return (
+            nc
+            * (
+                7.54267e-11 * special.erf(-4.989231 + 0.41778 * np.log(T))
+                + 7.542670e-11
+            )
+            - energy
+        )
+
+    @staticmethod
+    def heat_capacity(T: float) -> float:
+        """
+        Calculate heat capacity.
+
+        :param T: Excitation temperature in Kelvin.
+        :type T: float
+
+        """
+
+        global frequencies
+
+        val = 1.4387751297850830401 * frequencies / T
+
+        return 1.3806505e-16 * np.sum(np.exp(-val) * (val / (1.0 - np.exp(-val))) ** 2)
+
+    @staticmethod
+    def planck_feature_strength_convolved(f: np.ndarray) -> np.ndarray:
+        """
+        Calculate a feature's strength convolved with a
+        given blackbody radiation field.
+
+        :Param f: frequencies in wavenumber
+
+        :Returns: float
+
+        """
+        E = 1.9864456e-16 * f
+        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+
+        return Transitions.planck_number_of_photons(f) * integrate.quad(
+            Transitions.feature_strength, 2.73, Tmax
+        )
+
+    @staticmethod
+    def isrf_feature_strength_convolved(f: np.ndarray) -> np.ndarray:
+        """
+        Calculate a feature's strength convolved with the
+        interstellar radiation field.
+
+        :Param f: frequencies in wavenumber
+
+        :Returns: float
+
+        """
+        E = 1.9864456e-16 * f
+        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+
+        return Transitions.isrf_number_of_photons(f) * integrate.quad(
+            Transitions.feature_strength, 2.73, Tmax
+        )
+
+    @staticmethod
+    def stellar_model_feature_strength_convolved(f: np.ndarray) -> np.ndarray:
+        """
+        Calculate a feature's strength convolved with a given stellar model.
+
+        :Param f: frequencies in wavenumber
+
+        :Returns: float
+
+        """
+        E = 1.9864456e-16 * f
+        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+
+        return (
+            Transitions.absorption_cross_section(f)
+            * np.interp(
+                f,
+                star_model['frequency'],
+                star_model['intensity'] / star_model['frequenxy'],
+            )
+            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)
+        )
+
+    @staticmethod
+    def planck_approximate_feature_strength_convolved(f: np.ndarray) -> np.ndarray:
+        """
+        Calculate a feature's strength convolved with a
+        given blackbody using an approximation.
+
+        :Param f: frequencies in wavenumber
+
+        :Returns: float
+
+        """
+        E = 1.9864456e-16 * f
+        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+
+        return Transitions.planck_number_of_photons(f) * integrate.quad(
+            Transitions.approximate_feature_strength, 2.73, Tmax
+        )
+
+    @staticmethod
+    def isrf_approximate_feature_strength_convolved(f: np.ndarray) -> np.ndarray:
+        """
+        Calculate a feature's strength convolved with
+        the interstellar radiation field using an approximation.
+
+        :Param f: frequencies in wavenumber
+
+        :Returns: float
+
+        """
+        E = 1.9864456e-16 * f
+        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+
+        return Transitions.isrf_number_of_photons(f) * integrate.quad(
+            Transitions.approximate_feature_strength, 2.73, Tmax
+        )
+
+    @staticmethod
+    def stellar_model_approximate_feature_strength_convolved(
+        f: np.ndarray,
+    ) -> np.ndarray:
+        """
+        Calculate a feature's strength convolved with
+        the interstellar radiation field using an approximation.
+
+        :Param f: frequencies in wavenumber
+
+        :Returns: float
+
+        """
+        E = 1.9864456e-16 * f
+        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+
+        return (
+            Transitions.absorption_cross_section(f)
+            * np.interp(
+                f,
+                star_model['frequency'],
+                star_model['intensity'] / star_model['frequenxy'],
+            )
+            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)
+            / 1.9864456023253396e-16
+        )
+
+    @staticmethod
+    def feature_strength(T: float) -> float:
         """
         Calculate a feature's strength covolved with a blackbody.
 
@@ -735,7 +1126,7 @@ class Transitions(Data):
 
         valid = np.where((val2 < np.log(np.finfo(float).max)))
 
-        return (Transitions.heatcapacity(T) / np.expm1(val1)) * (
+        return (Transitions.heat_capacity(T) / np.expm1(val1)) * (
             1.0
             / np.sum(
                 intensities[valid] * (frequencies[valid]) ** 3 / np.expm1(val2[valid])
@@ -743,33 +1134,94 @@ class Transitions(Data):
         )
 
     @staticmethod
-    def attainedtemperature(T: float) -> float:
+    def approximate_feature_strength(T: float):
         """
-        Calculate a PAH's temperature after absorbing a given amount of energy.
+        Calculate a feature's strength convolved with a
+        blackbody using an approximation from Bakes, Tielens & Bauschliher,
+        ApJ, 556:501-514, 2001.
 
-        :param T: Excitation temperature in Kelvin.
-        :type T: float
+        : Param T: Excitation temperature in Kelvin.
 
         """
-        global energy
+        a = 0.0
+        b = 0.0
 
-        return integrate.quad(Transitions.heatcapacity, 2.73, T)[0] - energy
+        if charge != 0:
+            if T > 1000:
+                a = 4.8e-4
+                b = 1.6119
+
+            elif (T > 300) and (T <= 1000):
+                a = 6.38e-7
+                b = 2.5556
+
+            elif (T > 100) and (T <= 300):
+                a = 1.69e-12
+                b = 4.7687
+
+            elif (T > 40) and (T <= 100):
+                a = 7.7e-9
+                b = 2.9244
+
+            elif (T > 20) and (T <= 40):
+                a = 3.4e-12
+                b = 5.0428
+
+            elif (T > 2.7) and (T <= 20):
+                a = 4.47e-19
+                b = 10.3870
+
+        else:
+            if T > 270:
+                a = 5.5e-7
+                b = 2.5270
+
+            elif (T > 200) and (T <= 270):
+                a = 1.7e-9
+                b = 3.5607
+
+            elif (T > 60) and (T <= 200):
+                a = 1.35e-9
+                b = 4.4800
+
+            elif (T > 30) and (T <= 30):
+                a = 4.18e-8
+                b = 2.5217
+
+            elif (T > 2.7) and (T <= 30):
+                a = 1.8e-16
+                b = 8.1860
+
+        val = 1.4387751297850830401 * frequency / T
+
+        if (a == 0.0) or (val > np.log(np.finfo(float).max)):
+            return 0.0
+
+        else:
+            return 1 / ((np.exp(val) - 1) * a * T**b)
 
     @staticmethod
-    def heatcapacity(T: float) -> float:
+    def number_of_photons(**keywords):
         """
-        Calculate heat capacity.
-
-        :param T: Excitation temperature in Kelvin.
-        :type T: float
+        Calculate the number of photons given a
+        blacbody radiation field.
 
         """
 
-        global frequencies
+        if keywords.get['stellar_model']:
+            return integrate.simpson(
+                star_model["frequency"],
+                Transitions.absorption_cross_section(
+                    star_model["frequency"]
+                    * star_model["intensity"]
+                    / star_model["frequency"]
+                ),
+            )
 
-        val = 1.4387751297850830401 * frequencies / T
-
-        return 1.3806505e-16 * np.sum(np.exp(-val) * (val / (1.0 - np.exp(-val))) ** 2)
+        elif keywords.get('isrf'):
+            return integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)
+        else:
+            return integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)
 
     @staticmethod
     def _lineprofile(x: np.ndarray, x0: float, width: float, **keywords) -> np.ndarray:
@@ -890,3 +1342,29 @@ class Transitions(Data):
                 )
 
         return data, Tmax
+
+    def _atoms(self) -> None:
+        """
+        Create atoms dictionary.
+
+        """
+
+        # Create reference dictionary with atomic numbers for c, h, n, o, mg, si, and fe.
+        nelem = {"nc": 6, "nh": 1, "nn": 7, "no": 8, "nmg": 12, "nsi": 14, "nfe": 26}
+
+        # Initialize atoms dictionary.
+        self.atoms = {key: {} for key in self.uids}
+
+        for uid in self.uids:
+            # Initialize dictionary based on reference dictionary.
+            dnelem = dict.fromkeys(nelem)
+            # Loop through the keys to determine the number of each atom present in a given uid.
+            for key in dnelem.keys():
+                dnelem[key] = len(
+                    [
+                        sub["type"]
+                        for sub in self.pahdb["species"][uid]["geometry"]
+                        if sub["type"] == nelem[key]
+                    ]
+                )
+            self.atoms[uid] = dnelem
