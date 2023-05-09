@@ -197,7 +197,7 @@ class Transitions(Data):
             intensity = (
                 2.4853427121856266e-23
                 * f**3
-                / (np.exp(1.4387751297850830401 * f / t) - 1.0)
+                / (np.expm1(1.4387751297850830401 * f / t))
             )
             for d, i in zip(self.data[uid], intensity):
                 d["intensity"] *= i
@@ -208,11 +208,19 @@ class Transitions(Data):
 
         :param e: Excitation energy in erg.
         :type e: float
+        :If 'star' keyword is given the input should be temperature in Kelvin instead of energy.
+
+        :keywords:
+        :
 
         """
         if self.database != "theoretical":
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
+
+        # if keywords.get('star') or keywords.get('isrf') and not self.database:
+        # message("VALID DATABASE NEEDED FOR USE WITH STAR/ISRF")
+        # return
 
         if self.model:
             if self.model["type"] != "zerokelvin_m":
@@ -224,102 +232,25 @@ class Transitions(Data):
         message("APPLYING CALCULATED TEMPERATURE EMISSION MODEL")
 
         global energy
+        global Tstar
 
         energy = e
+        Tstar = 0
 
-        self.model = {
-            "type": "calculatedtemperature_m",
-            "energy": e,
-            "temperatures": [],
-            "description": "",
-        }
-
-        self.units["ordinate"] = {
-            "unit": u.erg / u.second / u.def_unit("molecule", doc="Molecule"),
-            "label": "integrated spectral radiance",
-        }
-
-        print(57 * "=")
-
-        i = 0
-
-        nuids = len(self.uids)
-
-        for uid in self.uids:
-            # Start timer.
-            tstart = time.perf_counter()
-
-            print("SPECIES                          : %d/%d" % (i + 1, nuids))
-            print("UID                              : %d" % uid)
-            print(
-                "MEAN ABSORBED ENERGY             : %f +/- %f eV"
-                % (e / 1.6021765e-12, 0.0)
-            )
-
-            global frequencies
-            frequencies = np.array([d["frequency"] for d in self.data[uid]])
-
-            Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
-
-            print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
-
-            self.model["temperatures"].append({"uid": uid, "temperature": Tmax})
-
-            for d in self.data[uid]:
-                if d["intensity"] > 0:
-                    d["intensity"] *= (
-                        2.4853427121856266e-23
-                        * d["frequency"] ** 3
-                        / (np.exp(1.4387751297850830401 * d["frequency"] / Tmax) - 1.0)
-                    )
-
-            # Stop timer and calculate elapsed time.
-            elapsed = timedelta(seconds=(time.perf_counter() - tstart))
-            print(f"Elapsed time: {elapsed}")
-
-            i += 1
-
-        print(57 * "=")
-
-    def cascade(self, e: float, **keywords) -> None:
-        """
-        Applies the Cascade emission model.
-
-        :param e: Excitation energy in erg.
-        :type: float
-
-        """
-        if self.database != "theoretical":
-            message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
-            return
-
-        if self.model:
-            if self.model["type"] != "zerokelvin_m":
-                message(
-                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}'
-                )
-                return
-
-        message("APPLYING CASCADE EMISSION MODEL")
-
-        global energy
-
-        energy = e
-
-        tstart = time.perf_counter()
-
-        TStar = 0.0
-
-        # Check keywords to determine model and call appropriate methods.
-        if keywords.get('star') and keywords.get('stellarmodel'):
+        if (keywords.get('star')) and (keywords.get('stellar_model')):
             message('STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL')
 
-            TStar = (
-                4 * np.pi * integrate.simpson(e.frequency, e.intensity) / 5.67040e-5
-            ) ** (0.25)
+            Tstar = (
+                4
+                * np.pi
+                * integrate.simpson(energy["frequency"], energy["intensity"])
+                / 5.67040e-5
+            ) ** 0.25
 
-            select = np.where((e.frequency >= 2.5e3) & (e.frequency <= 1.1e5))
-            nselect = e.frequency[select]
+            select = np.where(
+                (energy["frequency"] >= 2.5e3) & (energy["frequency"] <= 1.1e5)
+            )
+            nselect = energy["frequency"][select]
 
             if len(nselect) == 0:
                 message('STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm')
@@ -338,6 +269,182 @@ class Transitions(Data):
             star_model['intensity'] = ndimage.zoom(
                 energy['intensity'][select], 100 / len(energy['intensity'][select])
             )
+            message(f'CALCULATED EFFECTIVE TEMPERATURE: {Tstar} Kelvin')
+
+        elif keywords.get('star'):
+            Tstar = energy
+
+        if keywords.get('isrf') and not keywords.get('convolved'):
+            message('ISRF SELECTED: IGNORING FIRST PARAMETER')
+
+        self.model = {
+            "type": "calculated_temperature_m",
+            "energy": {},
+            "temperatures": {},
+            "approximate": keywords.get('approximate'),
+            "star": keywords.get('star'),
+            "isrf": keywords.get('isrf'),
+            "stellar_model": keywords.get('stellar_model'),
+            "Tstar": Tstar,
+            "description": "",
+        }
+
+        self.units["ordinate"] = {
+            "unit": u.erg / u.second / u.def_unit("molecule", doc="Molecule"),
+            "label": "integrated spectral radiance",
+        }
+
+        print(57 * "=")
+
+        i = 0
+
+        nuids = len(self.uids)
+
+        for uid in self.uids:
+            # Start timer.
+            tstart = time.perf_counter()
+            # Instatiate model energy and temperature dictionaries.
+            self.model['energy'][uid] = {}
+            self.model["temperatures"][uid] = {}
+
+            print("SPECIES                          : %d/%d" % (i + 1, nuids))
+            print("UID                              : %d" % uid)
+
+            if (
+                keywords.get('approximate')
+                or keywords.get('star')
+                or keywords.get('isrf')
+            ):
+                global charge
+                global nc
+
+                self._atoms()
+                charge = self.pahdb["species"][uid]["charge"]
+                nc = self.atoms[uid]["nc"]
+
+            if keywords.get('star') or keywords.get('isrf'):
+                energy = Transitions.mean_energy(**keywords)
+                self.model['energy'][uid]['sigma'] = np.sqrt(
+                    Transitions.mean_energy_squared(**keywords) - energy**2
+                )
+
+            else:
+                energy = e
+                self.model['energy'][uid]['sigma'] = 0.
+
+            self.model['energy'][uid]['e'] = energy
+
+            print(
+                f"MEAN ABSORBED ENERGY             : {self.model['energy'][uid]['e'] / 1.6021765e-12} +/- {self.model['energy'][uid]['sigma'] / 1.6021765e-12} eV"
+            )
+
+            global frequencies
+            frequencies = np.array([d["frequency"] for d in self.data[uid]])
+
+            if keywords.get('approximate'):
+                Tmax = optimize.brentq(Transitions.approximate_attained_temperature, 2.73, 5000.0)
+            else:
+                Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+
+            self.model["temperatures"][uid]["temperature"] = Tmax
+
+            print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
+
+            for d in self.data[uid]:
+                if d["intensity"] > 0:
+                    d["intensity"] *= (
+                        2.4853427121856266e-23
+                        * d["frequency"] ** 3
+                        / (np.expm1(1.4387751297850830401 * d["frequency"] / Tmax))
+                    )
+
+            # Stop timer and calculate elapsed time.
+            elapsed = timedelta(seconds=(time.perf_counter() - tstart))
+            print(f"Elapsed time: {elapsed}")
+
+            i += 1
+
+        description = (
+            f'model: calculated_temperature, approximated: {keywords.get("approximate", False)}'
+        )
+
+        if self.model['isrf']:
+            description += ', isrf: yes'
+
+        if self.model['star']:
+            description += ', star: yes'
+            description += f', Tstar: {Tstar} Kelvin'
+            description += f', modelled: {keywords.get("stellar_model", False)}'
+
+        else:
+            description += f'<E>: {energy / 1.6021765e-12} eV'
+
+        self.model['description'] = description
+
+        print(57 * "=")
+
+    def cascade(self, e: float, **keywords) -> None:
+        """
+        Applies the Cascade emission model.
+
+        :param e: Excitation energy in erg.
+        :type: float
+
+        """
+        if self.database != "theoretical" and not keywords.get('approximate'):
+            message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
+            return
+
+        if self.model:
+            if self.model["type"] != "zerokelvin_m":
+                message(
+                    f'AN EMISSION MODEL HAS ALREADY BEEN APPLIED: {self.model["type"]}'
+                )
+                return
+
+        message("APPLYING CASCADE EMISSION MODEL")
+
+        global energy
+
+        energy = e
+        TStar = 0.0
+
+        tstart = time.perf_counter()
+
+        if keywords.get('star') and keywords.get('stellarmodel'):
+            message('STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL')
+
+            TStar = (
+                4
+                * np.pi
+                * integrate.simpson(energy["frequency"], energy["intensity"])
+                / 5.67040e-5
+            ) ** (0.25)
+
+            select = np.where(
+                (energy["frequency"] >= 2.5e3) & (energy["frequency"] <= 1.1e5)
+            )
+            nselect = energy["frequency"][select]
+
+            if len(nselect) == 0:
+                message('STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm')
+                self.state = 0
+
+            message('REBINNING STELLAR MODEL: 100 POINTS')
+            # ^ Consider giving a user warning when providing large dimension data.
+
+            global star_model
+            star_model = [{'frequency': 0.0, 'intensity': 0}] * 100
+
+            # * Using interpolation through ndimage.zoom to get equivalent
+            # * of the IDL congrid function.
+            star_model['frequency'] = ndimage.zoom(
+                energy['frequency'][select], 100 / len(energy['frequency'][select])
+            )
+            star_model['intensity'] = ndimage.zoom(
+                energy['intensity'][select], 100 / len(energy['intensity'][select])
+            )
+
             message(f'CALCULATED EFFECTIVE TEMPERATURE: {TStar} Kelvin')
 
         elif keywords.get('star'):
@@ -359,11 +466,12 @@ class Transitions(Data):
             "star": keywords.get('star'),
             "isrf": keywords.get('isrf'),
             "convolved": keywords.get('convolved'),
-            "stellarmodel": keywords.get('stellarmodel'),
+            "stellar_model": keywords.get('stellar_model'),
+            "Tstar": Tstar,
             "description": "",
         }
 
-        self.units["ordinate"] = {"unit": u.erg, "label": "integrated radiant energy"}
+        self.units["ordinate"] = {"unit": u.erg, "label": "integrated radiant energy [erg]"}
 
         description = (
             f'model: cascade, approximated: {keywords.get("approximate", False)}'
@@ -376,11 +484,11 @@ class Transitions(Data):
         if self.model['star']:
             description += ', star: yes'
             description += f', Tstar: {Tstar} Kelvin'
-            description += f', modelled: {keywords.get("stellarmodel", False)}'
+            description += f', modelled: {keywords.get("stellar_model", False)}'
             description += f', convolved: {keywords.get("convolved", False)}'
 
         else:
-            description += f'<E>: {e / 1.6021765e-12} eV'
+            description += f'<E>: {energy / 1.6021765e-12} eV'
 
         self.model['description'] = description
 
@@ -389,45 +497,31 @@ class Transitions(Data):
         if keywords.get('approxiamte', False):
             message('USING APPROXIMATION')
 
-            func1 = 'approximate_attained_temperature'
-            func2 = 'approximate_feature_strength'
+            func1 = Transitions.approximate_attained_temperature
+            func2 = Transitions.approximate_feature_strength
 
             if keywords.get('convolved', False):
                 if keywords.get('isrf', False):
-                    func3 = 'isrf_approximate_feature_strength_convolved'
+                    func3 = Transitions.isrf_approximate_feature_strength_convolved
 
                 elif keywords.get('stellarmodel', False):
-                    func3 = 'stellar_model_approximate_feature_strength_convolved'
+                    func3 = Transitions.stellar_model_approximate_feature_strength_convolved
 
                 else:
-                    func3 = 'planck_approximate_feature_strength_convolved'
+                    func3 = Transitions.planck_approximate_feature_strength_convolved
         else:
-            func1 = 'attained_temperature'
-            func2 = 'feature_strength'
+            func1 = Transitions.attained_temperature
+            func2 = Transitions.feature_strength
 
             if keywords.get('convolved', False):
                 if keywords.get('isrf', False):
-                    func3 = 'isrf_feature_strength_convolved'
+                    func3 = Transitions.isrf_feature_strength_convolved
 
                 elif keywords.get('stellarmodel', False):
-                    func3 = 'stellar_model_feature_strength_convolved'
+                    func3 = Transitions.stellar_model_feature_strength_convolved
 
                 else:
-                    func3 = 'planck_feature_strength_convolved'
-
-        # ! Need to iterate over uids ! #
-
-        if keywords.get('approximate') or keywords.get('star') or keywords.get('isrf'):
-            global charge
-            global nc
-
-            self._atoms()
-            charge = [self.pahdb["species"][uid]["charge"] for uid in self.uids]
-            nc = np.array([self.atoms[uid]["nc"] for uid in self.uids])
-
-        if keywords.get('star') or keywords.get('isrf'):
-            Ein = Transitions.mean_energy(**keywords)
-            breakpoint()
+                    func3 = Transitions.planck_feature_strength_convolved
 
         if keywords.get("multiprocessing", False):
             cascade_em_model = partial(Transitions._cascade_em_model, e)
@@ -448,11 +542,39 @@ class Transitions(Data):
             i = 0
             nuids = len(self.uids)
             for uid in self.uids:
+                # Instatiate model energy and temperature dictionaries.
+                self.model['energy'][uid] = {}
+                self.model["temperatures"][uid] = {}
+
                 print("SPECIES                          : %d/%d" % (i + 1, nuids))
                 print("UID                              : %d" % uid)
+
+                if keywords.get('approximate') or keywords.get('star') or keywords.get('isrf'):
+                    global charge
+                    global nc
+
+                    self._atoms()
+                    charge = [self.pahdb["species"][uid]["charge"] for uid in self.uids]
+                    nc = np.array([self.atoms[uid]["nc"] for uid in self.uids])
+
+                if keywords.get('star') or keywords.get('isrf'):
+                    energy = Transitions.mean_energy(**keywords)
+
+                    self.model['energy'][uid]['sigma'] = np.sqrt(
+                        Transitions.mean_energy_squared(**keywords) - energy**2
+                    )
+
+                    if keywords.get('convolved'):
+                        Nphot = Transitions.number_of_photons(**keywords)
+
+                else:
+                    energy = e
+                    self.model['energy'][uid]['sigma'] = 0.
+
+                self.model['energy'][uid]['e'] = energy
+
                 print(
-                    "MEAN ABSORBED ENERGY             : %f +/- %f eV"
-                    % (e / 1.6021765e-12, 0.0)
+                    f"MEAN ABSORBED ENERGY             : {self.model['energy'][uid]['e'] / 1.6021765e-12} +/- {self.model['energy'][uid]['sigma'] / 1.6021765e-12} eV"
                 )
 
                 global frequencies
@@ -461,26 +583,48 @@ class Transitions(Data):
                 global intensities
                 intensities = np.array([d["intensity"] for d in self.data[uid]])
 
-                Tmax = optimize.brentq(self.attained_temperature, 2.73, 5000.0)
+                if keywords.get('approximate'):
+                    totalcrossection = np.sum(intensities)
 
+                Tmax = optimize.brentq(func1, 2.73, 5000.0)
+                self.model["temperatures"][uid] = Tmax
                 print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
-                self.model["temperatures"][uid] = Tmax
+                if keywords.get('star') or keywords.get('isrf') and keywords.get('convolved'):
+                    for d in self.data[uid]:
+                        if d["intensity"] > 0:
+                            global frequency
+                            frequency = d["frequency"]
+                            d["intensity"] *= (
+                                d["frequency"] ** 3
+                                * integrate.quad(func3, 2.5e3, 1.1e5)[
+                                    0
+                                ]
+                            )
+                    intensities = np.array([x / Nphot for x in intensities])
 
-                for d in self.data[uid]:
-                    if d["intensity"] > 0:
-                        global frequency
-                        frequency = d["frequency"]
-                        d["intensity"] *= (
-                            d["frequency"] ** 3
-                            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[
-                                0
-                            ]
-                        )
+                else:
+                    for d in self.data[uid]:
+                        if d["intensity"] > 0:
+                            global frequency
+                            frequency = d["frequency"]
+                            d["intensity"] *= (
+                                d["frequency"] ** 3
+                                * integrate.quad(func2, 2.73, Tmax)[
+                                    0
+                                ]
+                            )
 
                 i += 1
 
-            print(57 * "=")
+            if not keywords.get('approximate'):
+                intensities = np.array([x * y**3 for x, y in zip(intensities, frequencies)])
+            else:
+                intensities = np.array([x * 2.48534271218563e-23 * nc * y**3 / totalcrossection for x, y in zip(intensities, frequencies)])
+
+            print(f"ENERGY CONSERVATION IN SPECTRUM  :{np.sum(intensities) / self.model['energy'][uid]['e']}")
+
+        print(57 * "=")
 
         elapsed = timedelta(seconds=(time.perf_counter() - tstart))
         print(f"Elapsed time: {elapsed}\n")
@@ -720,11 +864,10 @@ class Transitions(Data):
         :Returns: float array
 
         """
-        breakpoint()
         return (
             Transitions.absorption_cross_section(f)
             * f**3
-            / (np.exp(1.4387751297850830401 * f / Tstar) - 1.0)
+            / (np.expm1(1.4387751297850830401 * f / Tstar))
         )
 
     @staticmethod
@@ -741,7 +884,7 @@ class Transitions(Data):
         return (
             Transitions.absorption_cross_section(f)
             * f**4
-            / (np.exp(1.4387751297850830401 * f / Tstar) - 1.0)
+            / (np.expm1(1.4387751297850830401 * f / Tstar))
         )
 
     @staticmethod
@@ -758,7 +901,7 @@ class Transitions(Data):
         return (
             Transitions.absorption_cross_section(f)
             * f**2
-            / (np.exp(1.4387751297850830401 * f / Tstar) - 1.0)
+            / (np.expm1(1.4387751297850830401 * f / Tstar))
         )
 
     @staticmethod
@@ -786,7 +929,9 @@ class Transitions(Data):
         return (
             Transitions.absorption_cross_section(f)
             * f**3
-            * np.sum(W / np.exp(1.4387751297850830401 * f / T) - 1.0)
+            * np.sum(
+                [w / np.expm1(1.4387751297850830401 * f / t) for w, t in zip(W, T)]
+            )
         )
 
     @staticmethod
@@ -814,7 +959,9 @@ class Transitions(Data):
         return (
             Transitions.absorption_cross_section(f)
             * f**4
-            * np.sum(W / np.exp(1.4387751297850830401 * f / T) - 1.0)
+            * np.sum(
+                [w / np.expm1(1.4387751297850830401 * f / t) for w, t in zip(W, T)]
+            )
         )
 
     @staticmethod
@@ -842,7 +989,9 @@ class Transitions(Data):
         return (
             Transitions.absorption_cross_section(f)
             * f**2
-            * np.sum(W / np.exp(1.4387751297850830401 * f / T) - 1.0)
+            * np.sum(
+                [w / np.expm1(1.4387751297850830401 * f / t) for w, t in zip(W, T)]
+            )
         )
 
     @staticmethod
@@ -854,7 +1003,7 @@ class Transitions(Data):
         :Returns: float array
 
         """
-        # ! Using simpson's integration, as there is no Python (scipy)
+        # ! Using simpson's integration, given there is no Python (scipy)
         # ! implementation of the 5-point Newton-Cotes integration of
         # ! IDL's INT_TABULATED.
 
@@ -876,15 +1025,14 @@ class Transitions(Data):
         elif keywords.get('isrf'):
             me = (
                 1.9864456023253396e-16
-                * integrate.quad(Transitions.isrf, 2.5e3, 1.1e5)
-                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)
+                * integrate.quad(Transitions.isrf, 2.5e3, 1.1e5)[0]
+                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)[0]
             )
         else:
-            breakpoint()
             me = (
                 1.9864456023253396e-16
-                * integrate.quad(Transitions.planck, 2.5e3, 1.1e5)
-                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)
+                * integrate.quad(Transitions.planck, 2.5e3, 1.1e5)[0]
+                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)[0]
             )
 
         return me
@@ -898,7 +1046,7 @@ class Transitions(Data):
         :Returns: float array
 
         """
-        # ! Using simpson's integration, as there is no Python (scipy)
+        # ! Using simpson's integration, given there is no Python (scipy)
         # ! implementation of the 5-point Newton-Cotes integration of
         # ! IDL's INT_TABULATED.
 
@@ -921,14 +1069,14 @@ class Transitions(Data):
         elif keywords.get('isrf'):
             me = (
                 3.945966130997681e-32
-                * integrate.quad(Transitions.isrf_squared, 2.5e3, 1.1e5)
-                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)
+                * integrate.quad(Transitions.isrf_squared, 2.5e3, 1.1e5)[0]
+                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)[0]
             )
         else:
             me = (
                 3.945966130997681e-32
-                * integrate.quad(Transitions.planck_squared, 2.5e3, 1.1e5)
-                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)
+                * integrate.quad(Transitions.planck_squared, 2.5e3, 1.1e5)[0]
+                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)[0]
             )
 
         return me
@@ -997,8 +1145,9 @@ class Transitions(Data):
         E = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
-        return Transitions.planck_number_of_photons(f) * integrate.quad(
-            Transitions.feature_strength, 2.73, Tmax
+        return (
+            Transitions.planck_number_of_photons(f)
+            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
         )
 
     @staticmethod
@@ -1015,8 +1164,9 @@ class Transitions(Data):
         E = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
-        return Transitions.isrf_number_of_photons(f) * integrate.quad(
-            Transitions.feature_strength, 2.73, Tmax
+        return (
+            Transitions.isrf_number_of_photons(f)
+            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
         )
 
     @staticmethod
@@ -1039,7 +1189,7 @@ class Transitions(Data):
                 star_model['frequency'],
                 star_model['intensity'] / star_model['frequenxy'],
             )
-            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)
+            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
         )
 
     @staticmethod
@@ -1054,10 +1204,13 @@ class Transitions(Data):
 
         """
         E = 1.9864456e-16 * f
-        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+        Tmax = optimize.root_scalar(
+            Transitions.attained_temperature, bracket=[2.73, 5000.0]
+        )
 
-        return Transitions.planck_number_of_photons(f) * integrate.quad(
-            Transitions.approximate_feature_strength, 2.73, Tmax
+        return (
+            Transitions.planck_number_of_photons(f)
+            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)[0]
         )
 
     @staticmethod
@@ -1074,8 +1227,9 @@ class Transitions(Data):
         E = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
-        return Transitions.isrf_number_of_photons(f) * integrate.quad(
-            Transitions.approximate_feature_strength, 2.73, Tmax
+        return (
+            Transitions.isrf_number_of_photons(f)
+            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)[0]
         )
 
     @staticmethod
@@ -1101,7 +1255,7 @@ class Transitions(Data):
                 star_model['frequency'],
                 star_model['intensity'] / star_model['frequenxy'],
             )
-            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)
+            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)[0]
             / 1.9864456023253396e-16
         )
 
@@ -1219,9 +1373,10 @@ class Transitions(Data):
             )
 
         elif keywords.get('isrf'):
-            return integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)
+            return integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)[0]
+
         else:
-            return integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)
+            return integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)[0]
 
     @staticmethod
     def _lineprofile(x: np.ndarray, x0: float, width: float, **keywords) -> np.ndarray:
