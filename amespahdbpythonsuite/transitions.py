@@ -405,9 +405,10 @@ class Transitions(Data):
         message("APPLYING CASCADE EMISSION MODEL")
 
         global energy
+        global Tstar
 
         energy = e
-        TStar = 0.0
+        Tstar = 0.0
 
         tstart = time.perf_counter()
 
@@ -448,7 +449,6 @@ class Transitions(Data):
             message(f'CALCULATED EFFECTIVE TEMPERATURE: {TStar} Kelvin')
 
         elif keywords.get('star'):
-            global Tstar
             Tstar = energy
             message(f'BLACKBODY TEMPERATURE: {TStar} Kelvin')
 
@@ -606,7 +606,7 @@ class Transitions(Data):
                 else:
                     for d in self.data[uid]:
                         if d["intensity"] > 0:
-                            global frequency
+                            # global frequency
                             frequency = d["frequency"]
                             d["intensity"] *= (
                                 d["frequency"] ** 3
@@ -1297,6 +1297,7 @@ class Transitions(Data):
         : Param T: Excitation temperature in Kelvin.
 
         """
+
         a = 0.0
         b = 0.0
 
