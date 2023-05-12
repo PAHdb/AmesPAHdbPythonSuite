@@ -377,7 +377,7 @@ class Transitions(Data):
             description += f', modelled: {keywords.get("stellar_model", False)}'
 
         else:
-            description += f'<E>: {energy / 1.6021765e-12} eV'
+            description += f' <E>: {energy / 1.6021765e-12} eV'
 
         self.model['description'] = description
 
@@ -394,6 +394,9 @@ class Transitions(Data):
         if self.database != "theoretical" and not keywords.get('approximate'):
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
+
+        if (keywords.get('star') or keywords.get('stellar_model')) and not self.database:
+            message('VALID DATABASE NEEDED FOR USE WITH STAR/ISRF')
 
         if self.model:
             if self.model["type"] != "zerokelvin_m":
@@ -1502,14 +1505,14 @@ class Transitions(Data):
         global intensities
         intensities = np.array([d["intensity"] for d in data])
 
-        Tmax = optimize.brentq(Transitions.attainedtemperature, 2.73, 5000.0)
+        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
         for d in data:
             if d["intensity"] > 0:
                 frequency = d["frequency"]
                 d["intensity"] *= (
                     d["frequency"] ** 3
-                    * integrate.quad(Transitions.featurestrength, 2.73, Tmax)[0]
+                    * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
                 )
 
         return data, Tmax
