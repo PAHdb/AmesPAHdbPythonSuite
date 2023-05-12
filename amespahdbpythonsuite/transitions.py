@@ -318,6 +318,7 @@ class Transitions(Data):
                 global charge
                 global nc
 
+                breakpoint
                 self._atoms()
                 charge = self.pahdb["species"][uid]["charge"]
                 nc = self.atoms[uid]["nc"]
@@ -395,7 +396,9 @@ class Transitions(Data):
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
 
-        if (keywords.get('star') or keywords.get('stellar_model')) and not self.database:
+        if (
+            keywords.get('star') or keywords.get('stellar_model')
+        ) and not self.database:
             message('VALID DATABASE NEEDED FOR USE WITH STAR/ISRF')
 
         if self.model:
@@ -459,7 +462,7 @@ class Transitions(Data):
         if keywords.get('isrf') and not keywords.get('convolved'):
             message('ISRF SELECTED: IGNORING FIRST PARAMETER')
 
-        if keywords.get('isrf') or keywords.get('star') and keywords.get('convolved'):
+        if (keywords.get('isrf') or keywords.get('star')) and keywords.get('convolved'):
             message('CONVOLVING WITH ENTIRE RADIATION FIELD')
 
         self.model = {
@@ -501,7 +504,7 @@ class Transitions(Data):
 
         print(57 * "=")
 
-        if keywords.get('approxiamte', False):
+        if keywords.get('approximate', False):
             message('USING APPROXIMATION')
 
             func1 = Transitions.approximate_attained_temperature
@@ -533,10 +536,14 @@ class Transitions(Data):
                     func3 = Transitions.planck_feature_strength_convolved
 
         if keywords.get("multiprocessing", False):
-            cascade_em_model = partial(Transitions._cascade_em_model, e)
+            if keywords.get('convolved', False):
+                cascade_em_model = partial(Transitions._cascade_em_model, e, t_method=func1, i_method=func3, convolved=True)
+            else:
+                cascade_em_model = partial(Transitions._cascade_em_model, e, t_method=func1, i_method=func2, convolved=False)
             ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
             message(f"USING MULTIPROCESSING WITH {ncores} CORES")
             pool = multiprocessing.Pool(processes=ncores)
+            breakpoint()
             data, Tmax = zip(*pool.map(cascade_em_model, self.data.values()))
             pool.close()
             pool.join()
@@ -1479,7 +1486,9 @@ class Transitions(Data):
         return s
 
     @staticmethod
-    def _cascade_em_model(e: float, data: list) -> tuple:
+    def _cascade_em_model(
+        e: float, data: list, t_method: None, i_method: None, convolved: bool
+    ) -> tuple:
         """
         A partial method of :meth:`amespahdbpythonsuite.transitions.cascade`
         used when multiprocessing is required.
@@ -1505,15 +1514,22 @@ class Transitions(Data):
         global intensities
         intensities = np.array([d["intensity"] for d in data])
 
-        Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
+        if not convolved:
+            global nc
+            global charge
+            Tmax = optimize.brentq(t_method, 2.73, 5000.0)
 
         for d in data:
             if d["intensity"] > 0:
                 frequency = d["frequency"]
-                d["intensity"] *= (
-                    d["frequency"] ** 3
-                    * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
-                )
+                if convolved:
+                    d["intensity"] *= (
+                        d["frequency"] ** 3 * integrate.quad(i_method, 2.5e3, 1.1e5)[0]
+                    )
+                else:
+                    d["intensity"] *= (
+                        d["frequency"] ** 3 * integrate.quad(i_method, 2.73, Tmax)[0]
+                    )
 
         return data, Tmax
 
