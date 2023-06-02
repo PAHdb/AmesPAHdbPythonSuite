@@ -25,8 +25,7 @@ message = AmesPAHdb.message
 
 energy: Union[float, dict, None]
 Tstar: float
-star_model: Any  # Need to update with the proper type
-# star_model: Union[dict, list]
+star_model: Any
 frequency: float
 nc: int
 charge: int
@@ -85,7 +84,7 @@ class Transitions(Data):
         Class representation.
 
         """
-        return f"{self.__class__.__name__}(" f"{self.uids=},shift={self._shift})"
+        return f"{self.__class__.__name__}({self.uids=},shift={self._shift})"
 
     def __str__(self) -> str:
         """
@@ -93,7 +92,7 @@ class Transitions(Data):
 
         """
 
-        return f"AmesPAHdbPythonSuite Transitions instance.\n" f"{self.uids=}"
+        return f"AmesPAHdbPythonSuite Transitions instance.\n{self.uids=}"
 
     def write(self, filename: str = "") -> None:
         """
@@ -117,7 +116,10 @@ class Transitions(Data):
             .replace(microsecond=0)
             .isoformat(),
             "ORIGIN": "NASA Ames Research Center",
-            "CREATOR": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "CREATOR": (
+                "Python"
+                f" {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+            ),
             "SOFTWARE": "AmesPAHdbPythonSuite",
             "AUTHOR": "Dr. C. Boersma",
             "TYPE": self.__class__.__name__.upper(),
@@ -351,7 +353,9 @@ class Transitions(Data):
             self.model['energy'][uid]['e'] = energy
 
             print(
-                f"MEAN ABSORBED ENERGY             : {self.model['energy'][uid]['e'] / 1.6021765e-12} +/- {self.model['energy'][uid]['sigma'] / 1.6021765e-12} eV"
+                "MEAN ABSORBED ENERGY             :"
+                f" {self.model['energy'][uid]['e'] / 1.6021765e-12} +/-"
+                f" {self.model['energy'][uid]['sigma'] / 1.6021765e-12} eV"
             )
 
             global frequencies
@@ -382,7 +386,10 @@ class Transitions(Data):
 
             i += 1
 
-        description = f'model: calculated_temperature, approximated: {keywords.get("approximate", False)}'
+        description = (
+            'model: calculated_temperature, approximated:'
+            f' {keywords.get("approximate", False)}'
+        )
 
         if self.model['isrf']:
             description += ', isrf: yes'
@@ -650,7 +657,9 @@ class Transitions(Data):
                 self.model['energy'][uid]['e'] = energy
 
                 print(
-                    f"MEAN ABSORBED ENERGY             : {self.model['energy'][uid]['e'] / 1.6021765e-12} +/- {self.model['energy'][uid]['sigma'] / 1.6021765e-12} eV"
+                    "MEAN ABSORBED ENERGY             :"
+                    f" {self.model['energy'][uid]['e'] / 1.6021765e-12} +/-"
+                    f" {self.model['energy'][uid]['sigma'] / 1.6021765e-12} eV"
                 )
 
                 global frequencies
@@ -702,7 +711,8 @@ class Transitions(Data):
                 )
 
             print(
-                f"ENERGY CONSERVATION IN SPECTRUM  :{np.sum(intensities) / self.model['energy'][uid]['e']}"
+                "ENERGY CONSERVATION IN SPECTRUM "
+                f" :{np.sum(intensities) / self.model['energy'][uid]['e']}"
             )
 
         print(57 * "=")
@@ -1223,7 +1233,8 @@ class Transitions(Data):
         :Returns: float
 
         """
-        E = 1.9864456e-16 * f
+        global energy
+        energy = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
         return (
@@ -1242,7 +1253,8 @@ class Transitions(Data):
         :Returns: float
 
         """
-        E = 1.9864456e-16 * f
+        global energy
+        energy = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
         return (
@@ -1260,7 +1272,8 @@ class Transitions(Data):
         :Returns: float
 
         """
-        E = 1.9864456e-16 * f
+        global energy
+        energy = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
         return (
@@ -1284,7 +1297,8 @@ class Transitions(Data):
         :Returns: float
 
         """
-        E = 1.9864456e-16 * f
+        global energy
+        energy = 1.9864456e-16 * f
         Tmax = optimize.root_scalar(
             Transitions.attained_temperature, bracket=[2.73, 5000.0]
         )
@@ -1305,7 +1319,8 @@ class Transitions(Data):
         :Returns: float
 
         """
-        E = 1.9864456e-16 * f
+        global energy
+        energy = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
         return (
@@ -1326,7 +1341,8 @@ class Transitions(Data):
         :Returns: float
 
         """
-        E = 1.9864456e-16 * f
+        global energy
+        energy = 1.9864456e-16 * f
         Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
         return (
