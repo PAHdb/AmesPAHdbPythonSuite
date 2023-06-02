@@ -7,7 +7,7 @@ import multiprocessing
 import time
 from datetime import timedelta
 from functools import partial
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Union, Any
 
 from scipy import integrate, optimize, ndimage, special  # type: ignore
 
@@ -23,8 +23,13 @@ if TYPE_CHECKING:
 
 message = AmesPAHdb.message
 
-energy: float
+energy: Union[float, dict, None]
+Tstar: float
+star_model: Any  # Need to update with the proper type
+# star_model: Union[dict, list]
 frequency: float
+nc: int
+charge: int
 frequencies: np.ndarray
 intensities: np.ndarray
 
@@ -202,7 +207,7 @@ class Transitions(Data):
             for d, i in zip(self.data[uid], intensity):
                 d["intensity"] *= i
 
-    def calculated_temperature(self, e: float, **keywords) -> None:
+    def calculated_temperature(self, e: Union[float, dict, None], **keywords) -> None:
         """
         Applies the Calculated Temperature emission model.
 
@@ -235,10 +240,13 @@ class Transitions(Data):
         global Tstar
 
         energy = e
-        Tstar = 0
+        Tstar = 0.0
 
         if (keywords.get('star')) and (keywords.get('stellar_model')):
             message('STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL')
+
+            if not isinstance(energy, dict):
+                raise TypeError('Expecting energy in dictionary form')
 
             Tstar = (
                 4
@@ -272,6 +280,9 @@ class Transitions(Data):
             message(f'CALCULATED EFFECTIVE TEMPERATURE: {Tstar} Kelvin')
 
         elif keywords.get('star'):
+            if not isinstance(energy, float):
+                raise TypeError('Expecting temperature as float type')
+
             Tstar = energy
 
         if keywords.get('isrf') and not keywords.get('convolved'):
@@ -299,13 +310,13 @@ class Transitions(Data):
         i = 0
 
         nuids = len(self.uids)
+        self._atoms()
 
         for uid in self.uids:
             # Start timer.
             tstart = time.perf_counter()
             # Instatiate model energy and temperature dictionaries.
             self.model['energy'][uid] = {}
-            self.model["temperatures"][uid] = {}
 
             print("SPECIES                          : %d/%d" % (i + 1, nuids))
             print("UID                              : %d" % uid)
@@ -318,13 +329,17 @@ class Transitions(Data):
                 global charge
                 global nc
 
-                breakpoint
-                self._atoms()
                 charge = self.pahdb["species"][uid]["charge"]
                 nc = self.atoms[uid]["nc"]
 
             if keywords.get('star') or keywords.get('isrf'):
                 energy = Transitions.mean_energy(**keywords)
+
+                if not isinstance(energy, float):
+                    raise TypeError(
+                        'Expecting temperature as float type or isrf keyword'
+                    )
+
                 self.model['energy'][uid]['sigma'] = np.sqrt(
                     Transitions.mean_energy_squared(**keywords) - energy**2
                 )
@@ -349,7 +364,7 @@ class Transitions(Data):
             else:
                 Tmax = optimize.brentq(Transitions.attained_temperature, 2.73, 5000.0)
 
-            self.model["temperatures"][uid]["temperature"] = Tmax
+            self.model["temperatures"][uid] = Tmax
 
             print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
 
@@ -378,6 +393,9 @@ class Transitions(Data):
             description += f', modelled: {keywords.get("stellar_model", False)}'
 
         else:
+            if not isinstance(energy, float):
+                raise TypeError('Expecting energy as float type')
+
             description += f' <E>: {energy / 1.6021765e-12} eV'
 
         self.model['description'] = description
@@ -417,10 +435,15 @@ class Transitions(Data):
         energy = e
         Tstar = 0.0
 
+        self._atoms()
+
         tstart = time.perf_counter()
 
         if keywords.get('star') and keywords.get('stellar_model'):
             message('STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL')
+
+            if not isinstance(energy, dict):
+                raise TypeError('Expecting energy in dictionary form')
 
             Tstar = (
                 4
@@ -491,7 +514,7 @@ class Transitions(Data):
             description += ', isrf: yes'
             description += f', convolved: {keywords.get("convlolved", False)}'
 
-        if self.model['star']:
+        elif self.model['star']:
             description += ', star: yes'
             description += f', Tstar: {Tstar} Kelvin'
             description += f', modelled: {keywords.get("stellar_model", False)}'
@@ -536,15 +559,45 @@ class Transitions(Data):
                     func3 = Transitions.planck_feature_strength_convolved
 
         if keywords.get("multiprocessing", False):
-            if keywords.get('convolved', False):
-                cascade_em_model = partial(Transitions._cascade_em_model, e, t_method=func1, i_method=func3, convolved=True)
-            else:
-                cascade_em_model = partial(Transitions._cascade_em_model, e, t_method=func1, i_method=func2, convolved=False)
             ncores = keywords.get("ncores", multiprocessing.cpu_count() - 1)
             message(f"USING MULTIPROCESSING WITH {ncores} CORES")
             pool = multiprocessing.Pool(processes=ncores)
-            breakpoint()
-            data, Tmax = zip(*pool.map(cascade_em_model, self.data.values()))
+
+            if keywords.get('convolved', False):
+                cascade_em_model = partial(
+                    Transitions._cascade_em_model,
+                    energy,
+                    t_method=func1,
+                    i_method=func3,
+                    convolved=keywords.get('convolved'),
+                    approximate=keywords.get('approximate'),
+                    star=keywords.get('star'),
+                    isrf=keywords.get('isrf'),
+                )
+            else:
+                cascade_em_model = partial(
+                    Transitions._cascade_em_model,
+                    energy,
+                    t_method=func1,
+                    i_method=func2,
+                    convolved=keywords.get('convolved'),
+                    approximate=keywords.get('approximate'),
+                    star=keywords.get('star'),
+                    isrf=keywords.get('isrf'),
+                )
+
+            if (
+                keywords.get('approximate')
+                or keywords.get('star')
+                or keywords.get('isrf')
+            ):
+                charges = [self.atoms[uid]["charge"] for uid in self.uids]
+                ncs = [self.atoms[uid]["nc"] for uid in self.uids]
+                data, Tmax = zip(
+                    *pool.map(cascade_em_model, zip(self.data.values(), ncs, charges))
+                )
+            else:
+                data, Tmax = zip(*pool.map(cascade_em_model, self.data.values()))
             pool.close()
             pool.join()
 
@@ -560,7 +613,6 @@ class Transitions(Data):
             for uid in self.uids:
                 # Instatiate model energy and temperature dictionaries.
                 self.model['energy'][uid] = {}
-                self.model["temperatures"][uid] = {}
 
                 print("SPECIES                          : %d/%d" % (i + 1, nuids))
                 print("UID                              : %d" % uid)
@@ -573,12 +625,16 @@ class Transitions(Data):
                     global charge
                     global nc
 
-                    self._atoms()
                     charge = self.pahdb["species"][uid]["charge"]
                     nc = self.atoms[uid]["nc"]
 
                 if keywords.get('star') or keywords.get('isrf'):
                     energy = Transitions.mean_energy(**keywords)
+
+                    if not isinstance(energy, float):
+                        raise TypeError(
+                            'Expecting temperature as float type or isrf keyword'
+                        )
 
                     self.model['energy'][uid]['sigma'] = np.sqrt(
                         Transitions.mean_energy_squared(**keywords) - energy**2
@@ -930,7 +986,7 @@ class Transitions(Data):
         )
 
     @staticmethod
-    def isrf(f: np.ndarray) -> np.ndarray:
+    def isrf(f: np.ndarray) -> Union[np.ndarray, float]:
         """
         Callback function to calculate the absorption cross-section times
         the interstellar radiation field per Mathis et al. 1983, A&A, 128:212.
@@ -949,7 +1005,7 @@ class Transitions(Data):
             return Transitions.absorption_cross_section(f) * 1.019e-2 / f**0.3322
 
         T = [7500, 4000, 3000, 2.73]
-        W = [1e-14, 1.65e-13, 4e-13, 1]
+        W = [1e-14, 1.65e-13, 4e-13, 1.0]
 
         return (
             Transitions.absorption_cross_section(f)
@@ -960,7 +1016,7 @@ class Transitions(Data):
         )
 
     @staticmethod
-    def isrf_squared(f: np.ndarray) -> np.ndarray:
+    def isrf_squared(f: np.ndarray) -> Union[np.ndarray, float]:
         """
         Callback function to calculate the absorption cross-section times
         the interstellar radiation field per Mathis et al. 1983, A&A, 128:212.
@@ -972,14 +1028,14 @@ class Transitions(Data):
         if f > 1.1e5:
             return 0.0
         if f > 1e4 / 0.110:
-            return Transitions.absorption_cross_section(f) * 1.20e23 / f**4.4172
+            return Transitions.absorption_cross_section(f) * 1.202e23 / f**4.4172
         if f > 1e4 / 0.134:
             return Transitions.absorption_cross_section(f) * 1.366e6 / f
         if f > 1e4 / 0.246:
-            return Transitions.absorption_cross_section(f) * 1.019e-2 / f**0.6678
+            return Transitions.absorption_cross_section(f) * 1.019e-2 * f**0.6678
 
         T = [7500, 4000, 3000, 2.73]
-        W = [1e-14, 1.65e-13, 4e-13, 1]
+        W = [1e-14, 1.65e-13, 4e-13, 1.0]
 
         return (
             Transitions.absorption_cross_section(f)
@@ -990,7 +1046,7 @@ class Transitions(Data):
         )
 
     @staticmethod
-    def isrf_number_of_photons(f: np.ndarray) -> np.ndarray:
+    def isrf_number_of_photons(f: np.ndarray) -> Union[np.ndarray, float]:
         """
         Callback function to calculate the number of photons per Mathis et al. 1983, A&A, 128:212.
 
@@ -1002,14 +1058,14 @@ class Transitions(Data):
         if f > 1.1e5:
             return 0.0
         if f > 1e4 / 0.110:
-            return Transitions.absorption_cross_section(f) * 1.20e23 / f**6.4172
+            return Transitions.absorption_cross_section(f) * 1.202e23 / f**6.4172
         if f > 1e4 / 0.134:
             return Transitions.absorption_cross_section(f) * 1.366e6 / f**3
         if f > 1e4 / 0.246:
             return Transitions.absorption_cross_section(f) * 1.019e-2 / f**1.3322
 
         T = [7500, 4000, 3000, 2.73]
-        W = [1e-14, 1.65e-13, 4e-13, 1]
+        W = [1e-14, 1.65e-13, 4e-13, 1.0]
 
         return (
             Transitions.absorption_cross_section(f)
@@ -1023,7 +1079,7 @@ class Transitions(Data):
     def mean_energy(**keywords):
         """
         Callback function to calculate the mean energy in erg for a given
-        blackbody temperatyre.
+        blackbody temperature.
 
         :Returns: float array
 
@@ -1487,7 +1543,11 @@ class Transitions(Data):
 
     @staticmethod
     def _cascade_em_model(
-        e: float, data: list, t_method: None, i_method: None, convolved: bool
+        e: float,
+        data: list,
+        t_method: None,
+        i_method: None,
+        **keywords,
     ) -> tuple:
         """
         A partial method of :meth:`amespahdbpythonsuite.transitions.cascade`
@@ -1506,6 +1566,12 @@ class Transitions(Data):
         """
         global frequency
         global energy
+
+        if type(data) == zip:
+            data, ncs, charge = [list(x) for x in data]
+            if keywords.get('star') or keywords.get('isrf'):
+                energy = Transitions.mean_energy(**keywords)
+
         energy = e
 
         global frequencies
@@ -1514,15 +1580,13 @@ class Transitions(Data):
         global intensities
         intensities = np.array([d["intensity"] for d in data])
 
-        if not convolved:
-            global nc
-            global charge
+        if not keywords.get('convolved'):
             Tmax = optimize.brentq(t_method, 2.73, 5000.0)
 
         for d in data:
             if d["intensity"] > 0:
                 frequency = d["frequency"]
-                if convolved:
+                if keywords.get('convolved'):
                     d["intensity"] *= (
                         d["frequency"] ** 3 * integrate.quad(i_method, 2.5e3, 1.1e5)[0]
                     )
@@ -1543,7 +1607,7 @@ class Transitions(Data):
         nelem = {"nc": 6, "nh": 1, "nn": 7, "no": 8, "nmg": 12, "nsi": 14, "nfe": 26}
 
         # Initialize atoms dictionary.
-        self.atoms = {key: {} for key in self.uids}
+        self.atoms: dict = {key: {} for key in self.uids}
 
         for uid in self.uids:
             # Initialize dictionary based on reference dictionary.
