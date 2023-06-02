@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 message = AmesPAHdb.message
 
-energy: Union[float, dict, None]
+energy: Union[float, dict, np.ndarray, None]
 Tstar: float
 star_model: Any
 frequency: float
