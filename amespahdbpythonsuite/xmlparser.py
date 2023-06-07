@@ -356,6 +356,26 @@ class XMLparser:
                     specie_dict["laboratory"] = specie_laboratory_handler(context)
             elif action == "end":
                 if tag == "specie":
+                    atom_numbers = {
+                        "n_c": 6,
+                        "n_h": 1,
+                        "n_n": 7,
+                        "n_o": 8,
+                        "n_mg": 12,
+                        "n_si": 14,
+                        "n_fe": 26,
+                    }
+
+                    specie_dict.update(dict.fromkeys(atom_numbers.keys(), 0))
+
+                    for atom, number in atom_numbers.items():
+                        specie_dict[atom] = len(
+                            [
+                                sub["type"]
+                                for sub in specie_dict["geometry"]
+                                if sub["type"] == number
+                            ]
+                        )
                     break
 
                 try:

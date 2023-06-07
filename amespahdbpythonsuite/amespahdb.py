@@ -1,33 +1,34 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Union
 
-import os
-import sys
 import copy
-import json
-import random
-from urllib.error import HTTPError
-import urllib.request
-from packaging.version import Version
 import hashlib
+import json
+import os
+import pickle
+import random
+import re
+import sys
 import tempfile
 import time
-import re
+import urllib.request
 from datetime import timedelta
+from typing import TYPE_CHECKING, Optional, Union
+from urllib.error import HTTPError
+
 import astropy.units as u  # type: ignore
+import numpy as np
+from packaging.version import Version
 
-import pickle
-
-from amespahdbpythonsuite.xmlparser import XMLparser
 import amespahdbpythonsuite as suite
+from amespahdbpythonsuite.xmlparser import XMLparser
 
 if TYPE_CHECKING:
-    from amespahdbpythonsuite.species import Species
     from amespahdbpythonsuite.geometry import Geometry
-    from amespahdbpythonsuite.transitions import Transitions
     from amespahdbpythonsuite.laboratory import Laboratory
+    from amespahdbpythonsuite.species import Species
+    from amespahdbpythonsuite.transitions import Transitions
 
 
 class AmesPAHdb:
@@ -145,7 +146,6 @@ class AmesPAHdb:
             and os.path.isfile(md5)
             and os.access(md5, os.R_OK)
         ):
-
             self.message("RESTORING DATABASE FROM CACHE")
 
             # Start timer.
@@ -171,7 +171,6 @@ class AmesPAHdb:
             self.message(info, space=0)
 
         else:
-
             self.message("PARSING DATABASE: THIS MAY TAKE A FEW MINUTES")
 
             # Start timer.
@@ -428,7 +427,6 @@ class AmesPAHdb:
 
         i = 0
         while True:
-
             if i == n:
                 break
 
@@ -486,7 +484,7 @@ class AmesPAHdb:
 
         found = eval(
             f"[item[0] for item in _AmesPAHdb__data['species'].items() if ({code})]",
-            self.__dict__,
+            self.__dict__ | {"np": np},
         )
 
         return found
@@ -521,26 +519,20 @@ class AmesPAHdb:
         identities = {
             "uid": "item[0]",
             "identifier": "item[0]",
-            "atoms": 'len(item[1]["geometry"])',
-            "hydrogen": 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
-            "carbon": 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
-            "nitrogen": 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
-            "oxygen": 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
-            "magnesium": 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
-            "silicium": 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
-            "iron": 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
-            "h": 'len([c for c in item[1]["geometry"] if c["type"] == 1])',
-            "c": 'len([c for c in item[1]["geometry"] if c["type"] == 6])',
-            "n": 'len([c for c in item[1]["geometry"] if c["type"] == 7])',
-            "o": 'len([c for c in item[1]["geometry"] if c["type"] == 8])',
-            "mg": 'len([c for c in item[1]["geometry"] if c["type"] == 12])',
-            "si": 'len([c for c in item[1]["geometry"] if c["type"] == 14])',
-            "fe": 'len([c for c in item[1]["geometry"] if c["type"] == 26])',
-            # TODO make transition search work
-            # 'wavenumber': 'item[1]["transitions"]["frequency"]',
-            # 'absorbance': 'item[1]["transitions"]["intensity"]',
-            # 'frequency': 'item[1]["transitions"]["frequency"]',
-            # 'intensity': 'item[1]["transitions"]["intensity"]',
+            "hydrogen": 'item[1]["n_h"]',
+            "carbon": 'item[1]["n_c"]',
+            "nitrogen": 'item[1]["n_n"]',
+            "oxygen": 'item[1]["n_o"]',
+            "magnesium": 'item[1]["n_mg"]',
+            "silicium": 'item[1]["n_si"]',
+            "iron": 'item[1]["n_fe"]',
+            "h": 'item[1]["n_h"]',
+            "c": 'item[1]["n_c"]',
+            "n": 'item[1]["n_n"]',
+            "o": 'item[1]["n_o"]',
+            "mg": 'item[1]["n_mg"]',
+            "si": 'item[1]["n_si"]',
+            "fe": 'item[1]["n_fe"]',
             "ch2": 'item[1]["n_ch2"]',
             "chx": 'item[1]["n_chx"]',
             "solo": 'item[1]["n_solo"]',
@@ -555,6 +547,13 @@ class AmesPAHdb:
             "energy": 'item[1]["total_e"]',
             "zeropoint": 'item[1]m["vib_e"]',
             "experiment": 'item[1]["exp"]',
+        }
+
+        composed = {
+            "wavenumber": 'np.array([t["frequency"] {operator} {operand} for t in item[1]["transitions"]])',
+            "absorbance": 'np.array([t["intensity"] {operator} {operand} for t in item[1]["transitions"]])',
+            "frequency": 'np.array([t["frequency"] {operator} {operand} for t in item[1]["transitions"]])',
+            "intensity": 'np.array([t["intensity"] {operator} {operand} for t in item[1]["transitions"]])',
         }
 
         logical = {"and": "and", "or": "or", "|": "or", "&": "and"}
@@ -586,6 +585,9 @@ class AmesPAHdb:
         elif word in identities:
             token["type"] = "IDENTITY"
             token["translation"] = identities[word]
+        elif word in composed:
+            token["type"] = "COMPOSED"
+            token["translation"] = composed[word]
         elif word in logical:
             token["type"] = "LOGICAL"
             token["translation"] = logical[word]
@@ -632,15 +634,13 @@ class AmesPAHdb:
 
         current = 0
 
-        if ntokens > 1:
-            next = 1
-        else:
-            next = -1
+        next = 1 if ntokens > 1 else -1
 
         parsed = ""
 
-        while current != -1:
+        sub = ""
 
+        while current != -1:
             if tokens[current]["type"] == "FORMULA":
                 if prev > -1:
                     if not (
@@ -653,7 +653,6 @@ class AmesPAHdb:
                     if not (
                         tokens[prev]["type"] == "LOGICAL"
                         or tokens[prev]["type"] == "TRANSFER"
-                        or tokens[prev]["type"] == "TRANSFER"
                         and tokens[prev]["valid"]
                     ):
                         parsed += " and "
@@ -662,6 +661,54 @@ class AmesPAHdb:
                         parsed += " " + tokens[current]["translation"]
                     else:
                         parsed += " " + tokens[current]["translation"] + " > 0"
+            elif tokens[current]["type"] == "COMPOSED":
+                if prev > -1:
+                    if not (
+                        tokens[prev]["type"] == "LOGICAL"
+                        or tokens[prev]["type"] == "TRANSFER"
+                        and tokens[prev]["valid"]
+                    ):
+                        if sub:
+                            sub += " & "
+                        else:
+                            parsed += " and "
+
+                if next > -1:
+                    if tokens[next]["type"] != "COMPARISON":
+                        print("EXPECTING OPERATOR")
+                        return ""
+
+                    partial = tokens[current]["translation"].replace(
+                        "{operator}", tokens[next]["translation"]
+                    )
+
+                    prev = current
+
+                    current = next
+
+                    if next:
+                        if next == ntokens - 1:
+                            next = -1
+                        else:
+                            next += 1
+
+                    if next > -1 and tokens[next]["type"] != "NUMERIC":
+                        print("EXPECTING OPERAND")
+                        return ""
+
+                    sub += " " + partial.replace(
+                        "{operand}", tokens[next]["translation"]
+                    )
+
+                    prev = current
+
+                    current = next
+
+                    if next:
+                        if next == ntokens - 1:
+                            next = -1
+                        else:
+                            next += 1
             elif tokens[current]["type"] == "NUMERIC":
                 if prev > -1:
                     if tokens[prev]["type"] == "COMPARISON" and tokens[prev]["valid"]:
@@ -680,6 +727,10 @@ class AmesPAHdb:
                         if next > -1:
                             if tokens[next]["type"] == "TRANSFER":
                                 parsed += tokens[current]["translation"]
+                            elif tokens[next]["type"] == "COMPOSED" and sub:
+                                sub += {"and": " & ", "or": " | "}[
+                                    tokens[current]["translation"]
+                                ]
                             elif (
                                 tokens[next]["type"] == "IDENTITY"
                                 or tokens[next]["type"] == "NUMERIC"
@@ -689,6 +740,7 @@ class AmesPAHdb:
                                 parsed += " " + tokens[current]["translation"]
                             else:
                                 tokens[current]["valid"] = False
+
             elif tokens[current]["type"] == "COMPARISON":
                 if prev > -1:
                     if tokens[prev]["type"] == "IDENTITY" and tokens[prev]["valid"]:
@@ -728,6 +780,9 @@ class AmesPAHdb:
                     next = -1
                 else:
                     next += 1
+
+        if sub:
+            parsed += f" np.any({sub})"
 
         return parsed
 

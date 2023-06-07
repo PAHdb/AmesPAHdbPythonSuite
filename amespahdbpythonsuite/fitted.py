@@ -28,7 +28,6 @@ class Fitted(Spectrum):
 
         """
         super().__init__(d, **keywords)
-        self.atoms: dict = dict()
         self.__set(d, **keywords)
 
     def plot(self, **keywords) -> None:
@@ -148,29 +147,30 @@ class Fitted(Spectrum):
                 or keywords.get("composition", False)
             ):
                 classes = self.getclasses()
-                if keywords.get("charge", False):
-                    if not isinstance(classes["anion"], int):
-                        axis[0].plot(x, classes["anion"], "r-", label="anion")
-                    if not isinstance(classes["neutral"], int):
-                        axis[0].plot(x, classes["neutral"], "g-", label="neutral")
-                    if not isinstance(classes["cation"], int):
-                        axis[0].plot(x, classes["cation"], "b-", label="cation")
-                    axis[0].axhline(0, linestyle="--", color="gray")
-                    axis[0].legend()
-                elif keywords.get("size", False):
-                    if not isinstance(classes["small"], int):
-                        axis[0].plot(x, classes["small"], "r-", label="small")
-                    if not isinstance(classes["large"], int):
-                        axis[0].plot(x, classes["large"], "g-", label="large")
-                    axis[0].axhline(0, linestyle="--", color="gray")
-                    axis[0].legend()
-                elif keywords.get("composition", False):
-                    if not isinstance(classes["pure"], int):
-                        axis[0].plot(x, classes["pure"], "r-", label="pure")
-                    if not isinstance(classes["nitrogen"], int):
-                        axis[0].plot(x, classes["nitrogen"], "g-", label="nitrogen")
-                    axis[0].axhline(0, linestyle="--", color="gray")
-                    axis[0].legend()
+                if isinstance(classes, dict):
+                    if keywords.get("charge", False):
+                        if not isinstance(classes["anion"], int):
+                            axis[0].plot(x, classes["anion"], "r-", label="anion")
+                        if not isinstance(classes["neutral"], int):
+                            axis[0].plot(x, classes["neutral"], "g-", label="neutral")
+                        if not isinstance(classes["cation"], int):
+                            axis[0].plot(x, classes["cation"], "b-", label="cation")
+                        axis[0].axhline(0, linestyle="--", color="gray")
+                        axis[0].legend()
+                    elif keywords.get("size", False):
+                        if not isinstance(classes["small"], int):
+                            axis[0].plot(x, classes["small"], "r-", label="small")
+                        if not isinstance(classes["large"], int):
+                            axis[0].plot(x, classes["large"], "g-", label="large")
+                        axis[0].axhline(0, linestyle="--", color="gray")
+                        axis[0].legend()
+                    elif keywords.get("composition", False):
+                        if not isinstance(classes["pure"], int):
+                            axis[0].plot(x, classes["pure"], "r-", label="pure")
+                        if not isinstance(classes["nitrogen"], int):
+                            axis[0].plot(x, classes["nitrogen"], "g-", label="nitrogen")
+                        axis[0].axhline(0, linestyle="--", color="gray")
+                        axis[0].legend()
             elif keywords.get("residual", False):
                 y = self.getresidual()
                 axis[1].plot(x, y)
@@ -261,6 +261,13 @@ class Fitted(Spectrum):
                     self.weights = d["weights"]
                 if "method" not in keywords:
                     self.method = d["method"]
+
+        self._chisquared: Optional[float] = None
+        self._norm: Optional[float] = None
+        self._fit: Optional[np.ndarray] = None
+        self._classes: Optional[dict] = None
+        self._error: Optional[dict] = None
+        self._residual: Optional[np.ndarray] = None
 
     def get(self) -> dict:
         """
@@ -355,20 +362,24 @@ class Fitted(Spectrum):
         Calculates the chi-squared of the fit.
 
         """
-        if self.observation:
-            return np.sum(
-                (self.observation.flux.value - self.getfit()) ** 2
-                / self.observation.uncertainty.array
-            )
+        if self._chisquared is None:
+            if self.observation:
+                self._chisqured = np.sum(
+                    (self.observation.flux.value - self.getfit()) ** 2
+                    / self.observation.uncertainty.array
+                )
 
-        return None
+        return self._chisquared
 
     def getnorm(self) -> float:
         """
         Retrieves the Norm of the fit.
 
         """
-        return np.sum((self.observation.flux.value - self.getfit()) ** 2)
+        if self._norm is None:
+            self._norm = np.sum((self.observation.flux.value - self.getfit()) ** 2)
+
+        return self._norm
 
     def getobservation(self) -> Spectrum1D:
         """
@@ -382,13 +393,19 @@ class Fitted(Spectrum):
         Retrieves the sum of fit values.
 
         """
-        return sum(self.data.values())
+        if self._fit is None:
+            self._fit = sum(self.data.values())
 
-    def getresidual(self) -> float:
+        return self._fit
+
+    def getresidual(self) -> np.ndarray:
         """
         Retrieves the residual of the fit.
         """
-        return self.observation.flux.value - self.getfit()
+        if self._residual is None:
+            self._residual = self.observation.flux.value - self.getfit()
+
+        return self._residual
 
     def getweights(self) -> dict:
         """
@@ -408,10 +425,7 @@ class Fitted(Spectrum):
 
         """
 
-        if not len(self.atoms):
-            self._atoms()
-
-        nc = [self.atoms[uid]["nc"] for uid in self.weights]
+        nc = [self.pahdb["species"][uid]["n_c"] for uid in self.weights]
 
         if not min:
             min = builtins.min(nc)
@@ -422,40 +436,35 @@ class Fitted(Spectrum):
 
         return np.histogram(nc, bins=nbins, weights=list(self.weights.values()))
 
-    def getclasses(self, **keywords) -> dict:
+    def getclasses(self, **keywords) -> Optional[dict]:
         """
         Retrieves the spectra of the different classes of the fitted PAHs.
 
         """
-        if not self.pahdb:
-            message("VALID DATABASE NEEDED TO GET CLASSES")
-            return dict()
+        if self._classes is None:
+            if self.pahdb is None:
+                message("VALID DATABASE NEEDED TO GET CLASSES")
+                return None
 
-        if not len(self.atoms):
-            self._atoms()
+            self._classes = {
+                key: self.__classes(val)
+                for key, val in self._subclasses(**keywords).items()
+            }
 
-        # Set subclasses dictionary.
-        subclasses = self._subclasses(**keywords)
+            uids = [
+                uid
+                for uid in self.uids
+                if self.pahdb["species"][uid]["n_n"] == 0
+                and self.pahdb["species"][uid]["n_o"] == 0
+                and self.pahdb["species"][uid]["n_mg"] == 0
+                and self.pahdb["species"][uid]["n_si"] == 0
+                and self.pahdb["species"][uid]["n_fe"] == 0
+            ]
+            self._classes["pure"] = sum(
+                {key: val for key, val in self.data.items() if key in uids}.values()
+            )
 
-        classes: dict = dict()
-
-        for key in subclasses:
-            classes[key] = self.__classes(subclasses[key])
-
-        puids = [
-            uid
-            for uid in self.uids
-            if self.atoms[uid]["nn"] == 0
-            and self.atoms[uid]["no"] == 0
-            and self.atoms[uid]["nmg"] == 0
-            and self.atoms[uid]["nsi"] == 0
-            and self.atoms[uid]["nfe"] == 0
-        ]
-        classes["pure"] = sum(
-            {k: v for k, v in self.data.items() if k in puids}.values()
-        )
-
-        return classes
+        return self._classes
 
     def __classes(self, s: dict) -> np.ndarray:
         """
@@ -475,13 +484,15 @@ class Fitted(Spectrum):
             uids = [
                 uid
                 for uid in self.uids
-                if s["operator"](self.atoms[uid][s["subclass"]], s["operand"])
+                if s["operator"](
+                    self.pahdb["species"][uid][s["subclass"]], s["operand"]
+                )
             ]
 
         if not uids:
             return np.zeros(self.grid.size)
 
-        return sum({k: v for k, v in self.data.items() if k in uids}.values())
+        return sum({key: val for key, val in self.data.items() if key in uids}.values())
 
     def getbreakdown(self, **keywords) -> Optional[dict]:
         """
@@ -491,10 +502,6 @@ class Fitted(Spectrum):
         if not self.pahdb:
             message("VALID DATABASE NEEDED TO GET CLASSES")
             return None
-
-        # Set atom dictionary if it doesn't exist.
-        if not len(self.atoms):
-            self._atoms()
 
         # Getting fit weights
         fweight = np.array(list(self.weights.values()))
@@ -549,19 +556,19 @@ class Fitted(Spectrum):
         uids = [
             uid
             for uid in self.uids
-            if self.atoms[uid]["nn"] == 0
-            and self.atoms[uid]["no"] == 0
-            and self.atoms[uid]["nmg"] == 0
-            and self.atoms[uid]["nsi"] == 0
-            and self.atoms[uid]["nfe"] == 0
+            if self.pahdb["species"][uid]["n_n"] == 0
+            and self.pahdb["species"][uid]["n_o"] == 0
+            and self.pahdb["species"][uid]["n_mg"] == 0
+            and self.pahdb["species"][uid]["n_si"] == 0
+            and self.pahdb["species"][uid]["n_fe"] == 0
         ]
 
         if len(uids) > 0:
             breakdown["pure"] = np.sum([self.weights[uid] for uid in uids]) / total
 
         # Getting Nc.
-        nc = np.array([self.atoms[uid]["nc"] for uid in self.uids])
-        breakdown["nc"] = np.sum(nc * fweight) / np.sum(fweight)
+        nc = np.array([self.pahdb["species"][uid]["n_c"] for uid in self.uids])
+        breakdown["n_c"] = np.sum(nc * fweight) / np.sum(fweight)
 
         return breakdown
 
@@ -582,7 +589,9 @@ class Fitted(Spectrum):
             uids = [
                 uid
                 for uid in self.uids
-                if s["operator"](self.atoms[uid][s["subclass"]], s["operand"])
+                if s["operator"](
+                    self.pahdb["species"][uid][s["subclass"]], s["operand"]
+                )
             ]
 
         if len(uids) > 0:
@@ -601,45 +610,19 @@ class Fitted(Spectrum):
             "neutral": {"subclass": "charge", "operator": operator.eq, "operand": 0},
             "cation": {"subclass": "charge", "operator": operator.gt, "operand": 0},
             "small": {
-                "subclass": "nc",
+                "subclass": "n_c",
                 "operator": operator.le,
                 "operand": keywords.get("small", 50),
             },
             "large": {
-                "subclass": "nc",
+                "subclass": "n_c",
                 "operator": operator.gt,
                 "operand": keywords.get("small", 50),
             },
-            "nitrogen": {"subclass": "nn", "operator": operator.gt, "operand": 0},
+            "nitrogen": {"subclass": "n_n", "operator": operator.gt, "operand": 0},
         }
 
         return subclasses
-
-    def _atoms(self) -> None:
-        """
-        Create atoms dictionary.
-
-        """
-
-        # Create reference dictionary with atomic numbers for c, h, n, o, mg, si, and fe.
-        nelem = {"nc": 6, "nh": 1, "nn": 7, "no": 8, "nmg": 12, "nsi": 14, "nfe": 26}
-
-        # Initialize atoms dictionary.
-        self.atoms = {key: {} for key in self.uids}
-
-        for uid in self.uids:
-            # Initialize dictionary based on reference dictionary.
-            dnelem = dict.fromkeys(nelem)
-            # Loop through the keys to determine the number of each atom present in a given uid.
-            for key in dnelem.keys():
-                dnelem[key] = len(
-                    [
-                        sub["type"]
-                        for sub in self.pahdb["species"][uid]["geometry"]
-                        if sub["type"] == nelem[key]
-                    ]
-                )
-            self.atoms[uid] = dnelem
 
     def geterror(self) -> Optional[dict]:
         """
@@ -647,52 +630,50 @@ class Fitted(Spectrum):
         as the ratio of the residual over the total spectrum area.
 
         """
-        tags = ["err", "e127", "e112", "e77", "e62", "e33"]
+        if self._error is None:
+            range = {
+                "err": [min(self.grid), max(self.grid)],
+                "e127": [754.0, 855.0],
+                "e112": [855.0, 1000.0],
+                "e77": [1000.0, 1495.0],
+                "e62": [1495.0, 1712.0],
+                "e33": [2900.0, 3125.0],
+            }
 
-        piecewise = dict.fromkeys(tags, None)
-
-        range = dict()
-        range["err"] = [min(self.grid), max(self.grid)]
-        range["e127"] = [754.0, 855.0]
-        range["e112"] = [855.0, 1000.0]
-        range["e77"] = [1000.0, 1495.0]
-        range["e62"] = [1495.0, 1712.0]
-        range["e33"] = [2900.0, 3125.0]
-
-        if self.observation:
-            for key in piecewise.keys():
-                sel = np.where(
-                    np.logical_and(
-                        self.grid >= range[key][0], self.grid <= range[key][1]
+            self._error = dict.fromkeys(range.keys(), 0.0)
+            if self.observation:
+                for key, rng in range.items():
+                    sel = np.where(
+                        np.logical_and(self.grid >= rng[0], self.grid <= rng[1])
+                    )[0]
+                    total_area = np.trapz(
+                        self.observation.flux.value[sel], x=self.grid[sel]
                     )
-                )[0]
-                total_area = np.trapz(
-                    self.observation.flux.value[sel], x=self.grid[sel]
-                )
-                if total_area == 0:
-                    continue
-                fit = self.getfit()
-                if isinstance(fit, np.ndarray):
-                    resid_area = np.trapz(
-                        np.abs(self.observation.flux.value[sel] - fit[sel]),
-                        x=self.grid[sel],
-                    )
-                    piecewise[key] = resid_area / total_area
+                    if total_area == 0:
+                        continue
+                    fit = self.getfit()
+                    if isinstance(fit, np.ndarray):
+                        residual_area = np.trapz(
+                            np.abs(self.observation.flux.value[sel] - fit[sel]),
+                            x=self.grid[sel],
+                        )
+                        self._error[key] = residual_area / total_area
 
-        return piecewise
+        return self._error
 
     def sort(self, flux: bool = False) -> dict:
         """
         Sort UIDs and weights by their contribution to the fit
 
         """
-
-        if not flux:
-            w = self.weights
-        else:
-            w = dict()
-            for uid, flux in self.data.items():
-                w[uid] = -integrate.trapezoid(flux, x=self.grid)
+        w = (
+            self.weights
+            if not flux
+            else {
+                uid: -integrate.trapezoid(flux, x=self.grid)
+                for uid, flux in self.data.items()
+            }
+        )
 
         self.weights = dict(
             sorted(w.items(), key=lambda item: (item[1], item[0]), reverse=True)

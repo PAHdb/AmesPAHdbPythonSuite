@@ -43,6 +43,12 @@ class MCFitted:
                 if "observation" not in keywords:
                     self.observation = d["observation"]
 
+        self._fit: Optional[dict] = None
+        self._breakdown: Optional[dict] = None
+        self._classes: Optional[dict] = None
+        self._error: Optional[dict] = None
+        self._residual: Optional[dict] = None
+
     def get(self) -> dict:
         """
         Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.get`.
@@ -80,72 +86,50 @@ class MCFitted:
         Retrieves the mean, std, skewness, and kurtosis spectra.
 
         """
-        mcfits = list()
-        for mcfit in self.mcfits:
-            mcfits.append(mcfit.getfit())
+        if self._fit is None:
+            self._fit = self._getstats([mcfit.getfit() for mcfit in self.mcfits])
 
-        return self._getstats(mcfits)
+        return self._fit
 
     def getbreakdown(self) -> dict:
         """
         Retrieves the breakdown of the MC fitted PAHs.
 
         """
-        keys = [
-            "solo",
-            "duo",
-            "trio",
-            "quartet",
-            "quintet",
-            "neutral",
-            "cation",
-            "anion",
-            "small",
-            "large",
-            "pure",
-            "nitrogen",
-            "nc",
-        ]
+        if self._breakdown is None:
+            mcfits = iter(self.mcfits)
+            mcfit = next(mcfits)
+            breakdown = mcfit.getbreakdown()
+            results: dict = dict.fromkeys(breakdown.keys(), [])
+            for key, val in breakdown.items():
+                results[key].append(val)
+            for mcfit in mcfits:
+                breakdown = mcfit.getbreakdown()
+                for key, val in breakdown.items():
+                    results[key].append(val)
+            self._breakdown = {key: self._getstats(val) for key, val in results.items()}
 
-        results: dict = {key: [] for key in keys}
-
-        # Obtain fit breakdown.
-        for fit in self.mcfits:
-            bd = fit.getbreakdown()
-            for key in keys:
-                results[key].append(bd[key])
-
-        ret = dict()
-        for key in keys:
-            ret[key] = self._getstats(results[key])
-
-        return ret
+        return self._breakdown
 
     def getclasses(self) -> dict:
         """
         Retrieves the spectra of the different classes of the MC fitted PAHs.
 
         """
-        mcclasses = list()
-        for mcfit in self.mcfits:
-            mcclasses.append(mcfit.getclasses())
+        if self._classes is None:
+            mcfits = iter(self.mcfits)
+            mcfit = next(mcfits)
+            classes = mcfit.getclasses()
+            results: dict = dict.fromkeys(classes.keys(), [])
+            for key, val in classes.items():
+                results[key].append(val)
+            for mcfit in mcfits:
+                classes = mcfit.getclasses()
+                for key, val in classes.items():
+                    results[key].append(val)
+            self._classes = {key: self._getstats(val) for key, val in results.items()}
 
-        classkeys = list(mcclasses[0].keys())
-        _lst_classes: dict = {key: [] for key in classkeys}
-
-        # Create dictionary of lists for each breakdown class.
-        for mc in mcclasses:
-            for key in classkeys:
-                if key in mc.keys():
-                    _lst_classes[key].append(mc[key])
-
-        # Create the classes dictionary of dictionaries
-        classes = dict()
-
-        for key in classkeys:
-            classes[key] = self._getstats(_lst_classes[key])
-
-        return classes
+        return self._classes
 
     def plot(self, **keywords):
         """
@@ -398,29 +382,20 @@ class MCFitted:
         as the ratio of the residual over the total spectrum area.
 
         """
-        mcerr = list()
-        for mcfit in self.mcfits:
-            mcerr.append(mcfit.geterror())
+        if self._error is None:
+            mcfits = iter(self.mcfits)
+            mcfit = next(mcfits)
+            error = mcfit.geterror()
+            results: dict = dict.fromkeys(error.keys(), [])
+            for key, val in error.items():
+                results[key].append(val)
+            for mcfit in mcfits:
+                error = mcfit.geterror()
+                for key, val in error.items():
+                    results[key].append(val)
+            self._error = {key: self._getstats(val) for key, val in results.items()}
 
-        errkeys = list(mcerr[0].keys())
-        _lst_classes: dict = {key: [] for key in errkeys}
-
-        # Create dictionary of lists for each error.
-        for mc in mcerr:
-            for key in errkeys:
-                if key in mc.keys():
-                    _lst_classes[key].append(mc[key])
-
-        # Create the errors dictionary of dictionaries
-        errors: dict = dict()
-
-        for key in errkeys:
-            if None in _lst_classes[key]:
-                errors[key] = None
-            else:
-                errors[key] = self._getstats(_lst_classes[key])
-
-        return errors
+        return self._error
 
     def getobservation(self) -> Spectrum1D:
         """
@@ -433,8 +408,7 @@ class MCFitted:
         """
         Retrieves the statistics spectra for the residuals of the MC fits.
         """
-        mcres = list()
-        for mcfit in self.mcfits:
-            mcres.append(mcfit.getresidual())
+        if self._residual is None:
+            self._residual = self._getstats([mcfit.getresidual() for mcfit in self.mcfits])
 
-        return self._getstats(mcres)
+        return self._residual

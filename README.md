@@ -95,7 +95,7 @@ when using the AmesPAHdbPythonSuite:
   COMPUTATIONAL VERSION 3.00 WITH UPDATED CONTENT AND THE
   INTRODUCTION OF MULTIPLE SCALING FACTORS", The Astrophysical
   Journal Supplement Series, 234, 32, 2018
-  [https://doi.org/10.3847/1538-4365/aaa019](https://doi.org/10.3847/1538-4365/aaa019])
+  [https://doi.org/10.3847/1538-4365/aaa019](https://doi.org/10.3847/1538-4365/aaa019)
 
 * C. Boersma, C.W. Bauschlicher, Jr., A. Ricca, A.L. Mattioda,
   J. Cami, E. Peeters, F. Sanchez de Armas, G. Puerta Saborido,

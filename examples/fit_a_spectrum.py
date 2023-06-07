@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""examplemc_fit_a_specttum.py
+"""fit_a_spectrum.py
 
-Example of using the AmesPAHdbPythonSuite to display the ('stick')
-absorption spectrum of coronene (UID=18).
+Program demonstrating fitting an astronomical spectrum using the
+AmesPAHdbPythonSuite.
 
 For more examples visit the PAHdb cookbook website:
 https://pahdb.github.io/cookbook/
@@ -11,8 +11,8 @@ https://pahdb.github.io/cookbook/
 
 from pkg_resources import resource_filename
 
-from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import observation
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 if __name__ == "__main__":
     obs = observation.Observation(
@@ -30,9 +30,8 @@ if __name__ == "__main__":
         cache=False,
     )
 
-    uids = pahdb.search("c>0")
-
     # Retrieve the transitions from the database for the subset of PAHs.
+    uids = pahdb.search("c>0")
     transitions = pahdb.gettransitionsbyuid(uids)
 
     # Calculate the emission spectrum at the temperature reached
@@ -47,11 +46,11 @@ if __name__ == "__main__":
         grid=obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
     )
 
-    # Fit the spectrum using Monte Carlo approach.
-    mcfit = spectrum.mcfit(obs, samples=1024, multiprocessing=False)
+    # Fit the spectrum
+    fit = spectrum.fit(obs)
 
     # Create plots.
-    mcfit.plot(wavelength=True, charge=True)
-    mcfit.plot(wavelength=True, size=True)
-    mcfit.plot(wavelength=True, composition=True)
-    mcfit.plot(wavelength=True, save=True, ftype='pdf')
+    fit.plot(wavelength=True, residual=True)
+    fit.plot(wavelength=True, size=True)
+    fit.plot(wavelength=True, charge=True)
+    fit.plot(wavelength=True, composition=True)

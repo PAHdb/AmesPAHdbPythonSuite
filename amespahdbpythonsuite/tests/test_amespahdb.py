@@ -133,7 +133,6 @@ class TestAmesPAHdb:
         )
 
     def test_getdatabaseref(self, pahdb_theoretical):
-
         assert isinstance(pahdb_theoretical.getdatabaseref(), dict)
 
     def test_search_formula(self, pahdb_theoretical):
@@ -150,3 +149,8 @@ class TestAmesPAHdb:
 
     def test_search_uid_pipe(self, pahdb_theoretical):
         assert pahdb_theoretical.search("uid=18 | uid=73") == [18, 73]
+
+    def test_search_transitions(self, pahdb_theoretical):
+        assert pahdb_theoretical.search(
+            "c>20 frequency > 3068 and frequency < 3070 intensity > 140 intensity < 141"
+        ) == [18]

@@ -295,6 +295,13 @@ class Spectrum(Transitions):
         elif keywords.get("show", False):
             plt.show()
 
+    def getgrid(self) -> list:
+        """
+        Return the grid.
+
+        """
+        return self.grid
+
     def coadd(self, weights: dict = dict(), average: bool = False) -> Coadded:
         """
         Co-add PAHdb spectra.

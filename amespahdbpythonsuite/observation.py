@@ -168,6 +168,11 @@ class Observation:
 
             self.spectrum = Spectrum1D.read(self.filepath)
 
+            if "header" in self.spectrum.meta:
+                self.header = self.spectrum.meta["header"]
+            else:
+                self.header = fits.header.Header()
+
             return None
         except FileNotFoundError as e:
             raise (e)

@@ -312,7 +312,6 @@ class Transitions(Data):
         i = 0
 
         nuids = len(self.uids)
-        self._atoms()
 
         for uid in self.uids:
             # Start timer.
@@ -332,7 +331,7 @@ class Transitions(Data):
                 global nc
 
                 charge = self.pahdb["species"][uid]["charge"]
-                nc = self.atoms[uid]["nc"]
+                nc = self.pahdb["species"][uid]["n_c"]
 
             if keywords.get('star') or keywords.get('isrf'):
                 energy = Transitions.mean_energy(**keywords)
@@ -441,8 +440,6 @@ class Transitions(Data):
 
         energy = e
         Tstar = 0.0
-
-        self._atoms()
 
         tstart = time.perf_counter()
 
@@ -598,8 +595,8 @@ class Transitions(Data):
                 or keywords.get('star')
                 or keywords.get('isrf')
             ):
-                charges = [self.atoms[uid]["charge"] for uid in self.uids]
-                ncs = [self.atoms[uid]["nc"] for uid in self.uids]
+                charges = [self.pahdb["species"][uid]["charge"] for uid in self.uids]
+                ncs = [self.pahdb["species"][uid]["n_c"] for uid in self.uids]
                 data, Tmax = zip(
                     *pool.map(cascade_em_model, zip(self.data.values(), ncs, charges))
                 )
@@ -633,7 +630,7 @@ class Transitions(Data):
                     global nc
 
                     charge = self.pahdb["species"][uid]["charge"]
-                    nc = self.atoms[uid]["nc"]
+                    nc = self.pahdb["species"][uid]["n_c"]
 
                 if keywords.get('star') or keywords.get('isrf'):
                     energy = Transitions.mean_energy(**keywords)
@@ -1612,29 +1609,3 @@ class Transitions(Data):
                     )
 
         return data, Tmax
-
-    def _atoms(self) -> None:
-        """
-        Create atoms dictionary.
-
-        """
-
-        # Create reference dictionary with atomic numbers for c, h, n, o, mg, si, and fe.
-        nelem = {"nc": 6, "nh": 1, "nn": 7, "no": 8, "nmg": 12, "nsi": 14, "nfe": 26}
-
-        # Initialize atoms dictionary.
-        self.atoms: dict = {key: {} for key in self.uids}
-
-        for uid in self.uids:
-            # Initialize dictionary based on reference dictionary.
-            dnelem = dict.fromkeys(nelem)
-            # Loop through the keys to determine the number of each atom present in a given uid.
-            for key in dnelem.keys():
-                dnelem[key] = len(
-                    [
-                        sub["type"]
-                        for sub in self.pahdb["species"][uid]["geometry"]
-                        if sub["type"] == nelem[key]
-                    ]
-                )
-            self.atoms[uid] = dnelem

@@ -75,7 +75,7 @@ class TestFitted:
             "large",
             "nitrogen",
             "pure",
-            "nc",
+            "n_c",
         ]
 
     def test_error(self, test_fitted):
