@@ -185,8 +185,8 @@ class TestTransitions:
         intf, tmax = transitions.Transitions._cascade_em_model(
             6 * 1.603e-12, data['data'][18]
         )
-        test_i = [x for x in intf if x["frequency"] == 3068.821][0]
         assert tmax == 1279.7835033561428
+        test_i = [x for x in intf if x["frequency"] == 3068.821][0]
         np.testing.assert_allclose(test_i["intensity"], 1.6710637100014386e-12)
 
     def test_convolve_gaussian(self, test_transitions, test_spec):

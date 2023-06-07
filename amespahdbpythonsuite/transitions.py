@@ -715,7 +715,7 @@ class Transitions(Data):
                 f" :{np.sum(intensities) / self.model['energy'][uid]['e']}"
             )
 
-        print(57 * "=")
+        message('')
 
         elapsed = timedelta(seconds=(time.perf_counter() - tstart))
         print(f"Elapsed time: {elapsed}\n")
@@ -1450,7 +1450,7 @@ class Transitions(Data):
             return 0.0
 
         else:
-            return 1 / ((np.exp(val) - 1) * a * T**b)
+            return 1 / (np.expm1(val) * a * T**b)
 
     @staticmethod
     def number_of_photons(**keywords):

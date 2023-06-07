@@ -154,10 +154,7 @@ class MCFitted:
         """
         from astropy.nddata import StdDevUncertainty  # type: ignore
 
-        if keywords.get("datalabel", False):
-            datalabel = keywords["datalabel"]
-        else:
-            datalabel = "obs"
+        datalabel = keywords.get("datalabel", "obs")
 
         obs = self.getobservation()
 
