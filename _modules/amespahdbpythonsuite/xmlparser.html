@@ -519,6 +519,26 @@
                     <span class="n">specie_dict</span><span class="p">[</span><span class="s2">&quot;laboratory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">specie_laboratory_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;specie&quot;</span><span class="p">:</span>
+                    <span class="n">atom_numbers</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;n_c&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                        <span class="s2">&quot;n_h&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;n_n&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                        <span class="s2">&quot;n_o&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                        <span class="s2">&quot;n_mg&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+                        <span class="s2">&quot;n_si&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+                        <span class="s2">&quot;n_fe&quot;</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+                    <span class="p">}</span>
+
+                    <span class="n">specie_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">atom_numbers</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="mi">0</span><span class="p">))</span>
+
+                    <span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">atom_numbers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">specie_dict</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">sub</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+                                <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">specie_dict</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
+                                <span class="k">if</span> <span class="n">sub</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">number</span>
+                            <span class="p">]</span>
+                        <span class="p">)</span>
                     <span class="k">break</span>
 
                 <span class="k">try</span><span class="p">:</span>

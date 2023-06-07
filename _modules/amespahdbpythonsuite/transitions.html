@@ -475,7 +475,6 @@
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">nuids</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">:</span>
             <span class="c1"># Start timer.</span>
@@ -495,7 +494,7 @@
                 <span class="k">global</span> <span class="n">nc</span>
 
                 <span class="n">charge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span>
-                <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;nc&quot;</span><span class="p">]</span>
+                <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;n_c&quot;</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
                 <span class="n">energy</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
@@ -604,8 +603,6 @@
 
         <span class="n">energy</span> <span class="o">=</span> <span class="n">e</span>
         <span class="n">Tstar</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">()</span>
 
         <span class="n">tstart</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
@@ -761,8 +758,8 @@
                 <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
                 <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span>
             <span class="p">):</span>
-                <span class="n">charges</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">]</span>
-                <span class="n">ncs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;nc&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">]</span>
+                <span class="n">charges</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">]</span>
+                <span class="n">ncs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;n_c&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">]</span>
                 <span class="n">data</span><span class="p">,</span> <span class="n">Tmax</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
                     <span class="o">*</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">cascade_em_model</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">ncs</span><span class="p">,</span> <span class="n">charges</span><span class="p">))</span>
                 <span class="p">)</span>
@@ -796,7 +793,7 @@
                     <span class="k">global</span> <span class="n">nc</span>
 
                     <span class="n">charge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span>
-                    <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;nc&quot;</span><span class="p">]</span>
+                    <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;n_c&quot;</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
                     <span class="n">energy</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
@@ -1774,33 +1771,7 @@
                         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">i_method</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">Tmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">Tmax</span>
-
-    <span class="k">def</span> <span class="nf">_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create atoms dictionary.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Create reference dictionary with atomic numbers for c, h, n, o, mg, si, and fe.</span>
-        <span class="n">nelem</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nc&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;nh&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nn&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;nmg&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;nsi&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;nfe&quot;</span><span class="p">:</span> <span class="mi">26</span><span class="p">}</span>
-
-        <span class="c1"># Initialize atoms dictionary.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">}</span>
-
-        <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">:</span>
-            <span class="c1"># Initialize dictionary based on reference dictionary.</span>
-            <span class="n">dnelem</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">nelem</span><span class="p">)</span>
-            <span class="c1"># Loop through the keys to determine the number of each atom present in a given uid.</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dnelem</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">dnelem</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="n">sub</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
-                        <span class="k">if</span> <span class="n">sub</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">nelem</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                    <span class="p">]</span>
-                <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">dnelem</span></div>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">Tmax</span></div>
 </pre></div>
 
            </div>

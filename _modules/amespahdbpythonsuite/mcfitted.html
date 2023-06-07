@@ -206,6 +206,12 @@
                 <span class="k">if</span> <span class="s2">&quot;observation&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">observation</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_breakdown</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_residual</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
 <div class="viewcode-block" id="MCFitted.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.get`.</span>
@@ -243,72 +249,50 @@
 <span class="sd">        Retrieves the mean, std, skewness, and kurtosis spectra.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mcfits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">:</span>
-            <span class="n">mcfits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mcfit</span><span class="o">.</span><span class="n">getfit</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">([</span><span class="n">mcfit</span><span class="o">.</span><span class="n">getfit</span><span class="p">()</span> <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">mcfits</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span></div>
 
 <div class="viewcode-block" id="MCFitted.getbreakdown"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getbreakdown">[docs]</a>    <span class="k">def</span> <span class="nf">getbreakdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the breakdown of the MC fitted PAHs.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;solo&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;duo&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;trio&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;quartet&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;quintet&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;neutral&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;cation&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;anion&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;small&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;large&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pure&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;nitrogen&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;nc&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_breakdown</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mcfits</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">)</span>
+            <span class="n">mcfit</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">mcfits</span><span class="p">)</span>
+            <span class="n">breakdown</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">getbreakdown</span><span class="p">()</span>
+            <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">breakdown</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="p">[])</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">breakdown</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="n">mcfits</span><span class="p">:</span>
+                <span class="n">breakdown</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">getbreakdown</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">breakdown</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_breakdown</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-        <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
-
-        <span class="c1"># Obtain fit breakdown.</span>
-        <span class="k">for</span> <span class="n">fit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">:</span>
-            <span class="n">bd</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">getbreakdown</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-                <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bd</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-
-        <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-            <span class="n">ret</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-
-        <span class="k">return</span> <span class="n">ret</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_breakdown</span></div>
 
 <div class="viewcode-block" id="MCFitted.getclasses"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getclasses">[docs]</a>    <span class="k">def</span> <span class="nf">getclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the spectra of the different classes of the MC fitted PAHs.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mcclasses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">:</span>
-            <span class="n">mcclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mcfit</span><span class="o">.</span><span class="n">getclasses</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mcfits</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">)</span>
+            <span class="n">mcfit</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">mcfits</span><span class="p">)</span>
+            <span class="n">classes</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">getclasses</span><span class="p">()</span>
+            <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="p">[])</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="n">mcfits</span><span class="p">:</span>
+                <span class="n">classes</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">getclasses</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-        <span class="n">classkeys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mcclasses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="n">_lst_classes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">classkeys</span><span class="p">}</span>
-
-        <span class="c1"># Create dictionary of lists for each breakdown class.</span>
-        <span class="k">for</span> <span class="n">mc</span> <span class="ow">in</span> <span class="n">mcclasses</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">classkeys</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mc</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">_lst_classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-
-        <span class="c1"># Create the classes dictionary of dictionaries</span>
-        <span class="n">classes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">classkeys</span><span class="p">:</span>
-            <span class="n">classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">_lst_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-
-        <span class="k">return</span> <span class="n">classes</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span></div>
 
 <div class="viewcode-block" id="MCFitted.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -561,29 +545,20 @@
 <span class="sd">        as the ratio of the residual over the total spectrum area.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mcerr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">:</span>
-            <span class="n">mcerr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mcfit</span><span class="o">.</span><span class="n">geterror</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mcfits</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">)</span>
+            <span class="n">mcfit</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">mcfits</span><span class="p">)</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">geterror</span><span class="p">()</span>
+            <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="p">[])</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">error</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="n">mcfits</span><span class="p">:</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="n">mcfit</span><span class="o">.</span><span class="n">geterror</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">error</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_error</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-        <span class="n">errkeys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mcerr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="n">_lst_classes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">errkeys</span><span class="p">}</span>
-
-        <span class="c1"># Create dictionary of lists for each error.</span>
-        <span class="k">for</span> <span class="n">mc</span> <span class="ow">in</span> <span class="n">mcerr</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">errkeys</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mc</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">_lst_classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-
-        <span class="c1"># Create the errors dictionary of dictionaries</span>
-        <span class="n">errors</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">errkeys</span><span class="p">:</span>
-            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">_lst_classes</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-                <span class="n">errors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">errors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">_lst_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-
-        <span class="k">return</span> <span class="n">errors</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error</span></div>
 
 <div class="viewcode-block" id="MCFitted.getobservation"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getobservation">[docs]</a>    <span class="k">def</span> <span class="nf">getobservation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -596,11 +571,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the statistics spectra for the residuals of the MC fits.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mcres</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">:</span>
-            <span class="n">mcres</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mcfit</span><span class="o">.</span><span class="n">getresidual</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">([</span><span class="n">mcfit</span><span class="o">.</span><span class="n">getresidual</span><span class="p">()</span> <span class="k">for</span> <span class="n">mcfit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcfits</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getstats</span><span class="p">(</span><span class="n">mcres</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual</span></div></div>
 </pre></div>
 
            </div>

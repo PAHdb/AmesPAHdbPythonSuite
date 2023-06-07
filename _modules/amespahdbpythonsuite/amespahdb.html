@@ -164,33 +164,34 @@
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">urllib.error</span> <span class="kn">import</span> <span class="n">HTTPError</span>
-<span class="kn">import</span> <span class="nn">urllib.request</span>
-<span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">Version</span>
 <span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">urllib.error</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+
 <span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">Version</span>
 
-<span class="kn">import</span> <span class="nn">pickle</span>
-
-<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.xmlparser</span> <span class="kn">import</span> <span class="n">XMLparser</span>
 <span class="kn">import</span> <span class="nn">amespahdbpythonsuite</span> <span class="k">as</span> <span class="nn">suite</span>
+<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.xmlparser</span> <span class="kn">import</span> <span class="n">XMLparser</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.species</span> <span class="kn">import</span> <span class="n">Species</span>
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.geometry</span> <span class="kn">import</span> <span class="n">Geometry</span>
-    <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.transitions</span> <span class="kn">import</span> <span class="n">Transitions</span>
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.laboratory</span> <span class="kn">import</span> <span class="n">Laboratory</span>
+    <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.species</span> <span class="kn">import</span> <span class="n">Species</span>
+    <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.transitions</span> <span class="kn">import</span> <span class="n">Transitions</span>
 
 
 <div class="viewcode-block" id="AmesPAHdb"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb">[docs]</a><span class="k">class</span> <span class="nc">AmesPAHdb</span><span class="p">:</span>
@@ -308,7 +309,6 @@
             <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">md5</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">md5</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">)</span>
         <span class="p">):</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s2">&quot;RESTORING DATABASE FROM CACHE&quot;</span><span class="p">)</span>
 
             <span class="c1"># Start timer.</span>
@@ -334,7 +334,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s2">&quot;PARSING DATABASE: THIS MAY TAKE A FEW MINUTES&quot;</span><span class="p">)</span>
 
             <span class="c1"># Start timer.</span>
@@ -591,7 +590,6 @@
 
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
                 <span class="k">break</span>
 
@@ -649,7 +647,7 @@
 
         <span class="n">found</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;[item[0] for item in _AmesPAHdb__data[&#39;species&#39;].items() if (</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2">)]&quot;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">},</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">found</span></div>
@@ -684,26 +682,20 @@
         <span class="n">identities</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;item[0]&quot;</span><span class="p">,</span>
             <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;item[0]&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;atoms&quot;</span><span class="p">:</span> <span class="s1">&#39;len(item[1][&quot;geometry&quot;])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;hydrogen&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 1])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;carbon&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 6])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;nitrogen&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 7])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;oxygen&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 8])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;magnesium&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 12])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;silicium&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 14])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;iron&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 26])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 1])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 6])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 7])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;o&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 8])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;mg&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 12])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;si&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 14])&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;fe&quot;</span><span class="p">:</span> <span class="s1">&#39;len([c for c in item[1][&quot;geometry&quot;] if c[&quot;type&quot;] == 26])&#39;</span><span class="p">,</span>
-            <span class="c1"># TODO make transition search work</span>
-            <span class="c1"># &#39;wavenumber&#39;: &#39;item[1][&quot;transitions&quot;][&quot;frequency&quot;]&#39;,</span>
-            <span class="c1"># &#39;absorbance&#39;: &#39;item[1][&quot;transitions&quot;][&quot;intensity&quot;]&#39;,</span>
-            <span class="c1"># &#39;frequency&#39;: &#39;item[1][&quot;transitions&quot;][&quot;frequency&quot;]&#39;,</span>
-            <span class="c1"># &#39;intensity&#39;: &#39;item[1][&quot;transitions&quot;][&quot;intensity&quot;]&#39;,</span>
+            <span class="s2">&quot;hydrogen&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_h&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;carbon&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_c&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;nitrogen&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_n&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;oxygen&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_o&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;magnesium&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_mg&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;silicium&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_si&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;iron&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_fe&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_h&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_c&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_n&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;o&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_o&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;mg&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_mg&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;si&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_si&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;fe&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_fe&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;ch2&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_ch2&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;chx&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_chx&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;solo&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_solo&quot;]&#39;</span><span class="p">,</span>
@@ -718,6 +710,13 @@
             <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;total_e&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;zeropoint&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1]m[&quot;vib_e&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;experiment&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;exp&quot;]&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">composed</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;wavenumber&quot;</span><span class="p">:</span> <span class="s1">&#39;np.array([t[&quot;frequency&quot;] </span><span class="si">{operator}</span><span class="s1"> </span><span class="si">{operand}</span><span class="s1"> for t in item[1][&quot;transitions&quot;]])&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;absorbance&quot;</span><span class="p">:</span> <span class="s1">&#39;np.array([t[&quot;intensity&quot;] </span><span class="si">{operator}</span><span class="s1"> </span><span class="si">{operand}</span><span class="s1"> for t in item[1][&quot;transitions&quot;]])&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="s1">&#39;np.array([t[&quot;frequency&quot;] </span><span class="si">{operator}</span><span class="s1"> </span><span class="si">{operand}</span><span class="s1"> for t in item[1][&quot;transitions&quot;]])&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="s1">&#39;np.array([t[&quot;intensity&quot;] </span><span class="si">{operator}</span><span class="s1"> </span><span class="si">{operand}</span><span class="s1"> for t in item[1][&quot;transitions&quot;]])&#39;</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">logical</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;and&quot;</span><span class="p">:</span> <span class="s2">&quot;and&quot;</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">:</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">:</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">:</span> <span class="s2">&quot;and&quot;</span><span class="p">}</span>
@@ -749,6 +748,9 @@
         <span class="k">elif</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">identities</span><span class="p">:</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;IDENTITY&quot;</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">identities</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">composed</span><span class="p">:</span>
+            <span class="n">token</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;COMPOSED&quot;</span>
+            <span class="n">token</span><span class="p">[</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">composed</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">logical</span><span class="p">:</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LOGICAL&quot;</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logical</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
@@ -795,15 +797,13 @@
 
         <span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">if</span> <span class="n">ntokens</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">next</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">next</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="nb">next</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">ntokens</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="n">parsed</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="k">while</span> <span class="n">current</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
+        <span class="k">while</span> <span class="n">current</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;FORMULA&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
@@ -816,7 +816,6 @@
                     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
                         <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;LOGICAL&quot;</span>
                         <span class="ow">or</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;TRANSFER&quot;</span>
-                        <span class="ow">or</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;TRANSFER&quot;</span>
                         <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span>
                     <span class="p">):</span>
                         <span class="n">parsed</span> <span class="o">+=</span> <span class="s2">&quot; and &quot;</span>
@@ -825,6 +824,54 @@
                         <span class="n">parsed</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">parsed</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &gt; 0&quot;</span>
+            <span class="k">elif</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;COMPOSED&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                        <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;LOGICAL&quot;</span>
+                        <span class="ow">or</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;TRANSFER&quot;</span>
+                        <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span>
+                    <span class="p">):</span>
+                        <span class="k">if</span> <span class="n">sub</span><span class="p">:</span>
+                            <span class="n">sub</span> <span class="o">+=</span> <span class="s2">&quot; &amp; &quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">parsed</span> <span class="o">+=</span> <span class="s2">&quot; and &quot;</span>
+
+                <span class="k">if</span> <span class="nb">next</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;COMPARISON&quot;</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXPECTING OPERATOR&quot;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+                    <span class="n">partial</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">{operator}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                    <span class="n">prev</span> <span class="o">=</span> <span class="n">current</span>
+
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">next</span>
+
+                    <span class="k">if</span> <span class="nb">next</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">next</span> <span class="o">==</span> <span class="n">ntokens</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="nb">next</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">next</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="k">if</span> <span class="nb">next</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;NUMERIC&quot;</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXPECTING OPERAND&quot;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+                    <span class="n">sub</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">partial</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">{operand}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                    <span class="n">prev</span> <span class="o">=</span> <span class="n">current</span>
+
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">next</span>
+
+                    <span class="k">if</span> <span class="nb">next</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">next</span> <span class="o">==</span> <span class="n">ntokens</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="nb">next</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">next</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">elif</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUMERIC&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;COMPARISON&quot;</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]:</span>
@@ -843,6 +890,10 @@
                         <span class="k">if</span> <span class="nb">next</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                             <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;TRANSFER&quot;</span><span class="p">:</span>
                                 <span class="n">parsed</span> <span class="o">+=</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
+                            <span class="k">elif</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;COMPOSED&quot;</span> <span class="ow">and</span> <span class="n">sub</span><span class="p">:</span>
+                                <span class="n">sub</span> <span class="o">+=</span> <span class="p">{</span><span class="s2">&quot;and&quot;</span><span class="p">:</span> <span class="s2">&quot; &amp; &quot;</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">:</span> <span class="s2">&quot; | &quot;</span><span class="p">}[</span>
+                                    <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
+                                <span class="p">]</span>
                             <span class="k">elif</span> <span class="p">(</span>
                                 <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IDENTITY&quot;</span>
                                 <span class="ow">or</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUMERIC&quot;</span>
@@ -852,6 +903,7 @@
                                 <span class="n">parsed</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
             <span class="k">elif</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;COMPARISON&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IDENTITY&quot;</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]:</span>
@@ -891,6 +943,9 @@
                     <span class="nb">next</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="nb">next</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">sub</span><span class="p">:</span>
+            <span class="n">parsed</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; np.any(</span><span class="si">{</span><span class="n">sub</span><span class="si">}</span><span class="s2">)&quot;</span>
 
         <span class="k">return</span> <span class="n">parsed</span>
 
