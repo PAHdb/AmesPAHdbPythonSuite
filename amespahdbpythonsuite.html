@@ -90,10 +90,14 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.transitions">transitions class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.Transitions"><code class="docutils literal notranslate"><span class="pre">Transitions</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.Tstar"><code class="docutils literal notranslate"><span class="pre">Tstar</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.charge"><code class="docutils literal notranslate"><span class="pre">charge</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.energy"><code class="docutils literal notranslate"><span class="pre">energy</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.frequencies"><code class="docutils literal notranslate"><span class="pre">frequencies</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.frequency"><code class="docutils literal notranslate"><span class="pre">frequency</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.intensities"><code class="docutils literal notranslate"><span class="pre">intensities</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.nc"><code class="docutils literal notranslate"><span class="pre">nc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#amespahdbpythonsuite.transitions.star_model"><code class="docutils literal notranslate"><span class="pre">star_model</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amespahdbpythonsuite.spectrum">spectrum class</a><ul>
@@ -549,8 +553,44 @@ _root: root element of ElementTree tree.</p>
 <p>AmesPAHdbPythonSuite transitions class.
 Contains methods to create and apply an emission model.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.attainedtemperature">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attainedtemperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.attainedtemperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.attainedtemperature" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.absorption_cross_section">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absorption_cross_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.absorption_cross_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.absorption_cross_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the PAH absorption cross-section per Li &amp; Draine 2007,
+ApJ, 657:810-837.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.approximate_attained_temperature">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">approximate_attained_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.approximate_attained_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.approximate_attained_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a PAH’s temperature after absorbing a given amount of energy
+using an approximation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<em>float</em>) – Excitation temperature in Kelvin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.approximate_feature_strength">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">approximate_feature_strength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.approximate_feature_strength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.approximate_feature_strength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength convolved with a
+blackbody using an approximation from Bakes, Tielens &amp; Bauschliher,
+ApJ, 556:501-514, 2001.</p>
+<p>: Param T: Excitation temperature in Kelvin.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.attained_temperature">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attained_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.attained_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.attained_temperature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate a PAH’s temperature after absorbing a given amount of energy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -560,14 +600,20 @@ Contains methods to create and apply an emission model.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.calculatedtemperature">
-<span class="sig-name descname"><span class="pre">calculatedtemperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.calculatedtemperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.calculatedtemperature" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.calculated_temperature">
+<span class="sig-name descname"><span class="pre">calculated_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.calculated_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.calculated_temperature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies the Calculated Temperature emission model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>e</strong> (<em>float</em>) – Excitation energy in erg.</p>
 </dd>
 </dl>
+<p>:If ‘star’ keyword is given the input should be temperature in Kelvin instead of energy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keywords<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<p>:</p>
 </dd></dl>
 
 <dl class="py method">
@@ -594,8 +640,8 @@ respective instance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.featurestrength">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">featurestrength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.featurestrength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.featurestrength" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.feature_strength">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_strength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.feature_strength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.feature_strength" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate a feature’s strength covolved with a blackbody.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -605,8 +651,8 @@ respective instance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.fixedtemperature">
-<span class="sig-name descname"><span class="pre">fixedtemperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.fixedtemperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.fixedtemperature" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.fixed_temperature">
+<span class="sig-name descname"><span class="pre">fixed_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.fixed_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.fixed_temperature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies the Fixed Temperature emission model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -622,12 +668,192 @@ respective instance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.heatcapacity">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">heatcapacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.heatcapacity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.heatcapacity" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.heat_capacity">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">heat_capacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.heat_capacity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.heat_capacity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate heat capacity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>T</strong> (<em>float</em>) – Excitation temperature in Kelvin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.isrf">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isrf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.isrf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.isrf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to calculate the absorption cross-section times
+the interstellar radiation field per Mathis et al. 1983, A&amp;A, 128:212.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.isrf_approximate_feature_strength_convolved">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isrf_approximate_feature_strength_convolved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.isrf_approximate_feature_strength_convolved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.isrf_approximate_feature_strength_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength convolved with
+the interstellar radiation field using an approximation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.isrf_feature_strength_convolved">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isrf_feature_strength_convolved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.isrf_feature_strength_convolved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.isrf_feature_strength_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength convolved with the
+interstellar radiation field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.isrf_number_of_photons">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isrf_number_of_photons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.isrf_number_of_photons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.isrf_number_of_photons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to calculate the number of photons per Mathis et al. 1983, A&amp;A, 128:212.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.isrf_squared">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isrf_squared</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.isrf_squared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.isrf_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to calculate the absorption cross-section times
+the interstellar radiation field per Mathis et al. 1983, A&amp;A, 128:212.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.mean_energy">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.mean_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.mean_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to calculate the mean energy in erg for a given
+blackbody temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.mean_energy_squared">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean_energy_squared</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.mean_energy_squared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.mean_energy_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to calculate the mean energy in erg^2 for a given
+blackbody temperatyre.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.number_of_photons">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_photons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.number_of_photons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.number_of_photons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the number of photons given a
+blacbody radiation field.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.planck">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planck</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.planck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.planck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to Calculate the absorption cross-section
+multiplied by Planck’s function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.planck_approximate_feature_strength_convolved">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planck_approximate_feature_strength_convolved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.planck_approximate_feature_strength_convolved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.planck_approximate_feature_strength_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength convolved with a
+given blackbody using an approximation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.planck_feature_strength_convolved">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planck_feature_strength_convolved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.planck_feature_strength_convolved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.planck_feature_strength_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength convolved with a
+given blackbody radiation field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.planck_number_of_photons">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planck_number_of_photons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.planck_number_of_photons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.planck_number_of_photons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to Calculate the number of photons
+using Planck’s function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.planck_squared">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planck_squared</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.planck_squared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.planck_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to Calculate the absorption cross-section
+multiplied by Planck’s function squared.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -652,6 +878,35 @@ Checks flavor of the database, i.e., theoretical or experimental</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.stellar_model_approximate_feature_strength_convolved">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stellar_model_approximate_feature_strength_convolved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.stellar_model_approximate_feature_strength_convolved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.stellar_model_approximate_feature_strength_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength convolved with
+the interstellar radiation field using an approximation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.stellar_model_feature_strength_convolved">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stellar_model_feature_strength_convolved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.stellar_model_feature_strength_convolved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.stellar_model_feature_strength_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a feature’s strength convolved with a given stellar model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param f<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frequencies in wavenumber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Transitions.write">
 <span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/transitions.html#Transitions.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.transitions.Transitions.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the transitions to file as an IPAC-table.</p>
@@ -660,8 +915,18 @@ Checks flavor of the database, i.e., theoretical or experimental</p>
 </dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.Tstar">
+<span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">Tstar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#amespahdbpythonsuite.transitions.Tstar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.charge">
+<span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">charge</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#amespahdbpythonsuite.transitions.charge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.energy">
-<span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">energy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#amespahdbpythonsuite.transitions.energy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">energy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#amespahdbpythonsuite.transitions.energy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -677,6 +942,16 @@ Checks flavor of the database, i.e., theoretical or experimental</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.intensities">
 <span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">intensities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#amespahdbpythonsuite.transitions.intensities" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.nc">
+<span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">nc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#amespahdbpythonsuite.transitions.nc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.transitions.star_model">
+<span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.transitions.</span></span><span class="sig-name descname"><span class="pre">star_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#amespahdbpythonsuite.transitions.star_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
