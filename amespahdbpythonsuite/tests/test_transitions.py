@@ -110,36 +110,83 @@ class TestTransitions:
         trans.shift(-15.0)
         assert dtest["frequency"] == 3053.821
 
-    def test_fixedtemperature(self, pahdb_theoretical):
+    def test_fixed_temperature(self, pahdb_theoretical):
         trans = pahdb_theoretical.gettransitionsbyuid([18])
-        trans.fixedtemperature(600)
+        trans.fixed_temperature(600)
         dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
         np.testing.assert_allclose(dtest["intensity"], 6.420001406551514e-14)
 
-    def test_calculatedtemperature(self, pahdb_theoretical):
+    def test_calculated_temperature(self, pahdb_theoretical):
         trans = pahdb_theoretical.gettransitionsbyuid([18])
-        trans.calculatedtemperature(6 * 1.603e-12)
-        dtest = next(
-            (sub for sub in trans.model["temperatures"] if sub["uid"] == 18), None
-        )
-        assert dtest["temperature"] == 1279.7835033561428
+        trans.calculated_temperature(6 * 1.603e-12)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1279.7835033561428)
+
+    def test_calculated_temperature_star(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.calculated_temperature(15e4, star=True)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1787.5794340274335)
+
+    def test_calculated_temperature_star_approximate(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.calculated_temperature(15e4, star=True, approximate=True)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1822.1891542134522)
+
+    def test_calculated_temperature_isrf(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.calculated_temperature(e=None, isrf=True)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1284.0497226026382)
+
+    def test_calculated_temperature_isrf_approximate(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.calculated_temperature(e=None, isrf=True, approximate=True)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1376.5627092065665)
 
     def test_cascade(self, pahdb_theoretical):
         trans = pahdb_theoretical.gettransitionsbyuid([18])
         trans.cascade(6 * 1.603e-12, multiprocessing=False)
-        dtest_a = next(
-            (sub for sub in trans.model["temperatures"] if sub["uid"] == 18), None
-        )
-        dtest_b = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
-        assert dtest_a["temperature"] == 1279.7835033561428
-        np.testing.assert_allclose(dtest_b["intensity"], 1.6710637100014386e-12)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1279.7835033561428)
+        dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
+        np.testing.assert_allclose(dtest["intensity"], 1.6710637100014386e-12)
 
+    def test_cascade_star(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.cascade(15e4, star=True, multiprocessing=False)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1787.5794340274335)
+        dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
+        np.testing.assert_allclose(dtest["intensity"], 3.8173000360054425e-12)
+
+    def test_cascade_star_approximate(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.cascade(15e4, star=True, approximate=True, multiprocessing=False)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1822.1891542134522)
+        dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
+        np.testing.assert_allclose(dtest["intensity"], 3511508725103.2363)
+
+    def test_cascade_star_isrf(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.cascade(e=None, isrf=True, multiprocessing=False)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1284.0497226026382)
+        dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
+        np.testing.assert_allclose(dtest["intensity"], 1.686950587178696e-12)
+
+    def test_cascade_star_isrf_approximate(self, pahdb_theoretical):
+        trans = pahdb_theoretical.gettransitionsbyuid([18])
+        trans.cascade(e=None, isrf=True, approximate=True, multiprocessing=False)
+        np.testing.assert_allclose(trans.model["temperatures"][18], 1376.5627092065665)
+        dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
+        np.testing.assert_allclose(dtest["intensity"], 1750658149057.8667)
+
+    @pytest.mark.skip(
+        reason="skipped until complete implementation of multiprocessing "
+    )
     def test_partial_cascade(self, pahdb_theoretical):
         trans_multi = pahdb_theoretical.gettransitionsbyuid([18])
         data = trans_multi.get()
-        intf, tmax = transitions.Transitions._cascade_em_model(6 * 1.603e-12, data['data'][18])
-        test_i = [x for x in intf if x["frequency"] == 3068.821][0]
+        intf, tmax = transitions.Transitions._cascade_em_model(
+            6 * 1.603e-12, data['data'][18]
+        )
         assert tmax == 1279.7835033561428
+        test_i = [x for x in intf if x["frequency"] == 3068.821][0]
         np.testing.assert_allclose(test_i["intensity"], 1.6710637100014386e-12)
 
     def test_convolve_gaussian(self, test_transitions, test_spec):

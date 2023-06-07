@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import Optional
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
 
@@ -153,6 +154,8 @@ class MCFitted:
         """
         from astropy.nddata import StdDevUncertainty  # type: ignore
 
+        datalabel = keywords.get("datalabel", "obs")
+
         obs = self.getobservation()
 
         # Get MC average fit and breakdown spectra.
@@ -198,11 +201,11 @@ class MCFitted:
                 markersize=3,
                 elinewidth=0.2,
                 capsize=0.8,
-                label="obs",
+                label=datalabel,
             )
 
         else:
-            ax.scatter(x, obs.flux.value, color="k", s=10, label="obs")
+            ax.scatter(x, obs.flux.value, color="k", s=5, label=datalabel)
 
         ax.plot(x, fit["mean"], color="tab:purple", linewidth=1.2, label="fit")
         ax.fill_between(
@@ -315,15 +318,23 @@ class MCFitted:
                 )
 
         else:
-            ptype = None
+            ptype = "fitted"
 
         ax.axhline(0, linestyle="--", color="gray")
         ax.legend(fontsize=10)
 
-        if keywords.get("save"):
-            if not isinstance(ptype, str):
-                ptype = "fitted"
-            fig.savefig(f"{keywords['save']}mc_{ptype}_breakdown.pdf")
+        if keywords.get("save", False):
+            if keywords.get("output"):
+                if os.path.isdir(keywords["output"]):
+                    fig.savefig(
+                        f"{keywords['output']}/mc_{ptype}_breakdown.{keywords['ftype']}"
+                    )
+                else:
+                    fig.savefig(
+                        f"{keywords['output']}_mc_{ptype}_breakdown.{keywords['ftype']}"
+                    )
+            else:
+                fig.savefig(f"mc_{ptype}_breakdown.{keywords['ftype']}")
         else:
             plt.show()
 

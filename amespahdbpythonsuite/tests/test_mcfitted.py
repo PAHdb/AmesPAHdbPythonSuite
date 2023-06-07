@@ -70,25 +70,19 @@ class TestMCFitted:
 
     def test_plot_charge(self, test_mcfitted, test_path):
         test_mcfitted.plot(
-            wavelength=True,
-            charge=True,
-            save=test_path,
+            wavelength=True, charge=True, save=True, output=test_path, ftype='pdf'
         )
         assert exists(f"{test_path}mc_charge_breakdown.pdf")
 
     def test_plot_size(self, test_mcfitted, test_path):
         test_mcfitted.plot(
-            wavelength=True,
-            size=True,
-            save=test_path,
+            wavelength=True, size=True, save=True, output=test_path, ftype='pdf'
         )
         assert exists(f"{test_path}mc_size_breakdown.pdf")
 
     def test_plot_composition(self, test_mcfitted, test_path):
         test_mcfitted.plot(
-            wavelength=True,
-            composition=True,
-            save=test_path,
+            wavelength=True, composition=True, save=True, output=test_path, ftype='pdf'
         )
         assert exists(f"{test_path}mc_composition_breakdown.pdf")
 
