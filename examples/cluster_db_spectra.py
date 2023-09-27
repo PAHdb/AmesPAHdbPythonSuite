@@ -10,9 +10,9 @@ https://pahdb.github.io/cookbook/
 
 """
 
+import importlib_resources
 import matplotlib.pyplot as plt
 import numpy as np
-from pkg_resources import resource_filename
 from scipy.cluster.vq import kmeans
 from scipy.integrate import simpson
 
@@ -30,9 +30,10 @@ if __name__ == "__main__":
     nclusters = 2
 
     # Read in the database.
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    file_path = importlib_resources.files("amespahdbpythonsuite")
+    xml_file = file_path / "resources/pahdb-theoretical_cutdown.xml"
     pahdb = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml_file,
         check=False,
         cache=False,
     )

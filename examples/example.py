@@ -9,15 +9,16 @@ https://pahdb.github.io/cookbook/
 
 """
 
-from pkg_resources import resource_filename
+import importlib_resources
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 if __name__ == "__main__":
     # Read the database.
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    file_path = importlib_resources.files("amespahdbpythonsuite")
+    xml_file = file_path / "resources/pahdb-theoretical_cutdown.xml"
     pahdb = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml_file,
         check=False,
         cache=False,
     )

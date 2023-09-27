@@ -9,23 +9,24 @@ https://pahdb.github.io/cookbook/
 
 """
 
-from pkg_resources import resource_filename
+import importlib_resources
+import numpy as np
 
 from amespahdbpythonsuite import observation
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 if __name__ == "__main__":
-    obs = observation.Observation(
-        resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
-    )
+    file_path = importlib_resources.files("amespahdbpythonsuite")
+    data_file = file_path / "resources/galaxy_spec.ipac"
+    obs = observation.Observation(data_file)
 
     # Convert spectral unit to wavenumber required by AmesPAHdbPythonSuite.
     obs.abscissaunitsto("1/cm")
 
     # Read the database.
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml_file = file_path / "resources/pahdb-theoretical_cutdown.xml"
     pahdb = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml_file,
         check=False,
         cache=False,
     )
@@ -54,3 +55,14 @@ if __name__ == "__main__":
     fit.plot(wavelength=True, size=True)
     fit.plot(wavelength=True, charge=True)
     fit.plot(wavelength=True, composition=True)
+
+    # Predict 3 - 20 µm spectrum
+    transitions.intersect(fit.getuids())
+
+    xrange = 1e4 / np.array([20.0, 3.0])
+
+    spectrum = transitions.convolve(xrange=xrange, gaussian=True)
+
+    coadded = spectrum.coadd(weights=fit.getweights())
+
+    coadded.plot()

@@ -160,3 +160,5 @@ class Coadded(Spectrum):
             + unit.to_string("latex_inline")
             + "]",
         )
+
+        plt.show()

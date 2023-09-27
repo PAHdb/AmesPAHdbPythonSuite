@@ -9,23 +9,23 @@ https://pahdb.github.io/cookbook/
 
 """
 
-from pkg_resources import resource_filename
+import importlib_resources
 
 from amespahdbpythonsuite import observation
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 if __name__ == "__main__":
-    obs = observation.Observation(
-        resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
-    )
+    file_path = importlib_resources.files("amespahdbpythonsuite")
+    data_file = file_path / "resources/galaxy_spec.ipac"
+    obs = observation.Observation(data_file)
 
     # Convert spectral unit to wavenumber required by AmesPAHdbPythonSuite.
     obs.abscissaunitsto("1/cm")
 
     # Read the database.
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml_file = file_path / "resources/pahdb-theoretical_cutdown.xml"
     pahdb = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml_file,
         check=False,
         cache=False,
     )
@@ -55,4 +55,4 @@ if __name__ == "__main__":
     mcfit.plot(wavelength=True, size=True)
     mcfit.plot(wavelength=True, charge=True)
     mcfit.plot(wavelength=True, composition=True)
-    mcfit.plot(wavelength=True, save=True, ftype='pdf')
+    mcfit.plot(wavelength=True, save=True, ftype="pdf")

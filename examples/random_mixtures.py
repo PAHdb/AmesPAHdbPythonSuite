@@ -11,6 +11,7 @@ https://pahdb.github.io/cookbook/
 
 """
 
+import importlib_resources
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
@@ -33,11 +34,12 @@ if __name__ == "__main__":
     npoints = 300
 
     # retrieve spectra from the database
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    file_path = importlib_resources.files("amespahdbpythonsuite")
+    xml_file = file_path / "resources/pahdb-theoretical_cutdown.xml"
     pahdb = AmesPAHdb(
-        #   filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml_file,
         check=False,
-        #    cache=False,
+        cache=False,
     )
 
     # Retrieve all transitions for all species from the database

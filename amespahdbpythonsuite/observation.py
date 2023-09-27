@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
+import warnings
+from pathlib import Path
 from typing import Optional, Union
 
-import warnings
 import numpy as np
-
-from astropy.io import fits, ascii  # type: ignore
-
-from astropy.io.registry import IORegistryError  # type: ignore
-from astropy.io.fits.verify import VerifyWarning  # type: ignore
-from astropy.nddata import StdDevUncertainty  # type: ignore
 from astropy import units as u  # type: ignore
-from specutils import Spectrum1D, SpectralRegion, manipulation  # type: ignore
+from astropy.io import ascii, fits  # type: ignore
+from astropy.io.fits.verify import VerifyWarning  # type: ignore
+from astropy.io.registry import IORegistryError  # type: ignore
+from astropy.nddata import StdDevUncertainty  # type: ignore
+from specutils import SpectralRegion, Spectrum1D, manipulation  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
@@ -34,7 +33,7 @@ class Observation:
 
         """
 
-        if isinstance(d, str):
+        if isinstance(d, (Path, str)):
             self.read(d)
             return
 
@@ -79,8 +78,9 @@ class Observation:
         Write the spectrum to file as an IPAC-table.
 
         """
-        import sys
         import datetime
+        import sys
+
         from astropy.table import Table  # type: ignore
 
         if filename == "":
@@ -116,8 +116,7 @@ class Observation:
         )
 
         if self.spectrum.uncertainty:
-            tbl.add_column(self.spectrum.uncertainty.quantity,
-                           name="UNCERTAINTY")
+            tbl.add_column(self.spectrum.uncertainty.quantity, name="UNCERTAINTY")
 
         ascii.write(tbl, filename, format="ipac", overwrite=True)
 
@@ -150,7 +149,7 @@ class Observation:
         elif keywords.get("show", False):
             plt.show()
 
-    def read(self, filename: str) -> None:
+    def read(self, filename: Union[Path, str]) -> None:
         """
         Read a spectrum.
 
@@ -200,8 +199,7 @@ class Observation:
 
                         # Create Spectrum1D instance.
                         flux = h.data.T * u.Unit(h.header["BUNIT"])
-                        wave = hdu[h0].data[h1] * \
-                            u.Unit(hdu[h0].columns[h1].unit)
+                        wave = hdu[h0].data[h1] * u.Unit(hdu[h0].columns[h1].unit)
                         self.spectrum = Spectrum1D(flux, spectral_axis=wave)
 
                         return None
@@ -209,7 +207,6 @@ class Observation:
                     # Use the WCS definitions for coordinate three
                     # linear.
                     if "CDELT3" in hdu_keys:
-
                         self.header = h.header
 
                         # Create WCS instance
@@ -220,8 +217,7 @@ class Observation:
                         flux = h.data.T * u.Unit("Jy")
                         wave = (
                             h.header["CRVAL3"]
-                            + h.header["CDELT3"] *
-                            np.arange(0, h.header["NAXIS3"])
+                            + h.header["CDELT3"] * np.arange(0, h.header["NAXIS3"])
                         ) * u.Unit(h.header["CUNIT3"])
                         self.spectrum = Spectrum1D(flux, spectral_axis=wave)
 
@@ -258,7 +254,7 @@ class Observation:
 
         # Like astropy.io we, simply raise a generic OSError when
         # we fail to read the file.
-        raise OSError(self.filepath + ": Format not recognized")
+        raise OSError(f"{self.filepath}: Format not recognized")
 
     def getgrid(self) -> np.ndarray:
         """
@@ -299,8 +295,7 @@ class Observation:
             extrapolation_treatment="nan_fill"
         )
 
-        self.spectrum = resampler(
-            self.spectrum, g * self.spectrum.spectral_axis.unit)
+        self.spectrum = resampler(self.spectrum, g * self.spectrum.spectral_axis.unit)
 
     def setgridrange(self, min: float, max: Optional[float] = None) -> None:
         """
