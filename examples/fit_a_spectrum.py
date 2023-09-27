@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     xrange = 1e4 / np.array([20.0, 3.0])
 
-    spectrum = transitions.convolve(xrange=xrange, gaussian=True)
+    spectrum = transitions.convolve(xrange=xrange, gaussian=True, multiprocessing=False)
 
     coadded = spectrum.coadd(weights=fit.getweights())
 
