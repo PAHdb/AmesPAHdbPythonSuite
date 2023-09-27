@@ -160,7 +160,7 @@ class TestTransitions:
         trans.cascade(15e4, star=True, approximate=True, multiprocessing=False)
         np.testing.assert_allclose(trans.model["temperatures"][18], 1822.1891542134522)
         dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
-        np.testing.assert_allclose(dtest["intensity"], 3511508725103.2363)
+        np.testing.assert_allclose(dtest["intensity"], 3.3942087268282024e-12)
 
     def test_cascade_star_isrf(self, pahdb_theoretical):
         trans = pahdb_theoretical.gettransitionsbyuid([18])
@@ -174,7 +174,7 @@ class TestTransitions:
         trans.cascade(e=None, isrf=True, approximate=True, multiprocessing=False)
         np.testing.assert_allclose(trans.model["temperatures"][18], 1376.5627092065665)
         dtest = [x for x in trans.data[18] if x["frequency"] == 3068.821][0]
-        np.testing.assert_allclose(dtest["intensity"], 1750658149057.8667)
+        np.testing.assert_allclose(dtest["intensity"], 1.692178386101104e-12)
 
     @pytest.mark.skip(
         reason="skipped until complete implementation of multiprocessing "
