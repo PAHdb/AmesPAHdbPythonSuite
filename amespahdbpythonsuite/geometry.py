@@ -414,6 +414,11 @@ class Geometry(Data):
         if keywords.get("show", False):
             interactor.Initialize()
             interactor.Start()
+            renderWindow.Finalize()
+            interactor.TerminateApp()
+            del interactor
+
+        del renderWindow
 
     def inertia(self) -> dict:
         """
