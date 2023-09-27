@@ -702,7 +702,7 @@ class Transitions(Data):
                 )
 
                 elapsed = timedelta(seconds=(time.perf_counter() - tstart))
-                print(f"Elapsed time: {elapsed}")
+                print(f"ELAPSED TIME                     : {elapsed}")
                 print(57 * "=")
             print()
 
@@ -1469,7 +1469,7 @@ class Transitions(Data):
 
         :param x: Grid array.
         :type x: numpy.ndarray
-        :param x0:  Central frequency
+        :param x0: Central frequency
         :type x0: float
         :param width: Width of the line profile.
         :type width: float
@@ -1569,7 +1569,7 @@ class Transitions(Data):
         global frequency
         global energy
 
-        if type(data) == zip:
+        if isinstance(data, zip):
             data, ncs, charge = [list(x) for x in data]
             if keywords.get("star") or keywords.get("isrf"):
                 energy = Transitions.mean_energy(**keywords)
