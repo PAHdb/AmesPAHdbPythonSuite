@@ -3,16 +3,19 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import multiprocessing
+import os
+import pickle
+import tempfile
 import time
 from datetime import timedelta
 from functools import partial
-from typing import TYPE_CHECKING, Optional, Union, Any
-
-from scipy import integrate, optimize, ndimage, special  # type: ignore
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 import astropy.units as u  # type: ignore
 import numpy as np
+from scipy import integrate, ndimage, optimize, special  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
@@ -416,6 +419,19 @@ class Transitions(Data):
         :type: float
 
         """
+
+        if keywords.get("cache", True):
+            hash_code = (
+                hashlib.md5(pickle.dumps((e, keywords, self))).hexdigest().upper()
+            )
+            file_cache = os.path.join(tempfile.gettempdir(), hash_code) + ".pkl"
+            if os.path.exists(file_cache):
+                message(f"RESTORING CASCADE: {hash_code}")
+                with open(file_cache, "rb") as f:
+                    d = pickle.load(f)
+                    self.set(d, pahdb=self.pahdb)
+                return
+
         if self.database != "theoretical" and not keywords.get("approximate"):
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
@@ -706,6 +722,12 @@ class Transitions(Data):
                 print(57 * "=")
             print()
 
+        if keywords.get("cache", True):
+            file_cache = os.path.join(tempfile.gettempdir(), hash_code) + ".pkl"
+            message(f"CACHING CASCADE: {hash_code}")
+            with open(file_cache, "wb") as f:
+                pickle.dump(self.get(), f)
+
     def convolve(self, **keywords) -> Spectrum:
         """
         Convolve transitions with a line profile.
@@ -841,13 +863,14 @@ class Transitions(Data):
         Plot the transitions absorption spectrum.
 
         """
-        import matplotlib.cm as cm  # type: ignore
+        import matplotlib as mpl  # type: ignore
         import matplotlib.pyplot as plt  # type: ignore
 
         _, ax = plt.subplots()
         ax.minorticks_on()
         ax.tick_params(which="major", right="on", top="on", direction="in", axis="both")
-        colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
+        colors = mpl.colormaps["rainbow"](np.linspace(0, 1, len(self.uids)))
+
         for uid, col in zip(self.uids, colors):
             f = [v for v in self.data[uid]]
             x = [d["frequency"] for d in f]

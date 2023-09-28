@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
-from typing import Optional, Union, Literal
-
-import os
 import builtins
 import operator
-import numpy as np
+import os
+from typing import Literal, Optional, Union
 
+import numpy as np
 from scipy import integrate  # type: ignore
 from specutils import Spectrum1D  # type: ignore
 
@@ -36,9 +35,9 @@ class Fitted(Spectrum):
 
         """
 
-        import matplotlib.pyplot as plt  # type: ignore
+        import matplotlib as mpl  # type: ignore
         import matplotlib.gridspec as gs  # type: ignore
-        import matplotlib.cm as cm  # type: ignore
+        import matplotlib.pyplot as plt  # type: ignore
 
         if keywords.get("datalabel", False):
             datalabel = keywords["datalabel"]
@@ -133,7 +132,7 @@ class Fitted(Spectrum):
                 which="minor", right="on", top="on", direction="in", length=3
             )
 
-            colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
+            colors = mpl.colormaps["rainbow"](np.linspace(0, 1, len(self.uids)))
             for uid, col in zip(self.uids, colors):
                 y = self.data[uid]
                 if keywords.get("residual", False):
@@ -302,8 +301,9 @@ class Fitted(Spectrum):
         Write the fitted spectra to file as an IPAC-table.
 
         """
-        import sys
         import datetime
+        import sys
+
         from astropy.io import ascii  # type: ignore
         from astropy.table import Table  # type: ignore
 

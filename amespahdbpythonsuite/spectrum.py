@@ -250,13 +250,13 @@ class Spectrum(Transitions):
         Plot the spectrum.
 
         """
-        import matplotlib.cm as cm  # type: ignore
+        import matplotlib as mpl  # type: ignore
         import matplotlib.pyplot as plt  # type: ignore
 
         _, ax = plt.subplots()
         ax.minorticks_on()
         ax.tick_params(which="major", right="on", top="on", direction="in")
-        colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
+        colors = mpl.colormaps["rainbow"](np.linspace(0, 1, len(self.uids)))
         for y, col in zip(self.data.values(), colors):
             ax.plot(self.grid, y, color=col)
 

@@ -4,8 +4,8 @@ from typing import Optional
 
 import numpy as np
 
-from amespahdbpythonsuite.data import Data
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+from amespahdbpythonsuite.data import Data
 
 message = AmesPAHdb.message
 
@@ -57,8 +57,9 @@ class Laboratory(Data):
         Write the laboratory spectra to file as an IPAC-table.
 
         """
-        import sys
         import datetime
+        import sys
+
         from astropy.io import ascii  # type: ignore
         from astropy.table import Table  # type: ignore
 
@@ -107,13 +108,13 @@ class Laboratory(Data):
         Plot the spectrum.
 
         """
+        import matplotlib as mpl  # type: ignore
         import matplotlib.pyplot as plt  # type: ignore
-        import matplotlib.cm as cm  # type: ignore
 
         _, ax = plt.subplots()
         ax.minorticks_on()
         ax.tick_params(which="major", right="on", top="on", direction="in")
-        colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
+        colors = mpl.colormaps["rainbow"](np.linspace(0, 1, len(self.uids)))
         for d, col in zip(self.data.values(), colors):
             ax.plot(d["frequency"], d["intensity"], color=col)
 

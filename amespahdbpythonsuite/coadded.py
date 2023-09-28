@@ -76,8 +76,9 @@ class Coadded(Spectrum):
         Write the coadded spectrum to file as an IPAC-table.
 
         """
-        import sys
         import datetime
+        import sys
+
         from astropy.io import ascii  # type: ignore
         from astropy.table import Table  # type: ignore
 
@@ -124,13 +125,13 @@ class Coadded(Spectrum):
         Plot the spectrum.
 
         """
+        import matplotlib as mpl  # type: ignore
         import matplotlib.pyplot as plt  # type: ignore
-        import matplotlib.cm as cm  # type: ignore
 
         _, ax = plt.subplots()
         ax.minorticks_on()
         ax.tick_params(which="major", right="on", top="on", direction="in")
-        colors = cm.rainbow(np.linspace(0, 1, len(self.uids)))
+        colors = mpl.colormaps["rainbow"](np.linspace(0, 1, len(self.uids)))
         for y, col in zip(self.data.values(), colors):
             ax.plot(self.grid, y, color=col)
 
