@@ -14,9 +14,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -166,16 +166,19 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
-
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span><span class="p">,</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">ndimage</span><span class="p">,</span> <span class="n">special</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>  <span class="c1"># type: ignore</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span><span class="p">,</span> <span class="n">ndimage</span><span class="p">,</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">special</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
 <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.data</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -196,7 +199,9 @@
 <span class="n">intensities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
 
-<div class="viewcode-block" id="Transitions"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions">[docs]</a><span class="k">class</span> <span class="nc">Transitions</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+<div class="viewcode-block" id="Transitions">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions">[docs]</a>
+<span class="k">class</span> <span class="nc">Transitions</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    AmesPAHdbPythonSuite transitions class.</span>
 <span class="sd">    Contains methods to create and apply an emission model.</span>
@@ -211,7 +216,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Transitions.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Transitions.set">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.set">[docs]</a>
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.</span>
 <span class="sd">        Checks flavor of the database, i.e., theoretical or experimental</span>
@@ -219,6 +226,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Data</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -232,7 +240,9 @@
                 <span class="k">if</span> <span class="s2">&quot;shift&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_shift</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;shift&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Transitions.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="Transitions.get">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.get` to get keywords.</span>
 
@@ -241,6 +251,7 @@
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;shift&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shift</span>
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -257,7 +268,9 @@
 
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AmesPAHdbPythonSuite Transitions instance.</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="si">=}</span><span class="s2">&quot;</span>
 
-<div class="viewcode-block" id="Transitions.write"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Transitions.write">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write the transitions to file as an IPAC-table.</span>
 
@@ -320,7 +333,10 @@
 
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WRITTEN: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.shift"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.shift">[docs]</a>    <span class="k">def</span> <span class="nf">shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Transitions.shift">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.shift">[docs]</a>
+    <span class="k">def</span> <span class="nf">shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shifts transitions frequency by provided value.</span>
 
@@ -332,7 +348,10 @@
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">shift</span>
         <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TOTAL SHIFT: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_shift</span><span class="si">}</span><span class="s2"> /cm&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.fixed_temperature"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.fixed_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">fixed_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Transitions.fixed_temperature">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.fixed_temperature">[docs]</a>
+    <span class="k">def</span> <span class="nf">fixed_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies the Fixed Temperature emission model.</span>
 
@@ -372,7 +391,10 @@
             <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">],</span> <span class="n">intensity</span><span class="p">):</span>
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="n">i</span></div>
 
-<div class="viewcode-block" id="Transitions.calculated_temperature"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.calculated_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">calculated_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Transitions.calculated_temperature">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.calculated_temperature">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculated_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies the Calculated Temperature emission model.</span>
 
@@ -407,11 +429,11 @@
         <span class="n">energy</span> <span class="o">=</span> <span class="n">e</span>
         <span class="n">Tstar</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">)):</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">)):</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting energy in dictionary form&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expecting energy in dictionary form&quot;</span><span class="p">)</span>
 
             <span class="n">Tstar</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mi">4</span>
@@ -426,41 +448,41 @@
             <span class="n">nselect</span> <span class="o">=</span> <span class="n">energy</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nselect</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;REBINNING STELLAR MODEL: 100 POINTS&#39;</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;REBINNING STELLAR MODEL: 100 POINTS&quot;</span><span class="p">)</span>
             <span class="c1"># ^ Consider giving a user warning when providing large dimension data.</span>
 
             <span class="k">global</span> <span class="n">star_model</span>
-            <span class="n">star_model</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;intensity&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="n">star_model</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span> <span class="o">*</span> <span class="mi">100</span>
             <span class="c1"># * Using interpolation through ndimage.zoom to get equivalent</span>
             <span class="c1"># * of the IDL congrid function.</span>
-            <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
-                <span class="n">energy</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
+            <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
+                <span class="n">energy</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
             <span class="p">)</span>
-            <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
-                <span class="n">energy</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
+            <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
+                <span class="n">energy</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
             <span class="p">)</span>
-            <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CALCULATED EFFECTIVE TEMPERATURE: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s1"> Kelvin&#39;</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CALCULATED EFFECTIVE TEMPERATURE: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s2"> Kelvin&quot;</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting temperature as float type&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expecting temperature as float type&quot;</span><span class="p">)</span>
 
             <span class="n">Tstar</span> <span class="o">=</span> <span class="n">energy</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">):</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;ISRF SELECTED: IGNORING FIRST PARAMETER&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">):</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;ISRF SELECTED: IGNORING FIRST PARAMETER&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;calculated_temperature_m&quot;</span><span class="p">,</span>
             <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;temperatures&quot;</span><span class="p">:</span> <span class="p">{},</span>
-            <span class="s2">&quot;approximate&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">),</span>
-            <span class="s2">&quot;star&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">),</span>
-            <span class="s2">&quot;isrf&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">),</span>
-            <span class="s2">&quot;stellar_model&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;approximate&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;star&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;isrf&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;stellar_model&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">),</span>
             <span class="s2">&quot;Tstar&quot;</span><span class="p">:</span> <span class="n">Tstar</span><span class="p">,</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="p">}</span>
@@ -480,15 +502,15 @@
             <span class="c1"># Start timer.</span>
             <span class="n">tstart</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
             <span class="c1"># Instatiate model energy and temperature dictionaries.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SPECIES                          : </span><span class="si">%d</span><span class="s2">/</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nuids</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UID                              : </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">uid</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="p">(</span>
-                <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span>
+                <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">)</span>
             <span class="p">):</span>
                 <span class="k">global</span> <span class="n">charge</span>
                 <span class="k">global</span> <span class="n">nc</span>
@@ -496,23 +518,23 @@
                 <span class="n">charge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span>
                 <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;n_c&quot;</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">):</span>
                 <span class="n">energy</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                        <span class="s1">&#39;Expecting temperature as float type or isrf keyword&#39;</span>
+                        <span class="s2">&quot;Expecting temperature as float type or isrf keyword&quot;</span>
                     <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
                     <span class="n">Transitions</span><span class="o">.</span><span class="n">mean_energy_squared</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-</span> <span class="n">energy</span><span class="o">**</span><span class="mi">2</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">energy</span> <span class="o">=</span> <span class="n">e</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;e&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy</span>
 
             <span class="nb">print</span><span class="p">(</span>
                 <span class="s2">&quot;MEAN ABSORBED ENERGY             :&quot;</span>
@@ -523,7 +545,7 @@
             <span class="k">global</span> <span class="n">frequencies</span>
             <span class="n">frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]])</span>
 
-            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">):</span>
                 <span class="n">Tmax</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">brentq</span><span class="p">(</span>
                     <span class="n">Transitions</span><span class="o">.</span><span class="n">approximate_attained_temperature</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="mf">5000.0</span>
                 <span class="p">)</span>
@@ -549,29 +571,32 @@
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s1">&#39;model: calculated_temperature, approximated:&#39;</span>
+            <span class="s2">&quot;model: calculated_temperature, approximated:&quot;</span>
             <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;isrf&#39;</span><span class="p">]:</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="s1">&#39;, isrf: yes&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;isrf&quot;</span><span class="p">]:</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot;, isrf: yes&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;star&#39;</span><span class="p">]:</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="s1">&#39;, star: yes&#39;</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, Tstar: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s1"> Kelvin&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;star&quot;</span><span class="p">]:</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot;, star: yes&quot;</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, Tstar: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s2"> Kelvin&quot;</span>
             <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, modelled: </span><span class="si">{</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting energy as float type&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expecting energy as float type&quot;</span><span class="p">)</span>
 
-            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39; &lt;E&gt;: </span><span class="si">{</span><span class="n">energy</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.6021765e-12</span><span class="si">}</span><span class="s1"> eV&#39;</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; &lt;E&gt;: </span><span class="si">{</span><span class="n">energy</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.6021765e-12</span><span class="si">}</span><span class="s2"> eV&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="mi">57</span> <span class="o">*</span> <span class="s2">&quot;=&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.cascade"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.cascade">[docs]</a>    <span class="k">def</span> <span class="nf">cascade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Transitions.cascade">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.cascade">[docs]</a>
+    <span class="k">def</span> <span class="nf">cascade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies the Cascade emission model.</span>
 
@@ -579,14 +604,27 @@
 <span class="sd">        :type: float</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">!=</span> <span class="s2">&quot;theoretical&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">hash_code</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">((</span><span class="n">e</span><span class="p">,</span> <span class="n">keywords</span><span class="p">,</span> <span class="bp">self</span><span class="p">)))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">file_cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">hash_code</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_cache</span><span class="p">):</span>
+                <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RESTORING CASCADE: </span><span class="si">{</span><span class="n">hash_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_cache</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">!=</span> <span class="s2">&quot;theoretical&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">):</span>
             <span class="n">message</span><span class="p">(</span><span class="s2">&quot;THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="p">(</span>
-            <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">)</span>
+            <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">)</span>
         <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;VALID DATABASE NEEDED FOR USE WITH STAR/ISRF&#39;</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;VALID DATABASE NEEDED FOR USE WITH STAR/ISRF&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;zerokelvin_m&quot;</span><span class="p">:</span>
@@ -604,13 +642,11 @@
         <span class="n">energy</span> <span class="o">=</span> <span class="n">e</span>
         <span class="n">Tstar</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="n">tstart</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">):</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">):</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;STELLAR MODEL SELECTED: USING FIRST PARAMETER AS MODEL&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting energy in dictionary form&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expecting energy in dictionary form&quot;</span><span class="p">)</span>
 
             <span class="n">Tstar</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mi">4</span>
@@ -625,45 +661,45 @@
             <span class="n">nselect</span> <span class="o">=</span> <span class="n">energy</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nselect</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;REBINNING STELLAR MODEL: 100 POINTS&#39;</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;REBINNING STELLAR MODEL: 100 POINTS&quot;</span><span class="p">)</span>
             <span class="c1"># ^ Consider giving a user warning when providing large dimension data.</span>
 
             <span class="k">global</span> <span class="n">star_model</span>
-            <span class="n">star_model</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;intensity&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="n">star_model</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span> <span class="o">*</span> <span class="mi">100</span>
 
             <span class="c1"># * Using interpolation through ndimage.zoom to get equivalent</span>
             <span class="c1"># * of the IDL congrid function.</span>
-            <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
-                <span class="n">energy</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
+            <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
+                <span class="n">energy</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
             <span class="p">)</span>
-            <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
-                <span class="n">energy</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
+            <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
+                <span class="n">energy</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">],</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">][</span><span class="n">select</span><span class="p">])</span>
             <span class="p">)</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CALCULATED EFFECTIVE TEMPERATURE: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s1"> Kelvin&#39;</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CALCULATED EFFECTIVE TEMPERATURE: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s2"> Kelvin&quot;</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">):</span>
             <span class="n">Tstar</span> <span class="o">=</span> <span class="n">energy</span>
-            <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;BLACKBODY TEMPERATURE: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s1"> Kelvin&#39;</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BLACKBODY TEMPERATURE: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s2"> Kelvin&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">):</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;ISRF SELECTED: IGNORING FIRST PARAMETER&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">):</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;ISRF SELECTED: IGNORING FIRST PARAMETER&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">):</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;CONVOLVING WITH ENTIRE RADIATION FIELD&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">):</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;CONVOLVING WITH ENTIRE RADIATION FIELD&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;cascade_m&quot;</span><span class="p">,</span>
             <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;temperatures&quot;</span><span class="p">:</span> <span class="p">{},</span>
-            <span class="s2">&quot;approximate&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">),</span>
-            <span class="s2">&quot;star&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">),</span>
-            <span class="s2">&quot;isrf&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">),</span>
-            <span class="s2">&quot;convolved&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">),</span>
-            <span class="s2">&quot;stellar_model&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;approximate&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;star&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;isrf&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;convolved&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;stellar_model&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">),</span>
             <span class="s2">&quot;Tstar&quot;</span><span class="p">:</span> <span class="n">Tstar</span><span class="p">,</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="p">}</span>
@@ -677,34 +713,34 @@
             <span class="sa">f</span><span class="s1">&#39;model: cascade, approximated: </span><span class="si">{</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;isrf&#39;</span><span class="p">]:</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="s1">&#39;, isrf: yes&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;isrf&quot;</span><span class="p">]:</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot;, isrf: yes&quot;</span>
             <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, convolved: </span><span class="si">{</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convlolved&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
 
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;star&#39;</span><span class="p">]:</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="s1">&#39;, star: yes&#39;</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, Tstar: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s1"> Kelvin&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;star&quot;</span><span class="p">]:</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot;, star: yes&quot;</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, Tstar: </span><span class="si">{</span><span class="n">Tstar</span><span class="si">}</span><span class="s2"> Kelvin&quot;</span>
             <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, modelled: </span><span class="si">{</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
             <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, convolved: </span><span class="si">{</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;E&gt;: </span><span class="si">{</span><span class="n">energy</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.6021765e-12</span><span class="si">}</span><span class="s1"> eV&#39;</span>
+            <span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&lt;E&gt;: </span><span class="si">{</span><span class="n">energy</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.6021765e-12</span><span class="si">}</span><span class="s2"> eV&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="mi">57</span> <span class="o">*</span> <span class="s2">&quot;=&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;USING APPROXIMATION&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;USING APPROXIMATION&quot;</span><span class="p">)</span>
 
             <span class="n">func1</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">approximate_attained_temperature</span>
             <span class="n">func2</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">approximate_feature_strength</span>
 
-            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                     <span class="n">func3</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">isrf_approximate_feature_strength_convolved</span>
 
-                <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                     <span class="n">func3</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">Transitions</span><span class="o">.</span><span class="n">stellar_model_approximate_feature_strength_convolved</span>
                     <span class="p">)</span>
@@ -715,11 +751,11 @@
             <span class="n">func1</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">attained_temperature</span>
             <span class="n">func2</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">feature_strength</span>
 
-            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                     <span class="n">func3</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">isrf_feature_strength_convolved</span>
 
-                <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                     <span class="n">func3</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">stellar_model_feature_strength_convolved</span>
 
                 <span class="k">else</span><span class="p">:</span>
@@ -730,16 +766,16 @@
             <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;USING MULTIPROCESSING WITH </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> CORES&quot;</span><span class="p">)</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">ncores</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                 <span class="n">cascade_em_model</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
                     <span class="n">Transitions</span><span class="o">.</span><span class="n">_cascade_em_model</span><span class="p">,</span>
                     <span class="n">energy</span><span class="p">,</span>
                     <span class="n">t_method</span><span class="o">=</span><span class="n">func1</span><span class="p">,</span>
                     <span class="n">i_method</span><span class="o">=</span><span class="n">func3</span><span class="p">,</span>
-                    <span class="n">convolved</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">),</span>
-                    <span class="n">approximate</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">),</span>
-                    <span class="n">star</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">),</span>
-                    <span class="n">isrf</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">),</span>
+                    <span class="n">convolved</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">),</span>
+                    <span class="n">approximate</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">),</span>
+                    <span class="n">star</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">),</span>
+                    <span class="n">isrf</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cascade_em_model</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
@@ -747,16 +783,16 @@
                     <span class="n">energy</span><span class="p">,</span>
                     <span class="n">t_method</span><span class="o">=</span><span class="n">func1</span><span class="p">,</span>
                     <span class="n">i_method</span><span class="o">=</span><span class="n">func2</span><span class="p">,</span>
-                    <span class="n">convolved</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">),</span>
-                    <span class="n">approximate</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">),</span>
-                    <span class="n">star</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">),</span>
-                    <span class="n">isrf</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">),</span>
+                    <span class="n">convolved</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">),</span>
+                    <span class="n">approximate</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">),</span>
+                    <span class="n">star</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">),</span>
+                    <span class="n">isrf</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">),</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="p">(</span>
-                <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span>
+                <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">)</span>
             <span class="p">):</span>
                 <span class="n">charges</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">]</span>
                 <span class="n">ncs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;n_c&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">]</span>
@@ -778,16 +814,18 @@
             <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">nuids</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">:</span>
-                <span class="c1"># Instatiate model energy and temperature dictionaries.</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">tstart</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+                <span class="c1"># Instantiate model energy and temperature dictionaries.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SPECIES                          : </span><span class="si">%d</span><span class="s2">/</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nuids</span><span class="p">))</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UID                              : </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">uid</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">)</span>
-                    <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span>
-                    <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">)</span>
+                    <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">)</span>
                 <span class="p">):</span>
                     <span class="k">global</span> <span class="n">charge</span>
                     <span class="k">global</span> <span class="n">nc</span>
@@ -795,26 +833,26 @@
                     <span class="n">charge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;charge&quot;</span><span class="p">]</span>
                     <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pahdb</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;n_c&quot;</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">):</span>
                     <span class="n">energy</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
                         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                            <span class="s1">&#39;Expecting temperature as float type or isrf keyword&#39;</span>
+                            <span class="s2">&quot;Expecting temperature as float type or isrf keyword&quot;</span>
                         <span class="p">)</span>
 
-                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
                         <span class="n">Transitions</span><span class="o">.</span><span class="n">mean_energy_squared</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-</span> <span class="n">energy</span><span class="o">**</span><span class="mi">2</span>
                     <span class="p">)</span>
 
-                    <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">):</span>
                         <span class="n">Nphot</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">number_of_photons</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">energy</span> <span class="o">=</span> <span class="n">e</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;e&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy</span>
 
                 <span class="nb">print</span><span class="p">(</span>
                     <span class="s2">&quot;MEAN ABSORBED ENERGY             :&quot;</span>
@@ -828,15 +866,15 @@
                 <span class="k">global</span> <span class="n">intensities</span>
                 <span class="n">intensities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]])</span>
 
-                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">):</span>
                     <span class="n">totalcrossection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
 
                 <span class="n">Tmax</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">brentq</span><span class="p">(</span><span class="n">func1</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;temperatures&quot;</span><span class="p">][</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">Tmax</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MAXIMUM ATTAINED TEMPERATURE     : </span><span class="si">%f</span><span class="s2"> Kelvin&quot;</span> <span class="o">%</span> <span class="n">Tmax</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                    <span class="s1">&#39;convolved&#39;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;convolved&quot;</span>
                 <span class="p">):</span>
                     <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]:</span>
                         <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -844,9 +882,7 @@
                             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span>
                                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span>
                                 <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">func3</span><span class="p">,</span> <span class="mf">2.5e3</span><span class="p">,</span> <span class="mf">1.1e5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                            <span class="p">)</span>
-                    <span class="n">intensities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">/</span> <span class="n">Nphot</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">intensities</span><span class="p">])</span>
-
+                            <span class="p">)</span> <span class="o">/</span> <span class="n">Nphot</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]:</span>
                         <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -858,29 +894,29 @@
 
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;approximate&#39;</span><span class="p">):</span>
-                <span class="n">intensities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="o">**</span><span class="mi">3</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">)]</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">intensities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="n">x</span> <span class="o">*</span> <span class="mf">2.48534271218563e-23</span> <span class="o">*</span> <span class="n">nc</span> <span class="o">*</span> <span class="n">y</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="n">totalcrossection</span>
-                        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">)</span>
-                    <span class="p">]</span>
+                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;approximate&quot;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]:</span>
+                        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">2.48534271218563e-23</span> <span class="o">*</span> <span class="n">nc</span> <span class="o">/</span> <span class="n">totalcrossection</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;ENERGY CONSERVATION IN SPECTRUM  : &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sum</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;ENERGY CONSERVATION IN SPECTRUM &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; :</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">][</span><span class="n">uid</span><span class="p">][</span><span class="s1">&#39;e&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+                <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">tstart</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ELAPSED TIME                     : </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="mi">57</span> <span class="o">*</span> <span class="s2">&quot;=&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
 
-        <span class="n">message</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">file_cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">hash_code</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span>
+            <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CACHING CASCADE: </span><span class="si">{</span><span class="n">hash_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_cache</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span></div>
 
-        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">tstart</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Elapsed time: </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.convolve"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.convolve">[docs]</a>    <span class="k">def</span> <span class="nf">convolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+<div class="viewcode-block" id="Transitions.convolve">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.convolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">convolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convolve transitions with a line profile.</span>
 <span class="sd">        Calls class:</span>
@@ -1010,18 +1046,22 @@
             <span class="n">fwhm</span><span class="o">=</span><span class="n">fwhm</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Transitions.plot">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the transitions absorption spectrum.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>  <span class="c1"># type: ignore</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
-        <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">rainbow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)))</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colormaps</span><span class="p">[</span><span class="s2">&quot;rainbow&quot;</span><span class="p">](</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">)))</span>
+
         <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
             <span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">uid</span><span class="p">]]</span>
             <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
@@ -1050,7 +1090,10 @@
         <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Transitions.absorption_cross_section"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.absorption_cross_section">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.absorption_cross_section">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.absorption_cross_section">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">absorption_cross_section</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the PAH absorption cross-section per Li &amp; Draine 2007,</span>
@@ -1104,7 +1147,10 @@
 
         <span class="k">return</span> <span class="n">crosssection</span></div>
 
-<div class="viewcode-block" id="Transitions.planck"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.planck">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">planck</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to Calculate the absorption cross-section</span>
@@ -1121,7 +1167,10 @@
             <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="mf">1.4387751297850830401</span> <span class="o">*</span> <span class="n">f</span> <span class="o">/</span> <span class="n">Tstar</span><span class="p">))</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.planck_squared"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_squared">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.planck_squared">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_squared">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">planck_squared</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to Calculate the absorption cross-section</span>
@@ -1138,7 +1187,10 @@
             <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="mf">1.4387751297850830401</span> <span class="o">*</span> <span class="n">f</span> <span class="o">/</span> <span class="n">Tstar</span><span class="p">))</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.planck_number_of_photons"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_number_of_photons">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.planck_number_of_photons">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_number_of_photons">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">planck_number_of_photons</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to Calculate the number of photons</span>
@@ -1155,7 +1207,10 @@
             <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="mf">1.4387751297850830401</span> <span class="o">*</span> <span class="n">f</span> <span class="o">/</span> <span class="n">Tstar</span><span class="p">))</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.isrf"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.isrf">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">isrf</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the absorption cross-section times</span>
@@ -1185,7 +1240,10 @@
             <span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.isrf_squared"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_squared">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.isrf_squared">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_squared">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">isrf_squared</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the absorption cross-section times</span>
@@ -1215,7 +1273,10 @@
             <span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.isrf_number_of_photons"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_number_of_photons">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.isrf_number_of_photons">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_number_of_photons">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">isrf_number_of_photons</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the number of photons per Mathis et al. 1983, A&amp;A, 128:212.</span>
@@ -1245,7 +1306,10 @@
             <span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.mean_energy"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.mean_energy">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.mean_energy">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.mean_energy">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the mean energy in erg for a given</span>
@@ -1258,22 +1322,22 @@
         <span class="c1"># ! implementation of the 5-point Newton-Cotes integration of</span>
         <span class="c1"># ! IDL&#39;s INT_TABULATED.</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">):</span>
             <span class="n">me</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mf">1.9864456023253396e-16</span>
                 <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">simpson</span><span class="p">(</span>
-                    <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
-                    <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">])</span>
-                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">],</span>
+                    <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
+                    <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">])</span>
+                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
                 <span class="o">/</span> <span class="n">integrate</span><span class="o">.</span><span class="n">simpson</span><span class="p">(</span>
-                    <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
-                    <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">])</span>
-                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span>
-                    <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
+                    <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
+                    <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">])</span>
+                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span>
+                    <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">):</span>
             <span class="n">me</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mf">1.9864456023253396e-16</span>
                 <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">isrf</span><span class="p">,</span> <span class="mf">2.5e3</span><span class="p">,</span> <span class="mf">1.1e5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -1288,7 +1352,10 @@
 
         <span class="k">return</span> <span class="n">me</span></div>
 
-<div class="viewcode-block" id="Transitions.mean_energy_squared"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.mean_energy_squared">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.mean_energy_squared">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.mean_energy_squared">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">mean_energy_squared</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the mean energy in erg^2 for a given</span>
@@ -1301,23 +1368,23 @@
         <span class="c1"># ! implementation of the 5-point Newton-Cotes integration of</span>
         <span class="c1"># ! IDL&#39;s INT_TABULATED.</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">):</span>
             <span class="n">me</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mf">3.945966130997681e-32</span>
                 <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">simpson</span><span class="p">(</span>
-                    <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
-                    <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span>
-                    <span class="o">*</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">])</span>
-                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">],</span>
+                    <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
+                    <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">])</span>
+                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
                 <span class="o">/</span> <span class="n">integrate</span><span class="o">.</span><span class="n">simpson</span><span class="p">(</span>
-                    <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
-                    <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">])</span>
-                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span>
-                    <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
+                    <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
+                    <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">])</span>
+                    <span class="o">*</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span>
+                    <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">):</span>
             <span class="n">me</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mf">3.945966130997681e-32</span>
                 <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">isrf_squared</span><span class="p">,</span> <span class="mf">2.5e3</span><span class="p">,</span> <span class="mf">1.1e5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -1332,7 +1399,10 @@
 
         <span class="k">return</span> <span class="n">me</span></div>
 
-<div class="viewcode-block" id="Transitions.attained_temperature"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.attained_temperature">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.attained_temperature">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.attained_temperature">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">attained_temperature</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a PAH&#39;s temperature after absorbing a given amount of energy.</span>
@@ -1345,7 +1415,10 @@
 
         <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">heat_capacity</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">T</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">energy</span></div>
 
-<div class="viewcode-block" id="Transitions.approximate_attained_temperature"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.approximate_attained_temperature">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.approximate_attained_temperature">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.approximate_attained_temperature">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">approximate_attained_temperature</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a PAH&#39;s temperature after absorbing a given amount of energy</span>
@@ -1366,7 +1439,10 @@
             <span class="o">-</span> <span class="n">energy</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.heat_capacity"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.heat_capacity">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.heat_capacity">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.heat_capacity">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">heat_capacity</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate heat capacity.</span>
@@ -1382,7 +1458,10 @@
 
         <span class="k">return</span> <span class="mf">1.3806505e-16</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">val</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">val</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">val</span><span class="p">)))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.planck_feature_strength_convolved"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_feature_strength_convolved">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.planck_feature_strength_convolved">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_feature_strength_convolved">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">planck_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a</span>
@@ -1402,7 +1481,10 @@
             <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">feature_strength</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">Tmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.isrf_feature_strength_convolved"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_feature_strength_convolved">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.isrf_feature_strength_convolved">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_feature_strength_convolved">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">isrf_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with the</span>
@@ -1422,7 +1504,10 @@
             <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">feature_strength</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">Tmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.stellar_model_feature_strength_convolved"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.stellar_model_feature_strength_convolved">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.stellar_model_feature_strength_convolved">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.stellar_model_feature_strength_convolved">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">stellar_model_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a given stellar model.</span>
@@ -1440,13 +1525,16 @@
             <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
                 <span class="n">f</span><span class="p">,</span>
-                <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
-                <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequenxy&#39;</span><span class="p">],</span>
+                <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
+                <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequenxy&quot;</span><span class="p">],</span>
             <span class="p">)</span>
             <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">feature_strength</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">Tmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.planck_approximate_feature_strength_convolved"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_approximate_feature_strength_convolved">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.planck_approximate_feature_strength_convolved">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_approximate_feature_strength_convolved">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">planck_approximate_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a</span>
@@ -1468,7 +1556,10 @@
             <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">approximate_feature_strength</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">Tmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.isrf_approximate_feature_strength_convolved"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_approximate_feature_strength_convolved">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.isrf_approximate_feature_strength_convolved">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_approximate_feature_strength_convolved">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">isrf_approximate_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with</span>
@@ -1488,7 +1579,10 @@
             <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">approximate_feature_strength</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">Tmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.stellar_model_approximate_feature_strength_convolved"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.stellar_model_approximate_feature_strength_convolved">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.stellar_model_approximate_feature_strength_convolved">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.stellar_model_approximate_feature_strength_convolved">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">stellar_model_approximate_feature_strength_convolved</span><span class="p">(</span>
         <span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -1509,14 +1603,17 @@
             <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
                 <span class="n">f</span><span class="p">,</span>
-                <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],</span>
-                <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s1">&#39;frequenxy&#39;</span><span class="p">],</span>
+                <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
+                <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequenxy&quot;</span><span class="p">],</span>
             <span class="p">)</span>
             <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">approximate_feature_strength</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="n">Tmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="o">/</span> <span class="mf">1.9864456023253396e-16</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.feature_strength"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.feature_strength">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.feature_strength">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.feature_strength">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">feature_strength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength covolved with a blackbody.</span>
@@ -1544,7 +1641,10 @@
             <span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.approximate_feature_strength"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.approximate_feature_strength">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.approximate_feature_strength">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.approximate_feature_strength">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">approximate_feature_strength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a</span>
@@ -1612,7 +1712,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">T</span><span class="o">**</span><span class="n">b</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Transitions.number_of_photons"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.number_of_photons">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="Transitions.number_of_photons">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.number_of_photons">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">number_of_photons</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the number of photons given a</span>
@@ -1620,7 +1723,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">[</span><span class="s1">&#39;stellar_model&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">[</span><span class="s2">&quot;stellar_model&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">simpson</span><span class="p">(</span>
                 <span class="n">star_model</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
                 <span class="n">Transitions</span><span class="o">.</span><span class="n">absorption_cross_section</span><span class="p">(</span>
@@ -1630,11 +1733,12 @@
                 <span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">isrf_number_of_photons</span><span class="p">,</span> <span class="mf">2.5e3</span><span class="p">,</span> <span class="mf">1.1e5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">Transitions</span><span class="o">.</span><span class="n">planck_number_of_photons</span><span class="p">,</span> <span class="mf">2.5e3</span><span class="p">,</span> <span class="mf">1.1e5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_lineprofile</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -1643,7 +1747,7 @@
 
 <span class="sd">        :param x: Grid array.</span>
 <span class="sd">        :type x: numpy.ndarray</span>
-<span class="sd">        :param x0:  Central frequency</span>
+<span class="sd">        :param x0: Central frequency</span>
 <span class="sd">        :type x0: float</span>
 <span class="sd">        :param width: Width of the line profile.</span>
 <span class="sd">        :type width: float</span>
@@ -1743,9 +1847,9 @@
         <span class="k">global</span> <span class="n">frequency</span>
         <span class="k">global</span> <span class="n">energy</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">zip</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">zip</span><span class="p">):</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">ncs</span><span class="p">,</span> <span class="n">charge</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isrf&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;isrf&quot;</span><span class="p">):</span>
                 <span class="n">energy</span> <span class="o">=</span> <span class="n">Transitions</span><span class="o">.</span><span class="n">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
         <span class="n">energy</span> <span class="o">=</span> <span class="n">e</span>
@@ -1756,13 +1860,13 @@
         <span class="k">global</span> <span class="n">intensities</span>
         <span class="n">intensities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">):</span>
             <span class="n">Tmax</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">brentq</span><span class="p">(</span><span class="n">t_method</span><span class="p">,</span> <span class="mf">2.73</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">frequency</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;convolved&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;convolved&quot;</span><span class="p">):</span>
                     <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span>
                         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">i_method</span><span class="p">,</span> <span class="mf">2.5e3</span><span class="p">,</span> <span class="mf">1.1e5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="p">)</span>
@@ -1772,6 +1876,7 @@
                     <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">Tmax</span></div>
+
 </pre></div>
 
            </div>

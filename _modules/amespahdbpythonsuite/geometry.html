@@ -14,9 +14,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -175,7 +175,9 @@
 <span class="n">message</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="o">.</span><span class="n">message</span>
 
 
-<div class="viewcode-block" id="Geometry"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry">[docs]</a><span class="k">class</span> <span class="nc">Geometry</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+<div class="viewcode-block" id="Geometry">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry">[docs]</a>
+<span class="k">class</span> <span class="nc">Geometry</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    AmesPAHdbPythonSuite geometry class</span>
 
@@ -299,14 +301,19 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Geometry.set"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Geometry.set">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.set">[docs]</a>
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Data</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Geometry.get"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Geometry.get">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assigns class variables from inherited dictionary.</span>
 
@@ -315,6 +322,7 @@
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
         <span class="k">return</span> <span class="n">d</span></div>
+
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -330,7 +338,9 @@
 
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AmesPAHdbPythonSuite Geometry instance.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="si">=}</span><span class="s2">&quot;</span>
 
-<div class="viewcode-block" id="Geometry.plot"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Geometry.plot">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the structure</span>
 
@@ -408,7 +418,10 @@
         <span class="k">elif</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Geometry.structure"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.structure">[docs]</a>    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Geometry.structure">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Render the 3D structure.</span>
 
@@ -576,9 +589,17 @@
 
         <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">interactor</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
-            <span class="n">interactor</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span></div>
+            <span class="n">interactor</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span>
+            <span class="n">renderWindow</span><span class="o">.</span><span class="n">Finalize</span><span class="p">()</span>
+            <span class="n">interactor</span><span class="o">.</span><span class="n">TerminateApp</span><span class="p">()</span>
+            <span class="k">del</span> <span class="n">interactor</span>
 
-<div class="viewcode-block" id="Geometry.inertia"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.inertia">[docs]</a>    <span class="k">def</span> <span class="nf">inertia</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">renderWindow</span></div>
+
+
+<div class="viewcode-block" id="Geometry.inertia">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.inertia">[docs]</a>
+    <span class="k">def</span> <span class="nf">inertia</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the moment of inertia.</span>
 
@@ -609,7 +630,10 @@
 
         <span class="k">return</span> <span class="n">inertia</span></div>
 
-<div class="viewcode-block" id="Geometry.diagonalize"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.diagonalize">[docs]</a>    <span class="k">def</span> <span class="nf">diagonalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Geometry.diagonalize">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.diagonalize">[docs]</a>
+    <span class="k">def</span> <span class="nf">diagonalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Diagonalize the moment of inertia and align structure</span>
 <span class="sd">        with the x-y plane</span>
@@ -675,7 +699,10 @@
                 <span class="n">g</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
                 <span class="n">g</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Geometry.mass"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.mass">[docs]</a>    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Geometry.mass">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.mass">[docs]</a>
+    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes molecular mass.</span>
 
@@ -690,7 +717,10 @@
 
         <span class="k">return</span> <span class="n">mass</span></div>
 
-<div class="viewcode-block" id="Geometry.rings"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.rings">[docs]</a>    <span class="k">def</span> <span class="nf">rings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Geometry.rings">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.rings">[docs]</a>
+    <span class="k">def</span> <span class="nf">rings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the number of rings per type.</span>
 
@@ -888,7 +918,10 @@
 
         <span class="k">return</span> <span class="n">rings</span></div>
 
-<div class="viewcode-block" id="Geometry.area"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.area">[docs]</a>    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Geometry.area">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.area">[docs]</a>
+    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the area.</span>
 
@@ -914,7 +947,10 @@
 
         <span class="k">return</span> <span class="n">area</span></div>
 
-<div class="viewcode-block" id="Geometry.bec"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.bec">[docs]</a>    <span class="k">def</span> <span class="nf">bec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Geometry.bec">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.bec">[docs]</a>
+    <span class="k">def</span> <span class="nf">bec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert PAH carbon and hydrogen positions to a boundary-edge</span>
 <span class="sd">        code. Only makes sense to use this for regular PAHs. Return of</span>
 <span class="sd">        a tuple with a list of boundary carbons traversed in order and</span>
@@ -930,6 +966,7 @@
             <span class="n">becodes</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">becode</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">becodes</span></div>
+
 
     <span class="k">def</span> <span class="nf">__becode</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1105,6 +1142,7 @@
                 <span class="n">becode</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">csum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">csum</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="n">becode</span></div>
+
 </pre></div>
 
            </div>

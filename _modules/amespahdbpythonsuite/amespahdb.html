@@ -14,9 +14,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -194,7 +194,9 @@
     <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.transitions</span> <span class="kn">import</span> <span class="n">Transitions</span>
 
 
-<div class="viewcode-block" id="AmesPAHdb"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb">[docs]</a><span class="k">class</span> <span class="nc">AmesPAHdb</span><span class="p">:</span>
+<div class="viewcode-block" id="AmesPAHdb">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb">[docs]</a>
+<span class="k">class</span> <span class="nc">AmesPAHdb</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    AmesPAHdbPythonSuite main class.</span>
 <span class="sd">    Contains methods to parse the database, perform search based on query,</span>
@@ -282,7 +284,9 @@
             <span class="n">check</span><span class="o">=</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;check&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="AmesPAHdb.parsefile"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.parsefile">[docs]</a>    <span class="k">def</span> <span class="nf">parsefile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="AmesPAHdb.parsefile">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.parsefile">[docs]</a>
+    <span class="k">def</span> <span class="nf">parsefile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to parse or restore the database from cache.</span>
 <span class="sd">        Called by :meth:`amespahdbpythonsuite.amespahdb.__init__` method.</span>
@@ -365,6 +369,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Class representation.</span>
@@ -412,7 +417,9 @@
                 <span class="p">)</span>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="AmesPAHdb.gettransitionsbyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid">[docs]</a>    <span class="k">def</span> <span class="nf">gettransitionsbyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Transitions</span><span class="p">:</span>
+<div class="viewcode-block" id="AmesPAHdb.gettransitionsbyuid">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettransitionsbyuid">[docs]</a>
+    <span class="k">def</span> <span class="nf">gettransitionsbyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Transitions</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve and return transitions instance based on UIDs input.</span>
 <span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
@@ -451,7 +458,10 @@
             <span class="p">},</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.getlaboratorybyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid">[docs]</a>    <span class="k">def</span> <span class="nf">getlaboratorybyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Laboratory</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="AmesPAHdb.getlaboratorybyuid">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getlaboratorybyuid">[docs]</a>
+    <span class="k">def</span> <span class="nf">getlaboratorybyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Laboratory</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve and return laboratory database instance based on UIDs input.</span>
 <span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
@@ -499,7 +509,10 @@
             <span class="p">},</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.getspeciesbyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid">[docs]</a>    <span class="k">def</span> <span class="nf">getspeciesbyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Species</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AmesPAHdb.getspeciesbyuid">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getspeciesbyuid">[docs]</a>
+    <span class="k">def</span> <span class="nf">getspeciesbyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Species</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve and return species instance based on UIDs input.</span>
 <span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
@@ -532,7 +545,10 @@
             <span class="n">comments</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;comments&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">),</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.getgeometrybyuid"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">[docs]</a>    <span class="k">def</span> <span class="nf">getgeometrybyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Geometry</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AmesPAHdb.getgeometrybyuid">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getgeometrybyuid">[docs]</a>
+    <span class="k">def</span> <span class="nf">getgeometrybyuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Geometry</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve and return geometry instance based on UIDs input.</span>
 <span class="sd">        UIDs should be a list, e.g. the output of search method.</span>
@@ -564,7 +580,10 @@
             <span class="n">uids</span><span class="o">=</span><span class="n">uids_list</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.search"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="AmesPAHdb.search">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.search">[docs]</a>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search the database based on query input.</span>
 
@@ -651,6 +670,7 @@
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">found</span></div>
+
 
     <span class="k">def</span> <span class="nf">_tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -949,7 +969,9 @@
 
         <span class="k">return</span> <span class="n">parsed</span>
 
-<div class="viewcode-block" id="AmesPAHdb.getversion"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getversion">[docs]</a>    <span class="k">def</span> <span class="nf">getversion</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="AmesPAHdb.getversion">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getversion">[docs]</a>
+    <span class="k">def</span> <span class="nf">getversion</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to retrieve the PAHdb version.</span>
 
@@ -959,7 +981,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.checkversion"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.checkversion">[docs]</a>    <span class="k">def</span> <span class="nf">checkversion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AmesPAHdb.checkversion">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.checkversion">[docs]</a>
+    <span class="k">def</span> <span class="nf">checkversion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to check against a PAHdb version.</span>
 
@@ -969,7 +994,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">version</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.gettype"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettype">[docs]</a>    <span class="k">def</span> <span class="nf">gettype</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AmesPAHdb.gettype">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.gettype">[docs]</a>
+    <span class="k">def</span> <span class="nf">gettype</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to retrieve the PAHdb type.</span>
 
@@ -979,7 +1007,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.getdatabaseref"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdatabaseref">[docs]</a>    <span class="k">def</span> <span class="nf">getdatabaseref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AmesPAHdb.getdatabaseref">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.getdatabaseref">[docs]</a>
+    <span class="k">def</span> <span class="nf">getdatabaseref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to retrieve the database.</span>
 
@@ -989,7 +1020,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span></div>
 
-<div class="viewcode-block" id="AmesPAHdb.message"><a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.message">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="AmesPAHdb.message">
+<a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.amespahdb.AmesPAHdb.message">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">55</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A method to print terminal message.</span>
@@ -1009,7 +1043,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">space</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">()</span></div></div>
+        <span class="nb">print</span><span class="p">()</span></div>
+</div>
+
 </pre></div>
 
            </div>
