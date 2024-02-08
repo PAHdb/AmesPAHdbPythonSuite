@@ -520,8 +520,8 @@ class Transitions(Data):
         }
 
         self.units["ordinate"] = {
-            "unit": u.erg,
-            "label": "integrated radiant energy [erg]",
+            "unit": "10$^{5}$ erg mol$^{-1}$",
+            "label": "integrated radiant energy",
         }
 
         description = (
@@ -530,8 +530,7 @@ class Transitions(Data):
 
         if self.model["isrf"]:
             description += ", isrf: yes"
-            description += f', convolved: {keywords.get("convlolved", False)}'
-
+            description += f', convolved: {keywords.get("convolved", False)}'
         elif self.model["star"]:
             description += ", star: yes"
             description += f", Tstar: {Tstar} Kelvin"
@@ -884,12 +883,20 @@ class Transitions(Data):
             + self.units["abscissa"]["unit"].to_string("latex_inline")
             + "]"
         )
-        plt.ylabel(
-            self.units["ordinate"]["label"]
-            + " ["
-            + self.units["ordinate"]["unit"].to_string("latex_inline")
-            + "]"
-        )
+        if not isinstance(self.units["ordinate"]["unit"], str):
+            plt.ylabel(
+                self.units["ordinate"]["label"]
+                + " ["
+                + self.units["ordinate"]["unit"].to_string("latex_inline")
+                + "]"
+            )
+        else:
+            plt.ylabel(
+                self.units["ordinate"]["label"]
+                + " ["
+                + self.units["ordinate"]["unit"]
+                + "]"
+            )
 
         basename = keywords.get("save")
         if basename:

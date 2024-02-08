@@ -241,7 +241,7 @@ class Geometry(Data):
         if basename:
             if not isinstance(basename, str):
                 basename = "laboratory"
-            plt.savefig(f"{basename}.pdf")
+            plt.savefig(f"{basename}_{uid}.pdf")
         elif keywords.get("show", False):
             plt.show()
 
@@ -265,6 +265,7 @@ class Geometry(Data):
             vtkRenderer,
             vtkRenderWindowInteractor,
             vtkWindowToImageFilter,
+            vtkAssembly,
         )  # type:  ignore
         from vtkmodules.vtkIOImage import vtkPNGWriter  # type:  ignore
 
@@ -308,9 +309,8 @@ class Geometry(Data):
                 nsel = 6
 
             nlist[i, 0:nsel] = sel[0]
-
-        actors = list()
-
+ 
+        assembly = vtkAssembly()
         for x, y, z, t, i in zip(px, py, pz, pt, range(ng)):
             for j in range(numn[i]):
                 numn[nlist[i, j]] -= 1
@@ -354,7 +354,7 @@ class Geometry(Data):
                 cylinderTransform.RotateWXYZ(angle, vec[1], -vec[0], 0.0)
                 cylinderTransform.Translate(x, y, z)
                 cylinderActor.SetUserTransform(cylinderTransform)
-                actors.append(cylinderActor)
+                assembly.AddPart(cylinderActor)
 
         if not keywords.get("frame", False):
             for x, y, z, t in zip(px, py, pz, pt):
@@ -371,13 +371,12 @@ class Geometry(Data):
 
                 sphereActor.GetProperty().SetSpecular(0.25)
 
-                actors.append(sphereActor)
+                assembly.AddPart(sphereActor)
 
         renderer = vtkRenderer()
         renderer.SetBackground(0.24, 0.24, 0.24)
 
-        for actor in actors:
-            renderer.AddActor(actor)
+        renderer.AddActor(assembly)
 
         renderWindow = vtkRenderWindow()
         if not keywords.get("show", False):
@@ -390,7 +389,9 @@ class Geometry(Data):
             interactor.SetRenderWindow(renderWindow)
 
         renderWindow.AddRenderer(renderer)
-        renderWindow.SetSize(1024, 1024)
+
+        size = keywords.get("size", [1024, 1024])
+        renderWindow.SetSize(size[0], size[1])
 
         renderWindow.Render()
         if renderWindow.GetAlphaBitPlanes() == 0 and keywords.get("transparent", False):
@@ -408,7 +409,7 @@ class Geometry(Data):
             windowToImageFilter.Update()
             writer = vtkPNGWriter()
             writer.SetInputConnection(windowToImageFilter.GetOutputPort())
-            writer.SetFileName(f"{basename}.png")
+            writer.SetFileName(f"{basename}_{uid}.png")
             writer.Write()
 
         if keywords.get("show", False):
@@ -419,6 +420,9 @@ class Geometry(Data):
             del interactor
 
         del renderWindow
+
+        if keywords.get("actor", False):
+            return assembly
 
     def inertia(self) -> dict:
         """
@@ -939,7 +943,11 @@ class Geometry(Data):
         """
         becode = ""
         csum = 0
-        x = pcone_code.index("1")
+        try:
+          x = pcone_code.index("1")
+        except ValueError:
+          return ''
+
         for item in pcone_code[x + 1:] + pcone_code[: x + 1]:
             if item == "0":
                 csum += 1

@@ -826,6 +826,20 @@ class AmesPAHdb:
         """
         return self.__data
 
+    def extenddatabase(self, **keywords) -> None:
+        """
+        Method to extend the database.
+
+        Returns:
+            None
+
+        """
+        if not self.__data:
+            self.message("NO VALID DATABASE")
+
+        if keywords.get("species", False):
+            self.__data["species"].update(keywords["species"])
+
     @staticmethod
     def message(text, space: int = 55) -> None:
         """
