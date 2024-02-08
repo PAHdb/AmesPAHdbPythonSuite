@@ -83,7 +83,7 @@ class TestGeometry:
 
     def test_structure_save(self, test_path, test_geometry):
         test_geometry.structure(18, transparent=True, save=test_path)
-        assert exists(f"{test_path}.png")
+        assert exists(f"{test_path}_18.png")
 
     def test_mass(self, test_geometry, test_masses):
         assert test_geometry.mass() == test_masses

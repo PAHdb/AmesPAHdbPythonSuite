@@ -5,6 +5,7 @@ from typing import Optional
 import numpy as np
 from scipy.spatial import KDTree  # type: ignore
 from scipy.spatial.distance import euclidean as edist  # type: ignore
+from vtkmodules.vtkRenderingCore import vtkAssembly  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
@@ -245,7 +246,7 @@ class Geometry(Data):
         elif keywords.get("show", False):
             plt.show()
 
-    def structure(self, uid: int, **keywords) -> None:
+    def structure(self, uid: int, **keywords) -> Optional[vtkAssembly]:
         """
         Render the 3D structure.
 
@@ -255,19 +256,13 @@ class Geometry(Data):
         import vtkmodules.vtkRenderingOpenGL2  # type:  ignore # noqa:  F401
         from vtk import vtkTransform  # type:  ignore
         from vtkmodules.vtkFiltersSources import (  # type:  ignore
-            vtkCylinderSource,
-            vtkSphereSource,
-        )
-        from vtkmodules.vtkRenderingCore import (  # type:  ignore
-            vtkRenderWindow,
-            vtkActor,
-            vtkPolyDataMapper,
-            vtkRenderer,
-            vtkRenderWindowInteractor,
-            vtkWindowToImageFilter,
-            vtkAssembly,
-        )  # type:  ignore
+            vtkCylinderSource, vtkSphereSource)
         from vtkmodules.vtkIOImage import vtkPNGWriter  # type:  ignore
+        from vtkmodules.vtkRenderingCore import (vtkActor,  # type: ignore
+                                                 vtkPolyDataMapper,
+                                                 vtkRenderer, vtkRenderWindow,
+                                                 vtkRenderWindowInteractor,
+                                                 vtkWindowToImageFilter)
 
         atom_colors = {
             1: [0.78, 0.78, 0.78],
@@ -309,7 +304,7 @@ class Geometry(Data):
                 nsel = 6
 
             nlist[i, 0:nsel] = sel[0]
- 
+
         assembly = vtkAssembly()
         for x, y, z, t, i in zip(px, py, pz, pt, range(ng)):
             for j in range(numn[i]):
@@ -332,7 +327,7 @@ class Geometry(Data):
                 cylinder = vtkCylinderSource()
                 cylinder.SetResolution(32)
                 cylinder.SetRadius(0.1)
-                cylinder.SetHeight(norm)
+                cylinder.SetHeight(norm)  # type: ignore
                 cylinderMapper = vtkPolyDataMapper()
                 cylinderMapper.SetInputConnection(cylinder.GetOutputPort())
                 cylinderActor = vtkActor()
@@ -423,6 +418,8 @@ class Geometry(Data):
 
         if keywords.get("actor", False):
             return assembly
+
+        return None
 
     def inertia(self) -> dict:
         """
@@ -565,7 +562,7 @@ class Geometry(Data):
 
                 numn[i] = len(bounds)
 
-                nlist[i, 0: numn[i]] = bounds
+                nlist[i, 0:numn[i]] = bounds
 
             iring = np.zeros(9, dtype=int)
 
@@ -944,9 +941,9 @@ class Geometry(Data):
         becode = ""
         csum = 0
         try:
-          x = pcone_code.index("1")
+            x = pcone_code.index("1")
         except ValueError:
-          return ''
+            return ""
 
         for item in pcone_code[x + 1:] + pcone_code[: x + 1]:
             if item == "0":

@@ -216,12 +216,8 @@ class Transitions(Data):
         """
         Applies the Calculated Temperature emission model.
 
-        :param e: Excitation energy in erg.
+        :param e: Excitation energy in erg. If 'star' keyword is given the input should be temperature in Kelvin instead of energy.
         :type e: float
-        :If 'star' keyword is given the input should be temperature in Kelvin instead of energy.
-
-        :keywords:
-        :
 
         """
         if self.database != "theoretical":
@@ -685,7 +681,7 @@ class Transitions(Data):
 
                 Tmax = optimize.brentq(func1, 2.73, 5000.0)
                 self.model["temperatures"][uid] = Tmax
-                print("MAXIMUM ATTAINED TEMPERATURE     : %f Kelvin" % Tmax)
+                print(f"MAXIMUM ATTAINED TEMPERATURE     : {Tmax} Kelvin")
 
                 if (keywords.get("star") or keywords.get("isrf")) and keywords.get(
                     "convolved"
