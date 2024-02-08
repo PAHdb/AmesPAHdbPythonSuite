@@ -216,7 +216,7 @@ class Transitions(Data):
         """
         Applies the Calculated Temperature emission model.
 
-        :param e: Excitation energy in erg. If 'star' keyword is given the input should be temperature in Kelvin instead of energy.
+        :param e: Excitation energy in erg or temperature in Kelvin.
         :type e: float
 
         """
