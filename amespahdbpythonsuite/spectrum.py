@@ -184,7 +184,7 @@ class Spectrum(Transitions):
         if obs.uncertainty is None:
             method = "NNLS"
             b = obs.flux.value
-            m = matrix
+            m = matrix.copy()
         else:
             method = "NNLC"
             b = np.divide(obs.flux.value, obs.uncertainty.array)
@@ -193,7 +193,12 @@ class Spectrum(Transitions):
         if notice:
             message(f"DOING {method}")
 
+        scl = m.max()
+        m /= scl
+
         solution, _ = optimize.nnls(m.T, b)
+
+        solution /= scl
 
         # Initialize lists and dictionaries.
         uids = list()
