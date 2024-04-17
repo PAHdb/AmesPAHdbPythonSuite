@@ -252,7 +252,7 @@ class Transitions(Data):
             Tstar = (
                 4
                 * np.pi
-                * integrate.simpson(energy["frequency"], energy["intensity"])
+                * integrate.simpson(energy["intensity"], x=energy["frequency"])
                 / 5.67040e-5
             ) ** 0.25
 
@@ -269,7 +269,11 @@ class Transitions(Data):
             # ^ Consider giving a user warning when providing large dimension data.
 
             global star_model
-            star_model = [{"frequency": 0.0, "intensity": 0}] * 100
+            star_model = {
+                "frequency": np.full(100, 0.0),
+                "intensity": np.full(100, 0.0),
+            }
+
             # * Using interpolation through ndimage.zoom to get equivalent
             # * of the IDL congrid function.
             star_model["frequency"] = ndimage.zoom(
@@ -462,7 +466,7 @@ class Transitions(Data):
             Tstar = (
                 4
                 * np.pi
-                * integrate.simpson(energy["frequency"], energy["intensity"])
+                * integrate.simpson(energy["intensity"], x=energy["frequency"])
                 / 5.67040e-5
             ) ** (0.25)
 
@@ -479,7 +483,10 @@ class Transitions(Data):
             # ^ Consider giving a user warning when providing large dimension data.
 
             global star_model
-            star_model = [{"frequency": 0.0, "intensity": 0}] * 100
+            star_model = {
+                "frequency": np.full(100, 0.0),
+                "intensity": np.full(100, 0.0),
+            }
 
             # * Using interpolation through ndimage.zoom to get equivalent
             # * of the IDL congrid function.
@@ -579,23 +586,25 @@ class Transitions(Data):
             if keywords.get("convolved", False):
                 cascade_em_model = partial(
                     Transitions._cascade_em_model,
-                    energy,
+                    energy if not keywords.get('stellar_model', False) else star_model,
                     t_method=func1,
                     i_method=func3,
                     convolved=keywords.get("convolved"),
                     approximate=keywords.get("approximate"),
                     star=keywords.get("star"),
+                    stellar_model=keywords.get("stellar_model"),
                     isrf=keywords.get("isrf"),
                 )
             else:
                 cascade_em_model = partial(
                     Transitions._cascade_em_model,
-                    energy,
+                    energy if not keywords.get('stellar_model', False) else star_model,
                     t_method=func1,
                     i_method=func2,
                     convolved=keywords.get("convolved"),
                     approximate=keywords.get("approximate"),
                     star=keywords.get("star"),
+                    stellar_model=keywords.get("stellar_model"),
                     isrf=keywords.get("isrf"),
                 )
 
@@ -1114,15 +1123,15 @@ class Transitions(Data):
             me = (
                 1.9864456023253396e-16
                 * integrate.simpson(
-                    star_model["frequency"],
                     Transitions.absorption_cross_section(star_model["frequency"])
                     * star_model["intensity"],
+                    x=star_model["frequency"],
                 )
                 / integrate.simpson(
-                    star_model["frequency"],
                     Transitions.absorption_cross_section(star_model["frequency"])
                     * star_model["intensity"]
                     / star_model["frequency"],
+                    x=star_model["frequency"],
                 )
             )
         elif keywords.get("isrf"):
@@ -1157,16 +1166,16 @@ class Transitions(Data):
             me = (
                 3.945966130997681e-32
                 * integrate.simpson(
-                    star_model["frequency"],
                     star_model["frequency"]
                     * Transitions.absorption_cross_section(star_model["frequency"])
                     * star_model["intensity"],
+                    x=star_model["frequency"],
                 )
                 / integrate.simpson(
-                    star_model["frequency"],
                     Transitions.absorption_cross_section(star_model["frequency"])
                     * star_model["intensity"]
                     / star_model["frequency"],
+                    x=star_model["frequency"],
                 )
             )
         elif keywords.get("isrf"):
@@ -1293,7 +1302,7 @@ class Transitions(Data):
             * np.interp(
                 f,
                 star_model["frequency"],
-                star_model["intensity"] / star_model["frequenxy"],
+                star_model["intensity"] / star_model["frequency"],
             )
             * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
         )
@@ -1472,14 +1481,14 @@ class Transitions(Data):
 
         """
 
-        if keywords.get["stellar_model"]:
+        if keywords.get("stellar_model"):
             return integrate.simpson(
-                star_model["frequency"],
                 Transitions.absorption_cross_section(
                     star_model["frequency"]
                     * star_model["intensity"]
                     / star_model["frequency"]
                 ),
+                x=star_model["frequency"],
             )
 
         elif keywords.get("isrf"):
@@ -1594,13 +1603,21 @@ class Transitions(Data):
         """
         global frequency
         global energy
-
-        if isinstance(data, zip):
-            data, ncs, charge = [list(x) for x in data]
-            if keywords.get("star") or keywords.get("isrf"):
-                energy = Transitions.mean_energy(**keywords)
-
         energy = e
+
+        if keywords.get("star") and not keywords.get("stellar_model"):
+            global Tstar
+            Tstar = energy
+
+        if isinstance(data, tuple):
+            global nc
+            global charge
+            data, nc, charge = data
+            if keywords.get("star") or keywords.get("isrf"):
+                if keywords.get("stellar_model"):
+                    global star_model
+                    star_model = energy
+                energy = Transitions.mean_energy(**keywords)
 
         global frequencies
         frequencies = np.array([d["frequency"] for d in data])
@@ -1608,8 +1625,7 @@ class Transitions(Data):
         global intensities
         intensities = np.array([d["intensity"] for d in data])
 
-        if not keywords.get("convolved"):
-            Tmax = optimize.brentq(t_method, 2.73, 5000.0)
+        Tmax = optimize.brentq(t_method, 2.73, 5000.0)
 
         for d in data:
             if d["intensity"] > 0:
