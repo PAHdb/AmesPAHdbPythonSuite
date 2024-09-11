@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, Optional, Union
 
 import astropy.units as u  # type: ignore
 import numpy as np
-from scipy import integrate, ndimage, optimize, special  # type: ignore
+from scipy import integrate, interpolate, optimize, special  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.data import Data
@@ -259,9 +259,9 @@ class Transitions(Data):
             select = np.where(
                 (energy["frequency"] >= 2.5e3) & (energy["frequency"] <= 1.1e5)
             )
-            nselect = energy["frequency"][select]
+            nselect = len(select[0])
 
-            if len(nselect) == 0:
+            if nselect == 0:
                 message("STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm")
                 self.state = 0
 
@@ -274,14 +274,15 @@ class Transitions(Data):
                 "intensity": np.full(100, 0.0),
             }
 
-            # * Using interpolation through ndimage.zoom to get equivalent
-            # * of the IDL congrid function.
-            star_model["frequency"] = ndimage.zoom(
-                energy["frequency"][select], 100 / len(energy["frequency"][select])
-            )
-            star_model["intensity"] = ndimage.zoom(
-                energy["intensity"][select], 100 / len(energy["intensity"][select])
-            )
+            t = nselect * np.arange(100, dtype=float) / 100.0
+            x = np.arange(nselect, dtype=float)
+            star_model["frequency"] = interpolate.interp1d(
+                x, energy["frequency"][select], kind="nearest", fill_value=None
+            )(t)
+            star_model["intensity"] = interpolate.interp1d(
+                x, energy["intensity"][select], kind="nearest", fill_value=None
+            )(t)
+
             message(f"CALCULATED EFFECTIVE TEMPERATURE: {Tstar} Kelvin")
 
         elif keywords.get("star"):
@@ -473,9 +474,9 @@ class Transitions(Data):
             select = np.where(
                 (energy["frequency"] >= 2.5e3) & (energy["frequency"] <= 1.1e5)
             )
-            nselect = energy["frequency"][select]
+            nselect = len(select[0])
 
-            if len(nselect) == 0:
+            if nselect == 0:
                 message("STELLAR MODEL HAS NO DATA BETWEEN 2.5E3-1.1E5 /cm")
                 self.state = 0
 
@@ -488,14 +489,15 @@ class Transitions(Data):
                 "intensity": np.full(100, 0.0),
             }
 
-            # * Using interpolation through ndimage.zoom to get equivalent
-            # * of the IDL congrid function.
-            star_model["frequency"] = ndimage.zoom(
-                energy["frequency"][select], 100 / len(energy["frequency"][select])
-            )
-            star_model["intensity"] = ndimage.zoom(
-                energy["intensity"][select], 100 / len(energy["intensity"][select])
-            )
+            t = nselect * np.arange(100, dtype=float) / 100.0
+            x = np.arange(nselect, dtype=float)
+
+            star_model["frequency"] = interpolate.interp1d(
+                x, energy["frequency"][select], kind="nearest", fill_value=None
+            )(t)
+            star_model["intensity"] = interpolate.interp1d(
+                x, energy["intensity"][select], kind="nearest", fill_value=None
+            )(t)
 
             message(f"CALCULATED EFFECTIVE TEMPERATURE: {Tstar} Kelvin")
 
@@ -586,7 +588,7 @@ class Transitions(Data):
             if keywords.get("convolved", False):
                 cascade_em_model = partial(
                     Transitions._cascade_em_model,
-                    energy if not keywords.get('stellar_model', False) else star_model,
+                    energy if not keywords.get("stellar_model", False) else star_model,
                     t_method=func1,
                     i_method=func3,
                     convolved=keywords.get("convolved"),
@@ -598,7 +600,7 @@ class Transitions(Data):
             else:
                 cascade_em_model = partial(
                     Transitions._cascade_em_model,
-                    energy if not keywords.get('stellar_model', False) else star_model,
+                    energy if not keywords.get("stellar_model", False) else star_model,
                     t_method=func1,
                     i_method=func2,
                     convolved=keywords.get("convolved"),
@@ -700,7 +702,9 @@ class Transitions(Data):
                             frequency = d["frequency"]
                             d["intensity"] *= (
                                 d["frequency"] ** 3
-                                * integrate.quad(func3, 2.5e3, 1.1e5)[0]
+                                * integrate.quad(
+                                    func3, 2.5e3, 1.1e5, epsabs=1e-6, epsrel=1e-6
+                                )[0]
                             ) / Nphot
                 else:
                     for d in self.data[uid]:
@@ -708,7 +712,9 @@ class Transitions(Data):
                             frequency = d["frequency"]
                             d["intensity"] *= (
                                 d["frequency"] ** 3
-                                * integrate.quad(func2, 2.73, Tmax)[0]
+                                * integrate.quad(
+                                    func2, 2.73, Tmax, epsabs=1e-6, epsrel=1e-6
+                                )[0]
                             )
 
                 i += 1
@@ -1137,14 +1143,30 @@ class Transitions(Data):
         elif keywords.get("isrf"):
             me = (
                 1.9864456023253396e-16
-                * integrate.quad(Transitions.isrf, 2.5e3, 1.1e5)[0]
-                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)[0]
+                * integrate.quad(
+                    Transitions.isrf, 2.5e3, 1.1e5, epsabs=1e-6, epsrel=1e-6
+                )[0]
+                / integrate.quad(
+                    Transitions.isrf_number_of_photons,
+                    2.5e3,
+                    1.1e5,
+                    epsabs=1e-6,
+                    epsrel=1e-6,
+                )[0]
             )
         else:
             me = (
                 1.9864456023253396e-16
-                * integrate.quad(Transitions.planck, 2.5e3, 1.1e5)[0]
-                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)[0]
+                * integrate.quad(
+                    Transitions.planck, 2.5e3, 1.1e5, epsabs=1e-6, epsrel=1e-6
+                )[0]
+                / integrate.quad(
+                    Transitions.planck_number_of_photons,
+                    2.5e3,
+                    1.1e5,
+                    epsabs=1e-6,
+                    epsrel=1e-6,
+                )[0]
             )
 
         return me
@@ -1181,14 +1203,30 @@ class Transitions(Data):
         elif keywords.get("isrf"):
             me = (
                 3.945966130997681e-32
-                * integrate.quad(Transitions.isrf_squared, 2.5e3, 1.1e5)[0]
-                / integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)[0]
+                * integrate.quad(
+                    Transitions.isrf_squared, 2.5e3, 1.1e5, epsabs=1e-6, epsrel=1e-6
+                )[0]
+                / integrate.quad(
+                    Transitions.isrf_number_of_photons,
+                    2.5e3,
+                    1.1e5,
+                    epsabs=1e-6,
+                    epsrel=1e-6,
+                )[0]
             )
         else:
             me = (
                 3.945966130997681e-32
-                * integrate.quad(Transitions.planck_squared, 2.5e3, 1.1e5)[0]
-                / integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)[0]
+                * integrate.quad(
+                    Transitions.planck_squared, 2.5e3, 1.1e5, epsabs=1e-6, epsrel=1e-6
+                )[0]
+                / integrate.quad(
+                    Transitions.planck_number_of_photons,
+                    2.5e3,
+                    1.1e5,
+                    epsabs=1e-6,
+                    epsrel=1e-6,
+                )[0]
             )
 
         return me
@@ -1204,7 +1242,12 @@ class Transitions(Data):
         """
         global energy
 
-        return integrate.quad(Transitions.heat_capacity, 2.73, T)[0] - energy
+        return (
+            integrate.quad(
+                Transitions.heat_capacity, 2.73, T, epsabs=1e-6, epsrel=1e-6
+            )[0]
+            - energy
+        )
 
     @staticmethod
     def approximate_attained_temperature(T: float) -> float:
@@ -1260,7 +1303,9 @@ class Transitions(Data):
 
         return (
             Transitions.planck_number_of_photons(f)
-            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
+            * integrate.quad(
+                Transitions.feature_strength, 2.73, Tmax, epsabs=1e-6, epsrel=1e-6
+            )[0]
         )
 
     @staticmethod
@@ -1280,7 +1325,9 @@ class Transitions(Data):
 
         return (
             Transitions.isrf_number_of_photons(f)
-            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
+            * integrate.quad(
+                Transitions.feature_strength, 2.73, Tmax, epsabs=1e-6, epsrel=1e-6
+            )[0]
         )
 
     @staticmethod
@@ -1304,7 +1351,9 @@ class Transitions(Data):
                 star_model["frequency"],
                 star_model["intensity"] / star_model["frequency"],
             )
-            * integrate.quad(Transitions.feature_strength, 2.73, Tmax)[0]
+            * integrate.quad(
+                Transitions.feature_strength, 2.73, Tmax, epsabs=1e-6, epsrel=1e-6
+            )[0]
         )
 
     @staticmethod
@@ -1326,7 +1375,13 @@ class Transitions(Data):
 
         return (
             Transitions.planck_number_of_photons(f)
-            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)[0]
+            * integrate.quad(
+                Transitions.approximate_feature_strength,
+                2.73,
+                Tmax,
+                epsabs=1e-6,
+                epsrel=1e-6,
+            )[0]
         )
 
     @staticmethod
@@ -1346,7 +1401,13 @@ class Transitions(Data):
 
         return (
             Transitions.isrf_number_of_photons(f)
-            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)[0]
+            * integrate.quad(
+                Transitions.approximate_feature_strength,
+                2.73,
+                Tmax,
+                epsabs=1e-6,
+                epsrel=1e-6,
+            )[0]
         )
 
     @staticmethod
@@ -1373,7 +1434,13 @@ class Transitions(Data):
                 star_model["frequency"],
                 star_model["intensity"] / star_model["frequenxy"],
             )
-            * integrate.quad(Transitions.approximate_feature_strength, 2.73, Tmax)[0]
+            * integrate.quad(
+                Transitions.approximate_feature_strength,
+                2.73,
+                Tmax,
+                epsabs=1e-6,
+                epsrel=1e-6,
+            )[0]
             / 1.9864456023253396e-16
         )
 
@@ -1483,19 +1550,29 @@ class Transitions(Data):
 
         if keywords.get("stellar_model"):
             return integrate.simpson(
-                Transitions.absorption_cross_section(
-                    star_model["frequency"]
-                    * star_model["intensity"]
-                    / star_model["frequency"]
-                ),
+                Transitions.absorption_cross_section(star_model["frequency"])
+                * star_model["intensity"]
+                / star_model["frequency"],
                 x=star_model["frequency"],
             )
 
         elif keywords.get("isrf"):
-            return integrate.quad(Transitions.isrf_number_of_photons, 2.5e3, 1.1e5)[0]
+            return integrate.quad(
+                Transitions.isrf_number_of_photons,
+                2.5e3,
+                1.1e5,
+                epsabs=1e-6,
+                epsrel=1e-6,
+            )[0]
 
         else:
-            return integrate.quad(Transitions.planck_number_of_photons, 2.5e3, 1.1e5)[0]
+            return integrate.quad(
+                Transitions.planck_number_of_photons,
+                2.5e3,
+                1.1e5,
+                epsabs=1e-6,
+                epsrel=1e-6,
+            )[0]
 
     @staticmethod
     def _lineprofile(x: np.ndarray, x0: float, width: float, **keywords) -> np.ndarray:
@@ -1632,11 +1709,17 @@ class Transitions(Data):
                 frequency = d["frequency"]
                 if keywords.get("convolved"):
                     d["intensity"] *= (
-                        d["frequency"] ** 3 * integrate.quad(i_method, 2.5e3, 1.1e5)[0]
+                        d["frequency"] ** 3
+                        * integrate.quad(
+                            i_method, 2.5e3, 1.1e5, epsabs=1e-6, epsrel=1e-6
+                        )[0]
                     )
                 else:
                     d["intensity"] *= (
-                        d["frequency"] ** 3 * integrate.quad(i_method, 2.73, Tmax)[0]
+                        d["frequency"] ** 3
+                        * integrate.quad(
+                            i_method, 2.73, Tmax, epsabs=1e-6, epsrel=1e-6
+                        )[0]
                     )
 
         return data, Tmax

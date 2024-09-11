@@ -51,6 +51,7 @@ if __name__ == "__main__":
     fit = spectrum.fit(obs)
 
     # Create plots.
+    fit.plot(wavelength=True)
     fit.plot(wavelength=True, residual=True)
     fit.plot(wavelength=True, size=True)
     fit.plot(wavelength=True, charge=True)
