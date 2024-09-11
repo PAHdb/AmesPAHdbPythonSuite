@@ -11,7 +11,7 @@ import tempfile
 import time
 from datetime import timedelta
 from functools import partial
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional, Union, Callable
 
 import astropy.units as u  # type: ignore
 import numpy as np
@@ -1659,8 +1659,11 @@ class Transitions(Data):
     def _cascade_em_model(
         e: float,
         data: list,
-        t_method: None,
-        i_method: None,
+        t_method: Callable[[float], float],
+        i_method: Union[
+            Callable[[float], Any],
+            Callable[[np.ndarray[Any, Any]], np.ndarray[Any, Any]],
+        ],
         **keywords,
     ) -> tuple:
         """

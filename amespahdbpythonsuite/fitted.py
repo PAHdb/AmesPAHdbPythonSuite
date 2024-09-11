@@ -44,9 +44,10 @@ class Fitted(Spectrum):
         else:
             datalabel = "obs"
 
+        axis = []
         if keywords.get("sizedistribution", False):
-            fig, axis = plt.subplots()
-            axis = [axis]
+            fig, ax = plt.subplots()
+            axis.append(ax)
             h, edges = self.getsizedistribution()
             h = 100.0 * h / np.sum(h)
             axis[0].bar(
@@ -62,8 +63,8 @@ class Fitted(Spectrum):
             if keywords.get("residual", False):
                 fig = plt.figure()
                 spec = gs.GridSpec(2, 1, height_ratios=[3, 1])
-                axis = plt.subplot(spec[0])
-                axis = [axis, plt.subplot(spec[1], sharex=axis)]
+                axis.append(plt.subplot(spec[0]))
+                axis.append(plt.subplot(spec[1], sharex=axis[0]))
                 fig.subplots_adjust(hspace=0)
                 axis[0].tick_params(axis="x", which="both", labelbottom="off")
             elif (
@@ -71,13 +72,13 @@ class Fitted(Spectrum):
                 or keywords.get("size", False)
                 or keywords.get("composition", False)
             ):
-                fig, axis = plt.subplots()
-                axis = [axis]
+                fig, ax = plt.subplots()
+                axis.append(ax)
             elif not keywords.get("sizedistribution", False):
                 fig = plt.figure()
                 spec = gs.GridSpec(1, 2, width_ratios=[2, 3])
-                axis = plt.subplot(spec[0])
-                axis = [axis, plt.subplot(spec[1])]
+                axis.append(plt.subplot(spec[0]))
+                axis.append(plt.subplot(spec[1]))
                 fig.subplots_adjust(wspace=0.25)
                 axis[0].tick_params(
                     axis="x", which="both", bottom="off", top="off", labelbottom="off"
