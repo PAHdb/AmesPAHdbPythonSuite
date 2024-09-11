@@ -132,13 +132,17 @@ class Fitted(Spectrum):
                 which="minor", right="on", top="on", direction="in", length=3
             )
 
-            colors = mpl.colormaps["rainbow"](np.linspace(0, 1, len(self.uids)))
-            for uid, col in zip(self.uids, colors):
-                y = self.data[uid]
-                if keywords.get("residual", False):
-                    axis[0].plot(x, y, color=col)
+            if (
+                not keywords.get("residual", False)
+                and not keywords.get("charge", False)
+                and not keywords.get("size", False)
+                and not keywords.get("composition", False)
+            ):
+                colors = mpl.colormaps["rainbow"](np.linspace(0, 1, len(self.uids)))
+                for uid, col in zip(self.uids, colors):
+                    axis[0].plot(x, self.data[uid], color=col)
 
-            axis[0].plot(x, self.getfit(), color="tab:purple", label="fit")
+            axis[0].plot(x, self.getfit(), color="tab:purple", label="fit", lw=1)
 
             if (
                 keywords.get("charge", False)
@@ -192,7 +196,7 @@ class Fitted(Spectrum):
                     if ypos <= 0.05:
                         axis[1].text(0.05, ypos, "more...", family="monospace")
                         break
-
+            axis[0].ticklabel_format(axis="y", style="sci", scilimits=(4, 4))
             axis[0].set_ylabel(
                 self.units["ordinate"]["label"]
                 + " ["
