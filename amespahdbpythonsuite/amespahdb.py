@@ -84,7 +84,7 @@ class AmesPAHdb:
             except HTTPError:
                 self.message("FAILED TO CHECK FOR UPDATE")
 
-        self.message("WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/")
+        self.message("WEBSITE: WWW.ASTROCHEM.ORG/PAHDB/")
         self.message("CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV")
 
         filename = keywords.get("filename")
@@ -270,14 +270,16 @@ class AmesPAHdb:
         else:
             uids_list = uids
 
+        d = self.__getkeybyuids("transitions", uids_list)
+
         from amespahdbpythonsuite import transitions
 
         return transitions.Transitions(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("transitions", uids_list),
+            data=d,
             pahdb=self.__data,
-            uids=uids_list,
+            uids=list(d.keys()),
             model={"type": "zerokelvin_m", "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {
@@ -314,14 +316,16 @@ class AmesPAHdb:
         else:
             uids_list = uids
 
+        d = self.__getkeybyuids("laboratory", uids_list)
+
         from amespahdbpythonsuite import laboratory
 
         return laboratory.Laboratory(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("laboratory", uids_list),
+            data=d,
             pahdb=self.__data,
-            uids=uids_list,
+            uids=list(d.keys()),
             model={"type": "laboratory_m", "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {"unit": u.cm**-1, "label": "frequency"},
@@ -357,14 +361,16 @@ class AmesPAHdb:
         else:
             uids_list = uids
 
+        d = self.__getkeybyuids("species", uids_list)
+
         from amespahdbpythonsuite import species
 
         return species.Species(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("species", uids_list),
+            data=d,
             pahdb=self.__data,
-            uids=uids,
+            uids=list(d.keys()),
             references=self.__getkeybyuids("references", uids_list),
             comments=self.__getkeybyuids("comments", uids_list),
         )
@@ -391,14 +397,16 @@ class AmesPAHdb:
         else:
             uids_list = uids
 
+        d = self.__getkeybyuids("geometry", uids_list)
+
         from amespahdbpythonsuite import geometry
 
         return geometry.Geometry(
             database=self.__data["database"],
             version=self.__data["version"],
-            data=self.__getkeybyuids("geometry", uids_list),
+            data=d,
             pahdb=self.__data,
-            uids=uids_list,
+            uids=list(d.keys()),
         )
 
     def search(self, query: str) -> Optional[list]:
@@ -533,7 +541,9 @@ class AmesPAHdb:
             "mg": 'item[1]["n_mg"]',
             "si": 'item[1]["n_si"]',
             "fe": 'item[1]["n_fe"]',
+            "ch": 'item[1]["n_ch"]',
             "ch2": 'item[1]["n_ch2"]',
+            "ch3": 'item[1]["n_ch3"]',
             "chx": 'item[1]["n_chx"]',
             "solo": 'item[1]["n_solo"]',
             "duo": 'item[1]["n_duo"]',
