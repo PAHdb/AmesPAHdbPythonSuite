@@ -251,7 +251,7 @@
             <span class="k">except</span> <span class="n">HTTPError</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s2">&quot;FAILED TO CHECK FOR UPDATE&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s2">&quot;WEBSITE: HTTP://WWW.ASTROCHEM.ORG/PAHDB/&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s2">&quot;WEBSITE: WWW.ASTROCHEM.ORG/PAHDB/&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s2">&quot;CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV&quot;</span><span class="p">)</span>
 
         <span class="n">filename</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span>
@@ -442,14 +442,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">uids_list</span> <span class="o">=</span> <span class="n">uids</span>
 
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;transitions&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">)</span>
+
         <span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">transitions</span>
 
         <span class="k">return</span> <span class="n">transitions</span><span class="o">.</span><span class="n">Transitions</span><span class="p">(</span>
             <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span>
             <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
-            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;transitions&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
             <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span>
-            <span class="n">uids</span><span class="o">=</span><span class="n">uids_list</span><span class="p">,</span>
+            <span class="n">uids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
             <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;zerokelvin_m&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
             <span class="n">units</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;abscissa&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -489,14 +491,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">uids_list</span> <span class="o">=</span> <span class="n">uids</span>
 
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;laboratory&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">)</span>
+
         <span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">laboratory</span>
 
         <span class="k">return</span> <span class="n">laboratory</span><span class="o">.</span><span class="n">Laboratory</span><span class="p">(</span>
             <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span>
             <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
-            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;laboratory&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
             <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span>
-            <span class="n">uids</span><span class="o">=</span><span class="n">uids_list</span><span class="p">,</span>
+            <span class="n">uids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
             <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;laboratory_m&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
             <span class="n">units</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;abscissa&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;frequency&quot;</span><span class="p">},</span>
@@ -535,14 +539,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">uids_list</span> <span class="o">=</span> <span class="n">uids</span>
 
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;species&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">)</span>
+
         <span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">species</span>
 
         <span class="k">return</span> <span class="n">species</span><span class="o">.</span><span class="n">Species</span><span class="p">(</span>
             <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span>
             <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
-            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;species&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
             <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span>
-            <span class="n">uids</span><span class="o">=</span><span class="n">uids</span><span class="p">,</span>
+            <span class="n">uids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
             <span class="n">references</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;references&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">),</span>
             <span class="n">comments</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;comments&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">),</span>
         <span class="p">)</span></div>
@@ -572,14 +578,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">uids_list</span> <span class="o">=</span> <span class="n">uids</span>
 
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;geometry&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">)</span>
+
         <span class="kn">from</span> <span class="nn">amespahdbpythonsuite</span> <span class="kn">import</span> <span class="n">geometry</span>
 
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">Geometry</span><span class="p">(</span>
             <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span>
             <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
-            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getkeybyuids</span><span class="p">(</span><span class="s2">&quot;geometry&quot;</span><span class="p">,</span> <span class="n">uids_list</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
             <span class="n">pahdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span>
-            <span class="n">uids</span><span class="o">=</span><span class="n">uids_list</span><span class="p">,</span>
+            <span class="n">uids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
         <span class="p">)</span></div>
 
 
@@ -718,7 +726,9 @@
             <span class="s2">&quot;mg&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_mg&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;si&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_si&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;fe&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_fe&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;ch&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_ch&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;ch2&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_ch2&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;ch3&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_ch3&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;chx&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_chx&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;solo&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_solo&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;duo&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;n_duo&quot;]&#39;</span><span class="p">,</span>
