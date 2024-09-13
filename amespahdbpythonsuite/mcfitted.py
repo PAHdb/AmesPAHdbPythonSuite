@@ -100,7 +100,7 @@ class MCFitted:
             mcfits = iter(self.mcfits)
             mcfit = next(mcfits)
             breakdown = mcfit.getbreakdown()
-            results: dict = dict.fromkeys(breakdown.keys(), [])
+            results: dict = {k: [] for k in breakdown.keys()}
             for key, val in breakdown.items():
                 results[key].append(val)
             for mcfit in mcfits:
@@ -120,7 +120,7 @@ class MCFitted:
             mcfits = iter(self.mcfits)
             mcfit = next(mcfits)
             classes = mcfit.getclasses()
-            results: dict = dict.fromkeys(classes.keys(), [])
+            results: dict = {k: [] for k in classes.keys()}
             for key, val in classes.items():
                 results[key].append(val)
             for mcfit in mcfits:
@@ -386,7 +386,7 @@ class MCFitted:
             mcfits = iter(self.mcfits)
             mcfit = next(mcfits)
             error = mcfit.geterror()
-            results: dict = dict.fromkeys(error.keys(), [])
+            results: dict = {k: [] for k in error.keys()}
             for key, val in error.items():
                 results[key].append(val)
             for mcfit in mcfits:
@@ -409,6 +409,8 @@ class MCFitted:
         Retrieves the statistics spectra for the residuals of the MC fits.
         """
         if self._residual is None:
-            self._residual = self._getstats([mcfit.getresidual() for mcfit in self.mcfits])
+            self._residual = self._getstats(
+                [mcfit.getresidual() for mcfit in self.mcfits]
+            )
 
         return self._residual
