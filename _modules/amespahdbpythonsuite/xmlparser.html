@@ -539,7 +539,7 @@
                         <span class="s2">&quot;n_fe&quot;</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
                     <span class="p">}</span>
 
-                    <span class="n">specie_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">atom_numbers</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="mi">0</span><span class="p">))</span>
+                    <span class="n">specie_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">atom_numbers</span><span class="o">.</span><span class="n">keys</span><span class="p">()})</span>
 
                     <span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">atom_numbers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                         <span class="n">specie_dict</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
