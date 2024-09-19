@@ -645,24 +645,21 @@ class Fitted(Spectrum):
                 "e33": [2900.0, 3125.0],
             }
 
-            self._error = dict.fromkeys(range.keys(), 0.0)
+            self._error = {k: 0.0 for k in range.keys()}
             if self.observation:
+                srt = np.argsort(self.grid)
+                x = self.grid[srt]
+                y = self.observation.flux.value[srt]
+                r = np.abs(self.getresidual())[srt]
                 for key, rng in range.items():
-                    sel = np.where(
-                        np.logical_and(self.grid >= rng[0], self.grid <= rng[1])
-                    )[0]
-                    total_area = np.trapz(
-                        self.observation.flux.value[sel], x=self.grid[sel]
-                    )
-                    if total_area == 0:
+                    sel = np.where((x >= rng[0]) & (x <= rng[1]))[0]
+
+                    if len(sel) == 0:
                         continue
-                    fit = self.getfit()
-                    if isinstance(fit, np.ndarray):
-                        residual_area = np.trapz(
-                            np.abs(self.observation.flux.value[sel] - fit[sel]),
-                            x=self.grid[sel],
-                        )
-                        self._error[key] = residual_area / total_area
+
+                    self._error[key] = np.trapz(r[sel], x=x[sel]) / np.trapz(
+                        y[sel], x=x[sel]
+                    )
 
         return self._error
 

@@ -196,7 +196,7 @@ class Spectrum(Transitions):
         scl = m.max()
         m /= scl
 
-        solution, _ = optimize.nnls(m.T, b)
+        solution, _ = optimize.nnls(m.T, b, maxiter=1024, atol=1e-16)
 
         solution /= scl
 
@@ -463,6 +463,9 @@ class Spectrum(Transitions):
 
             m = np.divide(matrix, obs.uncertainty.array)
 
+            scl = m.max()
+            m /= scl
+
             pool = mp.Pool(mp.cpu_count() - 1)
             for solution, b in tqdm(
                 pool.imap_unordered(
@@ -491,13 +494,10 @@ class Spectrum(Transitions):
                     uid,
                     s,
                     m,
-                ) in zip(self.uids, solution, matrix):
+                ) in zip(self.uids, solution / scl, matrix):
                     if s > 0:
-                        intensities = []
                         uids.append(uid)
-                        for d in m:
-                            intensities.append(s * d)
-                        data[uid] = np.array(intensities) * obs.flux.unit
+                        data[uid] = s * m * obs.flux.unit
                         weights[uid] = s
 
                 obs_fit = Spectrum1D(
@@ -536,11 +536,13 @@ class Spectrum(Transitions):
                     # Calculate new flux based on random uniform distribution sampling.
                     flux = (
                         obs.uncertainty.array * np.random.uniform(-1, 1, obs.flux.shape)
-                        + obs.flux
+                        + obs.flux.value
                     )
                 else:
                     # Calculate new flux based on random normal distribution sampling.
-                    flux = np.random.normal(obs.flux.value, obs.uncertainty.array)
+                    flux = np.random.normal(
+                        obs.flux.value, obs.uncertainty.array, obs.flux.shape
+                    )
 
                 # Fit the spectrum.
                 fit = self.fit(flux * obs.flux.unit, obs.uncertainty, notice=False)
@@ -562,10 +564,9 @@ def _mcfit(_, m, x, u, uniform) -> tuple:
         b = u * np.random.uniform(-1, 1, x.shape) + x
     else:
         # Calculate new flux based on random normal distribution sampling.
-        b = np.random.normal(x, u)
-    b = np.divide(b, u)
+        b = np.random.normal(x, u, x.shape)
 
     # Fit the spectrum.
-    solution, _ = optimize.nnls(m.T, b)
+    solution, _ = optimize.nnls(m.T, np.divide(b, u), maxiter=1024, atol=1e-16)
 
     return solution, b

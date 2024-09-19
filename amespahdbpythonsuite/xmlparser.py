@@ -366,7 +366,7 @@ class XMLparser:
                         "n_fe": 26,
                     }
 
-                    specie_dict.update(dict.fromkeys(atom_numbers.keys(), 0))
+                    specie_dict.update({k: 0 for k in atom_numbers.keys()})
 
                     for atom, number in atom_numbers.items():
                         specie_dict[atom] = len(

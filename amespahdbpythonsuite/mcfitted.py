@@ -63,7 +63,7 @@ class MCFitted:
 
         return d
 
-    def _getstats(self, d=dict()) -> dict:
+    def _getstats(self, d=list()) -> dict:
         """
         Get statistics for the mcfitted spectra.
 
@@ -186,18 +186,22 @@ class MCFitted:
                 elinewidth=0.2,
                 capsize=0.8,
                 label=datalabel,
+                zorder=0,
             )
 
         else:
-            ax.scatter(x, obs.flux.value, color="k", s=5, label=datalabel)
+            ax.scatter(x, obs.flux.value, color="k", s=5, label=datalabel, zorder=0)
 
-        ax.plot(x, fit["mean"], color="tab:purple", linewidth=1.2, label="fit")
+        ax.plot(
+            x, fit["mean"], color="tab:purple", linewidth=1.5, label="fit", zorder=100
+        )
         ax.fill_between(
             x,
             fit["mean"] - fit["std"],
             fit["mean"] + fit["std"],
             color="tab:purple",
             alpha=0.3,
+            zorder=99,
         )
 
         if keywords.get("charge"):
@@ -209,6 +213,7 @@ class MCFitted:
                     color="tab:red",
                     linewidth=1.2,
                     label="anion",
+                    zorder=2,
                 )
                 ax.fill_between(
                     x,
@@ -216,6 +221,7 @@ class MCFitted:
                     components["anion"]["mean"] + components["anion"]["std"],
                     color="tab:red",
                     alpha=0.3,
+                    zorder=1,
                 )
 
             if isinstance(components["neutral"]["mean"], np.ndarray):
@@ -225,6 +231,7 @@ class MCFitted:
                     color="tab:green",
                     linewidth=1.2,
                     label="neutral",
+                    zorder=4,
                 )
                 ax.fill_between(
                     x,
@@ -232,6 +239,7 @@ class MCFitted:
                     components["neutral"]["mean"] + components["neutral"]["std"],
                     color="tab:green",
                     alpha=0.3,
+                    zorder=3,
                 )
 
             if isinstance(components["cation"]["mean"], np.ndarray):
@@ -241,6 +249,7 @@ class MCFitted:
                     color="tab:blue",
                     linewidth=1.2,
                     label="cation",
+                    zorder=6,
                 )
                 ax.fill_between(
                     x,
@@ -248,23 +257,35 @@ class MCFitted:
                     components["cation"]["mean"] + components["cation"]["std"],
                     color="tab:blue",
                     alpha=0.3,
+                    zorder=5,
                 )
 
         elif keywords.get("size"):
             ptype = "size"
             if isinstance(components["small"]["mean"], np.ndarray):
-                ax.plot(x, components["small"]["mean"], color="tab:red", label="small")
+                ax.plot(
+                    x,
+                    components["small"]["mean"],
+                    color="tab:red",
+                    label="small",
+                    zorder=2,
+                )
                 ax.fill_between(
                     x,
                     components["small"]["mean"] - components["small"]["std"],
                     components["small"]["mean"] + components["small"]["std"],
                     color="tab:red",
                     alpha=0.3,
+                    zorder=1,
                 )
 
             if isinstance(components["large"]["mean"], np.ndarray):
                 ax.plot(
-                    x, components["large"]["mean"], color="tab:green", label="large"
+                    x,
+                    components["large"]["mean"],
+                    color="tab:green",
+                    label="large",
+                    zorder=4,
                 )
                 ax.fill_between(
                     x,
@@ -272,18 +293,26 @@ class MCFitted:
                     components["large"]["mean"] + components["large"]["std"],
                     color="tab:green",
                     alpha=0.3,
+                    zorder=3,
                 )
 
         elif keywords.get("composition"):
             ptype = "composition"
             if isinstance(components["pure"]["mean"], np.ndarray):
-                ax.plot(x, components["pure"]["mean"], color="tab:red", label="pure")
+                ax.plot(
+                    x,
+                    components["pure"]["mean"],
+                    color="tab:red",
+                    label="pure",
+                    zorder=2,
+                )
                 ax.fill_between(
                     x,
                     components["pure"]["mean"] - components["pure"]["std"],
                     components["pure"]["mean"] + components["pure"]["std"],
                     color="tab:red",
                     alpha=0.3,
+                    zorder=1,
                 )
 
             if isinstance(components["nitrogen"]["mean"], np.ndarray):
@@ -292,6 +321,7 @@ class MCFitted:
                     components["nitrogen"]["mean"],
                     color="tab:green",
                     label="nitrogen",
+                    zorder=4,
                 )
                 ax.fill_between(
                     x,
@@ -299,12 +329,13 @@ class MCFitted:
                     components["nitrogen"]["mean"] + components["nitrogen"]["std"],
                     color="tab:green",
                     alpha=0.3,
+                    zorder=3,
                 )
 
         else:
             ptype = "fitted"
 
-        ax.axhline(0, linestyle="--", color="gray")
+        ax.axhline(0, linestyle="--", color="gray", zorder=0)
         ax.legend(fontsize=10)
 
         if keywords.get("save", False):
