@@ -35,6 +35,18 @@ def pahdb_laboratory():
     return db
 
 
+@pytest.fixture(scope="module")
+def pahdb_clusters_theoretical():
+    xml = "resources/pahdb-clusters-theoretical_cutdown.xml"
+    db = AmesPAHdb(
+        filename=resource_filename("amespahdbpythonsuite", xml),
+        check=False,
+        cache=False,
+        update=False,
+    )
+    return db
+
+
 class TestAmesPAHdb:
     """
     Test AmesPAHdb class.
@@ -55,11 +67,17 @@ class TestAmesPAHdb:
     def test_type_laboratory(self, pahdb_laboratory):
         assert pahdb_laboratory.gettype() == "experimental"
 
+    def test_type_clusters_theoretical(self, pahdb_clusters_theoretical):
+        assert pahdb_clusters_theoretical.gettype() == "clusters/theoretical"
+
     def test_version_theoretical(self, pahdb_theoretical):
         assert pahdb_theoretical.getversion() == "3.10"
 
     def test_version_laboratory(self, pahdb_laboratory):
         assert pahdb_laboratory.getversion() == "2.00"
+
+    def test_version_clusters_theoretical(self, pahdb_clusters_theoretical):
+        assert pahdb_clusters_theoretical.getversion() == "1.00"
 
     def test_env(self):
         # TODO: Turn the sys.exit into exceptions.
@@ -154,3 +172,8 @@ class TestAmesPAHdb:
         assert pahdb_theoretical.search(
             "c>20 frequency > 3068 and frequency < 3070 intensity > 140 intensity < 141"
         ) == [18]
+
+    def test_search_clusters(self, pahdb_clusters_theoretical):
+        assert pahdb_clusters_theoretical.search(
+            "monomers=18 type=dimer conformation=step"
+        ) == [761058176]

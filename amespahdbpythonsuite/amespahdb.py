@@ -165,6 +165,7 @@ class AmesPAHdb:
                 f"FILENAME                    : {md5}",
                 f"ORIGNINAL FILENAME          : {filename}",
                 f"PARSE TIME                  : {elapsed}",
+                f'DATABASE                    : {self.__data["database"]}',
                 f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
                 f'COMMENT                     : {self.__data["comment"]}',
             ]
@@ -188,7 +189,7 @@ class AmesPAHdb:
                     pickle.dump(self.__data, f, pickle.HIGHEST_PROTOCOL)
 
             # Store the dumped database filename.
-            self.__data["filename"] = md5
+            self.__data["filename"] = filename
 
             # Stop timer and calculate elapsed time.
             elapsed = timedelta(seconds=(time.perf_counter() - tstart))
@@ -196,6 +197,7 @@ class AmesPAHdb:
             info = [
                 f'FILENAME                    : {self.__data["filename"]}',
                 f"PARSE TIME                  : {elapsed}",
+                f'DATABASE                    : {self.__data["database"]}',
                 f'VERSION (DATE)              : {self.__data["version"]} ({self.__data["date"]})',
                 f'COMMENT                     : {self.__data["comment"]}',
             ]
@@ -555,9 +557,26 @@ class AmesPAHdb:
             "weight": 'item[1]["weight"]',
             "scale": 'item[1]["scale"]',
             "energy": 'item[1]["total_e"]',
-            "zeropoint": 'item[1]m["vib_e"]',
+            "zeropoint": 'item[1]["vib_e"]',
             "experiment": 'item[1]["exp"]',
         }
+
+        strings: list[str] = []
+        if self.__data["database"] == "clusters/theoretical":
+            identities.update(
+                {
+                    "monomers": 'item[1]["monomers"]',
+                    "type": 'item[1]["type"]',
+                    "conformation": 'item[1]["conformation"]',
+                }
+            )
+            strings.extend(
+                set([s["monomers"] for s in self.__data["species"].values()])
+            )
+            strings.extend(set([s["type"] for s in self.__data["species"].values()]))
+            strings.extend(
+                set([s["conformation"] for s in self.__data["species"].values()])
+            )
 
         composed = {
             "wavenumber": 'np.array([t["frequency"] {operator} {operand} for t in item[1]["transitions"]])',
@@ -607,6 +626,9 @@ class AmesPAHdb:
         elif word in transfer:
             token["type"] = "TRANSFER"
             token["translation"] = transfer[word]
+        elif word in strings:
+            token["type"] = "STRING"
+            token["translation"] = f"'{word}'"
         elif re.search(
             "(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]*)([0-9]*)",
             word,
@@ -617,6 +639,7 @@ class AmesPAHdb:
             # TODO: add search by compound name
             token["type"] = "IGNORE"
             token["translation"] = word
+            return token
 
         token["valid"] = True
 
@@ -755,7 +778,7 @@ class AmesPAHdb:
                 if prev > -1:
                     if tokens[prev]["type"] == "IDENTITY" and tokens[prev]["valid"]:
                         if next is not None:
-                            if tokens[next]["type"] == "NUMERIC":
+                            if tokens[next]["type"] in ["NUMERIC", "STRING"]:
                                 parsed += " " + tokens[current]["translation"]
                             else:
                                 tokens[current]["valid"] = False
@@ -776,6 +799,17 @@ class AmesPAHdb:
                         parsed += " and "
                 # TODO implement name
                 # parsed += f"item[1]['comments'] == {tokens[current]['translation']}"
+            elif tokens[current]["type"] == "STRING":
+                if prev > -1:
+                    if tokens[prev]["type"] in ["COMPARISON", "NUMERIC"] and tokens[prev]["valid"]:
+                        parsed += tokens[current]["translation"]
+                    else:
+                        print("EXPECTING COMPARISON")
+                        tokens[current]["valid"] = False
+                else:
+                    print("EXPECTING COMPARISON")
+                    tokens[current]["valid"] = False
+
             elif tokens[current]["type"] == "IGNORE":
                 print(f"'{tokens[current]['translation']}' NOT UNDERSTOOD")
 
@@ -793,6 +827,8 @@ class AmesPAHdb:
 
         if sub:
             parsed += f" np.any({sub})"
+
+        print(parsed)
 
         return parsed
 

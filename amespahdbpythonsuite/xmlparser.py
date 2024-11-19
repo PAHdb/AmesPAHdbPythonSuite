@@ -6,11 +6,12 @@ or without schema checking.
 
 """
 
-from typing import Optional, Union
 import array
 import base64
-import urllib.request
+from binascii import crc32
+from typing import Optional, Union
 from urllib.error import HTTPError, URLError
+import urllib.request
 
 from lxml import etree  # type: ignore
 
@@ -171,8 +172,22 @@ class XMLparser:
             tag = etree.QName(elem).localname
 
             if action == "start" and tag == "specie":
-                uid = int(elem.attrib["uid"])
+                if self.library["database"] != "clusters/theoretical":
+                    uid = int(elem.attrib["uid"])
+                else:
+                    uid = crc32(
+                        "-".join(
+                            [
+                                elem.attrib[key]
+                                for key in ["monomers", "type", "conformation"]
+                            ]
+                        ).encode("utf-8")
+                    )
                 species[uid] = self._specie_handler(context)
+                if self.library["database"] == "clusters/theoretical":
+                    species[uid].update(elem.attrib)
+                    if len(species[uid]["monomers"].split(",")) == 1:
+                        species[uid]["monomers"] = int(species[uid]["monomers"])
             elif action != "end":
                 continue
 
