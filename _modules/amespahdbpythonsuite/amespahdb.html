@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -5,21 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>amespahdbpythonsuite.amespahdb &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=b56f5f8f" />
 
   
     <link rel="shortcut icon" href="../../_static/touch-icon-310x310.png"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -334,6 +332,7 @@
                 <span class="sa">f</span><span class="s2">&quot;FILENAME                    : </span><span class="si">{</span><span class="n">md5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">&quot;ORIGNINAL FILENAME          : </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">&quot;PARSE TIME                  : </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;DATABASE                    : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s1">&#39;VERSION (DATE)              : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s1">&#39;COMMENT                     : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="p">]</span>
@@ -357,7 +356,7 @@
                     <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
 
             <span class="c1"># Store the dumped database filename.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">md5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
 
             <span class="c1"># Stop timer and calculate elapsed time.</span>
             <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">tstart</span><span class="p">))</span>
@@ -365,6 +364,7 @@
             <span class="n">info</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="sa">f</span><span class="s1">&#39;FILENAME                    : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">&quot;PARSE TIME                  : </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;DATABASE                    : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s1">&#39;VERSION (DATE)              : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s1">&#39;COMMENT                     : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="p">]</span>
@@ -740,9 +740,26 @@
             <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;weight&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;scale&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;total_e&quot;]&#39;</span><span class="p">,</span>
-            <span class="s2">&quot;zeropoint&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1]m[&quot;vib_e&quot;]&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;zeropoint&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;vib_e&quot;]&#39;</span><span class="p">,</span>
             <span class="s2">&quot;experiment&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;exp&quot;]&#39;</span><span class="p">,</span>
         <span class="p">}</span>
+
+        <span class="n">strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;clusters/theoretical&quot;</span><span class="p">:</span>
+            <span class="n">identities</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;monomers&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;monomers&quot;]&#39;</span><span class="p">,</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;type&quot;]&#39;</span><span class="p">,</span>
+                    <span class="s2">&quot;conformation&quot;</span><span class="p">:</span> <span class="s1">&#39;item[1][&quot;conformation&quot;]&#39;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">strings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="nb">set</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;monomers&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+            <span class="p">)</span>
+            <span class="n">strings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()]))</span>
+            <span class="n">strings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="nb">set</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;conformation&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+            <span class="p">)</span>
 
         <span class="n">composed</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;wavenumber&quot;</span><span class="p">:</span> <span class="s1">&#39;np.array([t[&quot;frequency&quot;] </span><span class="si">{operator}</span><span class="s1"> </span><span class="si">{operand}</span><span class="s1"> for t in item[1][&quot;transitions&quot;]])&#39;</span><span class="p">,</span>
@@ -792,6 +809,9 @@
         <span class="k">elif</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">transfer</span><span class="p">:</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TRANSFER&quot;</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transfer</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+            <span class="n">token</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;STRING&quot;</span>
+            <span class="n">token</span><span class="p">[</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">word</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
             <span class="s2">&quot;(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]+)([0-9]*)(mg+|si+|fe+|[chno]*)([0-9]*)&quot;</span><span class="p">,</span>
             <span class="n">word</span><span class="p">,</span>
@@ -802,6 +822,7 @@
             <span class="c1"># TODO: add search by compound name</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;IGNORE&quot;</span>
             <span class="n">token</span><span class="p">[</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">word</span>
+            <span class="k">return</span> <span class="n">token</span>
 
         <span class="n">token</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -940,7 +961,7 @@
                 <span class="k">if</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IDENTITY&quot;</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]:</span>
                         <span class="k">if</span> <span class="nb">next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUMERIC&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;NUMERIC&quot;</span><span class="p">,</span> <span class="s2">&quot;STRING&quot;</span><span class="p">]:</span>
                                 <span class="n">parsed</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
@@ -961,6 +982,17 @@
                         <span class="n">parsed</span> <span class="o">+=</span> <span class="s2">&quot; and &quot;</span>
                 <span class="c1"># TODO implement name</span>
                 <span class="c1"># parsed += f&quot;item[1][&#39;comments&#39;] == {tokens[current][&#39;translation&#39;]}&quot;</span>
+            <span class="k">elif</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;STRING&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COMPARISON&quot;</span><span class="p">,</span> <span class="s2">&quot;NUMERIC&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]:</span>
+                        <span class="n">parsed</span> <span class="o">+=</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXPECTING COMPARISON&quot;</span><span class="p">)</span>
+                        <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXPECTING COMPARISON&quot;</span><span class="p">)</span>
+                    <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
             <span class="k">elif</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IGNORE&quot;</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s1">&#39;translation&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; NOT UNDERSTOOD&quot;</span><span class="p">)</span>
 
@@ -978,6 +1010,8 @@
 
         <span class="k">if</span> <span class="n">sub</span><span class="p">:</span>
             <span class="n">parsed</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; np.any(</span><span class="si">{</span><span class="n">sub</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parsed</span>
 
