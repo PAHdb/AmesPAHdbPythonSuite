@@ -154,25 +154,27 @@ class Fitted(Spectrum):
                 if isinstance(classes, dict):
                     if keywords.get("charge", False):
                         if not isinstance(classes["anion"], int):
-                            axis[0].plot(x, classes["anion"], "r-", label="anion")
+                            axis[0].plot(x, classes["anion"], color="tab:red", label="anion")
                         if not isinstance(classes["neutral"], int):
-                            axis[0].plot(x, classes["neutral"], "g-", label="neutral")
+                            axis[0].plot(x, classes["neutral"], color="tab:green", label="neutral")
                         if not isinstance(classes["cation"], int):
-                            axis[0].plot(x, classes["cation"], "b-", label="cation")
+                            axis[0].plot(x, classes["cation"], color="tab:blue", label="cation")
                         axis[0].axhline(0, linestyle="--", color="gray")
                         axis[0].legend()
                     elif keywords.get("size", False):
                         if not isinstance(classes["small"], int):
-                            axis[0].plot(x, classes["small"], "r-", label="small")
+                            axis[0].plot(x, classes["small"], color="tab:blue", label="small")
+                        if not isinstance(classes["medium"], int):
+                            axis[0].plot(x, classes["medium"], color="tab:green", label="medium")
                         if not isinstance(classes["large"], int):
-                            axis[0].plot(x, classes["large"], "g-", label="large")
+                            axis[0].plot(x, classes["large"], color="tab:red", label="large")
                         axis[0].axhline(0, linestyle="--", color="gray")
                         axis[0].legend()
                     elif keywords.get("composition", False):
                         if not isinstance(classes["pure"], int):
-                            axis[0].plot(x, classes["pure"], "r-", label="pure")
+                            axis[0].plot(x, classes["pure"], color="tab:red", label="pure")
                         if not isinstance(classes["nitrogen"], int):
-                            axis[0].plot(x, classes["nitrogen"], "g-", label="nitrogen")
+                            axis[0].plot(x, classes["nitrogen"], color="tab:green", label="nitrogen")
                         axis[0].axhline(0, linestyle="--", color="gray")
                         axis[0].legend()
             elif keywords.get("residual", False):
@@ -477,14 +479,28 @@ class Fitted(Spectrum):
 
         """
 
-        if s["subclass"] == "charge":
-            uids = [
-                uid
-                for uid in self.uids
-                if s["operator"](
-                    self.pahdb["species"][uid][s["subclass"]], s["operand"]
-                )
-            ]
+        if s["subclass"] == "n_c":
+            if "operator_1" in s:
+                uids = [
+                    uid
+                    for uid in self.uids
+                    if s["operator_1"](
+                        self.pahdb["species"][uid][s["subclass"]],
+                        s["operand_1"],
+                    )
+                    and s["operator_2"](
+                        self.pahdb["species"][uid][s["subclass"]],
+                        s["operand_2"],
+                    )
+                ]
+            else:
+                uids = [
+                    uid
+                    for uid in self.uids
+                    if s["operator"](
+                        self.pahdb["species"][uid][s["subclass"]], s["operand"]
+                    )
+                ]
         else:
             uids = [
                 uid
@@ -582,12 +598,17 @@ class Fitted(Spectrum):
         Retrieve the sum of the fitting weights for the fitted PAHs.
 
         """
-        if s["subclass"] == "charge":
+        if "operator_1" in s:
             uids = [
                 uid
                 for uid in self.uids
-                if s["operator"](
-                    self.pahdb["species"][uid][s["subclass"]], s["operand"]
+                if s["operator_1"](
+                    self.pahdb["species"][uid][s["subclass"]],
+                    s["operand_1"],
+                )
+                and s["operator_2"](
+                    self.pahdb["species"][uid][s["subclass"]],
+                    s["operand_2"],
                 )
             ]
         else:
@@ -619,10 +640,17 @@ class Fitted(Spectrum):
                 "operator": operator.le,
                 "operand": keywords.get("small", 50),
             },
+            "medium": {
+                "subclass": "n_c",
+                "operator_1": operator.gt,
+                "operator_2": operator.le,
+                "operand_1": keywords.get("medium_low", 50),
+                "operand_2": keywords.get("medium_high", 70),
+            },
             "large": {
                 "subclass": "n_c",
                 "operator": operator.gt,
-                "operand": keywords.get("small", 50),
+                "operand": keywords.get("large", 70),
             },
             "nitrogen": {"subclass": "n_n", "operator": operator.gt, "operand": 0},
         }

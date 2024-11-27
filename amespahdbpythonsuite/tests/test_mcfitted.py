@@ -58,11 +58,11 @@ class TestMCFitted:
 
     def test_getclasses(self, test_mcfitted):
         classes = test_mcfitted.getclasses()
-        assert len(classes.keys()) == 7
+        assert len(classes.keys()) == 8
 
     def test_getbreakdown(self, test_mcfitted):
         breakdown = test_mcfitted.getbreakdown()
-        assert len(breakdown.keys()) == 13
+        assert len(breakdown.keys()) == 14
 
     def test_plot(self, monkeypatch, test_mcfitted):
         monkeypatch.setattr(plt, "show", lambda: None)

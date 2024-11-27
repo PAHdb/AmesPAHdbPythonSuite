@@ -72,6 +72,7 @@ class TestFitted:
             "neutral",
             "cation",
             "small",
+            "medium",
             "large",
             "nitrogen",
             "pure",
