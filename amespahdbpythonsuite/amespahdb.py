@@ -62,14 +62,14 @@ class AmesPAHdb:
             "Dr. Matthew J. Shannanon\n",
             "Dr. Joseph E. Roser\n",
         ]
-        self.message(intro)
+        # self.message(intro)
 
-        self.message(f"SUITE VERSION: {suite.__version__}")
+        # self.message(f"SUITE VERSION: {suite.__version__}")
 
         if keywords.get("update", False) or (
             keywords.get("update", True) and random.randint(0, 4) == 4
         ):
-            self.message("CHECKING FOR UPDATE")
+            # self.message("CHECKING FOR UPDATE")
             github = "http://api.github.com/repos/pahdb/amespahdbpythonsuite/tags"
             try:
                 with urllib.request.urlopen(github) as url:
@@ -84,8 +84,8 @@ class AmesPAHdb:
             except HTTPError:
                 self.message("FAILED TO CHECK FOR UPDATE")
 
-        self.message("WEBSITE: WWW.ASTROCHEM.ORG/PAHDB/")
-        self.message("CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV")
+        # self.message("WEBSITE: WWW.ASTROCHEM.ORG/PAHDB/")
+        # self.message("CONTACT: CHRISTIAAN.BOERSMA@NASA.GOV")
 
         filename = keywords.get("filename")
         if not filename:
@@ -172,7 +172,7 @@ class AmesPAHdb:
             self.message(info, space=0)
 
         else:
-            self.message("PARSING DATABASE: THIS MAY TAKE A FEW MINUTES")
+            # self.message("PARSING DATABASE: THIS MAY TAKE A FEW MINUTES")
 
             # Start timer.
             tstart = time.perf_counter()
