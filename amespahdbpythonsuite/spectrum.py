@@ -181,7 +181,10 @@ class Spectrum(Transitions):
 
         matrix = np.array(list(self.data.values()))
 
-        if obs.uncertainty is None:
+        # Option to use NNLS even if uncertainties are present, because Lopez-Puertas et al. (2013) does so
+        use_nnls = True  # Set to True if you want NNLS regardless of uncertainties
+
+        if obs.uncertainty is None or use_nnls:
             method = "NNLS"
             b = obs.flux.value
             m = matrix.copy()
