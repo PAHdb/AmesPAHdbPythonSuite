@@ -1536,7 +1536,7 @@ class Transitions(Data):
     def number_of_photons(**keywords):
         """
         Calculate the number of photons given a
-        blacbody radiation field.
+        blackbody radiation field.
 
         """
 
