@@ -1167,7 +1167,7 @@ class Transitions(Data):
     def mean_energy_squared(**keywords):
         """
         Callback function to calculate the mean energy in erg^2 for a given
-        blackbody temperatyre.
+        blackbody temperature.
 
         :Returns: float array
 
@@ -1536,7 +1536,7 @@ class Transitions(Data):
     def number_of_photons(**keywords):
         """
         Calculate the number of photons given a
-        blacbody radiation field.
+        blackbody radiation field.
 
         """
 
