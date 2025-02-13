@@ -222,7 +222,12 @@ class Spectrum(Transitions):
         if notice:
             message(
                 [
-                    " You're Doing Great <3",
+                    " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
+                    " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
+                    " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
+                    " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
+                    " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
+                    " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
                 ]
             )
 
