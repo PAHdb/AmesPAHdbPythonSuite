@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>amespahdbpythonsuite.mcfitted &mdash; AmesPAHdbPythonSuite  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -163,34 +163,34 @@
   <h1>Source code for amespahdbpythonsuite.mcfitted</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">specutils</span> <span class="kn">import</span> <span class="n">Spectrum1D</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">specutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum1D</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.amespahdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmesPAHdb</span>
 
 <span class="n">message</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="o">.</span><span class="n">message</span>
 
 
 <div class="viewcode-block" id="MCFitted">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted">[docs]</a>
-<span class="k">class</span> <span class="nc">MCFitted</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MCFitted</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    AmesPAHdbPythonSuite mcfitted class.</span>
 <span class="sd">    Contains methods to fit and plot the input spectrum using a Monte Carlo approach.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Populate data dictionary helper.</span>
 
@@ -216,7 +216,7 @@
 
 <div class="viewcode-block" id="MCFitted.get">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.get`.</span>
 <span class="sd">        Assigns class variables from inherited dictionary.</span>
@@ -231,7 +231,7 @@
         <span class="k">return</span> <span class="n">d</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_getstats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="nb">list</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getstats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="nb">list</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get statistics for the mcfitted spectra.</span>
 
@@ -251,7 +251,7 @@
 
 <div class="viewcode-block" id="MCFitted.getfit">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getfit">[docs]</a>
-    <span class="k">def</span> <span class="nf">getfit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getfit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the mean, std, skewness, and kurtosis spectra.</span>
 
@@ -264,7 +264,7 @@
 
 <div class="viewcode-block" id="MCFitted.getbreakdown">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getbreakdown">[docs]</a>
-    <span class="k">def</span> <span class="nf">getbreakdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getbreakdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the breakdown of the MC fitted PAHs.</span>
 
@@ -287,7 +287,7 @@
 
 <div class="viewcode-block" id="MCFitted.getclasses">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getclasses">[docs]</a>
-    <span class="k">def</span> <span class="nf">getclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the spectra of the different classes of the MC fitted PAHs.</span>
 
@@ -310,12 +310,12 @@
 
 <div class="viewcode-block" id="MCFitted.plot">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the MC sampled fit and breakdown components.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">StdDevUncertainty</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.nddata</span><span class="w"> </span><span class="kn">import</span> <span class="n">StdDevUncertainty</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">datalabel</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;datalabel&quot;</span><span class="p">,</span> <span class="s2">&quot;obs&quot;</span><span class="p">)</span>
 
@@ -537,14 +537,14 @@
 
 <div class="viewcode-block" id="MCFitted.write">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.write">[docs]</a>
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write the spectra to file as an IPAC-table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">sys</span>
-        <span class="kn">import</span> <span class="nn">datetime</span>
-        <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.tbl&quot;</span>
@@ -592,7 +592,7 @@
 
 <div class="viewcode-block" id="MCFitted.geterror">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.geterror">[docs]</a>
-    <span class="k">def</span> <span class="nf">geterror</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">geterror</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Obtains the PAHdb fitting uncertainty from the fitted geterror method,</span>
 <span class="sd">        as the ratio of the residual over the total spectrum area.</span>
@@ -616,7 +616,7 @@
 
 <div class="viewcode-block" id="MCFitted.getobservation">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getobservation">[docs]</a>
-    <span class="k">def</span> <span class="nf">getobservation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum1D</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getobservation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the observation.</span>
 
@@ -626,7 +626,7 @@
 
 <div class="viewcode-block" id="MCFitted.getresidual">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.mcfitted.MCFitted.getresidual">[docs]</a>
-    <span class="k">def</span> <span class="nf">getresidual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getresidual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the statistics spectra for the residuals of the MC fits.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

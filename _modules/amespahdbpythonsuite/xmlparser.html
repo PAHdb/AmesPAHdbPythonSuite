@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>amespahdbpythonsuite.xmlparser &mdash; AmesPAHdbPythonSuite  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -169,19 +169,19 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">array</span>
-<span class="kn">import</span> <span class="nn">base64</span>
-<span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">crc32</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">urllib.error</span> <span class="kn">import</span> <span class="n">HTTPError</span><span class="p">,</span> <span class="n">URLError</span>
-<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">array</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">binascii</span><span class="w"> </span><span class="kn">import</span> <span class="n">crc32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPError</span><span class="p">,</span> <span class="n">URLError</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
 
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">etree</span>  <span class="c1"># type: ignore</span>
 
 
 <div class="viewcode-block" id="XMLparser">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser">[docs]</a>
-<span class="k">class</span> <span class="nc">XMLparser</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XMLparser</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse a NASA Ames PAH IR Spectroscopic library XML-file.</span>
 
@@ -207,7 +207,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inits XMLparser with schema checking off, no given filename.</span>
 
@@ -216,14 +216,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="n">validate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Class representation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">=}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A description of the instance.</span>
 
@@ -232,7 +232,7 @@
 
 <div class="viewcode-block" id="XMLparser.verify_schema">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser.verify_schema">[docs]</a>
-    <span class="k">def</span> <span class="nf">verify_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate against linked schema.</span>
 
@@ -276,7 +276,7 @@
 
 <div class="viewcode-block" id="XMLparser.to_pahdb_dict">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.xmlparser.XMLparser.to_pahdb_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_pahdb_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_pahdb_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parses the XML, with or without validation.</span>
 
@@ -304,7 +304,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_tree_to_pahdb_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tree_to_pahdb_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the element tree to a a pahdb_dict.</span>
 
@@ -331,7 +331,7 @@
                 <span class="n">elem</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span>
 
-    <span class="k">def</span> <span class="nf">_species_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">,</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_species_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">,</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse a PAHdb XML &lt;species&gt; tag.</span>
 
@@ -369,13 +369,13 @@
 
         <span class="k">return</span> <span class="n">species</span>
 
-    <span class="k">def</span> <span class="nf">_specie_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">,</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_specie_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">,</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse a PAHdb XML &lt;specie&gt; tag.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">specie_geometry_handler</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">specie_geometry_handler</span><span class="p">(</span>
             <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">,</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">]</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;&lt;specie&gt; tag: Parse its child &lt;geometry&gt; tag.&quot;&quot;&quot;</span>
@@ -413,7 +413,7 @@
 
             <span class="k">return</span> <span class="n">geometry</span>
 
-        <span class="k">def</span> <span class="nf">specie_transitions_handler</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">specie_transitions_handler</span><span class="p">(</span>
             <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">,</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">]</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
@@ -465,7 +465,7 @@
 
             <span class="k">return</span> <span class="n">transitions</span>
 
-        <span class="k">def</span> <span class="nf">specie_laboratory_handler</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">specie_laboratory_handler</span><span class="p">(</span>
             <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">etree</span><span class="o">.</span><span class="n">iterwalk</span><span class="p">,</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">]</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>

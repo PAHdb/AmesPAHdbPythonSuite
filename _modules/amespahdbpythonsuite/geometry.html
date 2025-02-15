@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>amespahdbpythonsuite.geometry &mdash; AmesPAHdbPythonSuite  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -162,29 +162,29 @@
              
   <h1>Source code for amespahdbpythonsuite.geometry</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">KDTree</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">euclidean</span> <span class="k">as</span> <span class="n">edist</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">vtkmodules.vtkRenderingCore</span> <span class="kn">import</span> <span class="n">vtkAssembly</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">KDTree</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclidean</span> <span class="k">as</span> <span class="n">edist</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkRenderingCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">vtkAssembly</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
-<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.amespahdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmesPAHdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
 
 <span class="n">message</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="o">.</span><span class="n">message</span>
 
 
 <div class="viewcode-block" id="Geometry">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry">[docs]</a>
-<span class="k">class</span> <span class="nc">Geometry</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Geometry</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    AmesPAHdbPythonSuite geometry class</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_atomic_mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span>
@@ -304,7 +304,7 @@
 
 <div class="viewcode-block" id="Geometry.set">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.set">[docs]</a>
-    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.</span>
 
@@ -314,7 +314,7 @@
 
 <div class="viewcode-block" id="Geometry.get">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assigns class variables from inherited dictionary.</span>
 
@@ -325,14 +325,14 @@
         <span class="k">return</span> <span class="n">d</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Class representation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="si">=}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A description of the instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -341,13 +341,13 @@
 
 <div class="viewcode-block" id="Geometry.plot">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the structure</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># type: ignore</span>
 
         <span class="c1"># atom_names = [&quot;H&quot;, &quot;C&quot;, &quot;N&quot;, &quot;O&quot;, &quot;Mg&quot;, &quot;Si&quot;, &quot;Fe&quot;]</span>
 
@@ -422,19 +422,19 @@
 
 <div class="viewcode-block" id="Geometry.structure">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.structure">[docs]</a>
-    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">vtkAssembly</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">vtkAssembly</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Render the 3D structure.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="kn">import</span> <span class="nn">vtkmodules.vtkInteractionStyle</span>  <span class="c1"># type:  ignore</span>
-        <span class="kn">import</span> <span class="nn">vtkmodules.vtkRenderingOpenGL2</span>  <span class="c1"># type:  ignore # noqa:  F401</span>
-        <span class="kn">from</span> <span class="nn">vtk</span> <span class="kn">import</span> <span class="n">vtkTransform</span>  <span class="c1"># type:  ignore</span>
-        <span class="kn">from</span> <span class="nn">vtkmodules.vtkFiltersSources</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type:  ignore</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">vtkmodules.vtkInteractionStyle</span>  <span class="c1"># type:  ignore</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">vtkmodules.vtkRenderingOpenGL2</span>  <span class="c1"># type:  ignore # noqa:  F401</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vtk</span><span class="w"> </span><span class="kn">import</span> <span class="n">vtkTransform</span>  <span class="c1"># type:  ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkFiltersSources</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type:  ignore</span>
             <span class="n">vtkCylinderSource</span><span class="p">,</span> <span class="n">vtkSphereSource</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">vtkmodules.vtkIOImage</span> <span class="kn">import</span> <span class="n">vtkPNGWriter</span>  <span class="c1"># type:  ignore</span>
-        <span class="kn">from</span> <span class="nn">vtkmodules.vtkRenderingCore</span> <span class="kn">import</span> <span class="p">(</span><span class="n">vtkActor</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkIOImage</span><span class="w"> </span><span class="kn">import</span> <span class="n">vtkPNGWriter</span>  <span class="c1"># type:  ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkRenderingCore</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">vtkActor</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
                                                  <span class="n">vtkPolyDataMapper</span><span class="p">,</span>
                                                  <span class="n">vtkRenderer</span><span class="p">,</span> <span class="n">vtkRenderWindow</span><span class="p">,</span>
                                                  <span class="n">vtkRenderWindowInteractor</span><span class="p">,</span>
@@ -600,7 +600,7 @@
 
 <div class="viewcode-block" id="Geometry.inertia">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.inertia">[docs]</a>
-    <span class="k">def</span> <span class="nf">inertia</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inertia</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the moment of inertia.</span>
 
@@ -634,7 +634,7 @@
 
 <div class="viewcode-block" id="Geometry.diagonalize">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.diagonalize">[docs]</a>
-    <span class="k">def</span> <span class="nf">diagonalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">diagonalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Diagonalize the moment of inertia and align structure</span>
 <span class="sd">        with the x-y plane</span>
@@ -703,7 +703,7 @@
 
 <div class="viewcode-block" id="Geometry.mass">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.mass">[docs]</a>
-    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes molecular mass.</span>
 
@@ -721,7 +721,7 @@
 
 <div class="viewcode-block" id="Geometry.rings">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.rings">[docs]</a>
-    <span class="k">def</span> <span class="nf">rings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the number of rings per type.</span>
 
@@ -922,7 +922,7 @@
 
 <div class="viewcode-block" id="Geometry.area">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.area">[docs]</a>
-    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the area.</span>
 
@@ -951,7 +951,7 @@
 
 <div class="viewcode-block" id="Geometry.bec">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.geometry.Geometry.bec">[docs]</a>
-    <span class="k">def</span> <span class="nf">bec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert PAH carbon and hydrogen positions to a boundary-edge</span>
 <span class="sd">        code. Only makes sense to use this for regular PAHs. Return of</span>
 <span class="sd">        a tuple with a list of boundary carbons traversed in order and</span>
@@ -969,7 +969,7 @@
         <span class="k">return</span> <span class="n">becodes</span></div>
 
 
-    <span class="k">def</span> <span class="nf">__becode</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__becode</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">allcarbons</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
         <span class="n">allhydrogens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
@@ -1111,7 +1111,7 @@
         <span class="n">boundary_carbons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary_carbons</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">boundary_carbons</span><span class="p">,</span> <span class="n">becode</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__indicator</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__indicator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">v1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">v2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -1128,7 +1128,7 @@
         <span class="n">value</span> <span class="o">+=</span> <span class="n">normal</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">v1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__pcone_to_be</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcone_code</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__pcone_to_be</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcone_code</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts the PC-1 code of a PAH to its boundary-edge code.  By</span>
 <span class="sd">        Dr. Joseph E. Roser &lt;Joseph.E.Roser@nasa.gov</span>
 

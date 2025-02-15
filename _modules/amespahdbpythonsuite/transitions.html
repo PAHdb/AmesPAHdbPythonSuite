@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>amespahdbpythonsuite.transitions &mdash; AmesPAHdbPythonSuite  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -163,28 +163,28 @@
   <h1>Source code for amespahdbpythonsuite.transitions</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">hashlib</span>
-<span class="kn">import</span> <span class="nn">multiprocessing</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>  <span class="c1"># type: ignore</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">special</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">integrate</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">special</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.amespahdb</span> <span class="kn">import</span> <span class="n">AmesPAHdb</span>
-<span class="kn">from</span> <span class="nn">amespahdbpythonsuite.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.amespahdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmesPAHdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
 
 
 <span class="n">message</span> <span class="o">=</span> <span class="n">AmesPAHdb</span><span class="o">.</span><span class="n">message</span>
@@ -201,14 +201,14 @@
 
 <div class="viewcode-block" id="Transitions">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions">[docs]</a>
-<span class="k">class</span> <span class="nc">Transitions</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Transitions</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    AmesPAHdbPythonSuite transitions class.</span>
 <span class="sd">    Contains methods to create and apply an emission model.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize transitions class.</span>
 
@@ -218,7 +218,7 @@
 
 <div class="viewcode-block" id="Transitions.set">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.set">[docs]</a>
-    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.set` to parse keywords.</span>
 <span class="sd">        Checks flavor of the database, i.e., theoretical or experimental</span>
@@ -228,7 +228,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__set</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Populate data dictionary helper.</span>
 
@@ -242,7 +242,7 @@
 
 <div class="viewcode-block" id="Transitions.get">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls class: :class:`amespahdbpythonsuite.data.Data.get` to get keywords.</span>
 
@@ -253,14 +253,14 @@
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Class representation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="si">=}</span><span class="s2">,shift=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_shift</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A description of the instance.</span>
 
@@ -270,16 +270,16 @@
 
 <div class="viewcode-block" id="Transitions.write">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.write">[docs]</a>
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write the transitions to file as an IPAC-table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">datetime</span>
-        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-        <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">ascii</span>  <span class="c1"># type: ignore</span>
-        <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">ascii</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.tbl&quot;</span>
@@ -336,7 +336,7 @@
 
 <div class="viewcode-block" id="Transitions.shift">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.shift">[docs]</a>
-    <span class="k">def</span> <span class="nf">shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shifts transitions frequency by provided value.</span>
 
@@ -351,7 +351,7 @@
 
 <div class="viewcode-block" id="Transitions.fixed_temperature">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.fixed_temperature">[docs]</a>
-    <span class="k">def</span> <span class="nf">fixed_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fixed_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies the Fixed Temperature emission model.</span>
 
@@ -394,7 +394,7 @@
 
 <div class="viewcode-block" id="Transitions.calculated_temperature">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.calculated_temperature">[docs]</a>
-    <span class="k">def</span> <span class="nf">calculated_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculated_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies the Calculated Temperature emission model.</span>
 
@@ -597,7 +597,7 @@
 
 <div class="viewcode-block" id="Transitions.cascade">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.cascade">[docs]</a>
-    <span class="k">def</span> <span class="nf">cascade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cascade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies the Cascade emission model.</span>
 
@@ -926,7 +926,7 @@
 
 <div class="viewcode-block" id="Transitions.convolve">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.convolve">[docs]</a>
-    <span class="k">def</span> <span class="nf">convolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spectrum</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convolve transitions with a line profile.</span>
 <span class="sd">        Calls class:</span>
@@ -1037,7 +1037,7 @@
                 <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;radiant energy&quot;</span><span class="p">,</span>
             <span class="p">}</span>
 
-        <span class="kn">from</span> <span class="nn">amespahdbpythonsuite.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
 
         <span class="k">return</span> <span class="n">Spectrum</span><span class="p">(</span>
             <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span>
@@ -1059,13 +1059,13 @@
 
 <div class="viewcode-block" id="Transitions.plot">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the transitions absorption spectrum.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>  <span class="c1"># type: ignore</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
@@ -1112,7 +1112,7 @@
 <div class="viewcode-block" id="Transitions.absorption_cross_section">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.absorption_cross_section">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">absorption_cross_section</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">absorption_cross_section</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the PAH absorption cross-section per Li &amp; Draine 2007,</span>
 <span class="sd">        ApJ, 657:810-837.</span>
@@ -1169,7 +1169,7 @@
 <div class="viewcode-block" id="Transitions.planck">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">planck</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">planck</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to Calculate the absorption cross-section</span>
 <span class="sd">        multiplied by Planck&#39;s function.</span>
@@ -1189,7 +1189,7 @@
 <div class="viewcode-block" id="Transitions.planck_squared">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_squared">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">planck_squared</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">planck_squared</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to Calculate the absorption cross-section</span>
 <span class="sd">        multiplied by Planck&#39;s function squared.</span>
@@ -1209,7 +1209,7 @@
 <div class="viewcode-block" id="Transitions.planck_number_of_photons">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_number_of_photons">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">planck_number_of_photons</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">planck_number_of_photons</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to Calculate the number of photons</span>
 <span class="sd">        using Planck&#39;s function.</span>
@@ -1229,7 +1229,7 @@
 <div class="viewcode-block" id="Transitions.isrf">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">isrf</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isrf</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the absorption cross-section times</span>
 <span class="sd">        the interstellar radiation field per Mathis et al. 1983, A&amp;A, 128:212.</span>
@@ -1262,7 +1262,7 @@
 <div class="viewcode-block" id="Transitions.isrf_squared">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_squared">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">isrf_squared</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isrf_squared</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the absorption cross-section times</span>
 <span class="sd">        the interstellar radiation field per Mathis et al. 1983, A&amp;A, 128:212.</span>
@@ -1295,7 +1295,7 @@
 <div class="viewcode-block" id="Transitions.isrf_number_of_photons">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_number_of_photons">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">isrf_number_of_photons</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isrf_number_of_photons</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the number of photons per Mathis et al. 1983, A&amp;A, 128:212.</span>
 
@@ -1328,7 +1328,7 @@
 <div class="viewcode-block" id="Transitions.mean_energy">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.mean_energy">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_energy</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the mean energy in erg for a given</span>
 <span class="sd">        blackbody temperature.</span>
@@ -1390,7 +1390,7 @@
 <div class="viewcode-block" id="Transitions.mean_energy_squared">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.mean_energy_squared">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">mean_energy_squared</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_energy_squared</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function to calculate the mean energy in erg^2 for a given</span>
 <span class="sd">        blackbody temperatyre.</span>
@@ -1453,7 +1453,7 @@
 <div class="viewcode-block" id="Transitions.attained_temperature">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.attained_temperature">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">attained_temperature</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">attained_temperature</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a PAH&#39;s temperature after absorbing a given amount of energy.</span>
 
@@ -1474,7 +1474,7 @@
 <div class="viewcode-block" id="Transitions.approximate_attained_temperature">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.approximate_attained_temperature">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">approximate_attained_temperature</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">approximate_attained_temperature</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a PAH&#39;s temperature after absorbing a given amount of energy</span>
 <span class="sd">        using an approximation.</span>
@@ -1498,7 +1498,7 @@
 <div class="viewcode-block" id="Transitions.heat_capacity">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.heat_capacity">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">heat_capacity</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">heat_capacity</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate heat capacity.</span>
 
@@ -1517,7 +1517,7 @@
 <div class="viewcode-block" id="Transitions.planck_feature_strength_convolved">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_feature_strength_convolved">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">planck_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">planck_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a</span>
 <span class="sd">        given blackbody radiation field.</span>
@@ -1542,7 +1542,7 @@
 <div class="viewcode-block" id="Transitions.isrf_feature_strength_convolved">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_feature_strength_convolved">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">isrf_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isrf_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with the</span>
 <span class="sd">        interstellar radiation field.</span>
@@ -1567,7 +1567,7 @@
 <div class="viewcode-block" id="Transitions.stellar_model_feature_strength_convolved">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.stellar_model_feature_strength_convolved">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">stellar_model_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stellar_model_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a given stellar model.</span>
 
@@ -1596,7 +1596,7 @@
 <div class="viewcode-block" id="Transitions.planck_approximate_feature_strength_convolved">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.planck_approximate_feature_strength_convolved">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">planck_approximate_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">planck_approximate_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a</span>
 <span class="sd">        given blackbody using an approximation.</span>
@@ -1627,7 +1627,7 @@
 <div class="viewcode-block" id="Transitions.isrf_approximate_feature_strength_convolved">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.isrf_approximate_feature_strength_convolved">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">isrf_approximate_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isrf_approximate_feature_strength_convolved</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with</span>
 <span class="sd">        the interstellar radiation field using an approximation.</span>
@@ -1656,7 +1656,7 @@
 <div class="viewcode-block" id="Transitions.stellar_model_approximate_feature_strength_convolved">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.stellar_model_approximate_feature_strength_convolved">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">stellar_model_approximate_feature_strength_convolved</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stellar_model_approximate_feature_strength_convolved</span><span class="p">(</span>
         <span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1693,7 +1693,7 @@
 <div class="viewcode-block" id="Transitions.feature_strength">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.feature_strength">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">feature_strength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">feature_strength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength covolved with a blackbody.</span>
 
@@ -1724,7 +1724,7 @@
 <div class="viewcode-block" id="Transitions.approximate_feature_strength">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.approximate_feature_strength">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">approximate_feature_strength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">approximate_feature_strength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate a feature&#39;s strength convolved with a</span>
 <span class="sd">        blackbody using an approximation from Bakes, Tielens &amp; Bauschliher,</span>
@@ -1795,7 +1795,7 @@
 <div class="viewcode-block" id="Transitions.number_of_photons">
 <a class="viewcode-back" href="../../amespahdbpythonsuite.html#amespahdbpythonsuite.transitions.Transitions.number_of_photons">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">number_of_photons</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">number_of_photons</span><span class="p">(</span><span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the number of photons given a</span>
 <span class="sd">        blacbody radiation field.</span>
@@ -1830,7 +1830,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_lineprofile</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_lineprofile</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate Gaussian, Drude, or Lorentzian line profiles.</span>
 
@@ -1856,7 +1856,7 @@
             <span class="k">return</span> <span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">width</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_intensities</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_intensities</span><span class="p">(</span>
         <span class="n">npoints</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">xmin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">xmax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1911,7 +1911,7 @@
         <span class="k">return</span> <span class="n">s</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_cascade_em_model</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cascade_em_model</span><span class="p">(</span>
         <span class="n">e</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="n">t_method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
