@@ -828,8 +828,6 @@ class AmesPAHdb:
         if sub:
             parsed += f" np.any({sub})"
 
-        print(parsed)
-
         return parsed
 
     def getversion(self) -> str:
