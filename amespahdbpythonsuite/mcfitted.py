@@ -52,16 +52,22 @@ class MCFitted:
     def get(self) -> dict:
         """
         Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.get`.
-        Assigns class variables from inherited dictionary.
-
+        Returns a dictionary including PAH UIDs and their corresponding weights.
         """
-        d = {}
-        d["type"] = self.__class__.__name__
-        d["mcfits"] = self.mcfits
-        d["distribution"] = self.distribution
-        d["observation"] = self.observation
 
-        return d
+        return {
+            "type": self.__class__.__name__,
+            "mcfits": [
+                {
+                    "uids": fitted.uids,  # List of PAH UIDs in the fit
+                    "weights": fitted.weights,  # Dictionary {uid: weight}
+                }
+                for fitted in self.mcfits
+            ],
+            "distribution": self.distribution,
+            "observation": self.observation,
+        }
+
 
     def _getstats(self, d=list()) -> dict:
         """
