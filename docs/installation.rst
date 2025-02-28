@@ -8,7 +8,7 @@ Installation
 The AmesPAHdbPythonSuite can be installed using pip directly from its
 GitHub-repository with::
 
-    $ pip install git+git://github.com/PAHdb/AmesPAHdbPythonSuite.git
+    $ pip install git+https://github.com/PAHdb/AmesPAHdbPythonSuite.git
 
 
 Alternatively the AmesPAHdbPythonSuite can be cloned and then installed::

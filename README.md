@@ -27,7 +27,7 @@ This software requires:
 The AmesPAHdbPythonSuite can be directly installed from its
 [repository](https://github.com/PAHdb/AmesPAHdbPythonSuite) using pip:
 
-``pip install git+git://github.com/PAHdb/AmesPAHdbPythonSuite.git``
+``pip install git+https://github.com/PAHdb/AmesPAHdbPythonSuite.git``
 
 ### From source
 
