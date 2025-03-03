@@ -605,7 +605,7 @@ class AmesPAHdb:
 
         transfer = {"(": "(", ")": ")"}
 
-        if word.isnumeric():
+        if word.strip("+-").isnumeric():
             token["type"] = "NUMERIC"
             token["translation"] = word
         elif word in charge:
