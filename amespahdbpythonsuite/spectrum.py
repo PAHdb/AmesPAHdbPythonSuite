@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 
 from __future__ import annotations
@@ -195,6 +196,8 @@ class Spectrum(Transitions):
 
         scl = m.max()
         m /= scl
+
+        print("the shapes are:", m.shape, b.shape)
 
         solution, _ = optimize.nnls(m.T, b, maxiter=1024, atol=1e-16)
 
@@ -403,15 +406,19 @@ class Spectrum(Transitions):
 
         Parameters
         ----------
-        samples : Number of samples.
-            int
-
+        samples : int
+            Number of samples.
         """
         from tqdm import tqdm  # type: ignore
+        import numpy as np
+        import copy
+        import astropy.units as u
+        from astropy.nddata import StdDevUncertainty
 
         from amespahdbpythonsuite import observation
         from amespahdbpythonsuite.mcfitted import MCFitted
 
+        # Prepare the observation
         if isinstance(y, Spectrum1D):
             obs = copy.deepcopy(y)
         elif isinstance(y, observation.Observation):
@@ -426,9 +433,7 @@ class Spectrum(Transitions):
                 uncertainty=unc,
             )
 
-        if obs.spectral_axis.unit != u.Unit() and obs.spectral_axis.unit != u.Unit(
-            "1/cm"
-        ):
+        if obs.spectral_axis.unit != u.Unit() and obs.spectral_axis.unit != u.Unit("1/cm"):
             message("EXPECTING SPECTRAL UNITS OF 1 / CM")
             return None
 
@@ -437,29 +442,25 @@ class Spectrum(Transitions):
             return None
 
         if notice:
-            message(
-                [
-                    " NOTICE: PLEASE TAKE CONSIDERABLE CARE WHEN INTERPRETING ",
-                    " THESE RESULTS AND PUTTING THEM IN AN ASTRONOMICAL       ",
-                    " CONTEXT. THERE ARE MANY SUBTLETIES THAT NEED TO BE TAKEN",
-                    " INTO ACCOUNT, RANGING FROM PAH SIZE, INCLUSION OF       ",
-                    " HETEROATOMS, ETC. TO DETAILS OF THE APPLIED EMISSION    ",
-                    " MODEL, BEFORE ANY THOROUGH ASSESSMENT CAN BE MADE.      ",
-                ]
-            )
+            message([])
+
+        #Calculate chi-square as a goodness of fit metric
+        def compute_chi2(data_flux: np.ndarray, model_flux: np.ndarray, uncertainty: np.ndarray) -> float:
+            residual = data_flux - model_flux
+            return np.sum((residual / uncertainty) ** 2)
 
         mcfits = list()
 
-        # Start the MC sampling and fitting.
         if multiprocessing:
             from amespahdbpythonsuite.fitted import Fitted
+            import multiprocessing as mp
+            from functools import partial
 
             matrix = np.array(list(self.data.values()))
-
             m = np.divide(matrix, obs.uncertainty.array)
-
             scl = m.max()
             m /= scl
+            print("the shapes are:", m.shape, obs.flux.shape)
 
             pool = mp.Pool(mp.cpu_count() - 1)
             for solution, b in tqdm(
@@ -484,15 +485,12 @@ class Spectrum(Transitions):
                 data = dict()
                 weights = dict()
 
-                # Retrieve uids, data, and fit weights dictionaries.
-                for (
-                    uid,
-                    s,
-                    m,
-                ) in zip(self.uids, solution / scl, matrix):
+                # Retrieve uids, data, and weights.
+                # (Renaming inner variable from 'm' to 'm_element' to avoid conflict.)
+                for uid, s, m_element in zip(self.uids, solution / scl, matrix):
                     if s > 0:
                         uids.append(uid)
-                        data[uid] = s * m * obs.flux.unit
+                        data[uid] = s * m_element * obs.flux.unit
                         weights[uid] = s
 
                 obs_fit = Spectrum1D(
@@ -500,6 +498,9 @@ class Spectrum(Transitions):
                     spectral_axis=copy.deepcopy(obs.spectral_axis),
                     uncertainty=copy.deepcopy(obs.uncertainty),
                 )
+
+                # Compute chi-square comparing the original observed flux to the fitted model flux b.
+                chi2 = compute_chi2(obs.flux.value, b, obs.uncertainty.array)
 
                 mcfits.append(
                     Fitted(
@@ -517,8 +518,11 @@ class Spectrum(Transitions):
                         observation=obs_fit,
                         weights=weights,
                         method="NNLC",
+                        gof=chi2,  # Attach goodness-of-fit value
                     )
                 )
+            pool.close()
+            pool.join()
         else:
             for _ in tqdm(
                 range(samples),
@@ -528,13 +532,13 @@ class Spectrum(Transitions):
                 colour="blue",
             ):
                 if uniform:
-                    # Calculate new flux based on random uniform distribution sampling.
+                    # Calculate new flux using uniform sampling.
                     flux = (
                         obs.uncertainty.array * np.random.uniform(-1, 1, obs.flux.shape)
                         + obs.flux.value
                     )
                 else:
-                    # Calculate new flux based on random normal distribution sampling.
+                    # Calculate new flux using normal sampling.
                     flux = np.random.normal(
                         obs.flux.value, obs.uncertainty.array, obs.flux.shape
                     )
@@ -542,8 +546,12 @@ class Spectrum(Transitions):
                 # Fit the spectrum.
                 fit = self.fit(flux * obs.flux.unit, obs.uncertainty, notice=False)
 
-                # Obtain the fit and weights.
                 if fit:
+                    # Compute chi-square using the perturbed flux (flux) as data
+                    # and the model flux from fit.observation.
+                    model_flux = fit.getfit()
+                    chi2 = compute_chi2(flux, model_flux, obs.uncertainty.array)
+                    fit.gof = chi2  # Attach goodness-of-fit value to the fit object
                     mcfits.append(fit)
 
         return MCFitted(
@@ -551,6 +559,8 @@ class Spectrum(Transitions):
             distribution="uniform" if uniform else "normal",
             observation=obs,
         )
+
+
 
 
 def _mcfit(_, m, x, u, uniform) -> tuple:
