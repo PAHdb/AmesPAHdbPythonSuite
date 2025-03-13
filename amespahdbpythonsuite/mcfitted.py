@@ -19,7 +19,6 @@ class MCFitted:
     """
     AmesPAHdbPythonSuite mcfitted class.
     Contains methods to fit and plot the input spectrum using a Monte Carlo approach.
-
     """
 
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
@@ -28,7 +27,6 @@ class MCFitted:
     def __set(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Populate data dictionary helper.
-
         """
         self.mcfits = keywords.get("mcfits", list())
         self.distribution = keywords.get("distribution", "")
@@ -51,16 +49,16 @@ class MCFitted:
 
     def get(self) -> dict:
         """
-        Calls class: :class:`amespahdbpythonsuite.transitions.Transitions.get`.
-        Returns a dictionary including PAH UIDs and their corresponding weights.
+        Returns a dictionary including PAH UIDs, their corresponding weights,
+        and the goodness-of-fit for each Monte Carlo fit.
         """
-
         return {
             "type": self.__class__.__name__,
             "mcfits": [
                 {
                     "uids": fitted.uids,  # List of PAH UIDs in the fit
                     "weights": fitted.weights,  # Dictionary {uid: weight}
+                    "gof": getattr(fitted, "gof", None),  # Goodness-of-fit value, if available
                 }
                 for fitted in self.mcfits
             ],
@@ -68,14 +66,12 @@ class MCFitted:
             "observation": self.observation,
         }
 
-
     def _getstats(self, d=list()) -> dict:
         """
         Get statistics for the mcfitted spectra.
 
         Returns:
             stat : dictionary
-
         """
         s = stats.describe(d)
         stat = {
@@ -84,23 +80,19 @@ class MCFitted:
             "skew": s.skewness,
             "kurt": s.kurtosis,
         }
-
         return stat
 
     def getfit(self) -> dict:
         """
         Retrieves the mean, std, skewness, and kurtosis spectra.
-
         """
         if self._fit is None:
             self._fit = self._getstats([mcfit.getfit() for mcfit in self.mcfits])
-
         return self._fit
 
     def getbreakdown(self) -> dict:
         """
         Retrieves the breakdown of the MC fitted PAHs.
-
         """
         if self._breakdown is None:
             mcfits = iter(self.mcfits)
@@ -114,13 +106,11 @@ class MCFitted:
                 for key, val in breakdown.items():
                     results[key].append(val)
             self._breakdown = {key: self._getstats(val) for key, val in results.items()}
-
         return self._breakdown
 
     def getclasses(self) -> dict:
         """
         Retrieves the spectra of the different classes of the MC fitted PAHs.
-
         """
         if self._classes is None:
             mcfits = iter(self.mcfits)
@@ -134,18 +124,15 @@ class MCFitted:
                 for key, val in classes.items():
                     results[key].append(val)
             self._classes = {key: self._getstats(val) for key, val in results.items()}
-
         return self._classes
 
     def plot(self, **keywords):
         """
         Plot the MC sampled fit and breakdown components.
-
         """
         from astropy.nddata import StdDevUncertainty  # type: ignore
 
         datalabel = keywords.get("datalabel", "obs")
-
         obs = self.getobservation()
 
         # Get MC average fit and breakdown spectra.
@@ -194,7 +181,6 @@ class MCFitted:
                 label=datalabel,
                 zorder=0,
             )
-
         else:
             ax.scatter(x, obs.flux.value, color="k", s=5, label=datalabel, zorder=0)
 
@@ -364,7 +350,6 @@ class MCFitted:
     def write(self, filename: str = "") -> None:
         """
         Write the spectra to file as an IPAC-table.
-
         """
         import sys
         import datetime
@@ -374,7 +359,6 @@ class MCFitted:
             filename = self.__class__.__name__ + ".tbl"
 
         hdr = list()
-
         kv = {
             "DATE": datetime.datetime.now()
             .astimezone()
@@ -410,14 +394,12 @@ class MCFitted:
             tbl.add_row([key, vals["mean"], vals["std"], vals["skew"], vals["kurt"]])
 
         tbl.write(filename, format="ipac", overwrite=True)
-
         message(f"WRITTEN: {filename}")
 
     def geterror(self) -> dict:
         """
         Obtains the PAHdb fitting uncertainty from the fitted geterror method,
         as the ratio of the residual over the total spectrum area.
-
         """
         if self._error is None:
             mcfits = iter(self.mcfits)
@@ -431,13 +413,11 @@ class MCFitted:
                 for key, val in error.items():
                     results[key].append(val)
             self._error = {key: self._getstats(val) for key, val in results.items()}
-
         return self._error
 
     def getobservation(self) -> Spectrum1D:
         """
         Retrieves the observation.
-
         """
         return self.observation
 
@@ -449,5 +429,4 @@ class MCFitted:
             self._residual = self._getstats(
                 [mcfit.getresidual() for mcfit in self.mcfits]
             )
-
         return self._residual
