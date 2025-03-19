@@ -921,12 +921,12 @@ class Transitions(Data):
     def absorption_cross_section(f: np.ndarray) -> np.ndarray:
         """
         Calculates the PAH absorption cross-section per
-        - Li & Draine 2001b, ApJ, 554:778-802 Eq. [11] 
+        - Li & Draine 2001b, ApJ, 554:778-802 Eq. [11]
         - Draine & 2007, ApJ, 657:810-837. Table 1, same as Li & Draine 2001
 
-        With NIR corrections from 
-        - Mattioda et al. 2005c  
-        - Mattioda et al. 2008. 
+        With NIR corrections from
+        - Mattioda et al. 2005c
+        - Mattioda et al. 2008.
 
         :Params f: frequencies in wavenumber
 
@@ -935,9 +935,9 @@ class Transitions(Data):
 
         wave = 1e4 / f
 
-        #entry 1 and 2 from Draine & Li (2007), (but these are not different from Li & Draine 2001), 
-        #entry 3-5 from Drude Parameters Mattioda et al. (2008) table 3, not used
-        #entry 6 is one Gaussian Parameters Mattioda et al. (2008) table 3
+        # entry 1 and 2 from Draine & Li (2007), (but these are not different from Li & Draine 2001),
+        # entry 3-5 from Drude Parameters Mattioda et al. (2008) table 3, not used
+        # entry 6 is one Gaussian Parameters Mattioda et al. (2008) table 3
         C_c = [0.0722, 0.2175, 1.05, 1.26, 1.905, 1.185]
         W_c = [0.195, 0.217, 0.055, 0.11, 0.09, 0.2985]
         A_c = [7.97e-17, 1.23e-17, 2e-20, 7.8e-21, 1.465e-22, 1.4e-20]
@@ -946,19 +946,21 @@ class Transitions(Data):
         W = np.transpose(np.resize(W_c, (np.size(f), np.size(W_c))))
         A = np.transpose(np.resize(A_c, (np.size(f), np.size(A_c))))
 
-
         # Cutoff wavelength from Salama et al. (1996),
         # (Eq. (4) in Mattioda et al. (2005c)), adding in the correction for nc > 40
-        if nc > 40: 
+        if nc > 40:
             y = 1.0 / (0.889 + (2.282 / np.sqrt(0.4 * nc))) / wave
         else:
             y = 1.0 / (0.889 + (2.282 / np.sqrt(0.3 * nc))) / wave
 
-        #continuum from 0.07 - 0.82 μm according to Li & Draine (2001), Eq [11]
+        # continuum from 0.07 - 0.82 μm according to Li & Draine (2001), Eq [11]
         wave_r2 = np.resize(wave, (2, (np.size(f))))
-        crosssection = ((1.0 / np.pi) * np.arctan((1e3 * (y - 1.0) ** 3) / y) + 0.5) * ( #implement cutoff wavelenght
-            3458e-20 * 10.0 ** (-3.431 * wave) #continuum from Li & Draine (2001) Eq. 11 
-            + (2.0 / np.pi) #Drude profile summation
+        crosssection = (
+            (1.0 / np.pi) * np.arctan((1e3 * (y - 1.0) ** 3) / y) + 0.5
+        ) * (  # implement cutoff wavelenght
+            3458e-20
+            * 10.0 ** (-3.431 * wave)  # continuum from Li & Draine (2001) Eq. 11
+            + (2.0 / np.pi)  # Drude profile summation
             * np.sum(
                 W[:2]
                 * C[:2]
@@ -968,18 +970,21 @@ class Transitions(Data):
             )
         )
         if charge != 0:
-            #NIR correction from 0.82 μm according to Mattioda et al. (2008), Eq. (3), table 3
+            # NIR correction from 0.82 μm according to Mattioda et al. (2008), Eq. (3), table 3
             wave_r6 = np.resize(wave, (6, np.size(f)))
 
-            crosssection = crosssection + (np.exp(-1e-1 / wave**2) * 1.4e-19 * 10 ** -0.2 * 10 ** (-1.34*wave)
+            crosssection = crosssection + (
+                np.exp(-1e-1 / wave**2) * 1.4e-19 * 10**-0.2 * 10 ** (-1.34 * wave)
                 + np.sqrt(2.0 / np.pi)
                 * np.sum(
-                    A[5:] * np.exp(-2.0 * (wave_r6 - C[5:]) ** 2 / W[5:] ** 2) / W[5:], #Gaussian profile summation
+                    A[5:]
+                    * np.exp(-2.0 * (wave_r6 - C[5:]) ** 2 / W[5:] ** 2)
+                    / W[5:],  # Gaussian profile summation
                     axis=0,
-                ))
+                )
+            )
 
         return crosssection
-
 
     @staticmethod
     def planck(f: np.ndarray) -> np.ndarray:
