@@ -1240,7 +1240,7 @@ class Transitions(Data):
         :type T: float
 
         """
-        global energy
+        global energy  # noqa: F824
 
         return (
             integrate.quad(
@@ -1259,7 +1259,7 @@ class Transitions(Data):
         :type T: float
 
         """
-        global energy
+        global energy  # noqa: F824
 
         return (
             nc
@@ -1280,7 +1280,7 @@ class Transitions(Data):
 
         """
 
-        global frequencies
+        global frequencies  # noqa: F824
 
         val = 1.4387751297850830401 * frequencies / T
 
@@ -1453,9 +1453,9 @@ class Transitions(Data):
         :type T: float
 
         """
-        global frequency
-        global frequencies
-        global intensities
+        global frequency  # noqa: F824
+        global frequencies  # noqa: F824
+        global intensities  # noqa: F824
 
         val1 = 1.4387751297850830401 * frequency / T
         if val1 > np.log(np.finfo(float).max):
