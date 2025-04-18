@@ -1461,7 +1461,7 @@
 <span class="sd">        :type T: float</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">global</span> <span class="n">energy</span>
+        <span class="k">global</span> <span class="n">energy</span>  <span class="c1"># noqa: F824</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
@@ -1483,7 +1483,7 @@
 <span class="sd">        :type T: float</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">global</span> <span class="n">energy</span>
+        <span class="k">global</span> <span class="n">energy</span>  <span class="c1"># noqa: F824</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">nc</span>
@@ -1507,7 +1507,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">global</span> <span class="n">frequencies</span>
+        <span class="k">global</span> <span class="n">frequencies</span>  <span class="c1"># noqa: F824</span>
 
         <span class="n">val</span> <span class="o">=</span> <span class="mf">1.4387751297850830401</span> <span class="o">*</span> <span class="n">frequencies</span> <span class="o">/</span> <span class="n">T</span>
 
@@ -1701,9 +1701,9 @@
 <span class="sd">        :type T: float</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">global</span> <span class="n">frequency</span>
-        <span class="k">global</span> <span class="n">frequencies</span>
-        <span class="k">global</span> <span class="n">intensities</span>
+        <span class="k">global</span> <span class="n">frequency</span>  <span class="c1"># noqa: F824</span>
+        <span class="k">global</span> <span class="n">frequencies</span>  <span class="c1"># noqa: F824</span>
+        <span class="k">global</span> <span class="n">intensities</span>  <span class="c1"># noqa: F824</span>
 
         <span class="n">val1</span> <span class="o">=</span> <span class="mf">1.4387751297850830401</span> <span class="o">*</span> <span class="n">frequency</span> <span class="o">/</span> <span class="n">T</span>
         <span class="k">if</span> <span class="n">val1</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">):</span>
