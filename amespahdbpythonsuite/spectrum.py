@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
+import copy
+from functools import partial
+import multiprocessing as mp
+from typing import Optional, TYPE_CHECKING, Union
 
-from typing import TYPE_CHECKING, Optional, Union
-
-import astropy.units as u  # type: ignore
-import numpy as np
 from astropy.nddata import StdDevUncertainty  # type: ignore
-from scipy import optimize  # type: ignore
+import astropy.units as u  # type: ignore
+from fnnls import fnnls  # type: ignore
+import numpy as np
 from specutils import Spectrum1D, manipulation  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -19,11 +21,9 @@ if TYPE_CHECKING:
     from amespahdbpythonsuite.observation import Observation
     from amespahdbpythonsuite.mcfitted import MCFitted
 
-import copy
-import multiprocessing as mp
-from functools import partial
-
 message = AmesPAHdb.message
+
+np.bool = np.bool_  # type: ignore
 
 
 class Spectrum(Transitions):
@@ -193,12 +193,15 @@ class Spectrum(Transitions):
         if notice:
             message(f"DOING {method}")
 
-        scl = m.max()
-        m /= scl
+        b_scl = b.max()
+        b /= b_scl
 
-        solution, _ = optimize.nnls(m.T, b, maxiter=1024, atol=1e-16)
+        m_scl = m.max()
+        m /= m_scl
 
-        solution /= scl
+        solution, _ = fnnls(m.T, b)
+
+        solution /= m_scl / b_scl
 
         # Initialize lists and dictionaries.
         uids = list()
@@ -463,8 +466,8 @@ class Spectrum(Transitions):
 
             m = np.divide(matrix, obs.uncertainty.array)
 
-            scl = m.max()
-            m /= scl
+            m_scl = m.max()
+            m /= m_scl
 
             pool = mp.Pool(mp.cpu_count() - 1)
             for solution, b in tqdm(
@@ -480,10 +483,13 @@ class Spectrum(Transitions):
                 ),
                 desc="samples",
                 leave=True,
-                unit="samples",
+                unit="sample",
                 colour="blue",
                 total=samples,
             ):
+
+                solution /= m_scl
+
                 # Initialize lists and dictionaries.
                 uids = list()
                 data = dict()
@@ -494,7 +500,7 @@ class Spectrum(Transitions):
                     uid,
                     s,
                     m,
-                ) in zip(self.uids, solution / scl, matrix):
+                ) in zip(self.uids, solution, matrix):
                     if s > 0:
                         uids.append(uid)
                         data[uid] = s * m * obs.flux.unit
@@ -566,7 +572,9 @@ def _mcfit(_, m, x, u, uniform) -> tuple:
         # Calculate new flux based on random normal distribution sampling.
         b = np.random.normal(x, u, x.shape)
 
-    # Fit the spectrum.
-    solution, _ = optimize.nnls(m.T, np.divide(b, u), maxiter=1024, atol=1e-16)
+    b_scl = b.max()
 
-    return solution, b
+    # Fit the spectrum.
+    solution, _ = fnnls(m.T, np.divide(b / b_scl, u))
+
+    return solution * b_scl, b

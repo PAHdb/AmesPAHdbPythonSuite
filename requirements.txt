@@ -1,9 +1,10 @@
-numpy
 astropy
+fnnls
 lxml
 matplotlib
-scipy
+numpy
 packaging
+scipy
 specutils
-vtk
 tqdm
+vtk
