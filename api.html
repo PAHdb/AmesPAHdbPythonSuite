@@ -55,7 +55,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4 </span>Working with fundamental vibrational transitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03e.html"><span class="sectnum">3.5 </span>Working with Molecular Geometric Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03f.html"><span class="sectnum">3.6 </span>Working with Raw Laboratory Spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7 </span>Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7 </span>Working Outside the <em>AmesPAHdbPythonSuite</em> Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03h.html"><span class="sectnum">3.8 </span>Creating PAH Spectra</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sec_03h.html#emission-models"><span class="sectnum">3.8.1 </span>Emission models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sec_03h.html#line-profiles"><span class="sectnum">3.8.2 </span>Line profiles</a></li>
@@ -167,32 +167,21 @@
              
   <section id="api">
 <h1><span class="sectnum">3 </span>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h1>
-<p>The suite currently consists of 13 IDL object classes and two
-helper programs. The main interface to the database is provided by
-the <em>AmesPAHdbIDLSuite</em>-object, which will parse the dowloaded
-XML-file utilizing IDL’s AmesPAHXMLParser-object. The available
-PAH data is divided into four parts, each handled by its own
-object class and providing its own functionality.</p>
+<p>The main interface to the database is provided by the <em>AmesPAHdb</em> instance,
+which will parse the dowloaded XML-file utilizing a <em>XMLParser</em> instance. The
+available PAH data is divided into four parts, each handled by its own class
+and providing its own functionality.</p>
 <ol class="arabic simple">
-<li><p>The Species-object, holds the PAH molecular properties,</p></li>
-<li><p>The Transitions-object, holds the fundamental vibrational transitions,</p></li>
-<li><p>The Laboratory_Spectrum-object holds the raw laboratory spectrum, and</p></li>
-<li><p>The Geometry-objects, holds the geometrical data.</p></li>
+<li><p>The <em>Species</em> class, which deals with the PAH molecular properties,</p></li>
+<li><p>The <em>Transitions</em> class, which deals with the fundamental vibrational transitions,</p></li>
+<li><p>The <em>Laboratory</em> class, which deals with the raw laboratory spectrum, and</p></li>
+<li><p>The <em>Geometry</em> class, which deals with the geometrical data.</p></li>
 </ol>
-<p>The <em>AmesPAHdbIDLSuite</em>-object will return one of these object
-classes upon request. In addition, the
-<em>AmesPAHdbIDLSuite</em>_Transitions-object returns object classes
-upon convolving, co-adding and fitting spectra; an
-<em>AmesPAHdbIDLSuite</em>_Spectrum-,
-<em>AmesPAHdbIDLSuite</em>_Coadded_Spectrum- and
-<em>AmesPAHdbIDLSuite</em>_Fitted_Spectrum-object, respectively. The
-<em>AmesPAHdbIDLSuite</em>_Observation-object can handle some commonly
-used astronomical data formats. The
-<em>AmesPAHdbIDLSuite</em>_Browser-object is a graphical user
-interface to the database that can be used to browse its contents.
-Lastly, the IDL_Object-object is a class used to inherit from in
-IDL versions before 8.0, allowing operator overloaded classes to
-still compile on these earlier versions.</p>
+<p>The <em>AmesPAHdb</em> instance will return one of these class instances upon request.
+In addition, the <em>Transitions</em> instance returns class instances upon
+convolving, co-adding and fitting spectra; a <em>Spectrum</em>, <em>Coadded</em> and <em>Fitted</em>
+or <em>MCFitted</em> instance, respectively. The <em>Observation</em> class can handle some
+commonly used astronomical data formats.</p>
 <p>The application programming interface (API) and its use is
 described in turn.</p>
 <div class="toctree-wrapper compound">
@@ -203,7 +192,7 @@ described in turn.</p>
 <li class="toctree-l1"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4 </span>Working with fundamental vibrational transitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sec_03e.html"><span class="sectnum">3.5 </span>Working with Molecular Geometric Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sec_03f.html"><span class="sectnum">3.6 </span>Working with Raw Laboratory Spectra</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7 </span>Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7 </span>Working Outside the <em>AmesPAHdbPythonSuite</em> Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sec_03h.html"><span class="sectnum">3.8 </span>Creating PAH Spectra</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sec_03i.html"><span class="sectnum">3.9 </span>Spectroscopic Database Fitting</a></li>
 </ul>
@@ -221,7 +210,7 @@ described in turn.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019/2021 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis.</p>
+    <p>&#169; Copyright 2019/2025 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

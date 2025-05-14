@@ -2,9 +2,9 @@
    :start: 7
    :prefix: 3.
 
-======================================================
-Working Outside the *AmesPAHdbIDLSuite* Object Classes
-======================================================
+==================================================
+Working Outside the *AmesPAHdbPythonSuite* Classes
+==================================================
 
 The *AmesPAHdbPythonSuite* object classes all provide the
 'get'-method that allows extraction of the object's internal data

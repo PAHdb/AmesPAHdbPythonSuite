@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="3.7 Working Outside the AmesPAHdbIDLSuite Object Classes" href="sec_03g.html" />
+    <link rel="next" title="3.7 Working Outside the AmesPAHdbPythonSuite Classes" href="sec_03g.html" />
     <link rel="prev" title="3.5 Working with Molecular Geometric Data" href="sec_03e.html" /> 
 </head>
 
@@ -55,7 +55,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sec_03d.html"><span class="sectnum">3.4 </span>Working with fundamental vibrational transitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03e.html"><span class="sectnum">3.5 </span>Working with Molecular Geometric Data</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#"><span class="sectnum">3.6 </span>Working with Raw Laboratory Spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7 </span>Working Outside the <em>AmesPAHdbIDLSuite</em> Object Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sec_03g.html"><span class="sectnum">3.7 </span>Working Outside the <em>AmesPAHdbPythonSuite</em> Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sec_03h.html"><span class="sectnum">3.8 </span>Creating PAH Spectra</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sec_03h.html#emission-models"><span class="sectnum">3.8.1 </span>Emission models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sec_03h.html#line-profiles"><span class="sectnum">3.8.2 </span>Line profiles</a></li>
@@ -159,7 +159,7 @@
       </li>
   </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
         <a href="sec_03e.html" class="btn btn-neutral float-left" title="3.5 Working with Molecular Geometric Data" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sec_03g.html" class="btn btn-neutral float-right" title="3.7 Working Outside the AmesPAHdbIDLSuite Object Classes" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sec_03g.html" class="btn btn-neutral float-right" title="3.7 Working Outside the AmesPAHdbPythonSuite Classes" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
   </div>
   <hr/>
 </div>
@@ -170,7 +170,7 @@
 <h1><span class="sectnum">3.6 </span>Working with Raw Laboratory Spectra<a class="headerlink" href="#working-with-raw-laboratory-spectra" title="Link to this heading">¶</a></h1>
 <p>The ‘laboratory’-instance exposes available raw
 laboratory spectra when an experimental database XML-file is
-loaded (<em>work-in-progress</em>).</p>
+loaded.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uids</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;c&lt;=20 neutral n=2 neutral&quot;</span><span class="p">)</span>
 
 <span class="n">laboratory</span> <span class="o">=</span> <span class="n">pahdb</span><span class="o">.</span><span class="n">getlaboratorybyuid</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
@@ -178,13 +178,13 @@ loaded (<em>work-in-progress</em>).</p>
 </div>
 <p>The ‘laboratory’-instance’s ‘plot’-method will
 display the raw laboratory spectra. The spectrum of each PAH
-species will be presented in a different color (<em>work-in-progress</em>).</p>
+species will be presented in a different color.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">laboratory</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Optionally, the ‘wavelength’, ‘oplot’, and ‘color’-keywords can be
 given to the ‘plot’-method to control the abscissa, overplotting,
-and color, respectively (<em>work-in-progress</em>).</p>
+and color, respectively.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">laboratory</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -192,7 +192,7 @@ and color, respectively (<em>work-in-progress</em>).</p>
 write the raw laboratory spectrum to file. The spectrum of each
 PAH species will be written to a separate text (.txt) file, where
 each filename will have the PAH species UID embedded. Optionally,
-a prefix can be given that will be prepended to the filename (<em>work-in-progress</em>).</p>
+a prefix can be given that will be prepended to the filename.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">laboratory</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;myFile&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -203,13 +203,13 @@ a prefix can be given that will be prepended to the filename (<em>work-in-progre
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="sec_03e.html" class="btn btn-neutral float-left" title="3.5 Working with Molecular Geometric Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sec_03g.html" class="btn btn-neutral float-right" title="3.7 Working Outside the AmesPAHdbIDLSuite Object Classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sec_03g.html" class="btn btn-neutral float-right" title="3.7 Working Outside the AmesPAHdbPythonSuite Classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019/2021 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis.</p>
+    <p>&#169; Copyright 2019/2025 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

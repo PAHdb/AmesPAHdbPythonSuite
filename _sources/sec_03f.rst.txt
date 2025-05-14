@@ -8,7 +8,7 @@ Working with Raw Laboratory Spectra
 
 The 'laboratory'-instance exposes available raw
 laboratory spectra when an experimental database XML-file is
-loaded (*work-in-progress*).
+loaded.
 
 .. code:: python
 
@@ -19,7 +19,7 @@ loaded (*work-in-progress*).
 
 The 'laboratory'-instance's 'plot'-method will
 display the raw laboratory spectra. The spectrum of each PAH
-species will be presented in a different color (*work-in-progress*).
+species will be presented in a different color.
 
 .. code:: python
 
@@ -27,7 +27,7 @@ species will be presented in a different color (*work-in-progress*).
 
 Optionally, the 'wavelength', 'oplot', and 'color'-keywords can be
 given to the 'plot'-method to control the abscissa, overplotting,
-and color, respectively (*work-in-progress*).
+and color, respectively.
 
 .. code:: python
 
@@ -37,7 +37,7 @@ The 'laboratory'-instance's 'write'-method will
 write the raw laboratory spectrum to file. The spectrum of each
 PAH species will be written to a separate text (.txt) file, where
 each filename will have the PAH species UID embedded. Optionally,
-a prefix can be given that will be prepended to the filename (*work-in-progress*).
+a prefix can be given that will be prepended to the filename.
 
 .. code:: python
 
