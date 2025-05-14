@@ -7,7 +7,7 @@ FAQ
 
 **What Python version is required to run the package?**
 
-*The AmesPAHdbPythonSuite requires a Python > 3.6 installation.*
+*The AmesPAHdbPythonSuite requires a Python > 3.9 installation.*
 
 
 **I am getting schema validation errors, is this an issue and how can I get rid of them?**

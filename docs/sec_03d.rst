@@ -43,13 +43,15 @@ The 'show' keyword will display the plot on screen, while the 'outfile' keyword 
 Optionally, the 'wavelength', 'stick', 'oplot', 'legend', and
 'color'-keywords can be given to the 'Plot'-method to control the
 abscissa, stick representation, overplotting, legend and color,
-respectively (*work-in-progress*). 
+respectively. 
 
 .. code:: python
 
    transitions.plot(wavelength=True, color='blue', show=True)
 
-The 'transitions'-instance's 'write'-method will write the fundamental vibrational transitions to file. The transitions of each PAH species will be written to a IPAC table (.tbl). Optionally, a filename can be provided (*work-in-progress*).
+The 'transitions'-instance's 'write'-method will write the fundamental
+vibrational transitions to file. The transitions of each PAH species will be
+written to a IPAC table (.tbl). Optionally, a filename can be provided.
 
 .. code:: python
 

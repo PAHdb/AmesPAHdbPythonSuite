@@ -10,7 +10,7 @@ Spectroscopic Database Fitting
 Dealing with astronomical observations
 --------------------------------------
 
-Astronomical observations can be handled by the 'observation'-instance, which is able to read text, ISO-SWS, and Spitzer-IRS-files (*work-in-progress*).
+Astronomical observations can be handled by the 'observation'-instance, which is able to read text, ISO-SWS, and Spitzer-IRS-files.
 
 .. code:: python
 

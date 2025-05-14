@@ -7,14 +7,14 @@ Working with Molecular Geometric Data
 =====================================
 
 The 'AmesPAHdbPythonSuite_Geometry'-object exposes the molecular
-geometric data (*work-in-progress*).
+geometric data.
 
 .. code:: python
 
    uids = pahdb.search("c<=20 neutral n=2 neutral")
    geometry = pahdb.getgeometrybyuid(uids)
 
-The 'geometry'-instance provides both the 'plot' and 'structure'-methods to output the chemical structure of the PAH with provided UID. The first method uses a 2D representation, while the latter a 3D one (*work-in-progress*).
+The 'geometry'-instance provides both the 'plot' and 'structure'-methods to output the chemical structure of the PAH with provided UID. The first method uses a 2D representation, while the latter a 3D one.
 
 .. code:: python
 
@@ -35,7 +35,7 @@ returned to the caller. When the 'save'-keyword is also set, a
 PNG-image will be generated as well, which will have the UID of
 the PAH molecule under consideration embedded in the filename.
 Lastly, the 'angle'-keyword controls rotation of the structure
-around the *z*-axis (*work-in-progress*).
+around the *z*-axis.
 
 .. code:: python
 
@@ -55,7 +55,7 @@ the generated PNG-file. The 'axis' and 'angle'-keywords can
 control axis and angle of rotation, respectively. With the
 'view'-keyword set the generated structure will be rendered on screen.
 Lastly, when the 'obj'-keyword is set, the
-generated 3D model is returned to the caller (*work-in-progress*).
+generated 3D model is returned to the caller.
 
 .. code:: python
 
@@ -66,7 +66,7 @@ img = geometry.structure(18, background=(0, 255, 0), resolution=(600, 600), save
 In addition, the 'geometry'-instance provides the
 'mass', 'rings', and 'area'-methods that return the calculated
 mass based on atomic masses, the number of 3-8 membered rings, and
-total surface area of the PAH molecules under consideration (*work-in-progress*).
+total surface area of the PAH molecules under consideration.
 
 .. code:: python
 
@@ -80,7 +80,7 @@ Lastly, the 'inertia'-method provides the moment of inertia
 matrices, which are diagonalized with the 'diagonalize'-method,
 for the PAH molecules under consideration. The latter method can
 be particular useful to ensure proper alignment of the structure
-with the view before calling the 'plot' or 'structure'-methods (*work-in-progress*).
+with the view before calling the 'plot' or 'structure'-methods.
 
 .. code:: python
 
