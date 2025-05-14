@@ -36,7 +36,7 @@ for additional resources and information, and the PAHdb
    faq
    amespahdbpythonsuite
 
-*Last updated December 2022*
+*Last updated May 2025*
 
 .. rubric:: Footnotes
 

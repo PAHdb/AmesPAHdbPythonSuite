@@ -92,7 +92,7 @@ class Spectrum(Transitions):
         A description of the instance.
         """
 
-        return f"AmesPAHdbPythonSuite Spectrum instance.\n" f"{self.uids=}"
+        return f"AmesPAHdbPythonSuite Spectrum instance.\n{self.uids=}"
 
     def write(self, filename: str = "") -> None:
         """
@@ -183,7 +183,7 @@ class Spectrum(Transitions):
 
         if obs.uncertainty is None:
             method = "NNLS"
-            b = obs.flux.value
+            b = obs.flux.value.copy()
             m = matrix.copy()
         else:
             method = "NNLC"
@@ -487,7 +487,6 @@ class Spectrum(Transitions):
                 colour="blue",
                 total=samples,
             ):
-
                 solution /= m_scl
 
                 # Initialize lists and dictionaries.

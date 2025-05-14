@@ -5,32 +5,21 @@
 API
 ===
 
-The suite currently consists of 13 IDL object classes and two
-helper programs. The main interface to the database is provided by
-the *AmesPAHdbIDLSuite*-object, which will parse the dowloaded
-XML-file utilizing IDL's AmesPAHXMLParser-object. The available
-PAH data is divided into four parts, each handled by its own
-object class and providing its own functionality.
+The main interface to the database is provided by the *AmesPAHdb* instance,
+which will parse the dowloaded XML-file utilizing a *XMLParser* instance. The
+available PAH data is divided into four parts, each handled by its own class
+and providing its own functionality.
 
-1. The Species-object, holds the PAH molecular properties,
-2. The Transitions-object, holds the fundamental vibrational transitions,
-3. The Laboratory_Spectrum-object holds the raw laboratory spectrum, and
-4. The Geometry-objects, holds the geometrical data.
+1. The *Species* class, which deals with the PAH molecular properties,
+2. The *Transitions* class, which deals with the fundamental vibrational transitions,
+3. The *Laboratory* class, which deals with the raw laboratory spectrum, and
+4. The *Geometry* class, which deals with the geometrical data.
 
-The *AmesPAHdbIDLSuite*-object will return one of these object
-classes upon request. In addition, the
-*AmesPAHdbIDLSuite*\ \_Transitions-object returns object classes
-upon convolving, co-adding and fitting spectra; an
-*AmesPAHdbIDLSuite*\ \_Spectrum-,
-*AmesPAHdbIDLSuite*\ \_Coadded_Spectrum- and
-*AmesPAHdbIDLSuite*\ \_Fitted_Spectrum-object, respectively. The
-*AmesPAHdbIDLSuite*\ \_Observation-object can handle some commonly
-used astronomical data formats. The
-*AmesPAHdbIDLSuite*\ \_Browser-object is a graphical user
-interface to the database that can be used to browse its contents.
-Lastly, the IDL_Object-object is a class used to inherit from in
-IDL versions before 8.0, allowing operator overloaded classes to
-still compile on these earlier versions.
+The *AmesPAHdb* instance will return one of these class instances upon request.
+In addition, the *Transitions* instance returns class instances upon
+convolving, co-adding and fitting spectra; a *Spectrum*, *Coadded* and *Fitted*
+or *MCFitted* instance, respectively. The *Observation* class can handle some
+commonly used astronomical data formats.
 
 The application programming interface (API) and its use is
 described in turn.

@@ -9,6 +9,8 @@ import numpy as np
 from scipy import integrate  # type: ignore
 from specutils import Spectrum1D  # type: ignore
 
+import astropy.units as u  # type: ignore
+
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite.spectrum import Spectrum
 
@@ -112,14 +114,14 @@ class Fitted(Spectrum):
                     mfc="white",
                     color="k",
                     ecolor="k",
-                    markersize=3,
+                    markersize=2,
                     elinewidth=0.2,
                     capsize=0.8,
                     label=datalabel,
                 )
             else:
                 axis[0].scatter(
-                    x, self.observation.flux.value, color="k", s=5, label=datalabel
+                    x, self.observation.flux.value, color="k", s=1, label=datalabel
                 )
 
             if "title" in keywords:
@@ -143,7 +145,9 @@ class Fitted(Spectrum):
                 for uid, col in zip(self.uids, colors):
                     axis[0].plot(x, self.data[uid], color=col)
 
-            axis[0].plot(x, self.getfit(), color="tab:purple", label="fit", lw=1)
+            axis[0].plot(
+                x, self.getfit(), color="tab:purple", label="fit", lw=1, zorder=42
+            )
 
             if (
                 keywords.get("charge", False)
@@ -154,27 +158,49 @@ class Fitted(Spectrum):
                 if isinstance(classes, dict):
                     if keywords.get("charge", False):
                         if not isinstance(classes["anion"], int):
-                            axis[0].plot(x, classes["anion"], color="tab:red", label="anion")
+                            axis[0].plot(
+                                x, classes["anion"], color="tab:red", label="anion"
+                            )
                         if not isinstance(classes["neutral"], int):
-                            axis[0].plot(x, classes["neutral"], color="tab:green", label="neutral")
+                            axis[0].plot(
+                                x,
+                                classes["neutral"],
+                                color="tab:green",
+                                label="neutral",
+                            )
                         if not isinstance(classes["cation"], int):
-                            axis[0].plot(x, classes["cation"], color="tab:blue", label="cation")
+                            axis[0].plot(
+                                x, classes["cation"], color="tab:blue", label="cation"
+                            )
                         axis[0].axhline(0, linestyle="--", color="gray")
                         axis[0].legend()
                     elif keywords.get("size", False):
                         if not isinstance(classes["small"], int):
-                            axis[0].plot(x, classes["small"], color="tab:blue", label="small")
+                            axis[0].plot(
+                                x, classes["small"], color="tab:blue", label="small"
+                            )
                         if not isinstance(classes["medium"], int):
-                            axis[0].plot(x, classes["medium"], color="tab:green", label="medium")
+                            axis[0].plot(
+                                x, classes["medium"], color="tab:green", label="medium"
+                            )
                         if not isinstance(classes["large"], int):
-                            axis[0].plot(x, classes["large"], color="tab:red", label="large")
+                            axis[0].plot(
+                                x, classes["large"], color="tab:red", label="large"
+                            )
                         axis[0].axhline(0, linestyle="--", color="gray")
                         axis[0].legend()
                     elif keywords.get("composition", False):
                         if not isinstance(classes["pure"], int):
-                            axis[0].plot(x, classes["pure"], color="tab:red", label="pure")
+                            axis[0].plot(
+                                x, classes["pure"], color="tab:red", label="pure"
+                            )
                         if not isinstance(classes["nitrogen"], int):
-                            axis[0].plot(x, classes["nitrogen"], color="tab:green", label="nitrogen")
+                            axis[0].plot(
+                                x,
+                                classes["nitrogen"],
+                                color="tab:green",
+                                label="nitrogen",
+                            )
                         axis[0].axhline(0, linestyle="--", color="gray")
                         axis[0].legend()
             elif keywords.get("residual", False):
@@ -199,13 +225,16 @@ class Fitted(Spectrum):
                     if ypos <= 0.05:
                         axis[1].text(0.05, ypos, "more...", family="monospace")
                         break
-            axis[0].ticklabel_format(axis="y", style="sci", scilimits=(4, 4))
-            axis[0].set_ylabel(
-                self.units["ordinate"]["label"]
-                + " ["
-                + self.units["ordinate"]["unit"].to_string("latex_inline")
-                + "]",
-            )
+
+            if self.observation.flux.unit == u.Unit():
+                axis[0].set_ylabel(
+                    self.units["ordinate"]["label"]
+                    + " ["
+                    + self.units["ordinate"]["unit"].to_string("latex_inline")
+                    + "]",
+                )
+            else:
+                plt.ylabel(self.observation.flux.unit.to_string("latex_inline"))
             if keywords.get("residual", False):
                 axis[1].set_xlabel(f"{xtitle}")
                 axis[1].set_ylabel("residual")
@@ -233,11 +262,17 @@ class Fitted(Spectrum):
 
             if keywords["output"]:
                 if os.path.isdir(keywords["output"]):
-                    fig.savefig(f"{keywords['output']}/{ptype}.{keywords['ftype']}")
+                    fig.savefig(
+                        f"{keywords['output']}/{ptype}.{keywords['ftype']}",
+                        bbox_inches="tight",
+                    )
                 else:
-                    fig.savefig(f"{keywords['output']}_{ptype}.{keywords['ftype']}")
+                    fig.savefig(
+                        f"{keywords['output']}_{ptype}.{keywords['ftype']}",
+                        bbox_inches="tight",
+                    )
             else:
-                fig.savefig(f"{ptype}.{keywords['ftype']}")
+                fig.savefig(f"{ptype}.{keywords['ftype']}", bbox_inches="tight")
         else:
             plt.show()
         plt.close(fig)
@@ -294,14 +329,14 @@ class Fitted(Spectrum):
         Class representation.
 
         """
-        return f"{self.__class__.__name__}(" f"{self.uids=},{self.method=})"
+        return f"{self.__class__.__name__}({self.uids=},{self.method=})"
 
     def __str__(self) -> str:
         """
         A description of the instance.
         """
 
-        return f"AmesPAHdbPythonSuite Fitted instance.\n" f"{self.uids=}"
+        return f"AmesPAHdbPythonSuite Fitted instance.\n{self.uids=}"
 
     def write(self, filename: str = "") -> None:
         """

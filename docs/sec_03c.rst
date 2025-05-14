@@ -6,10 +6,9 @@
 Working with Molecular PAH Properties
 =====================================
 
-The 'species'-instance exposes the molecular PAH
-properties (currently *work-in-progress*).
+The 'species'-instance exposes the molecular PAH properties.
 
-The below code snippets are examples only of the *work-in-progress* 'AmesPAHdbPythonSuite Species' module. 
+The below code snippets are examples only of the 'AmesPAHdbPythonSuite Species' module. 
 
 .. code:: python
 
