@@ -4,14 +4,16 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import io
 import multiprocessing
 import os
 import pickle
+import sys
 import tempfile
 import time
 from datetime import timedelta
 from functools import partial
-from typing import TYPE_CHECKING, Any, Optional, Union, Callable
+from typing import TYPE_CHECKING, Any, Callable, Optional, Union
 
 import astropy.units as u  # type: ignore
 import numpy as np
@@ -96,6 +98,59 @@ class Transitions(Data):
         """
 
         return f"AmesPAHdbPythonSuite Transitions instance.\n{self.uids=}"
+
+    def print(self, uid=None, str=False) -> Optional[str]:
+        """
+        Print transitions data.
+
+        """
+        if uid and uid not in self.data:
+            message(f"UID {uid} NOT FOUND")
+            return None
+
+        if str:
+            sys.stdout = out = io.StringIO()
+
+        if uid:
+            print(self.__class__.__name__.upper())
+            print(f"UID: {uid}")
+            xlabel = (
+                f"{self.units['abscissa']['label']} [{self.units['abscissa']['unit']}]"
+            )
+            ylabel = (
+                f"{self.units['ordinate']['label']} [{self.units['ordinate']['unit']}]"
+            )
+            print(f"{xlabel:<20.20}  {ylabel:<20.20}", end="")
+            if self.database == "theoretical":
+                print("  symmetry  scale", end="")
+            print()
+            for mode in self.data[uid]:
+                print(f"{mode['frequency']:<20}  {mode['intensity']:<20}", end="")
+                if self.database == "theoretical":
+                    print(f"  {mode['symmetry']:<8.8}  {mode['scale']}", end="")
+                print()
+        else:
+            for uid in self.uids:
+                print("=" * 55)
+                print(self.__class__.__name__.upper())
+                print(f"UID: {uid}")
+                xlabel = f"{self.units['abscissa']['label']} [{self.units['abscissa']['unit']}]"
+                ylabel = f"{self.units['ordinate']['label']} [{self.units['ordinate']['unit']}]"
+                print(f"{xlabel:<20.20}  {ylabel:<20.20}", end="")
+                if self.database == "theoretical":
+                    print("  symmetry  scale", end="")
+                print()
+                for mode in self.data[uid]:
+                    print(f"{mode['frequency']:<20}  {mode['intensity']:<20}", end="")
+                    if self.database == "theoretical":
+                        print(f"  {mode['symmetry']:<8.8}  {mode['scale']}", end="")
+                    print()
+                print("=" * 55)
+        if str:
+            sys.stdout = sys.__stdout__
+            return out.getvalue()
+
+        return None
 
     def write(self, filename: str = "") -> None:
         """

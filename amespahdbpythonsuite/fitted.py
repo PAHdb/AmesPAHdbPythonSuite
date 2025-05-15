@@ -226,6 +226,8 @@ class Fitted(Spectrum):
                         axis[1].text(0.05, ypos, "more...", family="monospace")
                         break
 
+            axis[0].ticklabel_format(axis="y", style="sci", scilimits=(-2, 2))
+
             if self.observation.flux.unit == u.Unit():
                 axis[0].set_ylabel(
                     self.units["ordinate"]["label"]
@@ -234,7 +236,7 @@ class Fitted(Spectrum):
                     + "]",
                 )
             else:
-                plt.ylabel(self.observation.flux.unit.to_string("latex_inline"))
+                axis[0].set_ylabel(self.observation.flux.unit.to_string("latex_inline"))
             if keywords.get("residual", False):
                 axis[1].set_xlabel(f"{xtitle}")
                 axis[1].set_ylabel("residual")

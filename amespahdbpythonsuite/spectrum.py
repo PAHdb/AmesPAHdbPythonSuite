@@ -534,7 +534,7 @@ class Spectrum(Transitions):
                 range(samples),
                 desc="samples",
                 leave=True,
-                unit="samples",
+                unit="sample",
                 colour="blue",
             ):
                 if uniform:

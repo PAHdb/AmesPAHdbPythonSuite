@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
+import copy
+import io
+import re
+import sys
 from typing import Optional
 
-from amespahdbpythonsuite import laboratory
-from amespahdbpythonsuite import geometry
-from amespahdbpythonsuite import transitions
-import copy
-import re
 import astropy.units as u  # type: ignore
 
+from amespahdbpythonsuite import geometry, laboratory, transitions
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 message = AmesPAHdb.message
@@ -48,15 +48,13 @@ class Species:
 
         if self.pahdb:
             if self.pahdb["database"] != self.database:
-
                 message(
-                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
+                    f"DATABASE MISMATCH: {self.pahdb['database']} != {self.database}"
+                )
                 return
 
             if self.pahdb["version"] != self.version:
-
-                message(
-                    f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
+                message(f"VERSION MISMATCH: {self.pahdb['version']} != {self.version}")
                 return
 
     def get(self) -> dict:
@@ -78,8 +76,7 @@ class Species:
 
         """
         return (
-            f"{self.__class__.__name__}("
-            f"{self.uids=},{self.database=},{self.version=})"
+            f"{self.__class__.__name__}({self.uids=},{self.database=},{self.version=})"
         )
 
     def __str__(self) -> str:
@@ -87,7 +84,46 @@ class Species:
         A description of the instance.
         """
 
-        return f"AmesPAHdbPythonSuite Species instance.\n" f"{self.uids=}"
+        return f"AmesPAHdbPythonSuite Species instance.\n{self.uids=}"
+
+    def print(self, uid=None, str=False) -> Optional[str]:
+        """
+        Print species data.
+
+        """
+        if uid and uid not in self.data:
+            message(f"UID {uid} NOT FOUND")
+            return None
+
+        if str:
+            sys.stdout = out = io.StringIO()
+
+        if uid:
+            for k, v in self.data[uid].items():
+                if isinstance(v, list) or isinstance(v, dict):
+                    continue
+                print(f"{k.upper():<10}: {v}")
+            for comment in self.data[uid]["comments"]:
+                print(f"COMMENT   : {comment}")
+            for reference in self.data[uid]["references"]:
+                print(f"REFERENCE : {reference}")
+        else:
+            for uid in self.uids:
+                print("=" * 55)
+                for k, v in self.data[uid].items():
+                    if isinstance(v, list) or isinstance(v, dict):
+                        continue
+                    print(f"{k.upper():<10}: {v}")
+                for comment in self.data[uid]["comments"]:
+                    print(f"COMMENT   : {comment}")
+                for reference in self.data[uid]["references"]:
+                    print(f"REFERENCE : {reference}")
+                print("=" * 55)
+        if str:
+            sys.stdout = sys.__stdout__
+            return out.getvalue()
+
+        return None
 
     def getuids(self) -> list[int]:
         """
@@ -109,7 +145,6 @@ class Species:
         count = len(keep)
 
         if count == 0:
-
             message("NO INTERSECTION FOUND")
 
             return
@@ -134,7 +169,6 @@ class Species:
         count = len(keep)
 
         if count == 0:
-
             message("NO DIFFERENCE FOUND")
 
             return
@@ -161,8 +195,7 @@ class Species:
             data=self.__getkey("transitions"),
             pahdb=self.pahdb,
             uids=self.uids,
-            model={"type": "zerokelvin_m",
-                   "temperature": 0.0, "description": ""},
+            model={"type": "zerokelvin_m", "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {
                     "unit": u.cm**-1,
@@ -210,8 +243,7 @@ class Species:
             data=self.__getkey("laboratory"),
             pahdb=self.pahdb,
             uids=self.uids,
-            model={"type": "laboratory_m",
-                   "temperature": 0.0, "description": ""},
+            model={"type": "laboratory_m", "temperature": 0.0, "description": ""},
             units={
                 "abscissa": {"unit": 1, "str": "frequency [wavenumber]"},
                 "ordinate": {"unit": 2, "str": "absorbance" + "[-log(I/I$_{0})$"},
@@ -268,8 +300,7 @@ def formatformula(formula: str) -> str:
     Make the formulae look pretty by embedding LaTeX formatting commands.
     """
 
-    formatted = re.sub(r"([A-Z][a-z]?)([0-9]+)",
-                       r"\1$_{\\mathregular{\2}}", formula)
+    formatted = re.sub(r"([A-Z][a-z]?)([0-9]+)", r"\1$_{\\mathregular{\2}}", formula)
 
     return re.sub(
         r"((\+)+|(\+[0-9])|(-)+|(-[0-9]))", r"$^{\\mathregular{\1}}", formatted

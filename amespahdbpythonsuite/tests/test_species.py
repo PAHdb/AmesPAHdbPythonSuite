@@ -77,3 +77,6 @@ class TestSpecies:
             species.formatformula("C10H8++")
             == r"C$_{\mathregular{10}}H$_{\mathregular{8}}$^{\mathregular{++}}"
         )
+
+    def test_print(self, species_test):
+        assert species_test.print(18, str=True)[0:18] == "FORMULA   : C24H12"

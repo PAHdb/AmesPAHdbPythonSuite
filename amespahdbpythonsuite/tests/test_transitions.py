@@ -183,7 +183,7 @@ class TestTransitions:
         trans_multi = pahdb_theoretical.gettransitionsbyuid([18])
         data = trans_multi.get()
         intf, tmax = transitions.Transitions._cascade_em_model(
-            6 * 1.603e-12, data['data'][18]
+            6 * 1.603e-12, data["data"][18]
         )
         assert tmax == 1279.7835033561428
         test_i = [x for x in intf if x["frequency"] == 3068.821][0]
@@ -241,3 +241,6 @@ class TestTransitions:
     def test_write_transitions(self, test_transitions, test_path):
         test_transitions.write(f"{test_path}.tbl")
         assert exists(f"{test_path}.tbl")
+
+    def test_print(self, test_transitions):
+        assert test_transitions.print(18, str=True)[0:11] == "TRANSITIONS"
