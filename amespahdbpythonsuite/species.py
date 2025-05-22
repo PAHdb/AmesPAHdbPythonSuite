@@ -99,6 +99,7 @@ class Species:
             sys.stdout = out = io.StringIO()
 
         if uid:
+            print(f"UID       : {uid}")
             for k, v in self.data[uid].items():
                 if isinstance(v, list) or isinstance(v, dict):
                     continue
@@ -110,6 +111,7 @@ class Species:
         else:
             for uid in self.uids:
                 print("=" * 55)
+                print(f"UID       : {uid}")
                 for k, v in self.data[uid].items():
                     if isinstance(v, list) or isinstance(v, dict):
                         continue

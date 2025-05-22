@@ -59,7 +59,7 @@ class AmesPAHdb:
             "Dr. Christiaan Boersma\n",
             "and\n",
             "Dr. Alexandros Maragkoudakis\n",
-            "Dr. Matthew J. Shannanon\n",
+            "Dr. Matthew J. Shannon\n",
             "Dr. Joseph E. Roser\n",
         ]
         self.message(intro)
