@@ -199,7 +199,7 @@ class Observation:
 
                         # Create Spectrum1D instance.
                         flux = h.data.T * u.Unit(h.header["BUNIT"])
-                        wave = hdu[h0].data[h1] * u.Unit(hdu[h0].columns[h1].unit)
+                        wave = hdu[h0].data[h1].squeeze() * u.Unit(hdu[h0].columns[h1].unit)
                         self.spectrum = Spectrum1D(flux, spectral_axis=wave)
 
                         return None
