@@ -275,6 +275,10 @@ class Transitions(Data):
         :type e: float
 
         """
+        if not self.pahdb:
+            message("DATABASE REQUIRED FOR EMISSION MODEL")
+            return
+
         if self.database != "theoretical":
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")
             return
@@ -487,6 +491,10 @@ class Transitions(Data):
                     d = pickle.load(f)
                     self.set(d, pahdb=self.pahdb)
                 return
+
+        if not self.pahdb:
+            message("DATABASE REQUIRED FOR EMISSION MODEL")
+            return
 
         if self.database != "theoretical" and not keywords.get("approximate"):
             message("THEORETICAL DATABASE REQUIRED FOR EMISSION MODEL")

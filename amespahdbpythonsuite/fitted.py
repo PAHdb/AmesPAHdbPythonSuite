@@ -469,6 +469,9 @@ class Fitted(Spectrum):
 
         """
 
+        if not self.pahdb:
+            return ()
+
         nc = [self.pahdb["species"][uid]["n_c"] for uid in self.weights]
 
         if not min:
@@ -510,11 +513,14 @@ class Fitted(Spectrum):
 
         return self._classes
 
-    def __classes(self, s: dict) -> np.ndarray:
+    def __classes(self, s: dict) -> Optional[np.ndarray]:
         """
         Retrieves the intensities of a given subclass.
 
         """
+
+        if not self.pahdb:
+            return None
 
         if s["subclass"] == "n_c":
             if "operator_1" in s:
@@ -635,6 +641,9 @@ class Fitted(Spectrum):
         Retrieve the sum of the fitting weights for the fitted PAHs.
 
         """
+        if not self.pahdb:
+            return 0.0
+
         if "operator_1" in s:
             uids = [
                 uid
@@ -657,18 +666,15 @@ class Fitted(Spectrum):
                 )
             ]
 
-        if len(uids) > 0:
-            return np.sum([self.weights[uid] for uid in uids])
-        else:
-            return 0.0
+        return np.sum([self.weights[uid] for uid in uids]) if len(uids) else 0.0
 
-    def _subclasses(self, **keywords) -> dict:
+    def _subclasses(self, **keywords) -> dict[str, dict]:
         """
         Create subclasses dictionary.
 
         """
 
-        subclasses = {
+        return {
             "anion": {"subclass": "charge", "operator": operator.lt, "operand": 0},
             "neutral": {"subclass": "charge", "operator": operator.eq, "operand": 0},
             "cation": {"subclass": "charge", "operator": operator.gt, "operand": 0},
@@ -692,9 +698,7 @@ class Fitted(Spectrum):
             "nitrogen": {"subclass": "n_n", "operator": operator.gt, "operand": 0},
         }
 
-        return subclasses
-
-    def geterror(self) -> Optional[dict]:
+    def geterror(self) -> Optional[dict[str, float]]:
         """
         Calculates the PAHdb fitting uncertainty
         as the ratio of the residual over the total spectrum area.
@@ -722,8 +726,8 @@ class Fitted(Spectrum):
                     if len(sel) == 0:
                         continue
 
-                    self._error[key] = np.trapz(r[sel], x=x[sel]) / np.trapz(
-                        y[sel], x=x[sel]
+                    self._error[key] = np.divide(
+                        np.trapz(r[sel], x=x[sel]), np.trapz(y[sel], x=x[sel])
                     )
 
         return self._error
