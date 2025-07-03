@@ -36,15 +36,14 @@ for additional resources and information, and the PAHdb
    faq
    amespahdbpythonsuite
 
-*Last updated May 2025*
+*Last updated July 2025*
 
 .. rubric:: Footnotes
 
-.. [#f1] Since FY2019 the NASA Ames PAH IR Spectroscopic Database is
-         being supported through a directed Work Package at NASA Ames
-         titled: "Laboratory Astrophysics – The NASA Ames PAH IR
-         Spectroscopic Database."
+.. [#f1] From FY2019-2022 the NASA Ames PAH IR Spectroscopic Database was
+   supported through a directed Work Package at NASA Ames titled: "Laboratory
+   Astrophysics – The NASA Ames PAH IR Spectroscopic Database."
 
-.. [#f2] Since FY2023 the NASA Ames PAH IR Spectroscopic Database is being
-         supported through the Laboratory Astrophysics Round 2 directed
-         Work Package at NASA Ames.
+.. [#f2] From FY2023-FY2025 the NASA Ames PAH IR Spectroscopic Database was
+   supported through the Laboratory Astrophysics Round 2 directed Work Package
+   at NASA Ames.
