@@ -42,13 +42,16 @@ Then change directories to the new AmesPAHdbPythonSuite directory and install:
 ## Examples
 
 ```python
-from pkg_resources import resource_filename
+from importlib_resources
+
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 # Read the database.
-xml = 'resources/pahdb-theoretical_cutdown.xml'
-pahdb = AmesPAHdb(filename=resource_filename('amespahdbpythonsuite', xml),
-                  check=False, cache=False)
+xml = (
+        importlib_resources.files('amespahdbpythonsuite')
+        /'resources/pahdb-theoretical_cutdown.xml'
+)
+pahdb = AmesPAHdb(filename=xml, check=False, cache=False)
 
 # Retrieve the transitions from the database for coronene.
 transitions = pahdb.gettransitionsbyuid([18])

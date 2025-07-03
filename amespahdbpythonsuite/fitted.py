@@ -41,6 +41,10 @@ class Fitted(Spectrum):
         import matplotlib.gridspec as gs  # type: ignore
         import matplotlib.pyplot as plt  # type: ignore
 
+        if not self.observation:
+            message("OBSERVATIONS ARE MISSING")
+            return
+
         if keywords.get("datalabel", False):
             datalabel = keywords["datalabel"]
         else:
@@ -205,7 +209,8 @@ class Fitted(Spectrum):
                         axis[0].legend()
             elif keywords.get("residual", False):
                 y = self.getresidual()
-                axis[1].plot(x, y)
+                if y is not None:
+                    axis[1].plot(x, y)
                 axis[1].axhline(0, linestyle="--", color="gray")
                 axis[0].legend()
             else:
@@ -415,12 +420,12 @@ class Fitted(Spectrum):
 
         return self._chisquared
 
-    def getnorm(self) -> float:
+    def getnorm(self) -> Optional[float]:
         """
         Retrieves the Norm of the fit.
 
         """
-        if self._norm is None:
+        if self._norm is None and self.observation:
             self._norm = np.sum((self.observation.flux.value - self.getfit()) ** 2)
 
         return self._norm
@@ -442,11 +447,11 @@ class Fitted(Spectrum):
 
         return self._fit
 
-    def getresidual(self) -> np.ndarray:
+    def getresidual(self) -> Optional[np.ndarray]:
         """
         Retrieves the residual of the fit.
         """
-        if self._residual is None:
+        if self._residual is None and self.observation:
             self._residual = self.observation.flux.value - self.getfit()
 
         return self._residual
@@ -719,16 +724,20 @@ class Fitted(Spectrum):
                 srt = np.argsort(self.grid)
                 x = self.grid[srt]
                 y = self.observation.flux.value[srt]
-                r = np.abs(self.getresidual())[srt]
-                for key, rng in range.items():
-                    sel = np.where((x >= rng[0]) & (x <= rng[1]))[0]
+                r = self.getresidual()
+                if r is not None:
+                    r = np.abs(r)[srt]
+                    if isinstance(r, np.ndarray):
+                        for key, rng in range.items():
+                            sel = np.where((x >= rng[0]) & (x <= rng[1]))[0]
 
-                    if len(sel) == 0:
-                        continue
+                            if len(sel) == 0:
+                                continue
 
-                    self._error[key] = np.divide(
-                        np.trapz(r[sel], x=x[sel]), np.trapz(y[sel], x=x[sel])
-                    )
+                            self._error[key] = np.divide(
+                                integrate.trapezoid(r[sel], x=x[sel]),
+                                integrate.trapezoid(y[sel], x=x[sel]),
+                            )
 
         return self._error
 
