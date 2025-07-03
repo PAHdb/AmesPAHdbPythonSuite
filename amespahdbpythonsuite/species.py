@@ -21,6 +21,8 @@ class Species:
 
     """
 
+    pahdb = None
+
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         self.set(d, **keywords)
 
@@ -32,7 +34,6 @@ class Species:
         self.database = keywords.get("database", "")
         self.version = keywords.get("version", "")
         self.data = keywords.get("data", dict())
-        self.pahdb = keywords.get("pahdb", None)
         self.uids = keywords.get("uids", list())
 
         if isinstance(d, dict):
@@ -45,6 +46,9 @@ class Species:
                     self.data = d["data"]
                 if "uids" not in keywords:
                     self.uids = d["uids"]
+
+        if "pahdb" in keywords:
+            self.pahdb = keywords.get("pahdb")
 
         if self.pahdb:
             if self.pahdb["database"] != self.database:

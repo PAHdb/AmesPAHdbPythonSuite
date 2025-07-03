@@ -7,11 +7,13 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 message = AmesPAHdb.message
 
 
-class Data():
+class Data:
     """
     AmesPAHdbPythonSuite data class
 
     """
+
+    pahdb = None
 
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         """
@@ -35,7 +37,6 @@ class Data():
         self.database = keywords.get("database", "")
         self.version = keywords.get("version", "")
         self.data = keywords.get("data", dict())
-        self.pahdb = keywords.get("pahdb", None)
         self.uids = keywords.get("uids", list())
         self.model = keywords.get("model", dict())
         self.units = keywords.get("units", dict())
@@ -57,16 +58,19 @@ class Data():
                 if "units" not in keywords:
                     self.units = d["units"]
 
+        if "pahdb" in keywords:
+            self.pahdb = keywords.get("pahdb")
+
         # Check for database and versioning mismatch between provided dictionary and parsed database.
         if self.pahdb:
             if self.pahdb["database"] != self.database:
                 message(
-                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}')
+                    f'DATABASE MISMATCH: {self.pahdb["database"]} != {self.database}'
+                )
                 return
 
             if self.pahdb["version"] != self.version:
-                message(
-                    f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
+                message(f'VERSION MISMATCH: {self.pahdb["version"]} != {self.version}')
                 return
 
     def get(self) -> dict:
@@ -89,17 +93,17 @@ class Data():
         Class representation.
 
         """
-        return f"{self.__class__.__name__}(" f"{self.uids=},{self.database=},{self.version=},{self.model=})"
+        return (
+            f"{self.__class__.__name__}("
+            f"{self.uids=},{self.database=},{self.version=},{self.model=})"
+        )
 
     def __str__(self) -> str:
         """
         A description of the instance.
         """
 
-        return (
-            f"AmesPAHdbPythonSuite Data instance.\n"
-            f"UIDS: {self.uids=}"
-        )
+        return f"AmesPAHdbPythonSuite Data instance.\n" f"UIDS: {self.uids=}"
 
     def getuids(self) -> list:
         """
