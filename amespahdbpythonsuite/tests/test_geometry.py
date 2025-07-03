@@ -5,21 +5,25 @@ test_geometry.py
 Test the geometry.py module.
 """
 
-import pytest
-from pkg_resources import resource_filename
 from os.path import exists
+
+import importlib_resources
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 
-from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import geometry
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 
 @pytest.fixture(scope="module")
 def test_geometry():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -36,33 +40,47 @@ def test_path(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def test_masses():
-    file = "resources/test_geometry_masses.npy"
-    return np.load(resource_filename("amespahdbpythonsuite", file), allow_pickle=True)
+    file = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/test_geometry_masses.npy"
+    )
+    return np.load(file, allow_pickle=True)
 
 
 @pytest.fixture(scope="module")
 def test_diagonalized():
-    file = "resources/test_geometry_diagonalized.npy"
-    return np.load(resource_filename("amespahdbpythonsuite", file))
+    file = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/test_geometry_diagonalized.npy"
+    )
+    return np.load(file)
 
 
 @pytest.fixture(scope="module")
 def test_tensor():
-    file = "resources/test_geometry_tensor.npy"
-
-    return np.load(resource_filename("amespahdbpythonsuite", file))
+    file = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/test_geometry_tensor.npy"
+    )
+    return np.load(file)
 
 
 @pytest.fixture(scope="module")
 def test_nrings():
-    file = "resources/test_geometry_rings.npy"
-    return np.load(resource_filename("amespahdbpythonsuite", file), allow_pickle=True)
+    file = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/test_geometry_rings.npy"
+    )
+    return np.load(file, allow_pickle=True)
 
 
 @pytest.fixture(scope="module")
 def test_areas():
-    file = "resources/test_geometry_areas.npy"
-    return np.load(resource_filename("amespahdbpythonsuite", file), allow_pickle=True)
+    file = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/test_geometry_areas.npy"
+    )
+    return np.load(file, allow_pickle=True)
 
 
 class TestGeometry:

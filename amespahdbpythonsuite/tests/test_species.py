@@ -5,19 +5,23 @@ test_species.py
 Test the species.py module.
 """
 
-import pytest
 import copy
-from pkg_resources import resource_filename
 
+import importlib_resources
+import pytest
+
+from amespahdbpythonsuite import geometry, laboratory, species, transitions
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import geometry, species, transitions, laboratory
 
 
 @pytest.fixture(scope="module")
 def species_test():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -58,6 +62,18 @@ class TestSpecies:
         s2 = species2.get()
         assert s2["type"] == "Species"
 
+    def test_getset_mismatch_database(self, capsys, species_test):
+        s = copy.copy(species_test)
+        s.set(database="none")
+        capture = capsys.readouterr()
+        assert capture.out.find("DATABASE MISMATCH")
+
+    def test_getset_mismatch_version(self, capsys, species_test):
+        s = copy.copy(species_test)
+        s.set(version="none")
+        capture = capsys.readouterr()
+        assert capture.out.find("VERSION MISMATCH")
+
     def test_intersect(self, species_test):
         sub_uids = [18, 223]
         s = copy.copy(species_test)
@@ -79,4 +95,5 @@ class TestSpecies:
         )
 
     def test_print(self, species_test):
-        assert species_test.print(18, str=True)[0:18] == "FORMULA   : C24H12"
+        assert species_test.print(18, str=True)[0:14] == "UID       : 18"
+        assert species_test.print(str=True)[0:14] == "=============="

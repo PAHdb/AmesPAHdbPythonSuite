@@ -5,9 +5,9 @@ test_parsers.py
 Test whether the XMLparser class behaves as expected.
 """
 
+import importlib_resources
 import pytest
 from lxml.etree import XMLSyntaxError
-from pkg_resources import resource_filename
 
 import amespahdbpythonsuite
 from amespahdbpythonsuite.xmlparser import XMLparser
@@ -15,20 +15,26 @@ from amespahdbpythonsuite.xmlparser import XMLparser
 
 @pytest.fixture(scope="module")
 def real_xml_file():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
-    return resource_filename("amespahdbpythonsuite", xml)
+    return (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
 
 
 @pytest.fixture(scope="module")
 def real_xml_file_experimental():
-    xml = "resources/pahdb-experimental_cutdown.xml"
-    return resource_filename("amespahdbpythonsuite", xml)
+    return (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-experimental_cutdown.xml"
+    )
 
 
 @pytest.fixture(scope="module")
 def illformed_xml_file():
-    xml = "resources/pahdb-theoretical_cutdown_illformed.xml"
-    return resource_filename("amespahdbpythonsuite", xml)
+    return (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown_illformed.xml"
+    )
 
 
 @pytest.fixture(scope="module")

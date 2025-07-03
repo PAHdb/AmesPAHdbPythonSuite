@@ -8,11 +8,11 @@ Test the spectrum.py module.
 from os.path import exists
 
 import astropy.units as u
+import importlib_resources
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from astropy.io import ascii
-from pkg_resources import resource_filename
 
 from amespahdbpythonsuite import mcfitted, observation, spectrum
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -20,9 +20,12 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 @pytest.fixture(scope="module")
 def test_transitions():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -40,7 +43,9 @@ def test_spectrum(test_transitions):
 
 @pytest.fixture(scope="module")
 def test_observations():
-    file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+    file = (
+        importlib_resources.files("amespahdbpythonsuite") / "resources/galaxy_spec.ipac"
+    )
     obs = observation.Observation(file)
     obs.abscissaunitsto("1/cm")
     return obs
@@ -70,7 +75,10 @@ class TestSpectrum:
         assert test_spectrum.data[73].max() == 1.0
 
     def test_fit_with_errors(self, test_transitions):
-        file = resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+        file = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/galaxy_spec.ipac"
+        )
         tbl = ascii.read(file)
         spectrum = test_transitions.convolve(
             grid=1e4 / tbl["wavelength"],
@@ -82,8 +90,9 @@ class TestSpectrum:
         assert fit.getmethod() == "NNLC"
 
     def test_fit_without_errors(self, test_transitions):
-        file = resource_filename(
-            "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
+        file = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/sample_data_NGC7023.tbl"
         )
         tbl = ascii.read(file)
         spectrum = test_transitions.convolve(
@@ -106,8 +115,9 @@ class TestSpectrum:
         assert fit.getmethod() == "NNLC"
 
     def test_fit_with_obs_without_errors(self, test_transitions):
-        file = resource_filename(
-            "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
+        file = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/sample_data_NGC7023.tbl"
         )
         obs = observation.Observation(file)
         obs.abscissaunitsto("1/cm")

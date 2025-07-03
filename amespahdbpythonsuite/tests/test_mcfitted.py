@@ -5,21 +5,24 @@ test_mcfitted.py
 Test the mcfitted.py module.
 """
 
-import pytest
 from os.path import exists
+
+import importlib_resources
 import matplotlib.pyplot as plt
+import pytest
 
-from pkg_resources import resource_filename
-
+from amespahdbpythonsuite import mcfitted, observation
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import observation, mcfitted
 
 
 @pytest.fixture(scope="module")
 def test_mcfitted():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -27,13 +30,12 @@ def test_mcfitted():
     uids = [18, 73, 726, 2054, 223]
     transitions = db.gettransitionsbyuid(uids)
     obs = observation.Observation(
-        resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+        importlib_resources.files("amespahdbpythonsuite") / "resources/galaxy_spec.ipac"
     )
     obs.abscissaunitsto("1/cm")
     spectrum = transitions.convolve(
         grid=obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
     )
-
     return spectrum.mcfit(obs, samples=10)
 
 
@@ -70,19 +72,19 @@ class TestMCFitted:
 
     def test_plot_charge(self, test_mcfitted, test_path):
         test_mcfitted.plot(
-            wavelength=True, charge=True, save=True, output=test_path, ftype='pdf'
+            wavelength=True, charge=True, save=True, output=test_path, ftype="pdf"
         )
         assert exists(f"{test_path}mc_charge_breakdown.pdf")
 
     def test_plot_size(self, test_mcfitted, test_path):
         test_mcfitted.plot(
-            wavelength=True, size=True, save=True, output=test_path, ftype='pdf'
+            wavelength=True, size=True, save=True, output=test_path, ftype="pdf"
         )
         assert exists(f"{test_path}mc_size_breakdown.pdf")
 
     def test_plot_composition(self, test_mcfitted, test_path):
         test_mcfitted.plot(
-            wavelength=True, composition=True, save=True, output=test_path, ftype='pdf'
+            wavelength=True, composition=True, save=True, output=test_path, ftype="pdf"
         )
         assert exists(f"{test_path}mc_composition_breakdown.pdf")
 

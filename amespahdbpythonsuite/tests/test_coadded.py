@@ -5,29 +5,34 @@ test_coadded.py
 Test the coadded.py module.
 """
 
-import pytest
 from os.path import exists
-import numpy as np
+
+import importlib_resources
 import matplotlib.pyplot as plt
-from pkg_resources import resource_filename
+import numpy as np
+import pytest
 
-
-from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import coadded
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 
 @pytest.fixture(scope="module")
 def test_coadded_result():
-    file = "resources/coadded_test_data.npy"
-    spec = np.load(resource_filename("amespahdbpythonsuite", file))
+    spec = np.load(
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/coadded_test_data.npy"
+    )
     return spec
 
 
 @pytest.fixture(scope="module")
 def test_coadded():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,

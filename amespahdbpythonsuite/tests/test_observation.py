@@ -5,21 +5,21 @@ test_obsservationervation.py
 Test the observation.py module.
 """
 
-import pytest
 from os.path import exists
-import numpy as np
+
+import importlib_resources
 import matplotlib.pyplot as plt
-
-from pkg_resources import resource_filename
-
+import numpy as np
+import pytest
 
 from amespahdbpythonsuite import observation
 
 
 @pytest.fixture(scope="module")
 def test_observation():
-    file = resource_filename(
-        "amespahdbpythonsuite", "resources/sample_data_NGC7023.tbl"
+    file = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/sample_data_NGC7023.tbl"
     )
     return observation.Observation(file)
 
@@ -44,14 +44,18 @@ class TestObservation:
         test_observation.plot(show=True)
 
     def test_read_fits(self):
-        file = "resources/sample_data_NGC7023.fits"
-        path = resource_filename("amespahdbpythonsuite", file)
-        assert isinstance(observation.Observation(path), observation.Observation)
+        file = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/sample_data_NGC7023.fits"
+        )
+        assert isinstance(observation.Observation(file), observation.Observation)
 
     def test_read_ipac(self):
-        file = "resources/sample_data_NGC7023.tbl"
-        path = resource_filename("amespahdbpythonsuite", file)
-        assert isinstance(observation.Observation(path), observation.Observation)
+        file = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/sample_data_NGC7023.tbl"
+        )
+        assert isinstance(observation.Observation(file), observation.Observation)
 
     def test_file_not_exists(self):
         with pytest.raises(FileNotFoundError) as pytest_wrapped_e:
@@ -59,10 +63,12 @@ class TestObservation:
             assert pytest_wrapped_e.type == FileNotFoundError
 
     def test_file_malformed(self):
-        file = "resources/sample_malformed.fits"
-        path = resource_filename("amespahdbpythonsuite", file)
+        file = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/sample_malformed.fits"
+        )
         with pytest.raises(OSError) as pytest_wrapped_e:
-            observation.Observation(path)
+            observation.Observation(file)
             assert pytest_wrapped_e.type == OSError
 
     def test_rebin(self, test_observation):
@@ -86,9 +92,11 @@ class TestObservation:
         assert g.min() >= 10.0 and g.max() <= 12.0
 
     def test_getset(self):
-        file = "resources/sample_data_NGC7023.tbl"
-        path = resource_filename("amespahdbpythonsuite", file)
-        obs1 = observation.Observation(path)
+        file = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/sample_data_NGC7023.tbl"
+        )
+        obs1 = observation.Observation(file)
         o1 = obs1.get()
         assert o1["type"] == "Observation"
         obs2 = observation.Observation()

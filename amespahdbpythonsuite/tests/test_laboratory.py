@@ -4,21 +4,23 @@ test_laboratory.py
 
 Test the laboratory.py module.
 """
-
-import pytest
-from os.path import exists
-from pkg_resources import resource_filename
+import os
+import importlib_resources
 import matplotlib.pyplot as plt
+import pytest
 
-from amespahdbpythonsuite.amespahdb import AmesPAHdb
 from amespahdbpythonsuite import laboratory
+from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 
 @pytest.fixture(scope="module")
 def test_laboratory():
-    xml = "resources/pahdb-experimental_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-experimental_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -55,4 +57,4 @@ class TestLaboratory:
 
     def test_write_laboratory(self, test_laboratory, test_path):
         test_laboratory.write(f"{test_path}.tbl")
-        assert exists(f"{test_path}.tbl")
+        assert os.path.exists(f"{test_path}.tbl")

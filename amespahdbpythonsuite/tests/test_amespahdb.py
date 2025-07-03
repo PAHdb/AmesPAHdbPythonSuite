@@ -4,18 +4,22 @@ test_amespahdb.py
 
 Test the amespahdb.py module.
 """
-import pytest
-from pkg_resources import resource_filename
-import amespahdbpythonsuite
+import importlib_resources
 
+import pytest
+
+import amespahdbpythonsuite
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 
 @pytest.fixture(scope="module")
 def pahdb_theoretical():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -25,9 +29,12 @@ def pahdb_theoretical():
 
 @pytest.fixture(scope="module")
 def pahdb_laboratory():
-    xml = "resources/pahdb-experimental_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-experimental_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -37,9 +44,12 @@ def pahdb_laboratory():
 
 @pytest.fixture(scope="module")
 def pahdb_clusters_theoretical():
-    xml = "resources/pahdb-clusters-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-clusters-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -57,9 +67,11 @@ class TestAmesPAHdb:
         assert isinstance(pahdb_theoretical, amespahdbpythonsuite.amespahdb.AmesPAHdb)
 
     def test_update(self):
-        xml = "resources/pahdb-theoretical_cutdown.xml"
-        path = resource_filename("amespahdbpythonsuite", xml)
-        AmesPAHdb(filename=path, check=False, cache=False, update=True)
+        xml = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/pahdb-theoretical_cutdown.xml"
+        )
+        AmesPAHdb(filename=xml, check=False, cache=False, update=True)
 
     def test_type_theoretical(self, pahdb_theoretical):
         assert pahdb_theoretical.gettype() == "theoretical"
@@ -98,16 +110,19 @@ class TestAmesPAHdb:
             assert pytest_wrapped_e.value.code == 2
 
     def test_cache(self, capsys):
-        xml = "resources/pahdb-experimental_cutdown.xml"
+        xml = (
+            importlib_resources.files("amespahdbpythonsuite")
+            / "resources/pahdb-experimental_cutdown.xml"
+        )
         with capsys.disabled():
             AmesPAHdb(
-                filename=resource_filename("amespahdbpythonsuite", xml),
+                filename=xml,
                 check=False,
                 cache=True,
                 update=False,
             )
         AmesPAHdb(
-            filename=resource_filename("amespahdbpythonsuite", xml),
+            filename=xml,
             check=False,
             cache=True,
             update=False,

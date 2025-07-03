@@ -4,13 +4,13 @@ test_transitions.py
 
 Test the transitions.py module.
 """
+import copy
+import os
 
-from os.path import exists
-
+import importlib_resources
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from pkg_resources import resource_filename
 
 from amespahdbpythonsuite import transitions
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -18,9 +18,12 @@ from amespahdbpythonsuite.amespahdb import AmesPAHdb
 
 @pytest.fixture(scope="module")
 def pahdb_theoretical():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -42,9 +45,9 @@ def test_spec():
     file2 = "resources/uid_18_drude_6eV_cascade_convolved_test_spec.npy"
     file3 = "resources/uid_18_lorentzian_6eV_cascade_convolved_test_spec.npy"
 
-    spec1 = np.load(resource_filename("amespahdbpythonsuite", file1))
-    spec2 = np.load(resource_filename("amespahdbpythonsuite", file2))
-    spec3 = np.load(resource_filename("amespahdbpythonsuite", file3))
+    spec1 = np.load(importlib_resources.files("amespahdbpythonsuite") / file1)
+    spec2 = np.load(importlib_resources.files("amespahdbpythonsuite") / file2)
+    spec3 = np.load(importlib_resources.files("amespahdbpythonsuite") / file3)
 
     return spec1, spec2, spec3
 
@@ -240,7 +243,20 @@ class TestTransitions:
 
     def test_write_transitions(self, test_transitions, test_path):
         test_transitions.write(f"{test_path}.tbl")
-        assert exists(f"{test_path}.tbl")
+        assert os.path.exists(f"{test_path}.tbl")
 
     def test_print(self, test_transitions):
         assert test_transitions.print(18, str=True)[0:11] == "TRANSITIONS"
+        assert test_transitions.print(str=True)[0:11] == "==========="
+
+    def test_getset_mismatch_database(self, capsys, test_transitions):
+        t = copy.copy(test_transitions)
+        t.set(database="none")
+        capture = capsys.readouterr()
+        assert capture.out.find("DATABASE MISMATCH")
+
+    def test_getset_mismatch_version(self, capsys, test_transitions):
+        t = copy.copy(test_transitions)
+        t.set(version="none")
+        capture = capsys.readouterr()
+        assert capture.out.find("VERSION MISMATCH")

@@ -5,21 +5,24 @@ test_fitted.py
 Test the fitted.py module.
 """
 
-import pytest
 from os.path import exists
-from pkg_resources import resource_filename
 
+import importlib_resources
 import matplotlib.pyplot as plt
+import pytest
 
+from amespahdbpythonsuite import fitted, observation
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
-from amespahdbpythonsuite import observation, fitted
 
 
 @pytest.fixture(scope="module")
 def test_fitted():
-    xml = "resources/pahdb-theoretical_cutdown.xml"
+    xml = (
+        importlib_resources.files("amespahdbpythonsuite")
+        / "resources/pahdb-theoretical_cutdown.xml"
+    )
     db = AmesPAHdb(
-        filename=resource_filename("amespahdbpythonsuite", xml),
+        filename=xml,
         check=False,
         cache=False,
         update=False,
@@ -29,13 +32,12 @@ def test_fitted():
     transitions.cascade(6 * 1.603e-12, multiprocessing=False)
     transitions.shift(-15.0)
     obs = observation.Observation(
-        resource_filename("amespahdbpythonsuite", "resources/galaxy_spec.ipac")
+        importlib_resources.files("amespahdbpythonsuite") / "resources/galaxy_spec.ipac"
     )
     obs.abscissaunitsto("1/cm")
     spectrum = transitions.convolve(
         grid=obs.getgrid(), fwhm=15.0, gaussian=True, multiprocessing=False
     )
-
     return spectrum.fit(obs)
 
 
