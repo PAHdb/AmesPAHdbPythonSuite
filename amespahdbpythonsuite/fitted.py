@@ -259,6 +259,8 @@ class Fitted(Spectrum):
                 ptype = "composition"
             elif keywords.get("residual"):
                 ptype = "residual"
+            elif keywords.get("sizedistribution"):
+                ptype = "sizedistribution"
             else:
                 ptype = "fitted"
 
