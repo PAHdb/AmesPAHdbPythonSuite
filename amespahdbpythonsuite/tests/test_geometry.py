@@ -97,7 +97,8 @@ class TestGeometry:
         test_geometry.plot(18, show=True)
 
     def test_structure(self, test_geometry):
-        test_geometry.structure(18, show=False)
+        img = test_geometry.structure(18, show=False)
+        assert img.shape == (1024, 1024, 4)
 
     def test_structure_save(self, test_path, test_geometry):
         test_geometry.structure(18, transparent=True, save=test_path)

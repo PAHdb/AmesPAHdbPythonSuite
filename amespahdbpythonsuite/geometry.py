@@ -5,6 +5,7 @@ from typing import Optional
 import numpy as np
 from scipy.spatial import KDTree  # type: ignore
 from scipy.spatial.distance import euclidean as edist  # type: ignore
+from vtk.util.numpy_support import vtk_to_numpy  # type: ignore
 from vtkmodules.vtkRenderingCore import vtkAssembly  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -256,13 +257,18 @@ class Geometry(Data):
         import vtkmodules.vtkRenderingOpenGL2  # type:  ignore # noqa:  F401
         from vtk import vtkTransform  # type:  ignore
         from vtkmodules.vtkFiltersSources import (  # type:  ignore
-            vtkCylinderSource, vtkSphereSource)
+            vtkCylinderSource,
+            vtkSphereSource,
+        )
         from vtkmodules.vtkIOImage import vtkPNGWriter  # type:  ignore
-        from vtkmodules.vtkRenderingCore import (vtkActor,  # type: ignore
-                                                 vtkPolyDataMapper,
-                                                 vtkRenderer, vtkRenderWindow,
-                                                 vtkRenderWindowInteractor,
-                                                 vtkWindowToImageFilter)
+        from vtkmodules.vtkRenderingCore import (
+            vtkActor,  # type: ignore
+            vtkPolyDataMapper,
+            vtkRenderer,
+            vtkRenderWindow,
+            vtkRenderWindowInteractor,
+            vtkWindowToImageFilter,
+        )
 
         atom_colors = {
             1: [0.78, 0.78, 0.78],
@@ -414,12 +420,25 @@ class Geometry(Data):
             interactor.TerminateApp()
             del interactor
 
-        del renderWindow
-
         if keywords.get("actor", False):
+            del renderWindow
             return assembly
 
-        return None
+        windowToImageFilter = vtkWindowToImageFilter()
+        windowToImageFilter.SetInput(renderWindow)
+        windowToImageFilter.SetInputBufferTypeToRGBA()
+        windowToImageFilter.SetScale(1)
+        windowToImageFilter.Update()
+
+        outputImage = windowToImageFilter.GetOutput()
+
+        outputData = outputImage.GetPointData().GetScalars()
+
+        img = vtk_to_numpy(outputData).reshape(*size, 4)
+
+        del renderWindow
+
+        return img
 
     def inertia(self) -> dict:
         """
@@ -945,7 +964,7 @@ class Geometry(Data):
         except ValueError:
             return ""
 
-        for item in pcone_code[x + 1:] + pcone_code[: x + 1]:
+        for item in pcone_code[x + 1:] + pcone_code[:x + 1]:
             if item == "0":
                 csum += 1
             else:

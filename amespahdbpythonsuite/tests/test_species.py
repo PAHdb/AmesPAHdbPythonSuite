@@ -91,7 +91,7 @@ class TestSpecies:
     def test_formatformula(self):
         assert (
             species.formatformula("C10H8++")
-            == r"C$_{\mathregular{10}}H$_{\mathregular{8}}$^{\mathregular{++}}"
+            == r"C$_{\mathregular{10}}$H$_{\mathregular{8}}$$^{\mathregular{++}}$"
         )
 
     def test_print(self, species_test):
