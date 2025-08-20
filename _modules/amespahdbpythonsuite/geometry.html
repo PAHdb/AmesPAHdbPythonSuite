@@ -168,6 +168,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">KDTree</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclidean</span> <span class="k">as</span> <span class="n">edist</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vtk.util.numpy_support</span><span class="w"> </span><span class="kn">import</span> <span class="n">vtk_to_numpy</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkRenderingCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">vtkAssembly</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">amespahdbpythonsuite.amespahdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmesPAHdb</span>
@@ -432,13 +433,18 @@
         <span class="kn">import</span><span class="w"> </span><span class="nn">vtkmodules.vtkRenderingOpenGL2</span>  <span class="c1"># type:  ignore # noqa:  F401</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">vtk</span><span class="w"> </span><span class="kn">import</span> <span class="n">vtkTransform</span>  <span class="c1"># type:  ignore</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkFiltersSources</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type:  ignore</span>
-            <span class="n">vtkCylinderSource</span><span class="p">,</span> <span class="n">vtkSphereSource</span><span class="p">)</span>
+            <span class="n">vtkCylinderSource</span><span class="p">,</span>
+            <span class="n">vtkSphereSource</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkIOImage</span><span class="w"> </span><span class="kn">import</span> <span class="n">vtkPNGWriter</span>  <span class="c1"># type:  ignore</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkRenderingCore</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">vtkActor</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-                                                 <span class="n">vtkPolyDataMapper</span><span class="p">,</span>
-                                                 <span class="n">vtkRenderer</span><span class="p">,</span> <span class="n">vtkRenderWindow</span><span class="p">,</span>
-                                                 <span class="n">vtkRenderWindowInteractor</span><span class="p">,</span>
-                                                 <span class="n">vtkWindowToImageFilter</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vtkmodules.vtkRenderingCore</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">vtkActor</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">vtkPolyDataMapper</span><span class="p">,</span>
+            <span class="n">vtkRenderer</span><span class="p">,</span>
+            <span class="n">vtkRenderWindow</span><span class="p">,</span>
+            <span class="n">vtkRenderWindowInteractor</span><span class="p">,</span>
+            <span class="n">vtkWindowToImageFilter</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="n">atom_colors</span> <span class="o">=</span> <span class="p">{</span>
             <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.78</span><span class="p">,</span> <span class="mf">0.78</span><span class="p">,</span> <span class="mf">0.78</span><span class="p">],</span>
@@ -590,12 +596,25 @@
             <span class="n">interactor</span><span class="o">.</span><span class="n">TerminateApp</span><span class="p">()</span>
             <span class="k">del</span> <span class="n">interactor</span>
 
-        <span class="k">del</span> <span class="n">renderWindow</span>
-
         <span class="k">if</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;actor&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">renderWindow</span>
             <span class="k">return</span> <span class="n">assembly</span>
 
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="n">windowToImageFilter</span> <span class="o">=</span> <span class="n">vtkWindowToImageFilter</span><span class="p">()</span>
+        <span class="n">windowToImageFilter</span><span class="o">.</span><span class="n">SetInput</span><span class="p">(</span><span class="n">renderWindow</span><span class="p">)</span>
+        <span class="n">windowToImageFilter</span><span class="o">.</span><span class="n">SetInputBufferTypeToRGBA</span><span class="p">()</span>
+        <span class="n">windowToImageFilter</span><span class="o">.</span><span class="n">SetScale</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">windowToImageFilter</span><span class="o">.</span><span class="n">Update</span><span class="p">()</span>
+
+        <span class="n">outputImage</span> <span class="o">=</span> <span class="n">windowToImageFilter</span><span class="o">.</span><span class="n">GetOutput</span><span class="p">()</span>
+
+        <span class="n">outputData</span> <span class="o">=</span> <span class="n">outputImage</span><span class="o">.</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">.</span><span class="n">GetScalars</span><span class="p">()</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">vtk_to_numpy</span><span class="p">(</span><span class="n">outputData</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="n">renderWindow</span>
+
+        <span class="k">return</span> <span class="n">img</span></div>
 
 
 <div class="viewcode-block" id="Geometry.inertia">
@@ -1140,7 +1159,7 @@
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pcone_code</span><span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">pcone_code</span><span class="p">[:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pcone_code</span><span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">pcone_code</span><span class="p">[:</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
                 <span class="n">csum</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
