@@ -15,14 +15,14 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import amespahdbpythonsuite
+# import amespahdbpythonsuite
 import sphinx_rtd_theme
 
 
 # -- Project information -----------------------------------------------------
 
 project = "AmesPAHdbPythonSuite"
-copyright = "2019/2025 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis"
+copyright = "2019-2025 Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis"
 author = (
     "Dr. Christiaan Boersma, Dr. Matthew J. Shannon, and Dr. Alexandros Maragkoudakis"
 )
@@ -90,7 +90,6 @@ pygments_style = None
 #
 # html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -99,7 +98,6 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_theme_options = {
     "prev_next_buttons_location": "both",
     "style_external_links": True,
-    "display_version": True,
     "collapse_navigation": False,
     "navigation_depth": 3,
 }
