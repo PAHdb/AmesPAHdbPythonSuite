@@ -1,4 +1,4 @@
-![Workflow Status](https://github.com/pahdb/AmesPAHdbPythonSuite/actions/workflows/ci.yml/badge.svg) [![Coverage Status]( https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite/graph/badge.svg)](https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite) [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://pahdb.github.io/AmesPAHdbPythonSuite/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17428588.svg)](https://doi.org/10.5281/zenodo.17428588) ![Workflow Status](https://github.com/pahdb/AmesPAHdbPythonSuite/actions/workflows/ci.yml/badge.svg) [![Coverage Status]( https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite/graph/badge.svg)](https://codecov.io/gh/PAHdb/AmesPAHdbPythonSuite) [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://pahdb.github.io/AmesPAHdbPythonSuite/)
 
 # AmesPAHdbPythonSuite
 
