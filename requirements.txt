@@ -1,5 +1,6 @@
 astropy
 fnnls
+importlib_resources
 lxml
 matplotlib
 numpy
