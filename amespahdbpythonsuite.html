@@ -451,6 +451,16 @@ Called by <code class="xref py py-meth docutils literal notranslate"><span class
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.data.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>AmesPAHdbPythonSuite data class</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#amespahdbpythonsuite.data.Data.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.database">
+<span class="sig-name descname"><span class="pre">database</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.data.Data.database" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.difference">
 <span class="sig-name descname"><span class="pre">difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.difference" title="Link to this definition"></a></dt>
@@ -487,6 +497,11 @@ Called by <code class="xref py py-meth docutils literal notranslate"><span class
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#amespahdbpythonsuite.data.Data.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.pahdb">
 <span class="sig-name descname"><span class="pre">pahdb</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#amespahdbpythonsuite.data.Data.pahdb" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -496,6 +511,21 @@ Called by <code class="xref py py-meth docutils literal notranslate"><span class
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/data.html#Data.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.data.Data.set" title="Link to this definition"></a></dt>
 <dd><p>Populate data dictionary.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.uids">
+<span class="sig-name descname"><span class="pre">uids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#amespahdbpythonsuite.data.Data.uids" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.units">
+<span class="sig-name descname"><span class="pre">units</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#amespahdbpythonsuite.data.Data.units" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.data.Data.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.data.Data.version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1001,6 +1031,11 @@ Contains methods to fit and plot the input spectrum.</p>
 <dd><p>Fits the input spectrum.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.fwhm">
+<span class="sig-name descname"><span class="pre">fwhm</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.fwhm" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.get" title="Link to this definition"></a></dt>
@@ -1010,9 +1045,14 @@ Assigns class variables from inherited dictionary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.getgrid">
-<span class="sig-name descname"><span class="pre">getgrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.getgrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.getgrid" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getgrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.getgrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.getgrid" title="Link to this definition"></a></dt>
 <dd><p>Return the grid.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.mcfit">
@@ -1038,6 +1078,11 @@ Assigns class variables from inherited dictionary.</p>
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/spectrum.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.plot" title="Link to this definition"></a></dt>
 <dd><p>Plot the spectrum.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.profile">
+<span class="sig-name descname"><span class="pre">profile</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.spectrum.Spectrum.profile" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.spectrum.Spectrum.resample">
@@ -1112,6 +1157,16 @@ Contains methods to work with PAH species.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#amespahdbpythonsuite.species.Species.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.database">
+<span class="sig-name descname"><span class="pre">database</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.species.Species.database" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.difference">
@@ -1207,6 +1262,16 @@ Calls the <a class="reference internal" href="#amespahdbpythonsuite.transitions.
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.uids">
+<span class="sig-name descname"><span class="pre">uids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#amespahdbpythonsuite.species.Species.uids" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.species.Species.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.species.Species.version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1408,6 +1473,16 @@ as the ratio of the residual over the total spectrum area.</p>
 <dd><p>Retrieves the weights of the fitted PAHs.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.method">
+<span class="sig-name descname"><span class="pre">method</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.method" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.observation">
+<span class="sig-name descname"><span class="pre">observation</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.observation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.plot" title="Link to this definition"></a></dt>
@@ -1426,6 +1501,11 @@ as the ratio of the residual over the total spectrum area.</p>
 <dd><p>Sort UIDs and weights by their contribution to the fit</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.weights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.fitted.Fitted.write">
 <span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/fitted.html#Fitted.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.fitted.Fitted.write" title="Link to this definition"></a></dt>
@@ -1442,6 +1522,11 @@ as the ratio of the residual over the total spectrum area.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amespahdbpythonsuite.mcfitted.</span></span><span class="sig-name descname"><span class="pre">MCFitted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted" title="Link to this definition"></a></dt>
 <dd><p>AmesPAHdbPythonSuite mcfitted class.
 Contains methods to fit and plot the input spectrum using a Monte Carlo approach.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.distribution">
+<span class="sig-name descname"><span class="pre">distribution</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.distribution" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.get" title="Link to this definition"></a></dt>
@@ -1451,19 +1536,19 @@ Assigns class variables from inherited dictionary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.getbreakdown">
-<span class="sig-name descname"><span class="pre">getbreakdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.getbreakdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.getbreakdown" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getbreakdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.getbreakdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.getbreakdown" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the breakdown of the MC fitted PAHs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.getclasses">
-<span class="sig-name descname"><span class="pre">getclasses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.getclasses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.getclasses" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getclasses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.getclasses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.getclasses" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the spectra of the different classes of the MC fitted PAHs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.geterror">
-<span class="sig-name descname"><span class="pre">geterror</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.geterror"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.geterror" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">geterror</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.geterror"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.geterror" title="Link to this definition"></a></dt>
 <dd><p>Obtains the PAHdb fitting uncertainty from the fitted geterror method,
 as the ratio of the residual over the total spectrum area.</p>
 </dd></dl>
@@ -1485,6 +1570,16 @@ as the ratio of the residual over the total spectrum area.</p>
 <span class="sig-name descname"><span class="pre">getresidual</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/mcfitted.html#MCFitted.getresidual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.getresidual" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the statistics spectra for the residuals of the MC fits.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.mcfits">
+<span class="sig-name descname"><span class="pre">mcfits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#amespahdbpythonsuite.fitted.Fitted" title="amespahdbpythonsuite.fitted.Fitted"><span class="pre">Fitted</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.mcfits" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.observation">
+<span class="sig-name descname"><span class="pre">observation</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.mcfitted.MCFitted.observation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.mcfitted.MCFitted.plot">
@@ -1514,6 +1609,11 @@ Contains methods to work with astronomical spectra.</p>
 <span class="sig-name descname"><span class="pre">abscissaunitsto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Unit</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/observation.html#Observation.abscissaunitsto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.observation.Observation.abscissaunitsto" title="Link to this definition"></a></dt>
 <dd><p>Convert abscissa units.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.observation.Observation.filepath">
+<span class="sig-name descname"><span class="pre">filepath</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#amespahdbpythonsuite.observation.Observation.filepath" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amespahdbpythonsuite.observation.Observation.get">
@@ -1562,6 +1662,12 @@ Contains methods to work with astronomical spectra.</p>
 <dt class="sig sig-object py" id="amespahdbpythonsuite.observation.Observation.setgridrange">
 <span class="sig-name descname"><span class="pre">setgridrange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/amespahdbpythonsuite/observation.html#Observation.setgridrange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amespahdbpythonsuite.observation.Observation.setgridrange" title="Link to this definition"></a></dt>
 <dd><p>Truncate the data to the given range.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amespahdbpythonsuite.observation.Observation.spectrum">
+<span class="sig-name descname"><span class="pre">spectrum</span></span><a class="headerlink" href="#amespahdbpythonsuite.observation.Observation.spectrum" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Spectrum1D</span></code></p>
 </dd></dl>
 
 <dl class="py method">
