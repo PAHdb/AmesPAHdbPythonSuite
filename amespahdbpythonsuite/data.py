@@ -14,6 +14,13 @@ class Data:
     """
 
     pahdb = None
+    database = ""
+    version = ""
+
+    data: dict = dict()
+    uids: list = list()
+    model: dict = dict()
+    units: dict = dict()
 
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         """
@@ -34,13 +41,6 @@ class Data:
         Populate data dictionary helper.
 
         """
-        self.database = keywords.get("database", "")
-        self.version = keywords.get("version", "")
-        self.data = keywords.get("data", dict())
-        self.uids = keywords.get("uids", list())
-        self.model = keywords.get("model", dict())
-        self.units = keywords.get("units", dict())
-
         if isinstance(d, dict):
             # Check if expected keywords are present in provided dictionary,
             # otherwise assign them to instance variables.
@@ -57,6 +57,25 @@ class Data:
                     self.model = d["model"]
                 if "units" not in keywords:
                     self.units = d["units"]
+
+        database = keywords.get("database")
+        if database and isinstance(database, str):
+            self.database = database
+        version = keywords.get("version")
+        if version and isinstance(version, str):
+            self.version = version
+        data = keywords.get("data")
+        if data and isinstance(data, dict):
+            self.data = data
+        uids = keywords.get("uids")
+        if uids and isinstance(uids, list):
+            self.uids = uids
+        model = keywords.get("model")
+        if model and isinstance(model, dict):
+            self.model = model
+        units = keywords.get("units")
+        if units and isinstance(units, dict):
+            self.units = units
 
         if "pahdb" in keywords:
             self.pahdb = keywords.get("pahdb")

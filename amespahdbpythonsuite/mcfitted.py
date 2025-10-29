@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
-from typing import Optional
 
 import os
-import numpy as np
-import matplotlib.pyplot as plt  # type: ignore
+from typing import Optional, Union
 
+import matplotlib.pyplot as plt  # type: ignore
+import numpy as np
 from scipy import stats  # type: ignore
 from specutils import Spectrum1D  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
+from amespahdbpythonsuite.fitted import Fitted
 
 message = AmesPAHdb.message
 
@@ -22,6 +23,10 @@ class MCFitted:
 
     """
 
+    mcfits: list[Fitted] = list()
+    distribution = ""
+    observation = ""
+
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         self.__set(d, **keywords)
 
@@ -30,10 +35,6 @@ class MCFitted:
         Populate data dictionary helper.
 
         """
-        self.mcfits = keywords.get("mcfits", list())
-        self.distribution = keywords.get("distribution", "")
-        self.observation = keywords.get("observation", "")
-
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "mcfits" not in keywords:
@@ -42,6 +43,18 @@ class MCFitted:
                     self.distribution = d["distribution"]
                 if "observation" not in keywords:
                     self.observation = d["observation"]
+
+        if "mcfits" in keywords:
+            self.mcfits = keywords["mcfits"]
+        if "distribution" in keywords:
+            self.distribution = keywords["distribution"]
+        if "observation" in keywords:
+            self.observation = keywords["observation"]
+
+        if "pahdb" in keywords:
+            if self.mcfits is not None:
+                for mcfit in self.mcfits:
+                    mcfit.set(pahdb=keywords["pahdb"])
 
         self._fit: Optional[dict] = None
         self._breakdown: Optional[dict] = None
@@ -55,7 +68,7 @@ class MCFitted:
         Assigns class variables from inherited dictionary.
 
         """
-        d = {}
+        d: dict[str, Union[str, list]] = dict()
         d["type"] = self.__class__.__name__
         d["mcfits"] = self.mcfits
         d["distribution"] = self.distribution
@@ -91,7 +104,7 @@ class MCFitted:
 
         return self._fit
 
-    def getbreakdown(self) -> dict:
+    def getbreakdown(self) -> Optional[dict]:
         """
         Retrieves the breakdown of the MC fitted PAHs.
 
@@ -100,18 +113,23 @@ class MCFitted:
             mcfits = iter(self.mcfits)
             mcfit = next(mcfits)
             breakdown = mcfit.getbreakdown()
-            results: dict = {k: [] for k in breakdown.keys()}
-            for key, val in breakdown.items():
-                results[key].append(val)
-            for mcfit in mcfits:
-                breakdown = mcfit.getbreakdown()
+            if breakdown:
+                results: dict = {k: [] for k in breakdown.keys()}
                 for key, val in breakdown.items():
                     results[key].append(val)
-            self._breakdown = {key: self._getstats(val) for key, val in results.items()}
+                for mcfit in mcfits:
+                    breakdown = mcfit.getbreakdown()
+                    if breakdown is None:
+                        continue
+                    for key, val in breakdown.items():
+                        results[key].append(val)
+                self._breakdown = {
+                    key: self._getstats(val) for key, val in results.items()
+                }
 
         return self._breakdown
 
-    def getclasses(self) -> dict:
+    def getclasses(self) -> Optional[dict]:
         """
         Retrieves the spectra of the different classes of the MC fitted PAHs.
 
@@ -120,14 +138,19 @@ class MCFitted:
             mcfits = iter(self.mcfits)
             mcfit = next(mcfits)
             classes = mcfit.getclasses()
-            results: dict = {k: [] for k in classes.keys()}
-            for key, val in classes.items():
-                results[key].append(val)
-            for mcfit in mcfits:
-                classes = mcfit.getclasses()
+            if classes:
+                results: dict = {k: [] for k in classes.keys()}
                 for key, val in classes.items():
                     results[key].append(val)
-            self._classes = {key: self._getstats(val) for key, val in results.items()}
+                for mcfit in mcfits:
+                    classes = mcfit.getclasses()
+                    if classes is None:
+                        continue
+                    for key, val in classes.items():
+                        results[key].append(val)
+                self._classes = {
+                    key: self._getstats(val) for key, val in results.items()
+                }
 
         return self._classes
 
@@ -360,8 +383,9 @@ class MCFitted:
         Write the spectra to file as an IPAC-table.
 
         """
-        import sys
         import datetime
+        import sys
+
         from astropy.table import Table  # type: ignore
 
         if not filename:
@@ -400,14 +424,18 @@ class MCFitted:
             meta={"comments": hdr},
         )
 
-        for key, vals in self.getbreakdown().items():
-            tbl.add_row([key, vals["mean"], vals["std"], vals["skew"], vals["kurt"]])
+        breakdown = self.getbreakdown()
+        if breakdown:
+            for key, vals in breakdown.items():
+                tbl.add_row(
+                    [key, vals["mean"], vals["std"], vals["skew"], vals["kurt"]]
+                )
 
         tbl.write(filename, format="ipac", overwrite=True)
 
         message(f"WRITTEN: {filename}")
 
-    def geterror(self) -> dict:
+    def geterror(self) -> Optional[dict]:
         """
         Obtains the PAHdb fitting uncertainty from the fitted geterror method,
         as the ratio of the residual over the total spectrum area.
@@ -417,14 +445,17 @@ class MCFitted:
             mcfits = iter(self.mcfits)
             mcfit = next(mcfits)
             error = mcfit.geterror()
-            results: dict = {k: [] for k in error.keys()}
-            for key, val in error.items():
-                results[key].append(val)
-            for mcfit in mcfits:
-                error = mcfit.geterror()
+            if error:
+                results: dict = {k: [] for k in error.keys()}
                 for key, val in error.items():
                     results[key].append(val)
-            self._error = {key: self._getstats(val) for key, val in results.items()}
+                for mcfit in mcfits:
+                    error = mcfit.geterror()
+                    if error is None:
+                        continue
+                    for key, val in error.items():
+                        results[key].append(val)
+                self._error = {key: self._getstats(val) for key, val in results.items()}
 
         return self._error
 

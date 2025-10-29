@@ -22,6 +22,10 @@ class Species:
     """
 
     pahdb = None
+    database = ""
+    version = ""
+    data: dict = dict()
+    uids: list = list()
 
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         self.set(d, **keywords)
@@ -31,11 +35,6 @@ class Species:
         Populate properties.
 
         """
-        self.database = keywords.get("database", "")
-        self.version = keywords.get("version", "")
-        self.data = keywords.get("data", dict())
-        self.uids = keywords.get("uids", list())
-
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "database" not in keywords:
@@ -46,6 +45,19 @@ class Species:
                     self.data = d["data"]
                 if "uids" not in keywords:
                     self.uids = d["uids"]
+
+        database = keywords.get("database")
+        if database and isinstance(database, str):
+            self.database = database
+        version = keywords.get("version")
+        if version and isinstance(version, str):
+            self.version = version
+        data = keywords.get("data")
+        if data and isinstance(data, dict):
+            self.data = data
+        uids = keywords.get("uids")
+        if uids and isinstance(uids, list):
+            self.uids = uids
 
         if "pahdb" in keywords:
             self.pahdb = keywords.get("pahdb")

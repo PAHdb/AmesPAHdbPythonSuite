@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
-import copy
-from functools import partial
-import multiprocessing as mp
-from typing import Optional, TYPE_CHECKING, Union
 
-from astropy.nddata import StdDevUncertainty  # type: ignore
+import copy
+import multiprocessing as mp
+from functools import partial
+from typing import TYPE_CHECKING, Optional, Union
+
 import astropy.units as u  # type: ignore
-from fnnls import fnnls  # type: ignore
 import numpy as np
+from astropy.nddata import StdDevUncertainty  # type: ignore
+from scipy.optimize import nnls  # type: ignore
 from specutils import Spectrum1D, manipulation  # type: ignore
 
 from amespahdbpythonsuite.amespahdb import AmesPAHdb
@@ -18,8 +19,8 @@ from amespahdbpythonsuite.transitions import Transitions
 if TYPE_CHECKING:
     from amespahdbpythonsuite.coadded import Coadded
     from amespahdbpythonsuite.fitted import Fitted
-    from amespahdbpythonsuite.observation import Observation
     from amespahdbpythonsuite.mcfitted import MCFitted
+    from amespahdbpythonsuite.observation import Observation
 
 message = AmesPAHdb.message
 
@@ -32,6 +33,10 @@ class Spectrum(Transitions):
     Contains methods to fit and plot the input spectrum.
 
     """
+
+    grid: Union[list, np.ndarray] = list()
+    profile = ""
+    fwhm = 0.0
 
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         super().__init__(d, **keywords)
@@ -50,10 +55,6 @@ class Spectrum(Transitions):
         Populate data dictionary helper.
 
         """
-        self.grid = keywords.get("grid", list())
-        self.profile = keywords.get("profile", "")
-        self.fwhm = keywords.get("fwhm", 0.0)
-
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "grid" not in keywords:
@@ -62,6 +63,16 @@ class Spectrum(Transitions):
                     self.profile = d["profile"]
                 if "fwhm" not in keywords:
                     self.fwhm = d["fwhm"]
+
+        grid = keywords.get("grid")
+        if grid is not None and isinstance(grid, (list, np.ndarray)):
+            self.grid = grid
+        profile = keywords.get("profile")
+        if profile and isinstance(profile, str):
+            self.profile = profile
+        fwhm = keywords.get("fwhm")
+        if fwhm and isinstance(fwhm, float):
+            self.fwhm = fwhm
 
     def get(self) -> dict:
         """
@@ -199,7 +210,7 @@ class Spectrum(Transitions):
         m_scl = m.max()
         m /= m_scl
 
-        solution, _ = fnnls(m.T, b)
+        solution, _ = nnls(m.T, b)
 
         solution /= m_scl / b_scl
 
@@ -303,7 +314,7 @@ class Spectrum(Transitions):
         elif keywords.get("show", False):
             plt.show()
 
-    def getgrid(self) -> list:
+    def getgrid(self) -> Union[list, np.ndarray]:
         """
         Return the grid.
 
@@ -464,7 +475,7 @@ class Spectrum(Transitions):
 
             matrix = np.array(list(self.data.values()))
 
-            m = np.divide(matrix, obs.uncertainty.array)
+            m = matrix.copy()
 
             m_scl = m.max()
             m /= m_scl
@@ -574,6 +585,6 @@ def _mcfit(_, m, x, u, uniform) -> tuple:
     b_scl = b.max()
 
     # Fit the spectrum.
-    solution, _ = fnnls(m.T, np.divide(b / b_scl, u))
+    solution, _ = nnls(m.T, np.divide(b / b_scl, u))
 
     return solution * b_scl, b

@@ -24,6 +24,9 @@ class Observation:
 
     """
 
+    filepath: Union[str, Path] = ""
+    spectrum = Spectrum1D
+
     def __init__(self, d: Optional[None] = None, **keywords) -> None:
         self.set(d, **keywords)
 
@@ -37,9 +40,6 @@ class Observation:
             self.read(d)
             return
 
-        self.filepath = keywords.get("filepath", "")
-        self.spectrum = keywords.get("spectrum", Spectrum1D)
-
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "filepath" not in keywords:
@@ -47,12 +47,18 @@ class Observation:
                 if "spectrum" not in keywords:
                     self.spectrum = d["spectrum"]
 
+        filepath = keywords.get("filepath")
+        if "filepath" and isinstance(filepath, (Path, str)):
+            self.filepath = filepath
+        if "spectrum" in keywords:
+            self.spectrum = keywords.get("spectrum")
+
     def get(self) -> dict:
         """
         Assigns class variables to dictionary.
 
         """
-        d = dict()
+        d: dict[str, Union[str, Path, Spectrum1D]] = dict()
         d["type"] = self.__class__.__name__
         d["filepath"] = self.filepath
         d["spectrum"] = self.spectrum
@@ -199,7 +205,9 @@ class Observation:
 
                         # Create Spectrum1D instance.
                         flux = h.data.T * u.Unit(h.header["BUNIT"])
-                        wave = hdu[h0].data[h1].squeeze() * u.Unit(hdu[h0].columns[h1].unit)
+                        wave = hdu[h0].data[h1].squeeze() * u.Unit(
+                            hdu[h0].columns[h1].unit
+                        )
                         self.spectrum = Spectrum1D(flux, spectral_axis=wave)
 
                         return None

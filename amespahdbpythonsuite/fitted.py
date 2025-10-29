@@ -23,6 +23,10 @@ class Fitted(Spectrum):
 
     """
 
+    observation = None
+    weights: dict = dict()
+    method = ""
+
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Initialize fitted class.
@@ -299,10 +303,6 @@ class Fitted(Spectrum):
         Populate data dictionary helper.
 
         """
-        self.observation = keywords.get("observation", None)
-        self.weights = keywords.get("weights", dict())
-        self.method = keywords.get("method", "")
-
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "observation" not in keywords:
@@ -311,6 +311,13 @@ class Fitted(Spectrum):
                     self.weights = d["weights"]
                 if "method" not in keywords:
                     self.method = d["method"]
+
+        if "observation" in keywords:
+            self.observation = keywords["observation"]
+        if "weights" in keywords:
+            self.weights = keywords["weights"]
+        if "method" in keywords:
+            self.method = keywords["method"]
 
         self._chisquared: Optional[float] = None
         self._norm: Optional[float] = None
@@ -561,7 +568,8 @@ class Fitted(Spectrum):
             ]
 
         if not uids:
-            return np.zeros(self.grid.size)
+            size = len(self.grid) if isinstance(self.grid, list) else self.grid.size
+            return np.zeros(size)
 
         return sum({key: val for key, val in self.data.items() if key in uids}.values())
 

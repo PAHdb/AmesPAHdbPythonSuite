@@ -45,6 +45,8 @@ class Transitions(Data):
 
     """
 
+    _shift = 0.0
+
     def __init__(self, d: Optional[dict] = None, **keywords) -> None:
         """
         Initialize transitions class.
@@ -67,12 +69,14 @@ class Transitions(Data):
         Populate data dictionary helper.
 
         """
-        self._shift = keywords.get("shift", 0.0)
-
         if isinstance(d, dict):
             if d.get("type", "") == self.__class__.__name__:
                 if "shift" not in keywords:
                     self._shift = d["shift"]
+
+        shift = keywords.get("shift")
+        if shift and isinstance(shift, float):
+            self._shift = shift
 
     def get(self) -> dict:
         """
