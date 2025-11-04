@@ -4,5 +4,32 @@
             "name": "The PAHdb Team"
         }
     ],
-    "title": "AmesPAHdbPythonSuite"
+    "contributors": [
+        {
+            "name": "Boersma, Christiaan",
+            "type": "ProjectLeader",
+            "orcid": "0000-0002-4836-217X",
+            "affiliation": "Ames Research Center"
+        },
+        {
+            "name": "Shannon, Matthew",
+            "type": "ProjectMember",
+            "orcid": "0000-0001-5681-5151",
+            "affiliation": "Universities Space Research Association"
+        },
+        {
+            "name": "Maragkoudakis, Alexandros",
+            "type": "ProjectMember",
+            "orcid": "0000-0003-2552-3871",
+            "affiliation": "Ames Research Center"
+        },
+        {
+            "name": "Roser, Joseph",
+            "type": "ProjectMember",
+            "orcid": "0000-0002-1806-3494",
+            "affiliation": "SETI Institute"
+        }
+    ],
+    "title": "AmesPAHdbPythonSuite",
+    "description": "Polycyclic aromatic hydrocarbon (PAH) molecules dominate the mid-infrared (IR) emission of many objects in the sky. At NASA Ames Research Center, laboratory experiments and quantum chemical calculations have resulted in an unrivaled collection of PAH absorption spectra that have been collected into the NASA Ames PAH IR Spectroscopic Database. To have astronomers mine this wealth of data and apply it to observations, tools are needed, preferably in a language astronomers are familiar with. The AmesPAHdbPythonSuite does just that. The AmesPAHdbPythonSuite is a module written in Python, a programming language used for data analysis and increasingly popular with astronomers. The module allows for the reading and parsing of a downloaded database XML-file. Once the database is loaded into memory, it can be searched and different elements can be plotted to screen and/or file. These elements include, but are not limited to, spectroscopic data, molecular properties, chemical structure, etc. In addition, the AmesPAHdbPythonSuite implements a selection PAH emission models that offer different levels of detail. These models turn the database absorption spectra into emission spectra, which are needed for comparison with astronomical observations. The AmesPAHdbPythonSuite also offers a selection of algorithms to be used for fitting these emission spectra directly to the observations and tools to break down and analyze those fits."
 }
