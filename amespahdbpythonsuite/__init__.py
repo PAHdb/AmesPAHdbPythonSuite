@@ -1,15 +1,30 @@
 """The AmesPAHdbPythonSuite is developed by the NASA Ames PAH IR
-Spectroscopic Database team, asscociated with the Astrophysics &
-Astrochemistry Laboratory at NASA Ames Research Center. The NASA Ames
-PAH IR Spectroscopic Database and pypahdb are being supported through
-a directed Work Package at NASA Ames titled: "Laboratory Astrophysics
-- The NASA Ames PAH IR Spectroscopic Database".
+Spectroscopic Database team, associated with the Astrophysics &
+Astrochemistry Laboratory at NASA Ames Research Center.
+
+From FY2025 onward the NASA Ames PAH IR Spectroscopic Database is being
+supported through the Laboratory Astrophysics Round 3 directed Work
+Package at NASA Ames.
+
+From FY2023-2025 the NASA Ames PAH IR Spectroscopic Database was
+supported through the Laboratory Astrophysics Round 2 directed Work
+Package at NASA Ames.
+
+From FY2019-2022 the NASA Ames PAH IR Spectroscopic Database was supported
+through a directed Work Package at NASA Ames titled: "Laboratory Astrophysics
+& The NASA Ames PAH IR Spectroscopic Database".
 
 Additional information can be found at the NASA Ames PAH IR
 Spectroscopic Database website, which is located at
 https://www.astrochemistry.org/pahdb You are kindly asked to consider
 the following references for citation when using the
 AmesPAHdbPythonSuite:
+
+    * Ricca, A., Boersma, C., Maragkoudakis, A., Roser, J.E., Shannon, M.J.
+      Allamandola, L.J., Bauschlicher Jr., C.W., "THE NASA AMES PAH IR
+      SPECTROSCOPIC DATABASE: COMPUTATIONAL VERSION 4.00, SOFTWARE TOOLS, WEBSITE,
+      AND DOCUMENTATION", The Astrophysical Journal Supplement Series, 282, 7,
+      2025 https://doi.org/10.3847/1538-4365/ae1c38
 
     * C.W. Bauschlicher, Jr., A. Ricca, C. Boersma, and
       L.J. Allamandola, "THE NASA AMES PAH IR SPECTROSCOPIC DATABASE:
