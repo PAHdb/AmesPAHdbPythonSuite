@@ -307,8 +307,8 @@ class AmesPAHdb:
 
         """
 
-        # Check if the experimental database is loaded.
-        if self.__data["database"] != "experimental":
+        # Check if a database with laboratory data is loaded.
+        if self.__data["database"] not in ["experimental", "gasphase"]:
             self.message("EXPERIMENTAL DATABASE REQUIRED")
             return None
 
@@ -801,7 +801,10 @@ class AmesPAHdb:
                 # parsed += f"item[1]['comments'] == {tokens[current]['translation']}"
             elif tokens[current]["type"] == "STRING":
                 if prev > -1:
-                    if tokens[prev]["type"] in ["COMPARISON", "NUMERIC"] and tokens[prev]["valid"]:
+                    if (
+                        tokens[prev]["type"] in ["COMPARISON", "NUMERIC"]
+                        and tokens[prev]["valid"]
+                    ):
                         parsed += tokens[current]["translation"]
                     else:
                         print("EXPECTING COMPARISON")
