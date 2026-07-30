@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>amespahdbpythonsuite.amespahdb &mdash; AmesPAHdbPythonSuite  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=b56f5f8f" />
@@ -482,8 +482,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Check if the experimental database is loaded.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;experimental&quot;</span><span class="p">:</span>
+        <span class="c1"># Check if a database with laboratory data is loaded.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;experimental&quot;</span><span class="p">,</span> <span class="s2">&quot;gasphase&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s2">&quot;EXPERIMENTAL DATABASE REQUIRED&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -986,7 +986,10 @@
                 <span class="c1"># parsed += f&quot;item[1][&#39;comments&#39;] == {tokens[current][&#39;translation&#39;]}&quot;</span>
             <span class="k">elif</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;STRING&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COMPARISON&quot;</span><span class="p">,</span> <span class="s2">&quot;NUMERIC&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COMPARISON&quot;</span><span class="p">,</span> <span class="s2">&quot;NUMERIC&quot;</span><span class="p">]</span>
+                        <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span>
+                    <span class="p">):</span>
                         <span class="n">parsed</span> <span class="o">+=</span> <span class="n">tokens</span><span class="p">[</span><span class="n">current</span><span class="p">][</span><span class="s2">&quot;translation&quot;</span><span class="p">]</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXPECTING COMPARISON&quot;</span><span class="p">)</span>
